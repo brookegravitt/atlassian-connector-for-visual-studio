@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using Atlassian.plvs.api;
+using Atlassian.plvs.dialogs;
 using Atlassian.plvs.models;
 
 namespace Atlassian.plvs.ui.issues {

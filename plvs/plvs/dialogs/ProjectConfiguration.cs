@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using Atlassian.plvs.api;
 using Atlassian.plvs.models;
 using Atlassian.plvs.ui;
-using PaZu.dialogs;
 
 namespace Atlassian.plvs.dialogs {
     public partial class ProjectConfiguration : Form {
