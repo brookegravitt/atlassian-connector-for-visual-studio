@@ -1,5 +1,4 @@
-﻿namespace PaZu.dialogs
-{
+﻿namespace Atlassian.plvs.dialogs {
     partial class TestJiraConnection
     {
         /// <summary>
