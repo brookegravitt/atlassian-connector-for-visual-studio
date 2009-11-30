@@ -69,61 +69,61 @@
     <Compile Include="dialogs\About.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="dialogs\About.designer.cs">
+    <Compile Include="dialogs\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
     <Compile Include="dialogs\AddOrEditJiraServer.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="dialogs\AddOrEditJiraServer.designer.cs">
+    <Compile Include="dialogs\AddOrEditJiraServer.Designer.cs">
       <DependentUpon>AddOrEditJiraServer.cs</DependentUpon>
     </Compile>
     <Compile Include="dialogs\EditCustomFilter.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="dialogs\EditCustomFilter.designer.cs">
+    <Compile Include="dialogs\EditCustomFilter.Designer.cs">
       <DependentUpon>EditCustomFilter.cs</DependentUpon>
     </Compile>
     <Compile Include="dialogs\GlobalSettings.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="dialogs\GlobalSettings.designer.cs">
+    <Compile Include="dialogs\GlobalSettings.Designer.cs">
       <DependentUpon>GlobalSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="dialogs\NewIssueComment.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="dialogs\NewIssueComment.designer.cs">
+    <Compile Include="dialogs\NewIssueComment.Designer.cs">
       <DependentUpon>NewIssueComment.cs</DependentUpon>
     </Compile>
     <Compile Include="dialogs\ProjectConfiguration.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="dialogs\ProjectConfiguration.designer.cs">
+    <Compile Include="dialogs\ProjectConfiguration.Designer.cs">
       <DependentUpon>ProjectConfiguration.cs</DependentUpon>
     </Compile>
     <Compile Include="dialogs\SearchIssue.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="dialogs\SearchIssue.designer.cs">
+    <Compile Include="dialogs\SearchIssue.Designer.cs">
       <DependentUpon>SearchIssue.cs</DependentUpon>
     </Compile>
     <Compile Include="dialogs\TestJiraConnection.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="dialogs\TestJiraConnection.designer.cs">
+    <Compile Include="dialogs\TestJiraConnection.Designer.cs">
       <DependentUpon>TestJiraConnection.cs</DependentUpon>
     </Compile>
     <Compile Include="IssueDetailsPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="IssueDetailsPanel.designer.cs">
+    <Compile Include="IssueDetailsPanel.Designer.cs">
       <DependentUpon>IssueDetailsPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="IssueDetailsWindow.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="IssueDetailsWindow.designer.cs">
+    <Compile Include="IssueDetailsWindow.Designer.cs">
       <DependentUpon>IssueDetailsWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="models\CredentialsVault.cs" />
@@ -147,7 +147,7 @@
     <Compile Include="PaZuWindow.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PaZuWindow.designer.cs">
+    <Compile Include="PaZuWindow.Designer.cs">
       <DependentUpon>PaZuWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
