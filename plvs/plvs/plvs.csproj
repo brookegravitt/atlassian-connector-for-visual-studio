@@ -32,6 +32,11 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Aga.Controls, Version=1.7.0.0, Culture=neutral, PublicKeyToken=fcc90fbf924463a3, processorArchitecture=MSIL" />
+    <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files\Microsoft Visual Studio 9.0\Common7\IDE\PublicAssemblies\EnvDTE.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualStudio.OLE.Interop" />
     <Reference Include="Microsoft.VisualStudio.Shell.Interop" />
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.8.0" />
@@ -45,10 +50,38 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="api\JiraField.cs" />
+    <Compile Include="api\JiraIssue.cs" />
+    <Compile Include="api\JiraNamedEntity.cs" />
+    <Compile Include="api\JiraProject.cs" />
+    <Compile Include="api\JiraSavedFilter.cs" />
+    <Compile Include="api\JiraServer.cs" />
+    <Compile Include="api\JiraServerFacade.cs" />
+    <Compile Include="api\RssClient.cs" />
+    <Compile Include="api\soap\SoapSession.cs" />
+    <Compile Include="dialogs\GlobalSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\GlobalSettings.designer.cs">
+      <DependentUpon>GlobalSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="models\CredentialsVault.cs" />
+    <Compile Include="models\ImageCache.cs" />
+    <Compile Include="models\JiraCustomFilter.cs" />
+    <Compile Include="models\JiraIssueListModel.cs" />
+    <Compile Include="models\JiraIssueListModelBuilder.cs" />
+    <Compile Include="models\JiraIssueListModelListener.cs" />
+    <Compile Include="models\JiraServerCache.cs" />
+    <Compile Include="models\JiraServerModel.cs" />
+    <Compile Include="models\RecentlyViewedIssue.cs" />
+    <Compile Include="models\RecentlyViewedIssuesModel.cs" />
     <Compile Include="MyControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -57,6 +90,11 @@
     </Compile>
     <Compile Include="MyToolWindow.cs" />
     <Compile Include="Guids.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -66,8 +104,33 @@
     <Compile Include="plvsPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PkgCmdID.cs" />
+    <Compile Include="ui\CustomFilterTreeNode.cs" />
+    <Compile Include="ui\issues\FilterContextMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ui\issues\FlatIssueTreeModel.cs" />
+    <Compile Include="ui\issues\IssueContextMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ui\issues\IssueNode.cs" />
+    <Compile Include="ui\IssueTypeListViewItem.cs" />
+    <Compile Include="ui\JiraSavedFilterTreeNode.cs" />
+    <Compile Include="ui\JiraServerTreeNode.cs" />
+    <Compile Include="ui\RecentlyOpenIssuesTreeNode.cs" />
+    <Compile Include="ui\StatusLabel.cs" />
+    <Compile Include="ui\TreeNodeWithServer.cs" />
+    <Compile Include="util\ParameterSerializer.cs" />
+    <Compile Include="Web References\Atlassian.plvs.api.soap.service\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="dialogs\GlobalSettings.resx">
+      <DependentUpon>GlobalSettings.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -84,12 +147,152 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="Key.snk" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Resources\Images_32bit.bmp" />
     <None Include="Resources\Images_24bit.bmp" />
+    <None Include="Web References\Atlassian.plvs.api.soap.service\jirasoapservice-v2.wsdl" />
+    <None Include="Web References\Atlassian.plvs.api.soap.service\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemoteAttachment.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemoteAvatar.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemoteComment.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemoteComponent.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemoteConfiguration.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemoteField.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemoteFilter.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemoteGroup.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemoteIssue.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemoteIssueType.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemoteNamedObject.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemotePermission.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemotePermissionScheme.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemotePriority.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemoteProject.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemoteProjectRole.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemoteProjectRoleActors.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemoteResolution.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemoteRoleActors.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemoteScheme.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemoteSecurityLevel.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemoteServerInfo.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemoteStatus.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemoteUser.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemoteVersion.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\Atlassian.plvs.api.soap.service\RemoteWorklog.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\icons\about.png" />
+    <Content Include="Resources\icons\atlassian-538x235.png" />
+    <Content Include="Resources\icons\atlassian-installer.bmp" />
+    <Content Include="Resources\icons\Atlassian.png" />
+    <Content Include="Resources\icons\close.png" />
+    <Content Include="Resources\icons\collapse_all.png" />
+    <Content Include="Resources\icons\edit_in_browser.png" />
+    <Content Include="Resources\icons\expand_all.png" />
+    <Content Include="Resources\icons\find-jira.png" />
+    <Content Include="Resources\icons\global_properties.png" />
+    <Content Include="Resources\icons\ico_jira_custom_filter.png" />
+    <Content Include="Resources\icons\ico_jira_recent_issues.png" />
+    <Content Include="Resources\icons\ico_jira_saved_filter.png" />
+    <Content Include="Resources\icons\ide_plugin_16.bmp" />
+    <Content Include="Resources\icons\ide_plugin_16.ico" />
+    <Content Include="Resources\icons\ide_plugin_300.png" />
+    <Content Include="Resources\icons\ide_plugin_32.ico" />
+    <Content Include="Resources\icons\jira-blue-16.png" />
+    <Content Include="Resources\icons\new_comment.png" />
+    <Content Include="Resources\icons\open_in_ide.png" />
+    <Content Include="Resources\icons\pazu.bmp" />
+    <Content Include="Resources\icons\pazu_32.ico" />
+    <Content Include="Resources\icons\projectsettings.png" />
+    <Content Include="Resources\icons\refresh.png" />
+    <Content Include="Resources\icons\search-jira.png" />
+    <Content Include="Resources\icons\unknown.png" />
+    <Content Include="Resources\icons\view_in_browser.png" />
     <Content Include="Resources\Package.ico" />
+    <None Include="Resources\texts\about_html.txt" />
+    <None Include="Resources\texts\comments_css.txt" />
+    <None Include="Resources\texts\summary_and_description_css.txt" />
+    <None Include="Resources\texts\toggler_javascript.txt" />
+    <Content Include="third party\treeviewadv\Aga.Controls.dll" />
+    <Content Include="third party\treeviewadv\license.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferenceUrl Include="http://jira.atlassian.com/rpc/soap/jirasoapservice-v2%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\Atlassian.plvs.api.soap.service\</RelPath>
+      <UpdateFromURL>http://jira.atlassian.com/rpc/soap/jirasoapservice-v2%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>plvs_Atlassian_plvs_api_soap_service_JiraSoapServiceService</CachedSettingsPropName>
+    </WebReferenceUrl>
   </ItemGroup>
   <PropertyGroup>
     <!--
