@@ -66,11 +66,65 @@
     <Compile Include="api\JiraServerFacade.cs" />
     <Compile Include="api\RssClient.cs" />
     <Compile Include="api\soap\SoapSession.cs" />
+    <Compile Include="dialogs\About.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\About.designer.cs">
+      <DependentUpon>About.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\AddOrEditJiraServer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\AddOrEditJiraServer.designer.cs">
+      <DependentUpon>AddOrEditJiraServer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\EditCustomFilter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\EditCustomFilter.designer.cs">
+      <DependentUpon>EditCustomFilter.cs</DependentUpon>
+    </Compile>
     <Compile Include="dialogs\GlobalSettings.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\GlobalSettings.designer.cs">
       <DependentUpon>GlobalSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\NewIssueComment.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\NewIssueComment.designer.cs">
+      <DependentUpon>NewIssueComment.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\ProjectConfiguration.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\ProjectConfiguration.designer.cs">
+      <DependentUpon>ProjectConfiguration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\SearchIssue.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\SearchIssue.designer.cs">
+      <DependentUpon>SearchIssue.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\TestJiraConnection.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\TestJiraConnection.designer.cs">
+      <DependentUpon>TestJiraConnection.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IssueDetailsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="IssueDetailsPanel.designer.cs">
+      <DependentUpon>IssueDetailsPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IssueDetailsWindow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="IssueDetailsWindow.designer.cs">
+      <DependentUpon>IssueDetailsWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="models\CredentialsVault.cs" />
     <Compile Include="models\ImageCache.cs" />
@@ -90,6 +144,12 @@
     </Compile>
     <Compile Include="MyToolWindow.cs" />
     <Compile Include="Guids.cs" />
+    <Compile Include="PaZuWindow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PaZuWindow.designer.cs">
+      <DependentUpon>PaZuWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -127,8 +187,48 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="dialogs\About.resx">
+      <DependentUpon>About.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\AddOrEditJiraServer.resx">
+      <DependentUpon>AddOrEditJiraServer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\EditCustomFilter.resx">
+      <DependentUpon>EditCustomFilter.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="dialogs\GlobalSettings.resx">
       <DependentUpon>GlobalSettings.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\NewIssueComment.resx">
+      <DependentUpon>NewIssueComment.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\ProjectConfiguration.resx">
+      <DependentUpon>ProjectConfiguration.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\SearchIssue.resx">
+      <DependentUpon>SearchIssue.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\TestJiraConnection.resx">
+      <DependentUpon>TestJiraConnection.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="IssueDetailsPanel.resx">
+      <DependentUpon>IssueDetailsPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="IssueDetailsWindow.resx">
+      <DependentUpon>IssueDetailsWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PaZuWindow.resx">
+      <DependentUpon>PaZuWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources.resx">
@@ -268,10 +368,12 @@
     <Content Include="Resources\icons\unknown.png" />
     <Content Include="Resources\icons\view_in_browser.png" />
     <Content Include="Resources\Package.ico" />
+    <None Include="LICENSE" />
     <None Include="Resources\texts\about_html.txt" />
     <None Include="Resources\texts\comments_css.txt" />
     <None Include="Resources\texts\summary_and_description_css.txt" />
     <None Include="Resources\texts\toggler_javascript.txt" />
+    <None Include="setup.nsi" />
     <Content Include="third party\treeviewadv\Aga.Controls.dll" />
     <Content Include="third party\treeviewadv\license.txt" />
   </ItemGroup>
