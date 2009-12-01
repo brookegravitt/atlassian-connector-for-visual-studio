@@ -45,7 +45,7 @@ namespace plvs_IntegrationTestProject
                 CommandID menuItemCmd = new CommandID(Atlassian.plvs.GuidList.guidplvsCmdSet, (int)Atlassian.plvs.PkgCmdIDList.cmdidToggleToolWindow);
 
                 // Create the DialogBoxListener Thread.
-                string expectedDialogBoxText = string.Format(CultureInfo.CurrentCulture, "{0}\n\nInside {1}.MenuItemCallback()", "Atlassian Connector for Visual Studio", "Atlassian.plvs.plvsPackage");
+                string expectedDialogBoxText = string.Format(CultureInfo.CurrentCulture, "{0}\n\nInside {1}.MenuItemCallback()", "Atlassian Connector for Visual Studio", "Atlassian.plvs.PlvsPackage");
                 DialogBoxPurger purger = new DialogBoxPurger(NativeMethods.IDOK, expectedDialogBoxText);
 
                 try

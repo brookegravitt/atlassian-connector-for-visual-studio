@@ -1,56 +1,42 @@
 ﻿using System;
 using System.ComponentModel.Design;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.VisualStudio.OLE.Interop;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.Shell;
 using Microsoft.VsSDK.IntegrationTestLibrary;
 using Microsoft.VSSDK.Tools.VsIdeTesting;
 
-namespace plvs_IntegrationTestProject
-{
-
-    [TestClass()]
-    public class ToolWindowTest
-    {
+namespace plvs_IntegrationTestProject {
+    [TestClass]
+    public class ToolWindowTest {
         private delegate void ThreadInvoker();
-
-        private TestContext testContextInstance;
 
         /// <summary>
         ///Gets or sets the test context which provides
         ///information about and functionality for the current test run.
         ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
-        }
+        public TestContext TestContext { get; set; }
 
         /// <summary>
         ///A test for showing the toolwindow
         ///</summary>
-        [TestMethod()]
+        [TestMethod]
         [HostType("VS IDE")]
-        public void ShowToolWindow()
-        {
-            UIThreadInvoker.Invoke((ThreadInvoker)delegate()
-            {
-                CommandID toolWindowCmd = new CommandID(Atlassian.plvs.GuidList.guidplvsCmdSet, (int)Atlassian.plvs.PkgCmdIDList.cmdidAtlassianToolWindow);
+        public void ShowToolWindow() {
+            UIThreadInvoker.Invoke((ThreadInvoker) delegate {
+                                                       CommandID toolWindowCmd =
+                                                           new CommandID(Atlassian.plvs.GuidList.guidplvsCmdSet,
+                                                                         (int)
+                                                                         Atlassian.plvs.PkgCmdIDList.
+                                                                             cmdidAtlassianToolWindow);
 
-                TestUtils testUtils = new TestUtils();
-                testUtils.ExecuteCommand(toolWindowCmd);
+                                                       TestUtils testUtils = new TestUtils();
+                                                       testUtils.ExecuteCommand(toolWindowCmd);
 
-                Assert.IsTrue(testUtils.CanFindToolwindow(new Guid(Atlassian.plvs.GuidList.guidToolWindowPersistanceString)));
-
-            });
+                                                       Assert.IsTrue(
+                                                           testUtils.CanFindToolwindow(
+                                                               new Guid(
+                                                                   Atlassian.plvs.GuidList.
+                                                                       guidToolWindowPersistanceString)));
+                                                   });
         }
-
     }
 }

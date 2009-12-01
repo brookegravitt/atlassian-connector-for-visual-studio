@@ -9,38 +9,29 @@ PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 
 ***************************************************************************/
 
-using System;
-using System.Collections;
-using System.Text;
-using System.Reflection;
 using Microsoft.VsSDK.UnitTestLibrary;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Atlassian.plvs;
 
-namespace UnitTestProject
-{
+namespace plvs_UnitTestProject {
     [TestClass()]
-    public class PackageTest
-    {
+    public class PackageTest {
         [TestMethod()]
-        public void CreateInstance()
-        {
-            plvsPackage package = new plvsPackage();
+        public void CreateInstance() {
+            PlvsPackage package = new PlvsPackage();
         }
 
         [TestMethod()]
-        public void IsIVsPackage()
-        {
-            plvsPackage package = new plvsPackage();
-            Assert.IsNotNull(package as IVsPackage, "The object does not implement IVsPackage");
+        public void IsIVsPackage() {
+            PlvsPackage package = new PlvsPackage();
+            Assert.IsNotNull(package, "The object does not implement IVsPackage");
         }
 
         [TestMethod()]
-        public void SetSite()
-        {
+        public void SetSite() {
             // Create the package
-            IVsPackage package = new plvsPackage() as IVsPackage;
+            IVsPackage package = new PlvsPackage();
             Assert.IsNotNull(package, "The object does not implement IVsPackage");
 
             // Create a basic service provider

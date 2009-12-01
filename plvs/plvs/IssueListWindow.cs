@@ -13,7 +13,7 @@ using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
 
 namespace Atlassian.plvs {
-    public partial class PaZuWindow : UserControl, JiraIssueListModelListener {
+    public partial class IssueListWindow : UserControl, JiraIssueListModelListener {
         private readonly JiraServerFacade facade = JiraServerFacade.Instance;
 
         private TreeViewAdv issuesTree;
@@ -24,7 +24,7 @@ namespace Atlassian.plvs {
 
         private readonly StatusLabel status;
 
-        public PaZuWindow() {
+        public IssueListWindow() {
             InitializeComponent();
 
             status = new StatusLabel(statusStrip, jiraStatus);
