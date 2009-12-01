@@ -13,17 +13,17 @@ namespace Atlassian.plvs {
     /// implementation of the IVsWindowPane interface.
     /// </summary>
     [Guid("06c81945-10ef-4d72-8daf-32d29f7e9573")]
-    public class MyToolWindow : ToolWindowPane {
+    public class AtlassianToolWindow : ToolWindowPane {
         // This is the user control hosted by the tool window; it is exposed to the base class 
         // using the Window property. Note that, even if this class implements IDispose, we are
         // not calling Dispose on this object. This is because ToolWindowPane calls Dispose on 
         // the object returned by the Window property.
-        private readonly PaZuWindow control;
+        private readonly IssueListWindow control;
 
         /// <summary>
         /// Standard constructor for the tool window.
         /// </summary>
-        public MyToolWindow() :
+        public AtlassianToolWindow() :
             base(null) {
             // Set the window title reading it from the resources.
             Caption = Resources.ToolWindowTitle;
@@ -36,7 +36,7 @@ namespace Atlassian.plvs {
             BitmapIndex = 1;
 
 
-            control = new PaZuWindow(); // new MyControl();
+            control = new IssueListWindow(); 
         }
 
         /// <summary>

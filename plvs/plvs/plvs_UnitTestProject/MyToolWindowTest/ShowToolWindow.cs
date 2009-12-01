@@ -9,9 +9,6 @@ PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 
 ***************************************************************************/
 
-using System;
-using System.Collections;
-using System.Text;
 using System.Reflection;
 using Microsoft.VsSDK.UnitTestLibrary;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -26,19 +23,19 @@ namespace UnitTestProject.MyToolWindowTest
         [TestMethod()]
         public void ValidateToolWindowShown()
         {
-            IVsPackage package = new plvsPackage() as IVsPackage;
+            IVsPackage package = new PlvsPackage();
 
             // Create a basic service provider
             OleServiceProvider serviceProvider = OleServiceProvider.CreateOleServiceProviderWithBasicServices();
 
             //Add uishell service that knows how to create a toolwindow
-            BaseMock uiShellService = UIShellServiceMock.GetUiShellInstanceCreateToolWin();
+            BaseMock uiShellService = plvs_UnitTestProject.MyToolWindowTest.UiShellServiceMock.GetUiShellInstanceCreateToolWin();
             serviceProvider.AddService(typeof(SVsUIShell), uiShellService, false);
 
             // Site the package
             Assert.AreEqual(0, package.SetSite(serviceProvider), "SetSite did not return S_OK");
 
-            MethodInfo method = typeof(plvsPackage).GetMethod("ShowToolWindow", BindingFlags.NonPublic | BindingFlags.Instance);
+            MethodInfo method = typeof(PlvsPackage).GetMethod("ShowToolWindow", BindingFlags.NonPublic | BindingFlags.Instance);
 
             object result = method.Invoke(package, new object[] { null, null });
         }
@@ -47,19 +44,19 @@ namespace UnitTestProject.MyToolWindowTest
         [ExpectedException(typeof(TargetInvocationException), "Did not throw expected exption when windowframe object was null")]
         public void ShowToolwindowNegativeTest()
         {
-            IVsPackage package = new plvsPackage() as IVsPackage;
+            IVsPackage package = new PlvsPackage();
 
             // Create a basic service provider
             OleServiceProvider serviceProvider = OleServiceProvider.CreateOleServiceProviderWithBasicServices();
 
             //Add uishell service that knows how to create a toolwindow
-            BaseMock uiShellService = UIShellServiceMock.GetUiShellInstanceCreateToolWinReturnsNull();
+            BaseMock uiShellService = plvs_UnitTestProject.MyToolWindowTest.UiShellServiceMock.GetUiShellInstanceCreateToolWinReturnsNull();
             serviceProvider.AddService(typeof(SVsUIShell), uiShellService, false);
 
             // Site the package
             Assert.AreEqual(0, package.SetSite(serviceProvider), "SetSite did not return S_OK");
 
-            MethodInfo method = typeof(plvsPackage).GetMethod("ShowToolWindow", BindingFlags.NonPublic | BindingFlags.Instance);
+            MethodInfo method = typeof(PlvsPackage).GetMethod("ShowToolWindow", BindingFlags.NonPublic | BindingFlags.Instance);
 
             //ShowToolWindow throw NotSupportException but the Exception is converted during the
             //call of invoke method

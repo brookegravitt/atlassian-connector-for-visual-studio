@@ -9,43 +9,32 @@ PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 
 ***************************************************************************/
 
-using System;
-using System.Collections;
-using System.Text;
 using System.Reflection;
-using Microsoft.VsSDK.UnitTestLibrary;
-using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Atlassian.plvs;
 
-namespace UnitTestProject.MyToolWindowTest
-{
+namespace plvs_UnitTestProject.MyToolWindowTest {
     /// <summary>
     ///This is a test class for MyToolWindowTest and is intended
     ///to contain all MyToolWindowTest Unit Tests
     ///</summary>
-    [TestClass()]
-    public class MyToolWindowTest
-    {
-
+    [TestClass]
+    public class MyToolWindowTest {
         /// <summary>
-        ///MyToolWindow Constructor test
+        ///AtlassianToolWindow Constructor test
         ///</summary>
-        [TestMethod()]
-        public void MyToolWindowConstructorTest()
-        {
-            MyToolWindow target = new MyToolWindow();
-            Assert.IsNotNull(target, "Failed to create an instance of MyToolWindow");
+        [TestMethod]
+        public void MyToolWindowConstructorTest() {
+            AtlassianToolWindow target = new AtlassianToolWindow();
+            Assert.IsNotNull(target, "Failed to create an instance of AtlassianToolWindow");
 
             FieldInfo field = target.GetType().GetField("control", BindingFlags.NonPublic | BindingFlags.Instance);
             Assert.IsNotNull(field.GetValue(target), "MyControl object was not instantiated");
         }
 
-        public void WindowPropertyTest()
-        {
-            MyToolWindow target = new MyToolWindow();
+        public void WindowPropertyTest() {
+            AtlassianToolWindow target = new AtlassianToolWindow();
             Assert.IsNotNull(target.Window, "Window property was null");
         }
-
     }
 }

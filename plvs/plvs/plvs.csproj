@@ -114,12 +114,14 @@
     <Compile Include="dialogs\TestJiraConnection.Designer.cs">
       <DependentUpon>TestJiraConnection.cs</DependentUpon>
     </Compile>
+    <Compile Include="eventsinks\SolutionEventSink.cs" />
     <Compile Include="IssueDetailsPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="IssueDetailsPanel.Designer.cs">
       <DependentUpon>IssueDetailsPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="IssueDetailsToolWindow.cs" />
     <Compile Include="IssueDetailsWindow.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -142,13 +144,13 @@
     <Compile Include="MyControl.Designer.cs">
       <DependentUpon>MyControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="MyToolWindow.cs" />
+    <Compile Include="AtlassianToolWindow.cs" />
     <Compile Include="Guids.cs" />
-    <Compile Include="PaZuWindow.cs">
+    <Compile Include="IssueListWindow.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PaZuWindow.Designer.cs">
-      <DependentUpon>PaZuWindow.cs</DependentUpon>
+    <Compile Include="IssueListWindow.Designer.cs">
+      <DependentUpon>IssueListWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -227,8 +229,8 @@
       <DependentUpon>IssueDetailsWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="PaZuWindow.resx">
-      <DependentUpon>PaZuWindow.cs</DependentUpon>
+    <EmbeddedResource Include="IssueListWindow.resx">
+      <DependentUpon>IssueListWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources.resx">

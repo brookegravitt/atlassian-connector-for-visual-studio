@@ -2,11 +2,29 @@
 using Atlassian.plvs.api;
 using Atlassian.plvs.models;
 using EnvDTE;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell.Interop;
 
 namespace Atlassian.plvs {
     public partial class IssueDetailsWindow : UserControl {
         public static IssueDetailsWindow Instance { get; private set; }
-        public Window WindowInstance { get; set; }
+
+        public IVsWindowFrame DetailsFrame { get; set; }
+
+        public bool FrameVisible {
+            get { return DetailsFrame != null && DetailsFrame.IsVisible() == VSConstants.S_OK; }
+            set {
+                if (DetailsFrame == null) {
+                    return;
+                }
+                if (value) {
+                    DetailsFrame.Show();
+                }
+                else {
+                    DetailsFrame.Hide();
+                }
+            }
+        }
 
         private readonly JiraIssueListModel model = JiraIssueListModel.Instance;
 
@@ -23,7 +41,7 @@ namespace Atlassian.plvs {
         }
 
         public void openIssue(JiraIssue issue) {
-            WindowInstance.Visible = true;
+            FrameVisible = true;
 
             string key = getIssueTabKey(issue);
             if (!issueTabs.TabPages.ContainsKey(key)) {

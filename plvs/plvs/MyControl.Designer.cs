@@ -47,11 +47,11 @@ namespace Atlassian.plvs
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // MyToolWindow
+            // AtlassianToolWindow
             // 
             this.BackColor = System.Drawing.SystemColors.Window;
             this.Controls.Add(this.button1);
-            this.Name = "MyToolWindow";
+            this.Name = "AtlassianToolWindow";
             this.ResumeLayout(false);
 
         }

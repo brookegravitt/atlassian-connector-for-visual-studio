@@ -290,7 +290,8 @@ namespace Atlassian.plvs {
         private void buttonClose_Click(object sender, EventArgs e) {
             tabWindow.TabPages.Remove(myTab);
             if (tabWindow.TabPages.Count == 0) {
-                IssueDetailsWindow.Instance.WindowInstance.Visible = false;
+//                IssueDetailsWindow.Instance.WindowInstance.Visible = false;
+                IssueDetailsWindow.Instance.Visible = false;
             }
         }
 

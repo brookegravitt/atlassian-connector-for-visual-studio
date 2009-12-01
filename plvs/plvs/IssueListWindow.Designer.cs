@@ -1,5 +1,5 @@
 ﻿namespace Atlassian.plvs {
-    partial class PaZuWindow
+    partial class IssueListWindow
     {
         /// <summary> 
         /// Required designer variable.
@@ -365,14 +365,14 @@
             // 
             this.filtersTreeToolTip.ToolTipTitle = "Custom Filter Summary";
             // 
-            // PaZuWindow
+            // IssueListWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.Controls.Add(this.mainContainer);
             this.Controls.Add(this.toolStripContainer1);
-            this.Name = "PaZuWindow";
+            this.Name = "IssueListWindow";
             this.Size = new System.Drawing.Size(709, 319);
             this.Load += new System.EventHandler(this.PaZuWindow_Load);
             this.mainContainer.ContentPanel.ResumeLayout(false);

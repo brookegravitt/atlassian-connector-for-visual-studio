@@ -9,9 +9,6 @@ PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 
 ***************************************************************************/
 
-using System;
-using System.Collections;
-using System.Text;
 using System.Reflection;
 using System.ComponentModel.Design;
 using Microsoft.VsSDK.UnitTestLibrary;
@@ -19,21 +16,19 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.VisualStudio.Shell;
 using Atlassian.plvs;
+using UnitTestProject;
 
-namespace UnitTestProject.MenuItemTests
-{
+namespace plvs_UnitTestProject.MenuItemTests {
     [TestClass()]
-    public class MenuItemTest
-    {
+    public class MenuItemTest {
         /// <summary>
         /// Verify that a new menu command object gets added to the OleMenuCommandService. 
         /// This action takes place In the Initialize method of the Package object
         /// </summary>
         [TestMethod]
-        public void InitializeMenuCommand()
-        {
+        public void InitializeMenuCommand() {
             // Create the package
-            IVsPackage package = new plvsPackage() as IVsPackage;
+            IVsPackage package = new PlvsPackage();
             Assert.IsNotNull(package, "The object does not implement IVsPackage");
 
             // Create a basic service provider
@@ -43,18 +38,21 @@ namespace UnitTestProject.MenuItemTests
             Assert.AreEqual(0, package.SetSite(serviceProvider), "SetSite did not return S_OK");
 
             //Verify that the menu command can be found
-            CommandID menuCommandID = new CommandID(Atlassian.plvs.GuidList.guidplvsCmdSet, (int)Atlassian.plvs.PkgCmdIDList.cmdidToggleToolWindow);
-            System.Reflection.MethodInfo info = typeof(Package).GetMethod("GetService", BindingFlags.Instance | BindingFlags.NonPublic);
+            CommandID menuCommandID = new CommandID(GuidList.guidplvsCmdSet,
+                                                    (int) PkgCmdIDList.cmdidToggleToolWindow);
+            MethodInfo info = typeof (Package).GetMethod("GetService",
+                                                         BindingFlags.Instance |
+                                                         BindingFlags.NonPublic);
             Assert.IsNotNull(info);
-            OleMenuCommandService mcs = info.Invoke(package, new object[] { (typeof(IMenuCommandService)) }) as OleMenuCommandService;
+            OleMenuCommandService mcs =
+                info.Invoke(package, new object[] {(typeof (IMenuCommandService))}) as OleMenuCommandService;
             Assert.IsNotNull(mcs.FindCommand(menuCommandID));
         }
 
         [TestMethod]
-        public void MenuItemCallback()
-        {
+        public void MenuItemCallback() {
             // Create the package
-            IVsPackage package = new plvsPackage() as IVsPackage;
+            IVsPackage package = new PlvsPackage();
             Assert.IsNotNull(package, "The object does not implement IVsPackage");
 
             // Create a basic service provider
@@ -62,19 +60,20 @@ namespace UnitTestProject.MenuItemTests
 
             // Create a UIShell service mock and proffer the service so that it can called from the MenuItemCallback method
             BaseMock uishellMock = UIShellServiceMock.GetUiShellInstance();
-            serviceProvider.AddService(typeof(SVsUIShell), uishellMock, true);
+            serviceProvider.AddService(typeof (SVsUIShell), uishellMock, true);
 
             // Site the package
             Assert.AreEqual(0, package.SetSite(serviceProvider), "SetSite did not return S_OK");
 
             //Invoke private method on package class and observe that the method does not throw
-            System.Reflection.MethodInfo info = package.GetType().GetMethod("MenuItemCallback", BindingFlags.Instance | BindingFlags.NonPublic);
+            MethodInfo info = package.GetType().GetMethod("MenuItemCallback",
+                                                          BindingFlags.Instance |
+                                                          BindingFlags.NonPublic);
             Assert.IsNotNull(info, "Failed to get the private method MenuItemCallback throug refplection");
-            info.Invoke(package, new object[] { null, null });
+            info.Invoke(package, new object[] {null, null});
 
             //Clean up services
-            serviceProvider.RemoveService(typeof(SVsUIShell));
-
+            serviceProvider.RemoveService(typeof (SVsUIShell));
         }
     }
 }
