@@ -8,7 +8,7 @@
 
       <Component Id="MainFilesComponent" Guid="DAAA6F31-E141-4998-8030-6A7E740E041D" DiskId="1">
         <File Id="PackageDll" Name="pkg.dll" LongName="plvs.dll" Source="$(var.plvs.TargetDir)plvs.dll" Vital="yes" DiskId="1"/>
-        <!--//TODO: Add other files and references-->
+        <File Id="AgaControlsDll" Name="controls.dll" LongName="Aga.Controls.dll" Source="$(var.plvs.TargetDir)Aga.Controls.dll" Vital="yes" DiskId="1"/>
         <File Id="Readme.htm" Name="Readme.htm" Source="Files\Readme.htm" Vital="yes" DiskId="1">
           <Shortcut Id="ReadmeShortcut" Directory="ProgramMenuShortcutDirectory" Name="Readme" Icon="ProductIcon" IconIndex="0" Show="normal" WorkingDirectory="TARGETDIR" />
         </File>

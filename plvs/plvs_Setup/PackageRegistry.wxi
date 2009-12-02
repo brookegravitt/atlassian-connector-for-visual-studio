@@ -4,7 +4,7 @@
     <Registry Name="Package" Value="{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" Type="string" />
     <Registry Name="ProductDetails" Value="#112" Type="string" />
     <Registry Name="PID" Value="1.0" Type="string" />
-    <Registry Name="LogoID" Value="#400" Type="string" />
+    <Registry Name="LogoID" Value="#600" Type="string" />
   </Registry>
 
   <Registry Root="HKLM" Key="Software\Microsoft\VisualStudio\9.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" Value="Atlassian.plvs.PlvsPackage, plvs, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" Type="string">
