@@ -30,12 +30,6 @@ namespace Atlassian.plvs {
             return base.GetService(serviceType);
         }
 
-#if (TOOLWINDOW_MENUITEM)
-        private void ShowToolWindow(object sender, EventArgs e) {
-            createJiraWindow();
-        }
-#endif
-
         private ToolWindowPane createJiraWindow() {
             // Get the instance number 0 of this tool window. This window is single instance so this instance
             // is actually the only one.
@@ -63,6 +57,7 @@ namespace Atlassian.plvs {
         private uint solutionEventCookie;
         private const string SERVER = "server";
 
+        // this does not work anyway - oh well. No splash screen for us. too bad
         public int IdBmpSplash(out uint pIdBmp) {
             pIdBmp = 400;
             return VSConstants.S_OK;
@@ -87,7 +82,6 @@ namespace Atlassian.plvs {
             pbstrProductDetails = VSPackage._112;
             return VSConstants.S_OK;
         }
-
 
         public int SaveUserOptions(IVsSolutionPersistence pPersistence) {
             try {
