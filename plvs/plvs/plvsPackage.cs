@@ -1,7 +1,10 @@
 ﻿using System;
+using System.ComponentModel.Design;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using Atlassian.plvs.eventsinks;
+using Atlassian.plvs.util;
 using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
@@ -58,6 +61,7 @@ namespace Atlassian.plvs {
         }
 
         private uint solutionEventCookie;
+        private const string SERVER = "server";
 
         public int IdBmpSplash(out uint pIdBmp) {
             pIdBmp = 400;
@@ -84,21 +88,52 @@ namespace Atlassian.plvs {
             return VSConstants.S_OK;
         }
 
-        int IVsPersistSolutionOpts.LoadUserOptions(IVsSolutionPersistence pPersistence, uint grfLoadOpts) {
+
+        public int SaveUserOptions(IVsSolutionPersistence pPersistence) {
             try {
-                pPersistence.LoadPackageUserOpts(this, "server");
-                return VSConstants.S_OK;
+                pPersistence.SavePackageUserOpts(this, SERVER);
             }
             finally {
                 Marshal.ReleaseComObject(pPersistence);
             }
+            return VSConstants.S_OK;
         }
 
-        int IVsPersistSolutionOpts.ReadUserOptions(IStream pOptionsStream, string pszKey) {
+        public int LoadUserOptions(IVsSolutionPersistence pPersistence, uint grfLoadOpts) {
             try {
-                using (Stream wrapper = (Stream) pOptionsStream) {
+                pPersistence.LoadPackageUserOpts(this, SERVER);
+            }
+            finally {
+                Marshal.ReleaseComObject(pPersistence);
+            }
+            return VSConstants.S_OK;
+        }
+
+        public int WriteUserOptions(IStream pOptionsStream, string pszKey) {
+            try {
+                using (StreamEater wrapper = new StreamEater(pOptionsStream)) {
                     switch (pszKey) {
-                        case "server":
+                        case SERVER:
+                            writeOptions(wrapper);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                return VSConstants.S_OK;
+            }
+            finally {
+                Marshal.ReleaseComObject(pOptionsStream);
+            }
+        }
+
+        public int ReadUserOptions(IStream pOptionsStream, string pszKey) {
+            try {
+                using (StreamEater wrapper = new StreamEater(pOptionsStream)) {
+                    switch (pszKey) {
+                        case SERVER:
+                            loadOptions(wrapper);
                             break;
                         default:
                             break;
@@ -111,29 +146,30 @@ namespace Atlassian.plvs {
             }
         }
 
-        public int SaveUserOptions(IVsSolutionPersistence pPersistence) {
-            return VSConstants.S_OK;
+        private void writeOptions(Stream storageStream) {
+            string text = "test";
+
+            using (BinaryWriter bw = new BinaryWriter(storageStream)) {
+                bw.Write(text);
+            }
+        }
+
+        private void loadOptions(Stream storageStream) {
+            using (BinaryReader bReader = new BinaryReader(storageStream)) {
+                string Text = bReader.ReadString();
+            }
         }
 
         protected override void Initialize() {
             base.Initialize();
 
-#if (MENUITEMS)
-    // Add our command handlers for menu (commands must exist in the .vsct file)
             OleMenuCommandService mcs = GetService(typeof (IMenuCommandService)) as OleMenuCommandService;
-            if (null == mcs) return;
-
-            // Create the command for the menu item.
-            CommandID menuCommandID = new CommandID(GuidList.guidplvsCmdSet, (int) PkgCmdIDList.cmdidToggleToolWindow);
-            MenuCommand menuItem = new MenuCommand(MenuItemCallback, menuCommandID);
-            mcs.AddCommand(menuItem);
-
-    // Create the command for the tool window
-            CommandID toolwndCommandID = new CommandID(GuidList.guidplvsCmdSet,
-                                                       (int) PkgCmdIDList.cmdidAtlassianToolWindow);
-            MenuCommand menuToolWin = new MenuCommand(ShowToolWindow, toolwndCommandID);
-            mcs.AddCommand(menuToolWin);
-#endif
+            if (null != mcs) {
+                CommandID menuCommandId = new CommandID(GuidList.guidplvsCmdSet,
+                                                        (int) PkgCmdIDList.cmdidToggleToolWindow);
+                MenuCommand menuItem = new MenuCommand(MenuItemCallback, menuCommandId);
+                mcs.AddCommand(menuItem);
+            }
 
             DTE dte = (DTE) GetService(typeof (DTE));
 
@@ -141,8 +177,6 @@ namespace Atlassian.plvs {
 
             IVsSolution solution = (IVsSolution) GetService(typeof (SVsSolution));
             ErrorHandler.ThrowOnFailure(solution.AdviseSolutionEvents(solutionEventSink, out solutionEventCookie));
-
-            //            createIssueDetailsWindow();
         }
 
         protected override void Dispose(bool disposing) {
@@ -150,33 +184,14 @@ namespace Atlassian.plvs {
             try {
                 solution.UnadviseSolutionEvents(solutionEventCookie);
             }
-                // ReSharper disable EmptyGeneralCatchClause
+// ReSharper disable EmptyGeneralCatchClause
             catch {}
-            // ReSharper restore EmptyGeneralCatchClause
+// ReSharper restore EmptyGeneralCatchClause
             base.Dispose(disposing);
         }
 
-#if (MENUITEMS)
-        private void MenuItemCallback(object sender, EventArgs e) {
-            // Show a Message Box to prove we were here
-            IVsUIShell uiShell = (IVsUIShell) GetService(typeof (SVsUIShell));
-            Guid clsid = Guid.Empty;
-            int result;
-            ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox(
-                                            0,
-                                            ref clsid,
-                                            "Atlassian Connector for Visual Studio",
-                                            string.Format(CultureInfo.CurrentCulture,
-                                                          "Inside {0}.MenuItemCallback()",
-                                                          this.ToString()),
-                                            string.Empty,
-                                            0,
-                                            OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                                            OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST,
-                                            OLEMSGICON.OLEMSGICON_INFO,
-                                            0, // false
-                                            out result));
+        private static void MenuItemCallback(object sender, EventArgs e) {
+            ToolWindowManager.Instance.AtlassianWindowVisible = !ToolWindowManager.Instance.AtlassianWindowVisible;
         }
-#endif
     }
 }

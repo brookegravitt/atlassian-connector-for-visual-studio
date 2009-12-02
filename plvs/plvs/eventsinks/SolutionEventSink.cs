@@ -10,16 +10,12 @@ namespace Atlassian.plvs.eventsinks {
     public sealed class SolutionEventSink : IVsSolutionEvents {
         public DTE dte { get; set; }
 
-        private ToolWindowPane jiraWindow;
-        private ToolWindowPane issueDetailsWindow;
-
         public delegate ToolWindowPane CreateToolWindow();
 
         private readonly CreateToolWindow createJiraWindow;
         private readonly CreateToolWindow createIssueDetailsWindow;
 
-        public SolutionEventSink(DTE dte, CreateToolWindow createJiraWindow, CreateToolWindow createIssueDetailsWindow)
-        {
+        public SolutionEventSink(DTE dte, CreateToolWindow createJiraWindow, CreateToolWindow createIssueDetailsWindow) {
             this.dte = dte;
             this.createJiraWindow = createJiraWindow;
             this.createIssueDetailsWindow = createIssueDetailsWindow;
@@ -55,8 +51,8 @@ namespace Atlassian.plvs.eventsinks {
                 JiraServerModel.Instance.load(dte.Solution.Globals);
                 RecentlyViewedIssuesModel.Instance.load(dte.Globals, dte.Solution.FullName);
                 JiraCustomFilter.load(dte.Globals, dte.Solution.FullName);
-                jiraWindow = createJiraWindow();
-                issueDetailsWindow = createIssueDetailsWindow();
+                ToolWindowManager.Instance.AtlassianWindow = createJiraWindow();
+                ToolWindowManager.Instance.IssueDetailsWindow = createIssueDetailsWindow();
                 IssueDetailsWindow.Instance.Solution = dte.Solution;
             }
             catch (Exception e) {
@@ -72,7 +68,7 @@ namespace Atlassian.plvs.eventsinks {
 
         public int OnBeforeCloseSolution(object pUnkReserved) {
             try {
-                if (jiraWindow == null) return VSConstants.S_OK;
+                if (ToolWindowManager.Instance.AtlassianWindow == null) return VSConstants.S_OK;
                 JiraServerModel.Instance.save(dte.Solution.Globals);
                 JiraCustomFilter.save(dte.Globals, dte.Solution.FullName);
                 JiraIssueListModel.Instance.removeAllListeners();

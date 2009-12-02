@@ -44,7 +44,6 @@
          group as the part of a menu contained between two lines. The parent of a group 
          must be a menu. -->
 
-    <!--
     <Groups>
 
       <Group guid="guidplvsCmdSet" id="MyMenuGroup" priority="0x0600">
@@ -53,22 +52,22 @@
 
 
     </Groups>
-      -->
 
     <!--Buttons section. -->
     <!--This section defines the elements the user can interact with, like a menu command or a button 
         or combo box in a toolbar. -->
-    <!--
+
     <Buttons>
       <Button guid="guidplvsCmdSet" id="cmdidToggleToolWindow" priority="0x0100" type="Button">
         <Parent guid="guidplvsCmdSet" id="MyMenuGroup" />
-        <Icon guid="guidImages" id="bmpPic1" />
+        <Icon guid="guidImages" id="charlie" />
         <Strings>
           <CommandName>cmdidToggleToolWindow</CommandName>
           <ButtonText>Toggle Atlassian Tool Window</ButtonText>
         </Strings>
       </Button>
-      
+
+      <!--
       <Button guid="guidplvsCmdSet" id="cmdidAtlassianToolWindow" priority="0x0100" type="Button">
         <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
         <Icon guid="guidImages" id="bmpPic2" />
@@ -77,10 +76,9 @@
           <ButtonText>Atlassian</ButtonText>
         </Strings>
       </Button>
-
+    -->
 
     </Buttons>
-    -->
 
     <!--The bitmaps section is used to define the bitmaps that are used for the commands.-->
     <Bitmaps>
@@ -108,9 +106,9 @@
     <!-- This is the guid used to group the menu commands together -->
     <GuidSymbol name="guidplvsCmdSet" value="{85a7fbbb-c60c-4329-9f0f-2fdf1fa122e6}">
 
-      <!--
       <IDSymbol name="MyMenuGroup" value="0x1020" />
-      <IDSymbol name="cmdidToggleToolWindow" value="0x0100" /> 
+      <IDSymbol name="cmdidToggleToolWindow" value="0x0100" />
+      <!--
       <IDSymbol name="cmdidAtlassianToolWindow" value="0x0101" />
       -->
 
