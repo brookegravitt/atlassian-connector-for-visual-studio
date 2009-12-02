@@ -182,6 +182,11 @@
     <Compile Include="ui\StatusLabel.cs" />
     <Compile Include="ui\TreeNodeWithServer.cs" />
     <Compile Include="util\ParameterSerializer.cs" />
+    <Compile Include="VSPackage.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>VSPackage.resx</DependentUpon>
+    </Compile>
     <Compile Include="Web References\Atlassian.plvs.api.soap.service\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -241,6 +246,8 @@
     <EmbeddedResource Include="VSPackage.resx">
       <MergeWithCTO>true</MergeWithCTO>
       <SubType>Designer</SubType>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>VSPackage.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -363,6 +370,7 @@
     <Content Include="Resources\icons\new_comment.png" />
     <Content Include="Resources\icons\open_in_ide.png" />
     <Content Include="Resources\icons\pazu.bmp" />
+    <None Include="Resources\icons\pazu_32.bmp" />
     <Content Include="Resources\icons\pazu_32.ico" />
     <Content Include="Resources\icons\projectsettings.png" />
     <Content Include="Resources\icons\refresh.png" />

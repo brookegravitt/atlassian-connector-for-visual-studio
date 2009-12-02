@@ -247,6 +247,15 @@ namespace Atlassian.plvs {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to Issues - JIRA.
+        /// </summary>
+        internal static string IssueDetailsToolWindowTitle {
+            get {
+                return ResourceManager.GetString("IssueDetailsToolWindowTitle", resourceCulture);
+            }
+        }
+        
         internal static System.Drawing.Bitmap jira_blue_16 {
             get {
                 object obj = ResourceManager.GetObject("jira_blue_16", resourceCulture);

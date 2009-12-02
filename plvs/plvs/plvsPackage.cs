@@ -1,51 +1,28 @@
-﻿// VsPkg.cs : Implementation of plvs
-//
-
-using System;
-using System.Globalization;
+﻿using System;
+using System.IO;
 using System.Runtime.InteropServices;
-using System.ComponentModel.Design;
 using Atlassian.plvs.eventsinks;
 using EnvDTE;
 using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell;
 
 namespace Atlassian.plvs {
-    /// <summary>
-    /// This is the class that implements the package exposed by this assembly.
-    ///
-    /// The minimum requirement for a class to be considered a valid package for Visual Studio
-    /// is to implement the IVsPackage interface and register itself with the shell.
-    /// This package uses the helper classes defined inside the Managed Package Framework (MPF)
-    /// to do it: it derives from the Package class that provides the implementation of the 
-    /// IVsPackage interface and uses the registration attributes defined in the framework to 
-    /// register itself and its components with the shell.
-    /// </summary>
-    // This attribute tells the registration utility (regpkg.exe) that this class needs
-    // to be registered as package.
-    [PackageRegistration(UseManagedResourcesOnly = true)]
-    // A Visual Studio component can be registered under different regitry roots; for instance
-    // when you debug your package you want to register it in the experimental hive. This
-    // attribute specifies the registry root to use if no one is provided to regpkg.exe with
-    // the /root switch.
-    [DefaultRegistryRoot("Software\\Microsoft\\VisualStudio\\9.0")]
-    // This attribute is used to register the informations needed to show the this package
-    // in the Help/About dialog of Visual Studio.
-    [InstalledProductRegistration(false, "#110", "#112", "1.0", IconResourceID = 400)]
-    // In order be loaded inside Visual Studio in a machine that has not the VS SDK installed, 
-    // package needs to have a valid load key (it can be requested at 
-    // http://msdn.microsoft.com/vstudio/extend/). This attributes tells the shell that this 
-    // package has a load key embedded in its resources.
     [ProvideLoadKey("Standard", "1.0", "Atlassian Connector for Visual Studio", "Atlassian", 1)]
-    // This attribute is needed to let the shell know that this package exposes some menus.
+    [PackageRegistration(UseManagedResourcesOnly = true)]
+    [DefaultRegistryRoot("Software\\Microsoft\\VisualStudio\\9.0")]
+    [InstalledProductRegistration(true, null, null, null)]
     [ProvideMenuResource(1000, 1)]
-    // This attribute registers a tool window exposed by this package.
-    [ProvideToolWindow(typeof (AtlassianToolWindow))]
-    [ProvideToolWindow(typeof (IssueDetailsToolWindow))]
+    [ProvideToolWindow(typeof (AtlassianToolWindow), Transient = true, Style = VsDockStyle.Tabbed,
+        Orientation = ToolWindowOrientation.Bottom)]
+    [ProvideToolWindow(typeof (IssueDetailsToolWindow), Transient = true, Style = VsDockStyle.Tabbed,
+        Orientation = ToolWindowOrientation.Bottom)]
+    [ProvideAutoLoad(UIContextGuids.SolutionExists)]
+    [ProvideToolWindowVisibility(typeof (AtlassianToolWindow), UIContextGuids.SolutionExists)]
+    [ProvideToolWindowVisibility(typeof (IssueDetailsToolWindow), UIContextGuids.SolutionExists)]
     [Guid(GuidList.guidplvsPkgString)]
-    public sealed class PlvsPackage : Package {
-
+    public sealed class PlvsPackage : Package, IVsPersistSolutionOpts, IVsInstalledProduct {
         public new object GetService(Type serviceType) {
             return base.GetService(serviceType);
         }
@@ -56,7 +33,7 @@ namespace Atlassian.plvs {
         }
 #endif
 
-        private IVsWindowFrame createJiraWindow() {
+        private ToolWindowPane createJiraWindow() {
             // Get the instance number 0 of this tool window. This window is single instance so this instance
             // is actually the only one.
             // The last flag is set to true so that if the tool window does not exists it will be created.
@@ -66,25 +43,83 @@ namespace Atlassian.plvs {
             }
             IVsWindowFrame windowFrame = (IVsWindowFrame) window.Frame;
             ErrorHandler.ThrowOnFailure(windowFrame.Show());
-            return windowFrame;
+            return window;
         }
 
-        private void createIssueDetailsWindow() {
+        private ToolWindowPane createIssueDetailsWindow() {
             ToolWindowPane window = FindToolWindow(typeof (IssueDetailsToolWindow), 0, true);
             if ((null == window) || (null == window.Frame)) {
                 throw new NotSupportedException(Resources.CanNotCreateWindow);
             }
             IVsWindowFrame windowFrame = (IVsWindowFrame) window.Frame;
-            IssueDetailsWindow.Instance.DetailsFrame = windowFrame;
+            IssueDetailsWindow.Instance.DetailsFrame = window;
             ErrorHandler.ThrowOnFailure(windowFrame.Hide());
+            return window;
         }
 
         private uint solutionEventCookie;
 
+        public int IdBmpSplash(out uint pIdBmp) {
+            pIdBmp = 400;
+            return VSConstants.S_OK;
+        }
+
+        public int IdIcoLogoForAboutbox(out uint pIdIco) {
+            pIdIco = 600;
+            return VSConstants.S_OK;
+        }
+
+        public int OfficialName(out string pbstrName) {
+            pbstrName = VSPackage._110;
+            return VSConstants.S_OK;
+        }
+
+        public int ProductID(out string pbstrPID) {
+            pbstrPID = "1.0";
+            return VSConstants.S_OK;
+        }
+
+        public int ProductDetails(out string pbstrProductDetails) {
+            pbstrProductDetails = VSPackage._112;
+            return VSConstants.S_OK;
+        }
+
+        int IVsPersistSolutionOpts.LoadUserOptions(IVsSolutionPersistence pPersistence, uint grfLoadOpts) {
+            try {
+                pPersistence.LoadPackageUserOpts(this, "server");
+                return VSConstants.S_OK;
+            }
+            finally {
+                Marshal.ReleaseComObject(pPersistence);
+            }
+        }
+
+        int IVsPersistSolutionOpts.ReadUserOptions(IStream pOptionsStream, string pszKey) {
+            try {
+                using (Stream wrapper = (Stream) pOptionsStream) {
+                    switch (pszKey) {
+                        case "server":
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                return VSConstants.S_OK;
+            }
+            finally {
+                Marshal.ReleaseComObject(pOptionsStream);
+            }
+        }
+
+        public int SaveUserOptions(IVsSolutionPersistence pPersistence) {
+            return VSConstants.S_OK;
+        }
+
         protected override void Initialize() {
             base.Initialize();
 
-            // Add our command handlers for menu (commands must exist in the .vsct file)
+#if (MENUITEMS)
+    // Add our command handlers for menu (commands must exist in the .vsct file)
             OleMenuCommandService mcs = GetService(typeof (IMenuCommandService)) as OleMenuCommandService;
             if (null == mcs) return;
 
@@ -93,7 +128,6 @@ namespace Atlassian.plvs {
             MenuCommand menuItem = new MenuCommand(MenuItemCallback, menuCommandID);
             mcs.AddCommand(menuItem);
 
-#if (TOOLWINDOW_MENUITEM)
     // Create the command for the tool window
             CommandID toolwndCommandID = new CommandID(GuidList.guidplvsCmdSet,
                                                        (int) PkgCmdIDList.cmdidAtlassianToolWindow);
@@ -103,12 +137,12 @@ namespace Atlassian.plvs {
 
             DTE dte = (DTE) GetService(typeof (DTE));
 
-            SolutionEventSink solutionEventSink = new SolutionEventSink(dte, createJiraWindow);
+            SolutionEventSink solutionEventSink = new SolutionEventSink(dte, createJiraWindow, createIssueDetailsWindow);
 
             IVsSolution solution = (IVsSolution) GetService(typeof (SVsSolution));
             ErrorHandler.ThrowOnFailure(solution.AdviseSolutionEvents(solutionEventSink, out solutionEventCookie));
 
-            createIssueDetailsWindow();
+            //            createIssueDetailsWindow();
         }
 
         protected override void Dispose(bool disposing) {
@@ -116,12 +150,13 @@ namespace Atlassian.plvs {
             try {
                 solution.UnadviseSolutionEvents(solutionEventCookie);
             }
-// ReSharper disable EmptyGeneralCatchClause
+                // ReSharper disable EmptyGeneralCatchClause
             catch {}
-// ReSharper restore EmptyGeneralCatchClause
+            // ReSharper restore EmptyGeneralCatchClause
             base.Dispose(disposing);
         }
 
+#if (MENUITEMS)
         private void MenuItemCallback(object sender, EventArgs e) {
             // Show a Message Box to prove we were here
             IVsUIShell uiShell = (IVsUIShell) GetService(typeof (SVsUIShell));
@@ -142,5 +177,6 @@ namespace Atlassian.plvs {
                                             0, // false
                                             out result));
         }
+#endif
     }
 }
