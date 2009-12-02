@@ -8,12 +8,9 @@ namespace Atlassian.plvs
     public class IssueDetailsToolWindow : ToolWindowPane {
         private readonly IssueDetailsWindow control;
 
-        /// <summary>
-        /// Standard constructor for the tool window.
-        /// </summary>
         public IssueDetailsToolWindow() :
             base(null) {
-            Caption = Resources.ToolWindowTitle;
+            Caption = Resources.IssueDetailsToolWindowTitle;
             BitmapResourceID = 301;
             BitmapIndex = 1;
 

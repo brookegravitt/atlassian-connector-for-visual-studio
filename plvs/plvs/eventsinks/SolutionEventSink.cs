@@ -3,21 +3,26 @@ using System.Diagnostics;
 using Atlassian.plvs.models;
 using EnvDTE;
 using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
 namespace Atlassian.plvs.eventsinks {
     public sealed class SolutionEventSink : IVsSolutionEvents {
         public DTE dte { get; set; }
 
-        private IVsWindowFrame jiraWindow;
+        private ToolWindowPane jiraWindow;
+        private ToolWindowPane issueDetailsWindow;
 
-        public delegate IVsWindowFrame CreateJiraWindow();
+        public delegate ToolWindowPane CreateToolWindow();
 
-        private readonly CreateJiraWindow createJiraWindow;
+        private readonly CreateToolWindow createJiraWindow;
+        private readonly CreateToolWindow createIssueDetailsWindow;
 
-        public SolutionEventSink(DTE dte, CreateJiraWindow createJiraWindow) {
+        public SolutionEventSink(DTE dte, CreateToolWindow createJiraWindow, CreateToolWindow createIssueDetailsWindow)
+        {
             this.dte = dte;
             this.createJiraWindow = createJiraWindow;
+            this.createIssueDetailsWindow = createIssueDetailsWindow;
         }
 
         public int OnAfterOpenProject(IVsHierarchy pHierarchy, int fAdded) {
@@ -51,6 +56,7 @@ namespace Atlassian.plvs.eventsinks {
                 RecentlyViewedIssuesModel.Instance.load(dte.Globals, dte.Solution.FullName);
                 JiraCustomFilter.load(dte.Globals, dte.Solution.FullName);
                 jiraWindow = createJiraWindow();
+                issueDetailsWindow = createIssueDetailsWindow();
                 IssueDetailsWindow.Instance.Solution = dte.Solution;
             }
             catch (Exception e) {
@@ -70,9 +76,6 @@ namespace Atlassian.plvs.eventsinks {
                 JiraServerModel.Instance.save(dte.Solution.Globals);
                 JiraCustomFilter.save(dte.Globals, dte.Solution.FullName);
                 JiraIssueListModel.Instance.removeAllListeners();
-                jiraWindow.Hide();
-                jiraWindow.CloseFrame((uint) __FRAMECLOSE.FRAMECLOSE_SaveIfDirty);
-                jiraWindow = null;
                 RecentlyViewedIssuesModel.Instance.save(dte.Globals, dte.Solution.FullName);
                 IssueDetailsWindow.Instance.clearAllIssues();
                 IssueDetailsWindow.Instance.FrameVisible = false;

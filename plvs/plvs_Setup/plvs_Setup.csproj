@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectTypeGuids>{C450E67E-F72C-455E-8F63-A2A33158F4C3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectGuid>{CD9CD026-CDB1-4F73-823C-EC23DFF16A5C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <OutputName>plvs_Setup</OutputName>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>plvs_Setup</RootNamespace>
+    <AssemblyName>plvs_Setup</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <VerboseOutput>True</VerboseOutput>
+    <LocalizedStringFile>Strings.wxl</LocalizedStringFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>Configuration=Debug</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>0</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>Configuration=Release</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>0</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="Files\EULA.rtf" />
+    <Compile Include="UI.wxs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Banner.bmp" />
+    <None Include="Resources\New.ico" />
+    <None Include="Resources\Product.ico" />
+    <None Include="Resources\Up.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Files\Readme.htm" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Files.wxs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Main.wxs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="PackageRegistry.wxs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Registry.wxs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="PackageRegistry.wxi" />
+    <Content Include="Strings.wxl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\plvs\plvs.csproj">
+      <Project>{A79DF670-278F-4D8E-AC58-72E4A08F09D6}</Project>
+      <Name>plvs</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties IsVsPackageSetup="true" />
+    </VisualStudio>
+  </ProjectExtensions>
+  <Import Project="$(MSBuildExtensionsPath)\VSSDK Assist\wix.targets" />
+</Project>

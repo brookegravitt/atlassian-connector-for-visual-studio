@@ -3,25 +3,26 @@ using Atlassian.plvs.api;
 using Atlassian.plvs.models;
 using EnvDTE;
 using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
 namespace Atlassian.plvs {
     public partial class IssueDetailsWindow : UserControl {
         public static IssueDetailsWindow Instance { get; private set; }
 
-        public IVsWindowFrame DetailsFrame { get; set; }
+        public ToolWindowPane DetailsFrame { get; set; }
 
         public bool FrameVisible {
-            get { return DetailsFrame != null && DetailsFrame.IsVisible() == VSConstants.S_OK; }
+            get { return DetailsFrame != null && ((IVsWindowFrame) DetailsFrame.Frame).IsVisible() == VSConstants.S_OK; }
             set {
                 if (DetailsFrame == null) {
                     return;
                 }
                 if (value) {
-                    DetailsFrame.Show();
+                    ((IVsWindowFrame)DetailsFrame.Frame).Show();
                 }
                 else {
-                    DetailsFrame.Hide();
+                    ((IVsWindowFrame)DetailsFrame.Frame).Hide();
                 }
             }
         }
