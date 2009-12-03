@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using Atlassian.plvs.eventsinks;
 using Atlassian.plvs.markers;
+using Atlassian.plvs.store;
 using Atlassian.plvs.util;
 using EnvDTE;
 using Microsoft.VisualStudio;
@@ -99,60 +100,19 @@ namespace Atlassian.plvs {
         }
 
         public int SaveUserOptions(IVsSolutionPersistence pPersistence) {
-            try {
-                pPersistence.SavePackageUserOpts(this, SERVER);
-            }
-            finally {
-                Marshal.ReleaseComObject(pPersistence);
-            }
-            return VSConstants.S_OK;
+            return ParameterStoreManager.Instance.SaveUserOptions(pPersistence);
         }
 
         public int LoadUserOptions(IVsSolutionPersistence pPersistence, uint grfLoadOpts) {
-            try {
-                pPersistence.LoadPackageUserOpts(this, SERVER);
-            }
-            finally {
-                Marshal.ReleaseComObject(pPersistence);
-            }
-            return VSConstants.S_OK;
+            return ParameterStoreManager.Instance.LoadUserOptions(pPersistence, grfLoadOpts);
         }
 
         public int WriteUserOptions(IStream pOptionsStream, string pszKey) {
-            try {
-                using (StreamEater wrapper = new StreamEater(pOptionsStream)) {
-                    switch (pszKey) {
-                        case SERVER:
-                            writeOptions(wrapper);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-
-                return VSConstants.S_OK;
-            }
-            finally {
-                Marshal.ReleaseComObject(pOptionsStream);
-            }
+            return ParameterStoreManager.Instance.WriteUserOptions(pOptionsStream, pszKey);
         }
 
         public int ReadUserOptions(IStream pOptionsStream, string pszKey) {
-            try {
-                using (StreamEater wrapper = new StreamEater(pOptionsStream)) {
-                    switch (pszKey) {
-                        case SERVER:
-                            loadOptions(wrapper);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                return VSConstants.S_OK;
-            }
-            finally {
-                Marshal.ReleaseComObject(pOptionsStream);
-            }
+            return ParameterStoreManager.Instance.ReadUserOptions(pOptionsStream, pszKey);
         }
 
         private void writeOptions(Stream storageStream) {

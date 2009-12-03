@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Atlassian.plvs.api;
-using Atlassian.plvs.util;
-using EnvDTE;
+using Atlassian.plvs.store;
 
 namespace Atlassian.plvs.models {
     public class JiraCustomFilter {
@@ -48,8 +47,7 @@ namespace Atlassian.plvs.models {
 
         public bool Empty {
             get {
-                return Projects.Count + IssueTypes.Count + FixForVersions.Count + AffectsVersions.Count +
-                       Components.Count == 0;
+                return Projects.Count + IssueTypes.Count + FixForVersions.Count + AffectsVersions.Count + Components.Count == 0;
             }
         }
 
@@ -149,20 +147,18 @@ namespace Atlassian.plvs.models {
             return sb.ToString();
         }
 
-        public static void load(Globals globals, string solutionName) {
+        public static void load() {
             FILTERS.Clear();
 
-            string solutionKey = ParameterSerializer.getKeyFromSolutionName(solutionName);
-            int filtersCount = ParameterSerializer.loadParameter(globals, solutionKey + FILTER_COUNT, 0);
+            ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
+
+            int filtersCount = store.loadParameter(FILTER_COUNT, 0);
             ICollection<JiraServer> servers = JiraServerModel.Instance.getAllServers();
 
             for (int i = 0; i < filtersCount; ++i) {
-                string filterGuidStr = ParameterSerializer.loadParameter(globals, solutionKey + FILTER_GUID + i, null);
+                string filterGuidStr = store.loadParameter(FILTER_GUID + i, null);
                 Guid filterGuid = new Guid(filterGuidStr);
-                string filterServerGuidStr = ParameterSerializer.loadParameter(globals,
-                                                                               getParamKey(solutionKey, filterGuid,
-                                                                                           FILTER_SERVER_GUID +
-                                                                                           filterGuidStr), null);
+                string filterServerGuidStr = store.loadParameter(getParamKey(filterGuid, FILTER_SERVER_GUID + filterGuidStr), null);
                 Guid serverGuid = new Guid(filterServerGuidStr);
                 JiraServer server = null;
                 foreach (JiraServer s in servers) {
@@ -174,182 +170,143 @@ namespace Atlassian.plvs.models {
 
                 JiraCustomFilter filter = new JiraCustomFilter(server);
 
-                loadProjects(globals, solutionKey, filterGuid, filter);
-                loadIssueTypes(globals, solutionKey, filterGuid, filter);
-                loadFixVersions(globals, solutionKey, filterGuid, filter);
-                loadAffectsVersions(globals, solutionKey, filterGuid, filter);
-                loadComponents(globals, solutionKey, filterGuid, filter);
+                loadProjects(store, filterGuid, filter);
+                loadIssueTypes(store, filterGuid, filter);
+                loadFixVersions(store, filterGuid, filter);
+                loadAffectsVersions(store, filterGuid, filter);
+                loadComponents(store, filterGuid, filter);
 
                 FILTERS[filterGuid] = filter;
             }
         }
 
-        public static void save(Globals globals, string solutionName) {
-            string solutionKey = ParameterSerializer.getKeyFromSolutionName(solutionName);
-            ParameterSerializer.storeParameter(globals, solutionKey + FILTER_COUNT, FILTERS.Count);
+        public static void save() {
+            ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
+
+            store.storeParameter(FILTER_COUNT, FILTERS.Count);
             int i = 0;
             foreach (var filter in FILTERS) {
-                ParameterSerializer.storeParameter(globals, solutionKey + FILTER_GUID + i, filter.Key.ToString());
-                ParameterSerializer.storeParameter(globals,
-                                                   getParamKey(solutionKey, filter.Key, FILTER_SERVER_GUID + filter.Key),
-                                                   filter.Key.ToString());
+                store.storeParameter(FILTER_GUID + i, filter.Key.ToString());
+                store.storeParameter(getParamKey(filter.Key, FILTER_SERVER_GUID + filter.Key),
+                                                     filter.Key.ToString());
 
                 JiraCustomFilter f = filter.Value;
 
-                storeProjects(globals, solutionKey, filter.Key, f);
-                storeIssueTypes(globals, solutionKey, filter.Key, f);
-                storeFixVersions(globals, solutionKey, filter.Key, f);
-                storeAffectsVersions(globals, solutionKey, filter.Key, f);
-                storeComponents(globals, solutionKey, filter.Key, f);
+                storeProjects(store, filter.Key, f);
+                storeIssueTypes(store, filter.Key, f);
+                storeFixVersions(store, filter.Key, f);
+                storeAffectsVersions(store, filter.Key, f);
+                storeComponents(store, filter.Key, f);
 
                 ++i;
             }
         }
 
-        private static void storeComponents(Globals globals, string solutionKey, Guid key, JiraCustomFilter f) {
+        private static void storeComponents(ParameterStore store, Guid key, JiraCustomFilter f) {
             int i = 0;
 
-            ParameterSerializer.storeParameter(globals, getParamKey(solutionKey, key, FILTER_COMPONENTS_COUNT),
-                                               f.Components.Count);
+            store.storeParameter(getParamKey(key, FILTER_COMPONENTS_COUNT), f.Components.Count);
             foreach (JiraNamedEntity comp in f.Components) {
-                ParameterSerializer.storeParameter(globals, getParamKey(solutionKey, key, FILTER_COMPONENTS_ID + i),
-                                                   comp.Id);
-                ParameterSerializer.storeParameter(globals, getParamKey(solutionKey, key, FILTER_COMPONENTS_NAME + i),
-                                                   comp.Name);
+                store.storeParameter(getParamKey(key, FILTER_COMPONENTS_ID + i), comp.Id);
+                store.storeParameter(getParamKey(key, FILTER_COMPONENTS_NAME + i), comp.Name);
                 ++i;
             }
         }
 
-        private static void loadComponents(Globals globals, string solutionKey, Guid key, JiraCustomFilter f) {
-            int count = ParameterSerializer.loadParameter(globals,
-                                                          getParamKey(solutionKey, key, FILTER_COMPONENTS_COUNT), 0);
+        private static void loadComponents(ParameterStore store, Guid key, JiraCustomFilter f) {
+            int count = store.loadParameter(getParamKey(key, FILTER_COMPONENTS_COUNT), 0);
             for (int i = 0; i < count; ++i) {
-                int id = ParameterSerializer.loadParameter(globals,
-                                                           getParamKey(solutionKey, key, FILTER_COMPONENTS_ID + i), 0);
-                string name = ParameterSerializer.loadParameter(globals,
-                                                                getParamKey(solutionKey, key, FILTER_COMPONENTS_NAME + i),
-                                                                null);
+                int id = store.loadParameter(getParamKey(key, FILTER_COMPONENTS_ID + i), 0);
+                string name = store.loadParameter(getParamKey(key, FILTER_COMPONENTS_NAME + i), null);
                 JiraNamedEntity comp = new JiraNamedEntity(id, name, null);
                 f.Components.Add(comp);
             }
         }
 
-        private static void storeAffectsVersions(Globals globals, string solutionKey, Guid key, JiraCustomFilter f) {
+        private static void storeAffectsVersions(ParameterStore store, Guid key, JiraCustomFilter f) {
             int i = 0;
-            ParameterSerializer.storeParameter(globals, getParamKey(solutionKey, key, FILTER_AFFECTVERSIONS_COUNT),
-                                               f.AffectsVersions.Count);
+            store.storeParameter(getParamKey(key, FILTER_AFFECTVERSIONS_COUNT), f.AffectsVersions.Count);
             foreach (JiraNamedEntity version in f.AffectsVersions) {
-                ParameterSerializer.storeParameter(globals, getParamKey(solutionKey, key, FILTER_AFFECTVERSIONS_ID + i),
-                                                   version.Id);
-                ParameterSerializer.storeParameter(globals,
-                                                   getParamKey(solutionKey, key, FILTER_AFFECTVERSIONS_NAME + i),
-                                                   version.Name);
+                store.storeParameter(getParamKey(key, FILTER_AFFECTVERSIONS_ID + i), version.Id);
+                store.storeParameter(getParamKey(key, FILTER_AFFECTVERSIONS_NAME + i), version.Name);
                 ++i;
             }
         }
 
-        private static void loadAffectsVersions(Globals globals, string solutionKey, Guid key, JiraCustomFilter f) {
-            int count = ParameterSerializer.loadParameter(globals,
-                                                          getParamKey(solutionKey, key, FILTER_AFFECTVERSIONS_COUNT), 0);
+        private static void loadAffectsVersions(ParameterStore store, Guid key, JiraCustomFilter f) {
+            int count = store.loadParameter(getParamKey(key, FILTER_AFFECTVERSIONS_COUNT), 0);
             for (int i = 0; i < count; ++i) {
-                int id = ParameterSerializer.loadParameter(globals,
-                                                           getParamKey(solutionKey, key, FILTER_AFFECTVERSIONS_ID + i),
-                                                           0);
-                string name = ParameterSerializer.loadParameter(globals,
-                                                                getParamKey(solutionKey, key,
-                                                                            FILTER_AFFECTVERSIONS_NAME + i), null);
+                int id = store.loadParameter(getParamKey(key, FILTER_AFFECTVERSIONS_ID + i), 0);
+                string name = store.loadParameter(getParamKey(key, FILTER_AFFECTVERSIONS_NAME + i), null);
                 JiraNamedEntity affectsVersion = new JiraNamedEntity(id, name, null);
                 f.AffectsVersions.Add(affectsVersion);
             }
         }
 
-        private static void storeFixVersions(Globals globals, string solutionKey, Guid key, JiraCustomFilter f) {
+        private static void storeFixVersions(ParameterStore store, Guid key, JiraCustomFilter f) {
             int i = 0;
 
-            ParameterSerializer.storeParameter(globals, getParamKey(solutionKey, key, FILTER_FIXFORVERSIONS_COUNT),
-                                               f.FixForVersions.Count);
+            store.storeParameter(getParamKey(key, FILTER_FIXFORVERSIONS_COUNT), f.FixForVersions.Count);
             foreach (JiraNamedEntity version in f.FixForVersions) {
-                ParameterSerializer.storeParameter(globals, getParamKey(solutionKey, key, FILTER_FIXFORVERSIONS_ID + i),
-                                                   version.Id);
-                ParameterSerializer.storeParameter(globals,
-                                                   getParamKey(solutionKey, key, FILTER_FIXFORVERSIONS_NAME + i),
-                                                   version.Name);
+                store.storeParameter(getParamKey(key, FILTER_FIXFORVERSIONS_ID + i), version.Id);
+                store.storeParameter(getParamKey(key, FILTER_FIXFORVERSIONS_NAME + i), version.Name);
                 ++i;
             }
         }
 
-        private static void loadFixVersions(Globals globals, string solutionKey, Guid key, JiraCustomFilter f) {
-            int count = ParameterSerializer.loadParameter(globals,
-                                                          getParamKey(solutionKey, key, FILTER_FIXFORVERSIONS_COUNT), 0);
+        private static void loadFixVersions(ParameterStore store, Guid key, JiraCustomFilter f) {
+            int count = store.loadParameter(getParamKey(key, FILTER_FIXFORVERSIONS_COUNT), 0);
             for (int i = 0; i < count; ++i) {
-                int id = ParameterSerializer.loadParameter(globals,
-                                                           getParamKey(solutionKey, key, FILTER_FIXFORVERSIONS_ID + i),
-                                                           0);
-                string name = ParameterSerializer.loadParameter(globals,
-                                                                getParamKey(solutionKey, key,
-                                                                            FILTER_FIXFORVERSIONS_NAME + i), null);
+                int id = store.loadParameter(getParamKey(key, FILTER_FIXFORVERSIONS_ID + i), 0);
+                string name = store.loadParameter(getParamKey(key, FILTER_FIXFORVERSIONS_NAME + i), null);
                 JiraNamedEntity fixVersion = new JiraNamedEntity(id, name, null);
                 f.FixForVersions.Add(fixVersion);
             }
         }
 
-        private static void storeIssueTypes(Globals globals, string solutionKey, Guid key, JiraCustomFilter f) {
+        private static void storeIssueTypes(ParameterStore store, Guid key, JiraCustomFilter f) {
             int i = 0;
 
-            ParameterSerializer.storeParameter(globals, getParamKey(solutionKey, key, FILTER_ISSUE_TYPE_COUNT),
-                                               f.IssueTypes.Count);
+            store.storeParameter(getParamKey(key, FILTER_ISSUE_TYPE_COUNT), f.IssueTypes.Count);
             foreach (JiraNamedEntity issueType in f.IssueTypes) {
-                ParameterSerializer.storeParameter(globals, getParamKey(solutionKey, key, FILTER_ISSUE_TYPE_ID + i),
-                                                   issueType.Id);
-                ParameterSerializer.storeParameter(globals, getParamKey(solutionKey, key, FILTER_ISSUE_TYPE_NAME + i),
-                                                   issueType.Name);
+                store.storeParameter(getParamKey(key, FILTER_ISSUE_TYPE_ID + i), issueType.Id);
+                store.storeParameter(getParamKey(key, FILTER_ISSUE_TYPE_NAME + i), issueType.Name);
                 ++i;
             }
         }
 
-        private static void loadIssueTypes(Globals globals, string solutionKey, Guid key, JiraCustomFilter f) {
-            int count = ParameterSerializer.loadParameter(globals,
-                                                          getParamKey(solutionKey, key, FILTER_ISSUE_TYPE_COUNT), 0);
+        private static void loadIssueTypes(ParameterStore store, Guid key, JiraCustomFilter f) {
+            int count = store.loadParameter(getParamKey(key, FILTER_ISSUE_TYPE_COUNT), 0);
             for (int i = 0; i < count; ++i) {
-                int id = ParameterSerializer.loadParameter(globals,
-                                                           getParamKey(solutionKey, key, FILTER_ISSUE_TYPE_ID + i), 0);
-                string name = ParameterSerializer.loadParameter(globals,
-                                                                getParamKey(solutionKey, key, FILTER_ISSUE_TYPE_NAME + i),
-                                                                null);
+                int id = store.loadParameter(getParamKey(key, FILTER_ISSUE_TYPE_ID + i), 0);
+                string name = store.loadParameter(getParamKey(key, FILTER_ISSUE_TYPE_NAME + i), null);
                 JiraNamedEntity issueType = new JiraNamedEntity(id, name, null);
                 f.IssueTypes.Add(issueType);
             }
         }
 
-        private static void storeProjects(Globals globals, string solutionKey, Guid key, JiraCustomFilter f) {
-            ParameterSerializer.storeParameter(globals, getParamKey(solutionKey, key, FILTER_PROJECT_COUNT),
-                                               f.Projects.Count);
+        private static void storeProjects(ParameterStore store, Guid key, JiraCustomFilter f) {
+            store.storeParameter(getParamKey(key, FILTER_PROJECT_COUNT), f.Projects.Count);
             int i = 0;
             foreach (JiraProject project in f.Projects) {
-                ParameterSerializer.storeParameter(globals, getParamKey(solutionKey, key, FILTER_PROJECT_ID + i),
-                                                   project.Id);
-                ParameterSerializer.storeParameter(globals, getParamKey(solutionKey, key, FILTER_PROJECT_KEY + i),
-                                                   project.Key);
+                store.storeParameter(getParamKey(key, FILTER_PROJECT_ID + i), project.Id);
+                store.storeParameter(getParamKey(key, FILTER_PROJECT_KEY + i), project.Key);
                 ++i;
             }
         }
 
-        private static void loadProjects(Globals globals, string solutionKey, Guid key, JiraCustomFilter f) {
-            int count = ParameterSerializer.loadParameter(globals, getParamKey(solutionKey, key, FILTER_PROJECT_COUNT),
-                                                          0);
+        private static void loadProjects(ParameterStore store, Guid key, JiraCustomFilter f) {
+            int count = store.loadParameter(getParamKey(key, FILTER_PROJECT_COUNT), 0);
             for (int i = 0; i < count; ++i) {
-                int id = ParameterSerializer.loadParameter(globals, getParamKey(solutionKey, key, FILTER_PROJECT_ID + i),
-                                                           0);
-                string projectKey = ParameterSerializer.loadParameter(globals,
-                                                                      getParamKey(solutionKey, key,
-                                                                                  FILTER_PROJECT_KEY + i), null);
+                int id = store.loadParameter(getParamKey(key, FILTER_PROJECT_ID + i), 0);
+                string projectKey = store.loadParameter(getParamKey(key, FILTER_PROJECT_KEY + i), null);
                 JiraProject proj = new JiraProject(id, projectKey, projectKey);
                 f.Projects.Add(proj);
             }
         }
 
-        private static string getParamKey(string solutionKey, Guid serverGuid, string paramName) {
-            return solutionKey + paramName + serverGuid;
+        private static string getParamKey(Guid serverGuid, string paramName) {
+            return paramName + serverGuid;
         }
     }
 }

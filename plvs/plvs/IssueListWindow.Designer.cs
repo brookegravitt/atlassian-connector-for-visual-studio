@@ -137,8 +137,8 @@
             // 
             this.statusStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                                                                                         this.jiraStatus,
-                                                                                         this.getMoreIssues});
+            this.jiraStatus,
+            this.getMoreIssues});
             this.statusStrip.Location = new System.Drawing.Point(0, 0);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(671, 22);
@@ -147,14 +147,14 @@
             // jiraStatus
             // 
             this.jiraStatus.Name = "jiraStatus";
-            this.jiraStatus.Size = new System.Drawing.Size(38, 17);
+            this.jiraStatus.Size = new System.Drawing.Size(39, 17);
             this.jiraStatus.Text = "Ready";
             // 
             // getMoreIssues
             // 
             this.getMoreIssues.IsLink = true;
             this.getMoreIssues.Name = "getMoreIssues";
-            this.getMoreIssues.Size = new System.Drawing.Size(97, 17);
+            this.getMoreIssues.Size = new System.Drawing.Size(99, 17);
             this.getMoreIssues.Text = "Get More Issues...";
             this.getMoreIssues.Visible = false;
             this.getMoreIssues.Click += new System.EventHandler(this.getMoreIssues_Click);
@@ -209,16 +209,16 @@
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                                                                                        this.buttonRefreshAll});
+            this.buttonRefreshAll});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(33, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(35, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonRefreshAll
             // 
             this.buttonRefreshAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonRefreshAll.Image = Resources.refresh;
+            this.buttonRefreshAll.Image = global::Atlassian.plvs.Resources.refresh;
             this.buttonRefreshAll.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonRefreshAll.Name = "buttonRefreshAll";
             this.buttonRefreshAll.Size = new System.Drawing.Size(23, 22);
@@ -246,20 +246,20 @@
             // 
             this.toolStrip2.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                                                                                        this.buttonOpen,
-                                                                                        this.buttonViewInBrowser,
-                                                                                        this.buttonEditInBrowser,
-                                                                                        this.buttonSearch,
-                                                                                        this.buttonRefresh});
+            this.buttonOpen,
+            this.buttonViewInBrowser,
+            this.buttonEditInBrowser,
+            this.buttonSearch,
+            this.buttonRefresh});
             this.toolStrip2.Location = new System.Drawing.Point(3, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(125, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(127, 25);
             this.toolStrip2.TabIndex = 0;
             // 
             // buttonOpen
             // 
             this.buttonOpen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonOpen.Image = Resources.open_in_ide;
+            this.buttonOpen.Image = global::Atlassian.plvs.Resources.open_in_ide;
             this.buttonOpen.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonOpen.Name = "buttonOpen";
             this.buttonOpen.Size = new System.Drawing.Size(23, 22);
@@ -269,7 +269,7 @@
             // buttonViewInBrowser
             // 
             this.buttonViewInBrowser.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonViewInBrowser.Image = Resources.view_in_browser;
+            this.buttonViewInBrowser.Image = global::Atlassian.plvs.Resources.view_in_browser;
             this.buttonViewInBrowser.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonViewInBrowser.Name = "buttonViewInBrowser";
             this.buttonViewInBrowser.Size = new System.Drawing.Size(23, 22);
@@ -279,7 +279,7 @@
             // buttonEditInBrowser
             // 
             this.buttonEditInBrowser.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonEditInBrowser.Image = Resources.edit_in_browser;
+            this.buttonEditInBrowser.Image = global::Atlassian.plvs.Resources.edit_in_browser;
             this.buttonEditInBrowser.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonEditInBrowser.Name = "buttonEditInBrowser";
             this.buttonEditInBrowser.Size = new System.Drawing.Size(23, 22);
@@ -289,7 +289,7 @@
             // buttonSearch
             // 
             this.buttonSearch.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonSearch.Image = Resources.find_jira;
+            this.buttonSearch.Image = global::Atlassian.plvs.Resources.find_jira;
             this.buttonSearch.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonSearch.Name = "buttonSearch";
             this.buttonSearch.Size = new System.Drawing.Size(23, 22);
@@ -299,7 +299,7 @@
             // buttonRefresh
             // 
             this.buttonRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonRefresh.Image = Resources.refresh;
+            this.buttonRefresh.Image = global::Atlassian.plvs.Resources.refresh;
             this.buttonRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonRefresh.Name = "buttonRefresh";
             this.buttonRefresh.Size = new System.Drawing.Size(23, 22);
@@ -310,18 +310,18 @@
             // 
             this.globalToolBar.Dock = System.Windows.Forms.DockStyle.None;
             this.globalToolBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                                                                                           this.buttonProjectProperties,
-                                                                                           this.buttonGlobalProperties,
-                                                                                           this.buttonAbout});
+            this.buttonProjectProperties,
+            this.buttonGlobalProperties,
+            this.buttonAbout});
             this.globalToolBar.Location = new System.Drawing.Point(0, 3);
             this.globalToolBar.Name = "globalToolBar";
-            this.globalToolBar.Size = new System.Drawing.Size(24, 78);
+            this.globalToolBar.Size = new System.Drawing.Size(24, 80);
             this.globalToolBar.TabIndex = 0;
             // 
             // buttonProjectProperties
             // 
             this.buttonProjectProperties.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonProjectProperties.Image = Resources.projectsettings;
+            this.buttonProjectProperties.Image = global::Atlassian.plvs.Resources.projectsettings;
             this.buttonProjectProperties.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonProjectProperties.Name = "buttonProjectProperties";
             this.buttonProjectProperties.Size = new System.Drawing.Size(22, 20);
@@ -331,7 +331,7 @@
             // buttonGlobalProperties
             // 
             this.buttonGlobalProperties.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonGlobalProperties.Image = Resources.global_properties;
+            this.buttonGlobalProperties.Image = global::Atlassian.plvs.Resources.global_properties;
             this.buttonGlobalProperties.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonGlobalProperties.Name = "buttonGlobalProperties";
             this.buttonGlobalProperties.Size = new System.Drawing.Size(22, 20);
@@ -341,7 +341,7 @@
             // buttonAbout
             // 
             this.buttonAbout.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonAbout.Image = Resources.about;
+            this.buttonAbout.Image = global::Atlassian.plvs.Resources.about;
             this.buttonAbout.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonAbout.Name = "buttonAbout";
             this.buttonAbout.Size = new System.Drawing.Size(22, 20);
@@ -374,7 +374,6 @@
             this.Controls.Add(this.toolStripContainer1);
             this.Name = "IssueListWindow";
             this.Size = new System.Drawing.Size(709, 319);
-            this.Load += new System.EventHandler(this.PaZuWindow_Load);
             this.mainContainer.ContentPanel.ResumeLayout(false);
             this.mainContainer.LeftToolStripPanel.ResumeLayout(false);
             this.mainContainer.LeftToolStripPanel.PerformLayout();

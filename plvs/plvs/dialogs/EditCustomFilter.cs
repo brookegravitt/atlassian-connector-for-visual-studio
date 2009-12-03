@@ -238,6 +238,7 @@ namespace Atlassian.plvs.dialogs {
                     filter.Components.Add(comp);
             }
             Changed = true;
+            JiraCustomFilter.save();
             Close();
         }
 

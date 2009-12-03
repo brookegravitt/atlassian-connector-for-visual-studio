@@ -48,10 +48,11 @@ namespace Atlassian.plvs.eventsinks {
         public int OnAfterOpenSolution(object pUnkReserved, int fNewSolution) {
             try {
                 JiraServerModel.Instance.clear();
-                JiraServerModel.Instance.load(dte.Solution.Globals);
-                RecentlyViewedIssuesModel.Instance.load(dte.Globals, dte.Solution.FullName);
-                JiraCustomFilter.load(dte.Globals, dte.Solution.FullName);
+                JiraServerModel.Instance.load();
+                RecentlyViewedIssuesModel.Instance.load();
+                JiraCustomFilter.load();
                 ToolWindowManager.Instance.AtlassianWindow = createJiraWindow();
+                IssueListWindow.Instance.reinitialize();
                 ToolWindowManager.Instance.IssueDetailsWindow = createIssueDetailsWindow();
                 IssueDetailsWindow.Instance.Solution = dte.Solution;
 
@@ -72,12 +73,13 @@ namespace Atlassian.plvs.eventsinks {
             try {
                 JiraEditorLinkManager.OnSolutionClosed();
                 if (ToolWindowManager.Instance.AtlassianWindow == null) return VSConstants.S_OK;
-                JiraServerModel.Instance.save(dte.Solution.Globals);
-                JiraCustomFilter.save(dte.Globals, dte.Solution.FullName);
+//                JiraServerModel.Instance.save();
+//                JiraCustomFilter.save();
                 JiraIssueListModel.Instance.removeAllListeners();
-                RecentlyViewedIssuesModel.Instance.save(dte.Globals, dte.Solution.FullName);
+//                RecentlyViewedIssuesModel.Instance.save();
                 IssueDetailsWindow.Instance.clearAllIssues();
                 IssueDetailsWindow.Instance.FrameVisible = false;
+                ToolWindowManager.Instance.AtlassianWindow = null;
             }
             catch (Exception e) {
                 Debug.WriteLine(e);

@@ -24,17 +24,24 @@ namespace Atlassian.plvs {
 
         private readonly StatusLabel status;
 
+        public static IssueListWindow Instance { get; private set; }
+
         public IssueListWindow() {
             InitializeComponent();
 
             status = new StatusLabel(statusStrip, jiraStatus);
 
-            model.addListener(this);
-
+            registerIssueModelListener();
             builder = new JiraIssueListModelBuilder(facade);
 
             filtersTreeToolTip.SetToolTip(filtersTree, "");
             filtersTreeToolTip.Active = true;
+
+            Instance = this;
+        }
+
+        private void registerIssueModelListener() {
+            model.addListener(this);
         }
 
         private readonly TreeColumn colKeyAndSummary = new TreeColumn();
@@ -56,6 +63,10 @@ namespace Atlassian.plvs {
         private readonly ImageList filterTreeImages = new ImageList();
 
         private void initIssuesTree() {
+            if (issuesTree != null) {
+                issueTreeContainer.ContentPanel.Controls.Remove(issuesTree);
+            }
+
             issuesTree = new TreeViewAdv();
 
             ITreeModel treeModel = new FlatIssueTreeModel(model);
@@ -421,7 +432,8 @@ namespace Atlassian.plvs {
             reloadKnownJiraServers();
         }
 
-        private void PaZuWindow_Load(object sender, EventArgs e) {
+        public void reinitialize() {
+            registerIssueModelListener();
             Invoke(new MethodInvoker(initIssuesTree));
             reloadKnownJiraServers();
         }

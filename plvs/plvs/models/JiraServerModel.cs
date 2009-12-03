@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Atlassian.plvs.api;
-using Atlassian.plvs.util;
-using EnvDTE;
+using Atlassian.plvs.store;
 using System.Diagnostics;
 
 namespace Atlassian.plvs.models {
@@ -11,8 +10,6 @@ namespace Atlassian.plvs.models {
         private const string SERVER_GUID = "serverGuid_";
         private const string SERVER_NAME = "serverName_";
         private const string SERVER_URL = "serverUrl_";
-
-        private bool changedSinceLoading;
 
         public class ModelException : Exception {
             public ModelException(string message) : base(message) {}
@@ -34,21 +31,21 @@ namespace Atlassian.plvs.models {
             }
         }
 
-        public void load(Globals globals) {
-            int count = ParameterSerializer.loadParameter(globals, SERVER_COUNT, -1);
+        public void load() {
+            ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SERVERS);
+            int count = store.loadParameter(SERVER_COUNT, -1);
             if (count != -1) {
                 try {
                     for (int i = 1; i <= count; ++i) {
-                        string guidStr = ParameterSerializer.loadParameter(globals, SERVER_GUID + i, null);
+                        string guidStr = store.loadParameter(SERVER_GUID + i, null);
                         Guid guid = new Guid(guidStr);
-                        string sName = ParameterSerializer.loadParameter(globals, SERVER_NAME + guidStr, null);
-                        string url = ParameterSerializer.loadParameter(globals, SERVER_URL + guidStr, null);
+                        string sName = store.loadParameter(SERVER_NAME + guidStr, null);
+                        string url = store.loadParameter(SERVER_URL + guidStr, null);
                         JiraServer server = new JiraServer(guid, sName, url, null, null);
                         server.UserName = CredentialsVault.Instance.getUserName(server);
                         server.Password = CredentialsVault.Instance.getPassword(server);
                         addServer(server);
                     }
-                    changedSinceLoading = false;
                 }
                 catch (Exception e) {
                     Debug.WriteLine(e);
@@ -56,22 +53,19 @@ namespace Atlassian.plvs.models {
             }
         }
 
-        public void save(Globals globals) {
-            if (!changedSinceLoading) {
-                return;
-            }
-
+        public void save() {
             try {
-                ParameterSerializer.storeParameter(globals, SERVER_COUNT, serverMap.Values.Count);
+                ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SERVERS);
+                store.storeParameter(SERVER_COUNT, serverMap.Values.Count);
 
                 int i = 1;
                 foreach (JiraServer s in getAllServers()) {
                     string var = SERVER_GUID + i;
-                    ParameterSerializer.storeParameter(globals, var, s.GUID.ToString());
+                    store.storeParameter(var, s.GUID.ToString());
                     var = SERVER_NAME + s.GUID;
-                    ParameterSerializer.storeParameter(globals, var, s.Name);
+                    store.storeParameter(var, s.Name);
                     var = SERVER_URL + s.GUID;
-                    ParameterSerializer.storeParameter(globals, var, s.Url);
+                    store.storeParameter(var, s.Url);
                     CredentialsVault.Instance.saveCredentials(s);
                     ++i;
                 }
@@ -87,7 +81,7 @@ namespace Atlassian.plvs.models {
                     throw new ModelException("Server exists");
                 }
                 serverMap.Add(server.GUID, server);
-                changedSinceLoading = true;
+                save();
             }
         }
 
@@ -108,7 +102,7 @@ namespace Atlassian.plvs.models {
             lock (serverMap) {
                 if (serverMap.ContainsKey(guid)) {
                     serverMap.Remove(guid);
-                    changedSinceLoading = true;
+                    save();
                 }
                 else if (!nothrow) {
                     throw new ModelException("No such server");
@@ -119,7 +113,6 @@ namespace Atlassian.plvs.models {
         public void clear() {
             lock (serverMap) {
                 serverMap.Clear();
-                changedSinceLoading = true;
             }
         }
     }
