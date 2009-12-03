@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using Atlassian.plvs.api;
-using Atlassian.plvs.util;
+using Atlassian.plvs.store;
 using EnvDTE;
 
 namespace Atlassian.plvs.models {
@@ -20,8 +20,6 @@ namespace Atlassian.plvs.models {
             get { return INSTANCE; }
         }
 
-        private bool changedSinceLoading;
-
         public void add(JiraIssue issue) {
             lock (this) {
                 if (moveToFrontIfContains(issue)) {
@@ -31,7 +29,7 @@ namespace Atlassian.plvs.models {
                     issues.RemoveAt(issues.Count - 1);
                 }
                 issues.Insert(0, new RecentlyViewedIssue(issue));
-                changedSinceLoading = true;
+                save();
             }
         }
 
@@ -40,7 +38,7 @@ namespace Atlassian.plvs.models {
                 if (!rvi.ServerGuid.Equals(issue.Server.GUID) || !rvi.IssueKey.Equals(issue.Key)) continue;
                 issues.Remove(rvi);
                 issues.Insert(0, rvi);
-                changedSinceLoading = true;
+                save();
                 return true;
             }
             return false;
@@ -50,26 +48,22 @@ namespace Atlassian.plvs.models {
             get { return issues; }
         }
 
-        public void load(Globals globals, string solutionName) {
+        public void load() {
             lock (this) {
                 issues.Clear();
 
-                solutionName = ParameterSerializer.getKeyFromSolutionName(solutionName);
+                ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
 
-                int count = ParameterSerializer.loadParameter(globals, RECENTLY_VIEWED_COUNT + solutionName, -1);
+                int count = store.loadParameter(RECENTLY_VIEWED_COUNT, -1);
                 if (count != -1) {
                     try {
                         if (count > MAX_ITEMS)
                             count = MAX_ITEMS;
 
                         for (int i = 1; i <= count; ++i) {
-                            string guidStr = ParameterSerializer.loadParameter(globals,
-                                                                               RECENTLY_VIEWED_ISSUE_SERVER_GUID +
-                                                                               solutionName + "_" + i, null);
+                            string guidStr = store.loadParameter(RECENTLY_VIEWED_ISSUE_SERVER_GUID  + i, null);
                             Guid guid = new Guid(guidStr);
-                            string key = ParameterSerializer.loadParameter(globals,
-                                                                           RECENTLY_VIEWED_ISSUE_KEY + solutionName +
-                                                                           "_" + i, null);
+                            string key = store.loadParameter(RECENTLY_VIEWED_ISSUE_KEY + i, null);
                             RecentlyViewedIssue issue = new RecentlyViewedIssue(guid, key);
                             issues.Add(issue);
                         }
@@ -78,26 +72,22 @@ namespace Atlassian.plvs.models {
                         Debug.WriteLine(e);
                     }
                 }
-                changedSinceLoading = false;
             }
         }
 
-        public void save(Globals globals, string solutionName) {
+        public void save() {
             lock (this) {
-                if (!changedSinceLoading)
-                    return;
-
-                solutionName = ParameterSerializer.getKeyFromSolutionName(solutionName);
+                ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
 
                 try {
-                    ParameterSerializer.storeParameter(globals, RECENTLY_VIEWED_COUNT + solutionName, issues.Count);
+                    store.storeParameter(RECENTLY_VIEWED_COUNT, issues.Count);
 
                     int i = 1;
                     foreach (RecentlyViewedIssue issue in issues) {
-                        string var = RECENTLY_VIEWED_ISSUE_SERVER_GUID + solutionName + "_" + i;
-                        ParameterSerializer.storeParameter(globals, var, issue.ServerGuid.ToString());
-                        var = RECENTLY_VIEWED_ISSUE_KEY + solutionName + "_" + i;
-                        ParameterSerializer.storeParameter(globals, var, issue.IssueKey);
+                        string var = RECENTLY_VIEWED_ISSUE_SERVER_GUID + i;
+                        store.storeParameter(var, issue.ServerGuid.ToString());
+                        var = RECENTLY_VIEWED_ISSUE_KEY + i;
+                        store.storeParameter(var, issue.IssueKey);
                         ++i;
                     }
                 }

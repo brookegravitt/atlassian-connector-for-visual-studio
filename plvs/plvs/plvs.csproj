@@ -170,6 +170,7 @@
     <Compile Include="plvsPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PkgCmdID.cs" />
+    <Compile Include="store\ParameterStore.cs" />
     <Compile Include="ToolWindowManager.cs" />
     <Compile Include="ui\CustomFilterTreeNode.cs" />
     <Compile Include="ui\issues\FilterContextMenu.cs">
@@ -186,7 +187,7 @@
     <Compile Include="ui\RecentlyOpenIssuesTreeNode.cs" />
     <Compile Include="ui\StatusLabel.cs" />
     <Compile Include="ui\TreeNodeWithServer.cs" />
-    <Compile Include="util\ParameterSerializer.cs" />
+    <Compile Include="store\ParameterStoreManager.cs" />
     <Compile Include="util\StreamEater.cs" />
     <Compile Include="VSPackage.Designer.cs">
       <AutoGen>True</AutoGen>
