@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -264,8 +264,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Resources\Images_32bit.bmp" />
-    <None Include="Resources\Images_24bit.bmp" />
     <None Include="Web References\Atlassian.plvs.api.soap.service\jirasoapservice-v2.wsdl" />
     <None Include="Web References\Atlassian.plvs.api.soap.service\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
@@ -368,6 +366,7 @@
     <Content Include="Resources\icons\ide_plugin_16.ico" />
     <Content Include="Resources\icons\ide_plugin_300.png" />
     <Content Include="Resources\icons\ide_plugin_32.ico" />
+    <Content Include="Resources\icons\Images.bmp" />
     <Content Include="Resources\icons\jira-blue-16.png" />
     <Content Include="Resources\icons\new_comment.png" />
     <Content Include="Resources\icons\open_in_ide.png" />
@@ -379,7 +378,6 @@
     <Content Include="Resources\icons\search-jira.png" />
     <Content Include="Resources\icons\unknown.png" />
     <Content Include="Resources\icons\view_in_browser.png" />
-    <Content Include="Resources\Package.ico" />
     <None Include="LICENSE" />
     <None Include="Resources\texts\about_html.txt" />
     <None Include="Resources\texts\comments_css.txt" />

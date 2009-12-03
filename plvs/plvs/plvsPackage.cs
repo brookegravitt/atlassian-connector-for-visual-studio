@@ -59,8 +59,8 @@ namespace Atlassian.plvs {
 
         // this does not work anyway - oh well. No splash screen for us. too bad
         public int IdBmpSplash(out uint pIdBmp) {
-            pIdBmp = 400;
-            return VSConstants.S_OK;
+            pIdBmp = 0;
+            return VSConstants.E_NOTIMPL;
         }
 
         public int IdIcoLogoForAboutbox(out uint pIdIco) {
