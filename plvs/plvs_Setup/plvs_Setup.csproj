@@ -35,7 +35,7 @@
     <WarningLevel>0</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="Files\EULA.rtf" />
+    <None Include="Files\LICENSE.rtf" />
     <Compile Include="UI.wxs" />
   </ItemGroup>
   <ItemGroup>

@@ -22,7 +22,7 @@
     <!-- Add/Remove Programs -->
     <Property Id="ARPCONTACT"><![CDATA[$(loc.Manufacturer)]]></Property>
     <Property Id="ARPPRODUCTICON">ProductIcon</Property>
-    <Property Id="ARPURLINFOABOUT"><![CDATA[http://www..com]]></Property>
+    <Property Id="ARPURLINFOABOUT"><![CDATA[http://www.atlassian.com]]></Property>
 
     <Property Id="ALLUSERS">2</Property>
 
