@@ -47,5 +47,22 @@
   <Registry Root="HKLM" Key="Software\Microsoft\VisualStudio\9.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}\Visibility">
     <Registry Name="{f1536ef8-92ec-443c-9ed7-fdadf150da82}" Value="0" Type="integer" />
   </Registry>
+
+  <Registry Root="HKLM" Key="Software\Microsoft\VisualStudio\9.0\Services\{34D3D2C5-60CD-4d79-8BD8-7759EBB3C27A}" Value="{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" Type="string">
+    <Registry Name="Name" Value="JIRA Link Service" Type="string" />
+  </Registry>
+
+  <Registry Root="HKLM" Key="Software\Microsoft\VisualStudio\9.0\Text Editor\External Markers\{658DDF58-FC14-4db9-8110-B52A6845B6CF}" Value="JIRA Links (Margin)" Type="string">
+    <Registry Name="DisplayName" Value="JIRA Links (Margin)" Type="string" />
+    <Registry Name="Package" Value="{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" Type="string" />
+    <Registry Name="Service" Value="{34D3D2C5-60CD-4d79-8BD8-7759EBB3C27A}" Type="string" />
+  </Registry>
+
+  <Registry Root="HKLM" Key="Software\Microsoft\VisualStudio\9.0\Text Editor\External Markers\{D7F03136-206D-4674-ADC7-DA0E9EE38869}" Value="JIRA Links (Text)" Type="string">
+    <Registry Name="DisplayName" Value="JIRA Links (Text)" Type="string" />
+    <Registry Name="Package" Value="{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" Type="string" />
+    <Registry Name="Service" Value="{34D3D2C5-60CD-4d79-8BD8-7759EBB3C27A}" Type="string" />
+  </Registry>
+
 </Include>
 
