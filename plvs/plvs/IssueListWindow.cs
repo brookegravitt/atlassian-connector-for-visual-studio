@@ -603,5 +603,51 @@ namespace Atlassian.plvs {
             GlobalSettings globals = new GlobalSettings();
             globals.ShowDialog();
         }
+
+        public delegate void FindFinished();
+
+        public void findAndOpenIssue(string key, FindFinished onFinish) {
+            TreeNodeWithServer node = filtersTree.SelectedNode as TreeNodeWithServer;
+            if (node == null) {
+                if (onFinish != null) {
+                    onFinish();
+                }
+                return;
+            }
+
+            Thread runner = new Thread(new ThreadStart(delegate {
+                                                           try {
+                                                               status.setInfo("Fetching issue " + key + "...");
+                                                               JiraIssue issue =
+                                                                   JiraServerFacade.Instance.getIssue(node.Server, key);
+                                                               if (issue != null) {
+                                                                   status.setInfo("Issue " + key + " found");
+                                                                   Invoke(new MethodInvoker(delegate {
+                                                                                                if (onFinish != null) {
+                                                                                                    onFinish();
+                                                                                                }
+                                                                                                IssueDetailsWindow.
+                                                                                                    Instance.openIssue(
+                                                                                                    issue);
+                                                                                            }));
+                                                               }
+                                                           }
+                                                           catch (Exception ex) {
+                                                               status.setError("Failed to find issue " + key, ex);
+                                                               Invoke(new MethodInvoker(delegate {
+                                                                                            MessageBox.Show(
+                                                                                                "Unable to find issue " +
+                                                                                                key + " on server \"" +
+                                                                                                node.Server.Name + "\"" +
+                                                                                                "\n\n" +
+                                                                                                ex.Message, "Error");
+                                                                                            if (onFinish != null) {
+                                                                                                onFinish();
+                                                                                            }
+                                                                                        }));
+                                                           }
+                                                       }));
+            runner.Start();
+        }
     }
 }
