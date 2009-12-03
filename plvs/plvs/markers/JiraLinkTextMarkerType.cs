@@ -35,7 +35,7 @@ namespace Atlassian.plvs.markers {
             piLineColor[0] = COLORINDEX.CI_DARKBLUE;
             piLineIndex[0] = LINESTYLE.LI_SOLID;
 
-            return VSConstants.S_OK;
+            return VSConstants.S_OK; // PL-1357
         }
 
         public int GetDefaultFontFlags(out uint pdwFontFlags) {

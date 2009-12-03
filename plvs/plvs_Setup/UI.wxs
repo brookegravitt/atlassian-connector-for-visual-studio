@@ -342,7 +342,7 @@
       </Dialog>
       <Dialog Id="EulaForm" Width="373" Height="287" Title="[ProductName]">
         <Control Id="LicenseText" Type="ScrollableText" X="18" Y="105" Width="348" Height="120" Sunken="yes" TabSkip="no">
-          <Text src="Files\EULA.rtf" />
+          <Text src="Files\LICENSE.rtf" />
         </Control>
         <Control Id="AgreeRadioGroup" Type="RadioButtonGroup" X="18" Y="231" Width="348" Height="15" Property="EulaForm_Property">
           <Text>{\VSI_MS_Sans_Serif13.0_0_0}MsiRadioButtonGroup</Text>
