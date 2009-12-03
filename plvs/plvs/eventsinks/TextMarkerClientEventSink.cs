@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using Atlassian.plvs.api;
+using Atlassian.plvs.models;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.TextManager.Interop;
@@ -18,9 +20,9 @@ namespace Atlassian.plvs.eventsinks {
 
         public int GetTipText(IVsTextMarker pMarker, string[] pbstrText) {
             if (TextMarker != null)
-                pbstrText[0] = "Double click to navigate to PL-1357,\nRight click for more options";
-//            else if (MarginMarker != null)
-//                pbstrText[0] = "Click to navigate to PL-1357";
+                pbstrText[0] = "Double click to try open PL-1357\non the currently selected server,\nRight click for more options";
+            else if (MarginMarker != null)
+                pbstrText[0] = "This line contains a link to issue PL-1357";
 
             return VSConstants.S_OK;
         }
@@ -39,8 +41,16 @@ namespace Atlassian.plvs.eventsinks {
 
             switch (iItem) {
                 case 0:
+                    if (pbstrText != null)
+                    {
+                        pbstrText[0] = "Open Issue in IDE";
+                        pcmdf[0] = menuItemFlags;
+                        return VSConstants.S_OK;
+                    }
+                    return VSConstants.S_FALSE;
+                case 1:
                     if (pbstrText != null) {
-                        pbstrText[0] = "Open Issue in the Browser";
+                        pbstrText[0] = "View Issue in the Browser";
                         pcmdf[0] = menuItemFlags;
                         return VSConstants.S_OK;
                     }
@@ -62,11 +72,14 @@ namespace Atlassian.plvs.eventsinks {
         public int ExecMarkerCommand(IVsTextMarker pMarker, int iItem) {
             switch (iItem) {
                 case 0:
+                    openInIde();
+                    return VSConstants.S_OK;
+                case 1:
                     launchBrowser();
                     return VSConstants.S_OK;
 
                 case (int) MarkerCommandValues.mcvBodyDoubleClickCommand:
-                    if (TextMarker != null) launchBrowser();
+                    if (TextMarker != null) openInIde();
                     return VSConstants.S_OK;
 
 //                case (int) MarkerCommandValues.mcvGlyphSingleClickCommand:
@@ -75,6 +88,19 @@ namespace Atlassian.plvs.eventsinks {
 
                 default:
                     return VSConstants.S_FALSE;
+            }
+        }
+
+        private static void openInIde() {
+            bool found = false;
+            foreach (JiraIssue issue in JiraIssueListModel.Instance.Issues) {
+                if (!issue.Key.Equals("PL-1357") || !issue.Server.Url.Equals("https://studio.atlassian.com")) continue;
+                IssueDetailsWindow.Instance.openIssue(issue);
+                found = true;
+                break;
+            }
+            if (!found) {
+                IssueListWindow.Instance.findAndOpenIssue("PL-1357", null);
             }
         }
 

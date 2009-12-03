@@ -157,15 +157,14 @@ namespace Atlassian.plvs {
 
             sb.Append("<html>\n<head>\n").Append(Resources.summary_and_description_css)
                 .Append("\n</head>\n<body>\n<table class=\"summary\">\n")
+                .Append("<tr><td><b>Summary</b></td><td>")
+                .Append(issue.Summary).Append("</td></tr>\n")
                 .Append("<tr><td><b>Type</b></td><td>")
-                .Append("<img alt=\"\" src=\"").Append(issue.IssueTypeIconUrl).Append("\"/>").Append(issue.IssueType).
-                Append("</td></tr>\n")
+                .Append("<img alt=\"\" src=\"").Append(issue.IssueTypeIconUrl).Append("\"/>").Append(issue.IssueType).Append("</td></tr>\n")
                 .Append("<tr><td><b>Status</b></td><td>")
-                .Append("<img alt=\"\" src=\"").Append(issue.StatusIconUrl).Append("\"/>").Append(issue.Status).Append(
-                "</td></tr>\n")
+                .Append("<img alt=\"\" src=\"").Append(issue.StatusIconUrl).Append("\"/>").Append(issue.Status).Append("</td></tr>\n")
                 .Append("<tr><td><b>Priority</b></td><td>")
-                .Append("<img alt=\"\" src=\"").Append(issue.PriorityIconUrl).Append("\"/>").Append(issue.Priority).
-                Append("</td></tr>\n")
+                .Append("<img alt=\"\" src=\"").Append(issue.PriorityIconUrl).Append("\"/>").Append(issue.Priority).Append("</td></tr>\n")
                 .Append("<tr><td><b>Assignee</b></td><td>")
                 .Append(issue.Assignee).Append("</td></tr>\n")
                 .Append("<tr><td><b>Reporter</b></td><td>")

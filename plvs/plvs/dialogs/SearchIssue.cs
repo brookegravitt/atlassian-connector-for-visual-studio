@@ -45,35 +45,7 @@ namespace Atlassian.plvs.dialogs {
             textQueryString.Enabled = false;
             buttonOk.Enabled = false;
             buttonCancel.Enabled = false;
-            Thread runner = new Thread(new ThreadStart(delegate {
-                                                           try {
-                                                               Status.setInfo("Fetching issue " + key + "...");
-                                                               JiraIssue issue =
-                                                                   JiraServerFacade.Instance.getIssue(Server, key);
-                                                               if (issue != null) {
-                                                                   Status.setInfo("Issue " + key + " found");
-                                                                   Invoke(new MethodInvoker(delegate {
-                                                                                                Close();
-                                                                                                IssueDetailsWindow.
-                                                                                                    Instance.openIssue(
-                                                                                                    issue);
-                                                                                            }));
-                                                               }
-                                                           }
-                                                           catch (Exception ex) {
-                                                               Status.setError("Failed to find issue " + key, ex);
-                                                               Invoke(new MethodInvoker(delegate {
-                                                                                            MessageBox.Show(
-                                                                                                "Unable to find issue " +
-                                                                                                key + " on server \"" +
-                                                                                                Server.Name + "\"" +
-                                                                                                "\n\n" +
-                                                                                                ex.Message, "Error");
-                                                                                            Close();
-                                                                                        }));
-                                                           }
-                                                       }));
-            runner.Start();
+            IssueListWindow.Instance.findAndOpenIssue(key, Close);
         }
 
         private void executeSearchAndClose() {
