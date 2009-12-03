@@ -328,6 +328,13 @@ namespace Atlassian.plvs {
             }
         }
         
+        internal static System.Drawing.Bitmap tab_jira {
+            get {
+                object obj = ResourceManager.GetObject("tab_jira", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to &lt;script language=&quot;javascript&quot;&gt;
         ///	function toggle(id, controlid) {

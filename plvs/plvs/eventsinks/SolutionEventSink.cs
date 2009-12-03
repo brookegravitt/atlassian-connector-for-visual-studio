@@ -54,6 +54,8 @@ namespace Atlassian.plvs.eventsinks {
                 ToolWindowManager.Instance.AtlassianWindow = createJiraWindow();
                 ToolWindowManager.Instance.IssueDetailsWindow = createIssueDetailsWindow();
                 IssueDetailsWindow.Instance.Solution = dte.Solution;
+
+                JiraEditorLinkManager.OnSolutionOpened();
             }
             catch (Exception e) {
                 Debug.WriteLine(e);
@@ -68,6 +70,7 @@ namespace Atlassian.plvs.eventsinks {
 
         public int OnBeforeCloseSolution(object pUnkReserved) {
             try {
+                JiraEditorLinkManager.OnSolutionClosed();
                 if (ToolWindowManager.Instance.AtlassianWindow == null) return VSConstants.S_OK;
                 JiraServerModel.Instance.save(dte.Solution.Globals);
                 JiraCustomFilter.save(dte.Globals, dte.Solution.FullName);
