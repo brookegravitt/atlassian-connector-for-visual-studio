@@ -12,6 +12,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "plvs_Setup", "plvs_Setup\plvs_Setup.csproj", "{CD9CD026-CDB1-4F73-823C-EC23DFF16A5C}"
 EndProject
 Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU

@@ -33,6 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Aga.Controls, Version=1.7.0.0, Culture=neutral, PublicKeyToken=fcc90fbf924463a3, processorArchitecture=MSIL" />
+    <Reference Include="Ankh.ExtensionPoints, Version=2.1.7444.278, Culture=neutral, PublicKeyToken=068e4b3e6ce74d73, processorArchitecture=MSIL" />
     <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Program Files\Microsoft Visual Studio 9.0\Common7\IDE\PublicAssemblies\EnvDTE.dll</HintPath>
