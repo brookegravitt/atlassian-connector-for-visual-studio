@@ -159,6 +159,8 @@ namespace Atlassian.plvs {
             // Since we register custom text markers we have to ensure the font and color
             // cache is up-to-date.
             ValidateFontAndColorCacheManagerIsUpToDate();
+
+//            Ankh.ExtensionPoints.IssueTracker.
         }
 
         // 
