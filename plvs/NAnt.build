@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<project name="Atlassian Connector for Visual Studio" default="build" basedir=".">
+	<description>The Hello World of build files.</description>
+<!--	<property name="debug" value="true" overwrite="false" />-->
+<!--	<target name="clean" description="remove all generated files">-->
+<!--		<delete file="HelloWorld.exe" failonerror="false" />-->
+<!--		<delete file="HelloWorld.pdb" failonerror="false" />-->
+<!--	</target>-->
+	<target name="build" description="builds the installer package">
+    <echo>Hello world</echo>
+	</target>
+</project>
