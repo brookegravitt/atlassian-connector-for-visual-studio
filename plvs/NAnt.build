@@ -6,7 +6,7 @@
   
   <property name="configuration" value="Release" overwrite="false" />
   <property name="nantcontrib-home" value="c:/devtools/nantcontrib-0.85/" overwrite="false" />
-  <property name="version" value="0.1.0" overwrite="false" readonly="false" />
+  <property name="version" value="0.0.0" overwrite="false" readonly="false" />
   <property name="build.stamp" value="SNAPSHOT" overwrite="false" readonly="false" />
   <property name="set.timestamp" value="false" overwrite="false" />
 
@@ -65,9 +65,6 @@
                              
           nantcontrib-home - Home of the NAnt-contrib package. 
                              Default: "c:/devtools/nantcontrib-0.85/"
-                             
-          version          - version of the connector. 
-                             Default: "0.1.0" [FIXME]
                              
           build.stamp      - build stamp used if "set.timestamp" 
                              is false. 
