@@ -42,7 +42,7 @@
           build.setup     - creates ${setup.project}.msi file
           make.setup.file - creates setup file with a target file name
 
-      Build artefacts are stored in the
+      Build artifacts are stored in the
       ${setup.project}/bin/$${configuration} directory
 
       Overridable properties:
