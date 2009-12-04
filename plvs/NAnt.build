@@ -1,30 +1,70 @@
 <?xml version="1.0"?>
 
-<project name="Atlassian Connector for Visual Studio" default="build" basedir=".">
-	<description>The Hello World of build files.</description>
-<!--	<property name="debug" value="true" overwrite="false" />-->
-<!--	<target name="clean" description="remove all generated files">-->
-<!--		<delete file="HelloWorld.exe" failonerror="false" />-->
-<!--		<delete file="HelloWorld.pdb" failonerror="false" />-->
-<!--	</target>-->
-	<target name="build" description="builds the installer package">
-    <echo>Hello world</echo>
-	</target>
+<project name="Atlassian Connector for Visual Studio" default="help" basedir=".">
+  
+<!--  overridable properties-->
+  
+  <property name="configuration" value="Release" overwrite="false" />
+  <property name="nantcontrib-home" value="c:/devtools/nantcontrib-0.85/" overwrite="false" />
+  <property name="version" value="0.1.0" overwrite="false" />
+  <property name="build.stamp" value="SNAPSHOT" overwrite="false" readonly="false" />
+  <property name="set.timestamp" value="false" overwrite="false" />
+
+<!--  read-only properties-->
+  <property name="main.project" value="plvs" />
+  <property name="setup.project" value="plvs_Setup" />
+  <property name="setup.base.file.name" value="atlassian-vs-connector-setup" />
 
   <target name="clean">
-    <delete dir="plvs/bin" />
-    <delete dir="plvs_Setup/bin" />
+    <delete dir="${main.project}/bin/${configuration}" />
+    <delete dir="${setup.project}/bin/${configuration}" />
   </target>
 
-  <target name="setup" depends="clean" >
-<!--    <solution solutionfile="plvs.sln" configuration="Debug" >-->
-<!--      <projects>-->
-<!--        <include name="plvs_Setup/plvs_Setup.csproj" />-->
-<!--      </projects>-->
-<!--    </solution>-->
-    <loadtasks assembly="c:/devtools/nantcontrib-0.85/bin/NAnt.Contrib.Tasks.dll" />
-    <msbuild project="plvs_Setup/plvs_Setup.csproj">
-      <property name="Configuration" value="Debug" />
+  <target name="build.setup" depends="clean" >
+    <loadtasks assembly="${nantcontrib-home}/bin/NAnt.Contrib.Tasks.dll" />
+    <msbuild project="${setup.project}/${setup.project}.csproj">
+      <property name="Configuration" value="${configuration}" />
     </msbuild>
+  </target>
+
+  <target name="make.setup.file" depends="build.setup"  >
+    <if test="${set.timestamp=='true'}">
+      <tstamp property="build.stamp" pattern="yyyyMMdd" verbose="true" />
+    </if> 
+    <copy file="${setup.project}/bin/${configuration}/${setup.project}.msi"
+          tofile="${setup.project}/bin/${configuration}/${setup.base.file.name}-${version}-${build.stamp}.msi" />
+  </target>
+
+  <target name="help">
+    <echo>
+      Targets:
+          clean           - cleans up the current configuration
+          build.setup     - creates ${setup.project}.msi file
+          make.setup.file - creates setup file with a target file name
+
+      Build artefacts are stored in the
+      ${setup.project}/bin/$${configuration} directory
+
+      Overridable properties:
+      
+          configuration    - "Debug" or "Release". 
+                             Default: "Release"
+                             
+          nantcontrib-home - Home of the NAnt-contrib package. 
+                             Default: "c:/devtools/nantcontrib-0.85/"
+                             
+          version          - version of the connector. 
+                             Default: "0.1.0" [FIXME]
+                             
+          build.stamp      - build stamp used if "set.timestamp" 
+                             is false. 
+                             Default: "SNAPSHOT"
+                             
+          set.timestamp    - "true" or "false". If "true", timestamp
+                             is used in the setup package name
+                             Default: "false"
+
+
+    </echo>
   </target>
 </project>
