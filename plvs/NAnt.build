@@ -6,7 +6,7 @@
   
   <property name="configuration" value="Release" overwrite="false" />
   <property name="nantcontrib-home" value="c:/devtools/nantcontrib-0.85/" overwrite="false" />
-  <property name="version" value="0.1.0" overwrite="false" />
+  <property name="version" value="0.1.0" overwrite="false" readonly="false" />
   <property name="build.stamp" value="SNAPSHOT" overwrite="false" readonly="false" />
   <property name="set.timestamp" value="false" overwrite="false" />
 
@@ -15,12 +15,25 @@
   <property name="setup.project" value="plvs_Setup" />
   <property name="setup.base.file.name" value="atlassian-vs-connector-setup" />
 
+  <target name="version.update">
+    <loadfile file="version.info" property="version"/>
+    <tstamp property="current.build.stamp" pattern="yyyyMMdd" verbose="true" />
+    <echo file="plvs/PlvsVersionInfo.cs">
+      namespace Atlassian.plvs {
+          public class PlvsVersionInfo {
+              public static string Version { get { return "${version}"; } }
+              public static string Stamp { get { return "${current.build.stamp}"; } }
+          }
+      }
+    </echo>
+  </target>
+
   <target name="clean">
     <delete dir="${main.project}/bin/${configuration}" />
     <delete dir="${setup.project}/bin/${configuration}" />
   </target>
 
-  <target name="build.setup" depends="clean" >
+  <target name="build.setup" depends="clean,version.update" >
     <loadtasks assembly="${nantcontrib-home}/bin/NAnt.Contrib.Tasks.dll" />
     <msbuild project="${setup.project}/${setup.project}.csproj">
       <property name="Configuration" value="${configuration}" />
