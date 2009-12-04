@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Atlassian.plvs.dialogs {
@@ -10,7 +11,7 @@ namespace Atlassian.plvs.dialogs {
             InitializeComponent();
 
             picture.Image = Resources.atlassian_538x235;
-            browser.DocumentText = Resources.about_html;
+            browser.DocumentText = string.Format(Resources.about_html, PlvsVersionInfo.Version);
             browser.ScrollBarsEnabled = false;
 
             StartPosition = FormStartPosition.CenterParent;
