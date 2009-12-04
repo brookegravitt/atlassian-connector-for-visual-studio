@@ -10,4 +10,21 @@
 	<target name="build" description="builds the installer package">
     <echo>Hello world</echo>
 	</target>
+
+  <target name="clean">
+    <delete dir="plvs/bin" />
+    <delete dir="plvs_Setup/bin" />
+  </target>
+
+  <target name="setup" depends="clean" >
+<!--    <solution solutionfile="plvs.sln" configuration="Debug" >-->
+<!--      <projects>-->
+<!--        <include name="plvs_Setup/plvs_Setup.csproj" />-->
+<!--      </projects>-->
+<!--    </solution>-->
+    <loadtasks assembly="c:/devtools/nantcontrib-0.85/bin/NAnt.Contrib.Tasks.dll" />
+    <msbuild project="plvs_Setup/plvs_Setup.csproj">
+      <property name="Configuration" value="Debug" />
+    </msbuild>
+  </target>
 </project>
