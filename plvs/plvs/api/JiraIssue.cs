@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Xml.XPath;
+using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.api {
     public class JiraIssue {
@@ -59,10 +62,10 @@ namespace Atlassian.plvs.api {
                         Reporter = nav.Value;
                         break;
                     case "created":
-                        CreationDate = nav.Value;
+                        CreationDate = JiraIssueUtils.getDateTimeFromJiraTimeString(nav.Value);
                         break;
                     case "updated":
-                        UpdateDate = nav.Value;
+                        UpdateDate = JiraIssueUtils.getDateTimeFromJiraTimeString(nav.Value);
                         break;
                     case "resolution":
                         Resolution = nav.Value;
@@ -154,9 +157,9 @@ namespace Atlassian.plvs.api {
 
         public string Assignee { get; private set; }
 
-        public string CreationDate { get; private set; }
+        public DateTime CreationDate { get; private set; }
 
-        public string UpdateDate { get; private set; }
+        public DateTime UpdateDate { get; private set; }
 
         public string ProjectKey { get; private set; }
 

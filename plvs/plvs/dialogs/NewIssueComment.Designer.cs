@@ -36,10 +36,10 @@
             // 
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOk.Location = new System.Drawing.Point(515, 374);
+            this.buttonOk.Location = new System.Drawing.Point(387, 180);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
-            this.buttonOk.TabIndex = 0;
+            this.buttonOk.TabIndex = 1;
             this.buttonOk.Text = "Add";
             this.buttonOk.UseVisualStyleBackColor = true;
             // 
@@ -47,30 +47,30 @@
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(596, 374);
+            this.buttonCancel.Location = new System.Drawing.Point(468, 180);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
-            this.buttonCancel.TabIndex = 1;
+            this.buttonCancel.TabIndex = 2;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
             // 
             // commentText
             // 
             this.commentText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                                                                             | System.Windows.Forms.AnchorStyles.Left)
-                                                                            | System.Windows.Forms.AnchorStyles.Right)));
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.commentText.Location = new System.Drawing.Point(12, 12);
             this.commentText.Multiline = true;
             this.commentText.Name = "commentText";
-            this.commentText.Size = new System.Drawing.Size(659, 346);
-            this.commentText.TabIndex = 2;
+            this.commentText.Size = new System.Drawing.Size(531, 152);
+            this.commentText.TabIndex = 0;
             this.commentText.TextChanged += new System.EventHandler(this.commentText_TextChanged);
             // 
             // NewIssueComment
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(683, 409);
+            this.ClientSize = new System.Drawing.Size(555, 215);
             this.ControlBox = false;
             this.Controls.Add(this.commentText);
             this.Controls.Add(this.buttonCancel);

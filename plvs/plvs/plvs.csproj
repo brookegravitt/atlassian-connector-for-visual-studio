@@ -189,6 +189,7 @@
     <Compile Include="ui\StatusLabel.cs" />
     <Compile Include="ui\TreeNodeWithServer.cs" />
     <Compile Include="store\ParameterStoreManager.cs" />
+    <Compile Include="util\JiraIssueUtils.cs" />
     <Compile Include="util\StreamEater.cs" />
     <Compile Include="PlvsVersionInfo.cs" />
     <Compile Include="VSPackage.Designer.cs">

@@ -10,6 +10,7 @@ using Atlassian.plvs.api;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.models;
 using Atlassian.plvs.ui;
+using Atlassian.plvs.util;
 using EnvDTE;
 using Process=System.Diagnostics.Process;
 using Thread=System.Threading.Thread;
@@ -102,7 +103,9 @@ namespace Atlassian.plvs {
             for (int i = 0; i < issue.Comments.Count; ++i) {
                 sb.Append("<div class=\"comment_header\">")
                     .Append("<div class=\"author\">").Append(issue.Comments[i].Author)
-                    .Append(" <span class=\"date\">").Append(issue.Comments[i].Created).Append("</span></div>")
+                    .Append(" <span class=\"date\">").Append(
+                        JiraIssueUtils.getTimeStringFromIssueDateTime(JiraIssueUtils.getDateTimeFromJiraTimeString(issue.Comments[i].Created)))
+                    .Append("</span></div>")
                     .Append("<a href=\"javascript:toggle('")
                     .Append(i).Append("', '").Append(i).Append("control');\"><div class=\"toggler\" id=\"")
                     .Append(i).Append("control\">").Append(expanded ? "collapse" : "expand").Append("</div></a></div>\n");
@@ -157,29 +160,29 @@ namespace Atlassian.plvs {
 
             sb.Append("<html>\n<head>\n").Append(Resources.summary_and_description_css)
                 .Append("\n</head>\n<body>\n<table class=\"summary\">\n")
-                .Append("<tr><td><b>Summary</b></td><td>")
+                .Append("<tr><td class=\"labelcolumn labelsummary\">Summary</td><td class=\"labelsummary\">")
                 .Append(issue.Summary).Append("</td></tr>\n")
-                .Append("<tr><td><b>Type</b></td><td>")
+                .Append("<tr><td class=\"labelcolumn\">Type</td><td>")
                 .Append("<img alt=\"\" src=\"").Append(issue.IssueTypeIconUrl).Append("\"/>").Append(issue.IssueType).Append("</td></tr>\n")
-                .Append("<tr><td><b>Status</b></td><td>")
+                .Append("<tr><td class=\"labelcolumn\">Status</td><td>")
                 .Append("<img alt=\"\" src=\"").Append(issue.StatusIconUrl).Append("\"/>").Append(issue.Status).Append("</td></tr>\n")
-                .Append("<tr><td><b>Priority</b></td><td>")
+                .Append("<tr><td class=\"labelcolumn\">Priority</td><td>")
                 .Append("<img alt=\"\" src=\"").Append(issue.PriorityIconUrl).Append("\"/>").Append(issue.Priority).Append("</td></tr>\n")
-                .Append("<tr><td><b>Assignee</b></td><td>")
+                .Append("<tr><td class=\"labelcolumn\">Assignee</td><td>")
                 .Append(issue.Assignee).Append("</td></tr>\n")
-                .Append("<tr><td><b>Reporter</b></td><td>")
+                .Append("<tr><td class=\"labelcolumn\">Reporter</td><td>")
                 .Append(issue.Reporter).Append("</td></tr>\n")
-                .Append("<tr><td><b>Resolution</b></td><td>")
+                .Append("<tr><td class=\"labelcolumn\">Resolution</td><td>")
                 .Append(issue.Resolution).Append("</td></tr>\n")
-                .Append("<tr><td><b>Created</b></td><td>")
-                .Append(issue.CreationDate).Append("</td></tr>\n")
-                .Append("<tr><td><b>Updated</b></td><td>")
-                .Append(issue.UpdateDate).Append("</td></tr>\n");
+                .Append("<tr><td class=\"labelcolumn\">Created</td><td>")
+                .Append(JiraIssueUtils.getTimeStringFromIssueDateTime(issue.CreationDate)).Append("</td></tr>\n")
+                .Append("<tr><td class=\"labelcolumn\">Updated</td><td>")
+                .Append(JiraIssueUtils.getTimeStringFromIssueDateTime(issue.UpdateDate)).Append("</td></tr>\n");
 
             if (issue.Versions.Count > 1)
-                sb.Append("<tr><td><b>Affects Versions</b></td><td>");
+                sb.Append("<tr><td class=\"labelcolumn\">Affects Versions</td><td>");
             else
-                sb.Append("<tr><td><b>Affects Version</b></td><td>");
+                sb.Append("<tr><td class=\"labelcolumn\">Affects Version</td><td>");
 
             if (issue.Versions.Count == 0)
                 sb.Append("None").Append("</td></tr>\n");
@@ -194,9 +197,9 @@ namespace Atlassian.plvs {
             }
 
             if (issue.FixVersions.Count > 1)
-                sb.Append("<tr><td><b>Fix Versions</b></td><td>");
+                sb.Append("<tr><td class=\"labelcolumn\">Fix Versions</td><td>");
             else
-                sb.Append("<tr><td><b>Fix Version</b></td><td>");
+                sb.Append("<tr><td class=\"labelcolumn\">Fix Version</td><td>");
 
             if (issue.FixVersions.Count == 0)
                 sb.Append("None").Append("</td></tr>\n");
@@ -211,9 +214,9 @@ namespace Atlassian.plvs {
             }
 
             if (issue.Components.Count > 1)
-                sb.Append("<tr><td><b>Components</b></td><td>");
+                sb.Append("<tr><td class=\"labelcolumn\">Components</td><td>");
             else
-                sb.Append("<tr><td><b>Component</b></td><td>");
+                sb.Append("<tr><td class=\"labelcolumn\">Component</td><td>");
 
             if (issue.Components.Count == 0)
                 sb.Append("None").Append("</td></tr>\n");
@@ -227,11 +230,11 @@ namespace Atlassian.plvs {
                 sb.Append("</td></tr>\n");
             }
 
-            sb.Append("<tr><td><b>Original Estimate</b></td><td>")
+            sb.Append("<tr><td class=\"labelcolumn\">Original Estimate</td><td>")
                 .Append(issue.OriginalEstimate ?? "None").Append("</td></tr>\n")
-                .Append("<tr><td><b>Remaining Estimate</b></td><td>")
+                .Append("<tr><td class=\"labelcolumn\">Remaining Estimate</td><td>")
                 .Append(issue.RemainingEstimate ?? "None").Append("</td></tr>\n")
-                .Append("<tr><td><b>Time Spent</b></td><td>")
+                .Append("<tr><td class=\"labelcolumn\">Time Spent</td><td>")
                 .Append(issue.TimeSpent ?? "None").Append("</td></tr>\n")
                 .Append("\n</table>\n</body>\n</html>\n");
 
