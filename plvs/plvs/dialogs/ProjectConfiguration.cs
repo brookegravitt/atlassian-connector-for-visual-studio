@@ -67,7 +67,7 @@ namespace Atlassian.plvs.dialogs {
         }
 
         private void buttonAdd_Click(object sender, EventArgs e) {
-            AddOrEditJiraServer dialog = new AddOrEditJiraServer(jiraServerModel, null);
+            AddOrEditJiraServer dialog = new AddOrEditJiraServer(null);
             DialogResult result = dialog.ShowDialog();
             if (result != DialogResult.OK) return;
             jiraServerModel.addServer(dialog.Server);
@@ -80,7 +80,7 @@ namespace Atlassian.plvs.dialogs {
 
         private void buttonEdit_Click(object sender, EventArgs e) {
             JiraServerTreeNode selectedNode = (JiraServerTreeNode) serverTree.SelectedNode;
-            AddOrEditJiraServer dialog = new AddOrEditJiraServer(jiraServerModel, selectedNode.Server);
+            AddOrEditJiraServer dialog = new AddOrEditJiraServer(selectedNode.Server);
             DialogResult result = dialog.ShowDialog();
             if (result != DialogResult.OK) return;
             jiraServerModel.removeServer(selectedNode.Server.GUID);
