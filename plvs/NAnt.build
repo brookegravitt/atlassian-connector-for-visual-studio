@@ -2,15 +2,15 @@
 
 <project name="Atlassian Connector for Visual Studio" default="help" basedir=".">
   
-<!--  overridable properties-->
-  
+  <!--  overridable properties-->
   <property name="configuration" value="Release" overwrite="false" />
   <property name="nantcontrib-home" value="c:/devtools/nantcontrib-0.85/" overwrite="false" />
   <property name="version" value="0.0.0" overwrite="false" readonly="false" />
-  <property name="build.stamp" value="00000000-0000" overwrite="false" readonly="false" />
+  <property name="build.type" value="SNAPSHOT" overwrite="false" readonly="false" />
   <property name="set.timestamp" value="false" overwrite="false" />
+  <property name="build.stamp" value="00000000-0000" overwrite="false" readonly="false" />
 
-<!--  read-only properties-->
+  <!--  read-only properties-->
   <property name="main.project" value="plvs" />
   <property name="setup.project" value="plvs_Setup" />
   <property name="setup.base.file.name" value="atlassian-vs-connector-setup" />
@@ -43,7 +43,7 @@
   <target name="make.setup.file" depends="build.setup"  >
     <tstamp property="build.stamp" pattern="yyyyMMdd-HHmm" verbose="true" />
     <copy file="${setup.project}/bin/${configuration}/${setup.project}.msi"
-          tofile="${setup.project}/bin/${configuration}/${setup.base.file.name}-${version}-SNAPSHOT-${build.stamp}.msi" />
+          tofile="${setup.project}/bin/${configuration}/${setup.base.file.name}-${version}-${build.type}-${build.stamp}.msi" />
   </target>
 
   <target name="help">
@@ -64,8 +64,7 @@
           nantcontrib-home - Home of the NAnt-contrib package. 
                              Default: "c:/devtools/nantcontrib-0.85/"
                              
-          build.stamp      - build stamp used if "set.timestamp" 
-                             is false. 
+          build.type       - build type stamp used. 
                              Default: "SNAPSHOT"
     </echo>
   </target>
