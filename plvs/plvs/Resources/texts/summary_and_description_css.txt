@@ -1,7 +1,18 @@
 <style type="text/css">
-.summary, .description 
-{ 
+.summary, .description { 
 	font-size:"10pt";
 	font-family:"Arial"; 
 }
+
+.labelcolumn {
+	text-align:"right";
+	padding-right:"1em";
+	font-weight:"bold";
+	vertical-align:"top";
+}
+
+.labelsummary {
+	padding-bottom:"1em";
+}
+
 </style>

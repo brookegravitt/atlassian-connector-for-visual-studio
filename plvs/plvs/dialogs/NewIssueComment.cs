@@ -5,6 +5,8 @@ namespace Atlassian.plvs.dialogs {
         public NewIssueComment() {
             InitializeComponent();
             buttonOk.Enabled = false;
+
+            StartPosition = FormStartPosition.CenterParent;
         }
 
         public string CommentBody {

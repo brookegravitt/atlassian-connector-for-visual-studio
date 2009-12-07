@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using Atlassian.plvs.api;
 using Atlassian.plvs.models;
+using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.ui.issues {
     public class IssueNode {
@@ -31,7 +32,7 @@ namespace Atlassian.plvs.ui.issues {
         }
 
         public string Updated {
-            get { return Issue.UpdateDate; }
+            get { return JiraIssueUtils.getTimeStringFromIssueDateTime(Issue.UpdateDate); }
         }
     }
 }
