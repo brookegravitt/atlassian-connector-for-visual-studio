@@ -39,7 +39,7 @@ namespace Atlassian.plvs.store {
 
         private const int CRYPTPROTECT_UI_FORBIDDEN = 0x1;
 
-        private static readonly byte[] EntropyBytes = Encoding.UTF8.GetBytes("some entropy bytes");
+//        private static readonly byte[] EntropyBytes = Encoding.UTF8.GetBytes("some entropy bytes");
 
         private static void initPrompt(ref CRYPTPROTECT_PROMPTSTRUCT ps) {
             ps.cbSize = Marshal.SizeOf(typeof (CRYPTPROTECT_PROMPTSTRUCT));
@@ -59,7 +59,7 @@ namespace Atlassian.plvs.store {
             Marshal.Copy(data, 0, blob.pbData, data.Length);
         }
 
-        public static string encrypt(string plainText) {
+        public static string encrypt(string plainText, string entropy) {
 
             byte[] txtBytes = Encoding.UTF8.GetBytes(plainText);
 
@@ -72,7 +72,7 @@ namespace Atlassian.plvs.store {
 
             try {
                 initBlob(txtBytes, ref txtBlob);
-                initBlob(EntropyBytes, ref entropyBlob);
+                initBlob(Encoding.UTF8.GetBytes(entropy), ref entropyBlob);
 
                 const int flags = CRYPTPROTECT_UI_FORBIDDEN;
 
@@ -97,7 +97,7 @@ namespace Atlassian.plvs.store {
             }
         }
 
-        public static string decrypt(string cipherText) {
+        public static string decrypt(string cipherText, string entropy) {
 
             DATA_BLOB txtBlob = new DATA_BLOB();
             DATA_BLOB cipherBlob = new DATA_BLOB();
@@ -110,7 +110,7 @@ namespace Atlassian.plvs.store {
 
             try {
                 initBlob(Convert.FromBase64String(cipherText), ref cipherBlob);
-                initBlob(EntropyBytes, ref entropyBlob);
+                initBlob(Encoding.UTF8.GetBytes(entropy), ref entropyBlob);
 
                 const int flags = CRYPTPROTECT_UI_FORBIDDEN;
 
