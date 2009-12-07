@@ -42,7 +42,7 @@
 
   <target name="make.setup.file" depends="build.setup"  >
     <if test="${set.timestamp=='true'}">
-      <tstamp property="build.stamp" pattern="yyyyMMdd" verbose="true" />
+      <tstamp property="build.stamp" pattern="yyyyMMdd-HHmm" verbose="true" />
     </if> 
     <copy file="${setup.project}/bin/${configuration}/${setup.project}.msi"
           tofile="${setup.project}/bin/${configuration}/${setup.base.file.name}-${version}-${build.stamp}.msi" />

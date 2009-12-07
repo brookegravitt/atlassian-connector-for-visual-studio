@@ -3,7 +3,7 @@ using Atlassian.plvs.api;
 using Microsoft.Win32;
 using System.Diagnostics;
 
-namespace Atlassian.plvs.models {
+namespace Atlassian.plvs.store {
     internal class CredentialsVault {
         private static readonly CredentialsVault INSTANCE = new CredentialsVault();
 
@@ -32,7 +32,10 @@ namespace Atlassian.plvs.models {
         public string getPassword(JiraServer server) {
             try {
                 RegistryKey key = Registry.CurrentUser.OpenSubKey(ATL_KEY + "\\" + PAZU_KEY);
-                if (key != null) return (string) key.GetValue(USER_PASSWORD + server.GUID, "");
+                if (key != null) {
+                    string password = DPApi.decrypt((string) key.GetValue(USER_PASSWORD + server.GUID, ""));
+                    return password;
+                }
             }
             catch (Exception e) {
                 Debug.WriteLine(e.Message);
@@ -46,7 +49,7 @@ namespace Atlassian.plvs.models {
             RegistryKey key = atlKey.CreateSubKey(PAZU_KEY);
             if (key == null) return;
             key.SetValue(USER_NAME + server.GUID, server.UserName);
-            key.SetValue(USER_PASSWORD + server.GUID, server.Password);
+            key.SetValue(USER_PASSWORD + server.GUID, DPApi.encrypt(server.Password));
         }
 
         public void deleteCredentials(JiraServer server) {

@@ -1,39 +1,40 @@
 ﻿using System;
 using System.Windows.Forms;
 using Atlassian.plvs.api;
-using Atlassian.plvs.models;
 
 namespace Atlassian.plvs.dialogs {
     public partial class AddOrEditJiraServer : Form {
-        private static int invocations = 0;
+        private static int invocations;
 
         private readonly bool editing;
 
         private readonly JiraServer server;
-        private JiraServerModel jiraServerModel;
 
-        public AddOrEditJiraServer(JiraServerModel jiraServerModel, JiraServer server) {
+        public AddOrEditJiraServer(JiraServer server) {
             InitializeComponent();
 
             editing = server != null;
 
             this.server = new JiraServer(server);
-            this.jiraServerModel = jiraServerModel;
 
             Text = editing ? "Edit JIRA Server" : "Add JIRA Server";
             buttonAddOrEdit.Text = editing ? "Apply Changes" : "Add Server";
 
             if (editing) {
-                name.Text = server.Name;
-                url.Text = server.Url;
-                user.Text = server.UserName;
-                password.Text = server.Password;
+                if (server != null) {
+                    name.Text = server.Name;
+                    url.Text = server.Url;
+                    user.Text = server.UserName;
+                    password.Text = server.Password;
+                }
             }
             else {
                 ++invocations;
                 name.Text = "JIRA Server #" + invocations;
                 buttonAddOrEdit.Enabled = false;
             }
+
+            StartPosition = FormStartPosition.CenterParent;
         }
 
         public override sealed string Text {
