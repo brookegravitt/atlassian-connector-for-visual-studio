@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
-using System.Threading;
 using System.Web;
 using System.Windows.Forms;
 using Atlassian.plvs.api;
 using Atlassian.plvs.models;
 using Atlassian.plvs.ui;
+using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.dialogs {
     public sealed partial class SearchIssue : Form {
-        private static readonly Regex ISSUE_REGEX = new Regex(@"([a-zA-Z]+-\d+)");
-
         public JiraServer Server { get; set; }
         public JiraIssueListModel Model { get; set; }
         public StatusLabel Status { get; set; }
@@ -45,14 +42,21 @@ namespace Atlassian.plvs.dialogs {
             textQueryString.Enabled = false;
             buttonOk.Enabled = false;
             buttonCancel.Enabled = false;
-            IssueListWindow.Instance.findAndOpenIssue(key, Close);
+            IssueListWindow.Instance.findAndOpenIssue(key, findFinished);
+        }
+
+        private void findFinished(bool success, string message) {
+            if (!success) {
+                MessageBox.Show(message, "Error");
+            }
+            Close();
         }
 
         private void executeSearchAndClose() {
             string query = textQueryString.Text.Trim();
             if (query.Length == 0) return;
 
-            if (ISSUE_REGEX.IsMatch(query)) {
+            if (JiraIssueUtils.ISSUE_REGEX.IsMatch(query.ToUpper())) {
                 JiraIssue foundIssue = null;
                 foreach (JiraIssue issue in Model.Issues) {
                     if (!issue.Key.Equals(query) || !issue.Server.Url.Equals(Server.Url)) continue;

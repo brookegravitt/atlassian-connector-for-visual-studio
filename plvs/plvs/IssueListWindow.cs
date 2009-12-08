@@ -604,13 +604,18 @@ namespace Atlassian.plvs {
             globals.ShowDialog();
         }
 
-        public delegate void FindFinished();
+        public delegate void FindFinished(bool success, string message);
+
+        public JiraServer getCurrentlySelectedServer() {
+            TreeNodeWithServer node = filtersTree.SelectedNode as TreeNodeWithServer;
+            return node == null ? null : node.Server;
+        }
 
         public void findAndOpenIssue(string key, FindFinished onFinish) {
-            TreeNodeWithServer node = filtersTree.SelectedNode as TreeNodeWithServer;
-            if (node == null) {
+            JiraServer server = getCurrentlySelectedServer();
+            if (server == null) {
                 if (onFinish != null) {
-                    onFinish();
+                    onFinish(false, "No JIRA server selected");
                 }
                 return;
             }
@@ -619,12 +624,12 @@ namespace Atlassian.plvs {
                                                            try {
                                                                status.setInfo("Fetching issue " + key + "...");
                                                                JiraIssue issue =
-                                                                   JiraServerFacade.Instance.getIssue(node.Server, key);
+                                                                   JiraServerFacade.Instance.getIssue(server, key);
                                                                if (issue != null) {
                                                                    status.setInfo("Issue " + key + " found");
                                                                    Invoke(new MethodInvoker(delegate {
                                                                                                 if (onFinish != null) {
-                                                                                                    onFinish();
+                                                                                                    onFinish(true, null);
                                                                                                 }
                                                                                                 IssueDetailsWindow.
                                                                                                     Instance.openIssue(
@@ -635,14 +640,11 @@ namespace Atlassian.plvs {
                                                            catch (Exception ex) {
                                                                status.setError("Failed to find issue " + key, ex);
                                                                Invoke(new MethodInvoker(delegate {
-                                                                                            MessageBox.Show(
-                                                                                                "Unable to find issue " +
-                                                                                                key + " on server \"" +
-                                                                                                node.Server.Name + "\"" +
-                                                                                                "\n\n" +
-                                                                                                ex.Message, "Error");
+                                                                                            string message = "Unable to find issue " +
+                                                                                                       key + " on server \"" +
+                                                                                                       server.Name + "\"\n\n" + ex.Message;
                                                                                             if (onFinish != null) {
-                                                                                                onFinish();
+                                                                                                onFinish(false, message);
                                                                                             }
                                                                                         }));
                                                            }
