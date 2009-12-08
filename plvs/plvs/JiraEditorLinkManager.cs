@@ -93,7 +93,7 @@ namespace Atlassian.plvs {
 //                        isInBlockComment = true;
 //                        scanCommentedLine(textLines, lineNumber, lineLength, matches[0].Value, current);
 //                    }
-                }
+//                }
 
                 if (isInBlockComment || commentMarkers.Line == null) continue;
                 int lineCmtIdx = text.IndexOf(commentMarkers.Line);
