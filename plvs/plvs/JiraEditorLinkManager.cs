@@ -8,6 +8,21 @@ using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace Atlassian.plvs {
     internal class JiraEditorLinkManager {
+        
+        private class CommentStrings {
+            public CommentStrings(string line, string blockOpen, string blockClose) {
+                Line = line;
+                BlockOpen = blockOpen;
+                BlockClose = blockClose;
+            }
+
+            public CommentStrings() {}
+
+            public readonly string Line;
+            public readonly string BlockOpen;
+            public readonly string BlockClose;
+        }
+
         public static void OnSolutionOpened() {}
 
         public static void OnSolutionClosed() {}
@@ -31,42 +46,79 @@ namespace Atlassian.plvs {
             addMarkersToDocument(textLines);
         }
 
+        private static readonly Regex blockInOneLine = new Regex(@"/*(.*)*/");
+        private static readonly Regex blockCommentStarted = new Regex(@"/*(.*)");
+        private static readonly Regex blockCommentEnded = new Regex(@"(.*)*/");
+
         private static void addMarkersToDocument(IVsTextLines textLines) {
             int lineCount;
             textLines.GetLineCount(out lineCount);
-            for (int i = 0; i < lineCount; ++i) {
+
+            CommentStrings commentMarkers = getCommentMarkerStrings(textLines);
+
+            bool isInBlockComment = false;
+            for (int lineNumber = 0; lineNumber < lineCount; ++lineNumber) {
                 string text;
-                int len;
-                textLines.GetLengthOfLine(i, out len);
-                textLines.GetLineText(i, 0, i, len, out text);
-                string cmt = getLineCommentString(textLines);
+                int lineLength;
+                textLines.GetLengthOfLine(lineNumber, out lineLength);
+                textLines.GetLineText(lineNumber, 0, lineNumber, lineLength, out text);
 
-                if (text == null || cmt == null || !text.Contains(cmt)) {
-                    continue;
+                if (text == null) continue;
+
+                //
+                // TEST ME!!!!
+                //
+//                if (commentMarkers.BlockOpen != null && commentMarkers.BlockClose != null) {
+//                    int current = 0;
+//                    MatchCollection matches;
+//                    if (isInBlockComment) {
+//                        matches = blockCommentEnded.Matches(text);
+//                        if (matches.Count > 0) {
+//                            scanCommentedLine(textLines, lineNumber, lineLength, matches[0].Value, 0);
+//                            current = matches[0].Length;
+//                        } else {
+//                            scanCommentedLine(textLines, lineNumber, lineLength, text, 0);
+//                            continue;
+//                        }
+//                    }
+//
+//                    matches = blockInOneLine.Matches(text, current);
+//                    for (int i = 0; i < matches.Count; ++i) {
+//                        scanCommentedLine(textLines, lineNumber, lineLength, matches[i].Value, matches[i].Index);
+//                        current = matches[i].Index + matches[i].Length;
+//                    }
+//
+//                    matches = blockCommentStarted.Matches(text, current);
+//                    if (matches.Count > 0) {
+//                        isInBlockComment = true;
+//                        scanCommentedLine(textLines, lineNumber, lineLength, matches[0].Value, current);
+//                    }
                 }
 
-                int cmtIdx = text.IndexOf(cmt);
-
-                MatchCollection matches = JiraIssueUtils.ISSUE_REGEX.Matches(text);
-                if (matches.Count > 0) {
-                    addMarker(textLines, i, 0, len, JiraLinkMarginMarkerType.Id,
-                              new TextMarkerClientEventSink(true, null));
-                }
-                for (int j = 0; j < matches.Count; ++j) {
-                    int index = matches[j].Index;
-                    if (index < cmtIdx) {
-                        continue;
-                    }
-                    addMarker(textLines, i, index, index + matches[j].Length, JiraLinkTextMarkerType.Id,
-                              new TextMarkerClientEventSink(false, matches[j].Value));
+                if (isInBlockComment || commentMarkers.Line == null) continue;
+                int lineCmtIdx = text.IndexOf(commentMarkers.Line);
+                if (lineCmtIdx != -1) {
+                    scanCommentedLine(textLines, lineNumber, lineLength, text.Substring(lineCmtIdx), lineCmtIdx);
                 }
             }
         }
 
-        private static string getLineCommentString(IVsTextLines lines) {
-            if (isCSharp(lines)) return "//";
-            if (isVb(lines)) return "'";
-            return null;
+        private static void scanCommentedLine(IVsTextLines textLines, int lineNumber, int lineLength, string text, int offset) {//}, int cmtIdx) {
+            MatchCollection matches = JiraIssueUtils.ISSUE_REGEX.Matches(text);
+            if (matches.Count > 0) {
+                addMarker(textLines, lineNumber, 0, lineLength, JiraLinkMarginMarkerType.Id, new TextMarkerClientEventSink(true, null));
+            }
+            for (int j = 0; j < matches.Count; ++j) {
+                int index = matches[j].Index + offset;
+                addMarker(textLines, lineNumber, index, index + matches[j].Length, JiraLinkTextMarkerType.Id,
+                          new TextMarkerClientEventSink(false, matches[j].Value));
+            }
+        }
+
+        private static CommentStrings getCommentMarkerStrings(IVsTextLines lines) {
+            if (isCSharp(lines)) return new CommentStrings("//", "/*", "*/");
+            if (isVb(lines)) return new CommentStrings("'", null, null);
+            return new CommentStrings();
         }
 
         private static bool isCSharp(IVsTextLines textLines) {
