@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Windows.Forms;
 using Atlassian.plvs.api;
 using Atlassian.plvs.models;
 using Microsoft.VisualStudio;
@@ -8,21 +9,28 @@ using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace Atlassian.plvs.eventsinks {
     public sealed class TextMarkerClientEventSink : IVsTextMarkerClient {
-        public IVsTextLineMarker TextMarker { get; set; }
-        public IVsTextLineMarker MarginMarker { get; set; }
+        private readonly bool marginMarker;
+        private readonly string issueKey;
+
+        public TextMarkerClientEventSink(bool marginMarker, string issueKey) {
+            this.marginMarker = marginMarker;
+            this.issueKey = issueKey;
+        }
+
+        public IVsTextLineMarker Marker { get; set; }
 
         #region IVsTextMarkerClient Members
 
         public void MarkerInvalidated() {
-            JiraEditorLinkManager.OnMarkerInvalidated(TextMarker);
-            JiraEditorLinkManager.OnMarkerInvalidated(MarginMarker);
+            JiraEditorLinkManager.OnMarkerInvalidated(Marker);
         }
 
         public int GetTipText(IVsTextMarker pMarker, string[] pbstrText) {
-            if (TextMarker != null)
-                pbstrText[0] = "Double click to try open PL-1357\non the currently selected server,\nRight click for more options";
-            else if (MarginMarker != null)
-                pbstrText[0] = "This line contains a link to issue PL-1357";
+            if (issueKey != null && !marginMarker)
+                pbstrText[0] = "Double click to try open " + issueKey +
+                               "\non the currently selected server,\nRight click for more options";
+            else if (marginMarker)
+                pbstrText[0] = "This line contains a link(s) to issues";
 
             return VSConstants.S_OK;
         }
@@ -36,21 +44,21 @@ namespace Atlassian.plvs.eventsinks {
             // Furthermore it should always be enabled.
             const uint menuItemFlags = (uint) (OLECMDF.OLECMDF_SUPPORTED | OLECMDF.OLECMDF_ENABLED);
 
-            if (pcmdf == null)
+            if (pcmdf == null) {
                 return VSConstants.S_FALSE;
-
+            }
+                
             switch (iItem) {
                 case 0:
-                    if (pbstrText != null)
-                    {
-                        pbstrText[0] = "Open Issue in IDE";
+                    if (pbstrText != null && issueKey != null) {
+                        pbstrText[0] = "Open Issue " + issueKey + " in IDE";
                         pcmdf[0] = menuItemFlags;
                         return VSConstants.S_OK;
                     }
                     return VSConstants.S_FALSE;
                 case 1:
-                    if (pbstrText != null) {
-                        pbstrText[0] = "View Issue in the Browser";
+                    if (pbstrText != null && issueKey != null) {
+                        pbstrText[0] = "View Issue " + issueKey + " in the Browser";
                         pcmdf[0] = menuItemFlags;
                         return VSConstants.S_OK;
                     }
@@ -58,11 +66,7 @@ namespace Atlassian.plvs.eventsinks {
 
                 case (int) MarkerCommandValues.mcvBodyDoubleClickCommand:
                     pcmdf[0] = menuItemFlags;
-                    return (TextMarker != null) ? VSConstants.S_OK : VSConstants.S_FALSE;
-
-//                case (int) MarkerCommandValues.mcvGlyphSingleClickCommand:
-//                    pcmdf[0] = menuItemFlags;
-//                    return (MarginMarker != null) ? VSConstants.S_OK : VSConstants.S_FALSE;
+                    return (marginMarker) ? VSConstants.S_FALSE : VSConstants.S_OK;
 
                 default:
                     return VSConstants.S_FALSE;
@@ -79,34 +83,46 @@ namespace Atlassian.plvs.eventsinks {
                     return VSConstants.S_OK;
 
                 case (int) MarkerCommandValues.mcvBodyDoubleClickCommand:
-                    if (TextMarker != null) openInIde();
+                    if (!marginMarker) openInIde();
                     return VSConstants.S_OK;
-
-//                case (int) MarkerCommandValues.mcvGlyphSingleClickCommand:
-//                    if (MarginMarker != null) launchBrowser();
-//                    return VSConstants.S_FALSE;
 
                 default:
                     return VSConstants.S_FALSE;
             }
         }
 
-        private static void openInIde() {
+        private void openInIde() {
+            if (issueKey == null) return;
+
             bool found = false;
             foreach (JiraIssue issue in JiraIssueListModel.Instance.Issues) {
-                if (!issue.Key.Equals("PL-1357") || !issue.Server.Url.Equals("https://studio.atlassian.com")) continue;
+                if (!issue.Key.Equals(issueKey)) continue;
                 IssueDetailsWindow.Instance.openIssue(issue);
                 found = true;
                 break;
             }
             if (!found) {
-                IssueListWindow.Instance.findAndOpenIssue("PL-1357", null);
+                IssueListWindow.Instance.findAndOpenIssue(issueKey, findFinished);
             }
         }
 
-        private static void launchBrowser() {
+        private static void findFinished(bool success, string message) {
+            if (!success) {
+                MessageBox.Show(message, "Error");
+            }
+        }
+
+        private void launchBrowser() {
+            if (issueKey == null) {
+                return;
+            }
             try {
-                Process.Start("https://studio.atlassian.com/browse/PL-1357");
+                JiraServer server = IssueListWindow.Instance.getCurrentlySelectedServer();
+                if (server != null) {
+                    Process.Start(server.Url + "/browse/" + issueKey);
+                } else {
+                    MessageBox.Show("No JIRA server selected", "Error");
+                }
             }
 // ReSharper disable EmptyGeneralCatchClause
             catch {}

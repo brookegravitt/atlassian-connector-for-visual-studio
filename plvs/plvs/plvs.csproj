@@ -118,6 +118,7 @@
     <Compile Include="eventsinks\RunningDocTableEventSink.cs" />
     <Compile Include="eventsinks\SolutionEventSink.cs" />
     <Compile Include="eventsinks\TextBufferDataEventSink.cs" />
+    <Compile Include="eventsinks\TextLinesEventSink.cs" />
     <Compile Include="eventsinks\TextManagerEventSink.cs" />
     <Compile Include="eventsinks\TextMarkerClientEventSink.cs" />
     <Compile Include="ExceptionBuilder.cs" />

@@ -1,5 +1,8 @@
-﻿using Atlassian.plvs.eventsinks;
+﻿using System;
+using System.Text.RegularExpressions;
+using Atlassian.plvs.eventsinks;
 using Atlassian.plvs.markers;
+using Atlassian.plvs.util;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.TextManager.Interop;
 
@@ -17,6 +20,14 @@ namespace Atlassian.plvs {
 
         public static void OnDocumentSaved(uint cookie) {}
 
+        public static void OnMarkerInvalidated(IVsTextLineMarker marker) {}
+
+        public static void OnDocumentChanged(IVsTextLines textLines) {
+            cleanupMarkers(textLines, JiraLinkTextMarkerType.Id);
+            cleanupMarkers(textLines, JiraLinkMarginMarkerType.Id);
+            addMarkersToDocument(textLines);
+        }
+
         private static void addMarkersToDocument(IVsTextLines textLines) {
             int lineCount;
             textLines.GetLineCount(out lineCount);
@@ -25,37 +36,48 @@ namespace Atlassian.plvs {
                 int len;
                 textLines.GetLengthOfLine(i, out len);
                 textLines.GetLineText(i, 0, i, len, out text);
-                string cmt = "//";
-                string issueKey = "PL-1357";
-                if (text == null || !text.Contains(cmt) || !text.Contains(issueKey)) continue;
+                const string cmt = "//";
+                if (text == null || !text.Contains(cmt)) {
+                    continue;
+                }
 
                 int cmtIdx = text.IndexOf(cmt);
-                int idx = text.IndexOf(issueKey);
 
-                if (idx < cmtIdx) continue;
-
-                addMarker(textLines, i, idx, idx + issueKey.Length);
+                MatchCollection matches = JiraIssueUtils.ISSUE_REGEX.Matches(text);
+                if (matches.Count > 0) {
+                    addMarker(textLines, i, 0, len, JiraLinkMarginMarkerType.Id, new TextMarkerClientEventSink(true, null));
+                }
+                for (int j = 0; j < matches.Count; ++j) {
+                    int index = matches[j].Index;
+                    if (index < cmtIdx) {
+                        continue;
+                    }
+                    addMarker(textLines, i, index, index + matches[j].Length, JiraLinkTextMarkerType.Id, new TextMarkerClientEventSink(false, matches[j].Value));
+                }
             }
         }
 
-        private static void addMarker(IVsTextLines textLines, int line, int start, int end) {
-            TextMarkerClientEventSink clientEventSinkMargin = new TextMarkerClientEventSink();
-            TextMarkerClientEventSink clientEventSinkText = new TextMarkerClientEventSink();
-
+        private static void addMarker(IVsTextLines textLines, int line, int start, int end, int markerType, TextMarkerClientEventSink client) {
             IVsTextLineMarker[] markers = new IVsTextLineMarker[1];
-
-            int hr = textLines.CreateLineMarker(JiraLinkMarginMarkerType.Id, line, start, line, end,
-                                                clientEventSinkMargin, markers);
+            int hr = textLines.CreateLineMarker(markerType, line, start, line, end, client, markers);
             if (!ErrorHandler.Succeeded(hr)) return;
-            clientEventSinkMargin.MarginMarker = markers[0];
-
-            hr = textLines.CreateLineMarker(JiraLinkTextMarkerType.Id, line, start, line, end, clientEventSinkText,
-                                            markers);
-
-            if (!ErrorHandler.Succeeded(hr)) return;
-            clientEventSinkText.TextMarker = markers[0];
+            client.Marker = markers[0];
         }
 
-        public static void OnMarkerInvalidated(IVsTextLineMarker marker) {}
+        private static void cleanupMarkers(IVsTextLines textLines, int markerType) {
+            IVsEnumLineMarkers markers;
+            textLines.EnumMarkers(0, 0, 0, 0, markerType, (uint) ENUMMARKERFLAGS.EM_ENTIREBUFFER, out markers);
+
+            int count;
+            markers.GetCount(out count);
+
+            for (int i = 0; i < count; ++i) {
+                IVsTextLineMarker marker;
+                markers.Next(out marker);
+                if (marker != null) {
+                    marker.Invalidate();
+                }
+            }
+        }
     }
 }

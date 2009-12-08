@@ -16,15 +16,15 @@ namespace Atlassian.plvs.eventsinks {
             // We have to keep track of the number of views that are currently open per
             // document. That way we can discover when a document is opened and insert
             // our custom text markers.
-            IVsTextLines textLines;
-            ErrorHandler.ThrowOnFailure(pView.GetBuffer(out textLines));
-            if (textLines == null)
+            IVsTextLines buffer;
+            ErrorHandler.ThrowOnFailure(pView.GetBuffer(out buffer));
+            if (buffer == null)
                 return;
 
             // Increment the stored view count.
             int documentViewCount;
-            documentViewCounts.TryGetValue(textLines, out documentViewCount);
-            documentViewCounts[textLines] = documentViewCount + 1;
+            documentViewCounts.TryGetValue(buffer, out documentViewCount);
+            documentViewCounts[buffer] = documentViewCount + 1;
 
             // If this view belongs to a document that had no views before the document
             // has been opened. It's time to notify the JiraEditorLinkManager about it.
@@ -34,27 +34,36 @@ namespace Atlassian.plvs.eventsinks {
             // get notified when the file load procedure completed.
             if (documentViewCount != 0) return;
 
-            TextBufferDataEventSink textBufferDataEventSink = new TextBufferDataEventSink();
-            IConnectionPoint connectionPoint;
+            IConnectionPoint connectionPointBufferDataEvents;
+            IConnectionPoint connectionPointTextLinesEvents;
             uint cookie;
 
-            IConnectionPointContainer textBufferData = (IConnectionPointContainer) textLines;
-            Guid interfaceGuid = typeof (IVsTextBufferDataEvents).GUID;
-            textBufferData.FindConnectionPoint(ref interfaceGuid, out connectionPoint);
-            connectionPoint.Advise(textBufferDataEventSink, out cookie);
+            IConnectionPointContainer container = (IConnectionPointContainer) buffer;
 
-            textBufferDataEventSink.TextLines = textLines;
-            textBufferDataEventSink.ConnectionPoint = connectionPoint;
+            Guid textBufferDataEventsGuid = typeof (IVsTextBufferDataEvents).GUID;
+            container.FindConnectionPoint(ref textBufferDataEventsGuid, out connectionPointBufferDataEvents);
+            TextBufferDataEventSink textBufferDataEventSink = new TextBufferDataEventSink();
+            connectionPointBufferDataEvents.Advise(textBufferDataEventSink, out cookie);
+            textBufferDataEventSink.TextLines = buffer;
+            textBufferDataEventSink.ConnectionPoint = connectionPointBufferDataEvents;
             textBufferDataEventSink.Cookie = cookie;
+
+            Guid eventsGuid = typeof(IVsTextLinesEvents).GUID;
+            container.FindConnectionPoint(ref eventsGuid, out connectionPointTextLinesEvents); 
+            TextLinesEventSink textLinesEventSink = new TextLinesEventSink();
+            connectionPointTextLinesEvents.Advise(textLinesEventSink, out cookie);
+            textLinesEventSink.TextLines = buffer;
+            textLinesEventSink.ConnectionPoint = connectionPointTextLinesEvents;
+            textLinesEventSink.Cookie = cookie;
         }
 
         public void OnUnregisterView(IVsTextView pView) {
             // It's interesting to us when a document is closed because we need this
             // information to keep track when a document is opened. Furthermore we
             // have to free all text markers.
-            IVsTextLines textLines;
-            ErrorHandler.ThrowOnFailure(pView.GetBuffer(out textLines));
-            if (textLines == null)
+            IVsTextLines buffer;
+            ErrorHandler.ThrowOnFailure(pView.GetBuffer(out buffer));
+            if (buffer == null)
                 return;
 
             // Decrement the stored view count. This is a little bit special as we use
@@ -63,21 +72,21 @@ namespace Atlassian.plvs.eventsinks {
             // to zero to prevent memory leaks.
             int documentViewCount;
 
-            if (!documentViewCounts.TryGetValue(textLines, out documentViewCount)) return;
+            if (!documentViewCounts.TryGetValue(buffer, out documentViewCount)) return;
 
             if (documentViewCount > 1) {
                 // There are several open views for the same document. In this case
                 // we only have to decrement the view count.
-                documentViewCounts[textLines] = documentViewCount - 1;
+                documentViewCounts[buffer] = documentViewCount - 1;
             }
             else {
                 // When we reach this branch the last view of a document has been
                 // closed. That means we have to free the whole IVsTextLines reference
                 // by removing it from the dictionary.
-                documentViewCounts.Remove(textLines);
+                documentViewCounts.Remove(buffer);
 
                 // Notify the CloneDetectiveManager of this event.
-                JiraEditorLinkManager.OnDocumentClosed(textLines);
+                JiraEditorLinkManager.OnDocumentClosed(buffer);
             }
         }
 
