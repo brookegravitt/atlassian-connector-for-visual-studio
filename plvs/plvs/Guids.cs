@@ -21,5 +21,11 @@ namespace Atlassian.plvs {
         public static readonly Guid JiraLinkMarginMarker = new Guid(JIRA_LINK_MARGIN_MARKER_STRING);
 
         public static readonly Guid JiraLinkTextMarker = new Guid(JIRA_LINK_TEXT_MARKER);
+
+        // this is VS2008 C# language GUID. It seems to be a hardcoded value
+        public static readonly Guid CSHARP_LANGUAGE_GUID = new Guid("694DD9B6-B865-4C5B-AD85-86356E9C88DC");
+
+        // this is VS2008 VB language GUID. It seems to be a hardcoded value
+        public static readonly Guid VB_LANGUAGE_GUID = new Guid("e34acdc0-baae-11d0-88bf-00a0c9110049");
     } ;
 }

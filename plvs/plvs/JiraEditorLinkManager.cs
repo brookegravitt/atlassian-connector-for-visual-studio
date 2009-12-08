@@ -15,6 +15,7 @@ namespace Atlassian.plvs {
         public static void OnDocumentClosed(IVsTextLines lines) {}
 
         public static void OnDocumentOpened(IVsTextLines lines) {
+            if (!(isCSharp(lines) || isVb(lines))) return;
             addMarkersToDocument(lines);
         }
 
@@ -23,6 +24,8 @@ namespace Atlassian.plvs {
         public static void OnMarkerInvalidated(IVsTextLineMarker marker) {}
 
         public static void OnDocumentChanged(IVsTextLines textLines) {
+            if (!(isCSharp(textLines) || isVb(textLines))) return;
+
             cleanupMarkers(textLines, JiraLinkTextMarkerType.Id);
             cleanupMarkers(textLines, JiraLinkMarginMarkerType.Id);
             addMarkersToDocument(textLines);
@@ -36,8 +39,9 @@ namespace Atlassian.plvs {
                 int len;
                 textLines.GetLengthOfLine(i, out len);
                 textLines.GetLineText(i, 0, i, len, out text);
-                const string cmt = "//";
-                if (text == null || !text.Contains(cmt)) {
+                string cmt = getLineCommentString(textLines);
+
+                if (text == null || cmt == null || !text.Contains(cmt)) {
                     continue;
                 }
 
@@ -45,19 +49,40 @@ namespace Atlassian.plvs {
 
                 MatchCollection matches = JiraIssueUtils.ISSUE_REGEX.Matches(text);
                 if (matches.Count > 0) {
-                    addMarker(textLines, i, 0, len, JiraLinkMarginMarkerType.Id, new TextMarkerClientEventSink(true, null));
+                    addMarker(textLines, i, 0, len, JiraLinkMarginMarkerType.Id,
+                              new TextMarkerClientEventSink(true, null));
                 }
                 for (int j = 0; j < matches.Count; ++j) {
                     int index = matches[j].Index;
                     if (index < cmtIdx) {
                         continue;
                     }
-                    addMarker(textLines, i, index, index + matches[j].Length, JiraLinkTextMarkerType.Id, new TextMarkerClientEventSink(false, matches[j].Value));
+                    addMarker(textLines, i, index, index + matches[j].Length, JiraLinkTextMarkerType.Id,
+                              new TextMarkerClientEventSink(false, matches[j].Value));
                 }
             }
         }
 
-        private static void addMarker(IVsTextLines textLines, int line, int start, int end, int markerType, TextMarkerClientEventSink client) {
+        private static string getLineCommentString(IVsTextLines lines) {
+            if (isCSharp(lines)) return "//";
+            if (isVb(lines)) return "'";
+            return null;
+        }
+
+        private static bool isCSharp(IVsTextLines textLines) {
+            Guid languageServiceId;
+            textLines.GetLanguageServiceID(out languageServiceId);
+            return GuidList.CSHARP_LANGUAGE_GUID.Equals(languageServiceId);
+        }
+
+        private static bool isVb(IVsTextLines textLines) {
+            Guid languageServiceId;
+            textLines.GetLanguageServiceID(out languageServiceId);
+            return GuidList.VB_LANGUAGE_GUID.Equals(languageServiceId);
+        }
+
+        private static void addMarker(IVsTextLines textLines, int line, int start, int end, int markerType,
+                                      TextMarkerClientEventSink client) {
             IVsTextLineMarker[] markers = new IVsTextLineMarker[1];
             int hr = textLines.CreateLineMarker(markerType, line, start, line, end, client, markers);
             if (!ErrorHandler.Succeeded(hr)) return;
