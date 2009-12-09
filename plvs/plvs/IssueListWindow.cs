@@ -37,6 +37,8 @@ namespace Atlassian.plvs {
             filtersTreeToolTip.SetToolTip(filtersTree, "");
             filtersTreeToolTip.Active = true;
 
+            buttonUpdate.Visible = false;
+
             Instance = this;
         }
 
@@ -650,6 +652,21 @@ namespace Atlassian.plvs {
                                                            }
                                                        }));
             runner.Start();
+        }
+
+        public void setAutoupdateAvailable() {
+            Invoke(new MethodInvoker(delegate {
+                                         buttonUpdate.Enabled = true;
+                                         buttonUpdate.Visible = true;
+                                     }));
+        }
+
+        public void setAutoupdateUnavailable(Exception exception) {
+            Invoke(new MethodInvoker(delegate {
+                                         buttonUpdate.Enabled = true;
+                                         buttonUpdate.Image = Resources.update_unavailable;
+                                         buttonUpdate.Visible = true;
+                                     }));
         }
     }
 }

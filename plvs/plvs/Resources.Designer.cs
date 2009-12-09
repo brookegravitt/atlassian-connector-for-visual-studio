@@ -312,13 +312,38 @@ namespace Atlassian.plvs {
             }
         }
         
+        internal static System.Drawing.Bitmap status_plugin {
+            get {
+                object obj = ResourceManager.GetObject("status_plugin", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap status_plugin1 {
+            get {
+                object obj = ResourceManager.GetObject("status_plugin1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to &lt;style type=&quot;text/css&quot;&gt;
-        ///.summary, .description 
-        ///{ 
+        ///.summary, .description { 
         ///	font-size:&quot;10pt&quot;;
         ///	font-family:&quot;Arial&quot;; 
         ///}
+        ///
+        ///.labelcolumn {
+        ///	text-align:&quot;right&quot;;
+        ///	padding-right:&quot;1em&quot;;
+        ///	font-weight:&quot;bold&quot;;
+        ///	vertical-align:&quot;top&quot;;
+        ///}
+        ///
+        ///.labelsummary {
+        ///	padding-bottom:&quot;1em&quot;;
+        ///}
+        ///
         ///&lt;/style&gt;
         ///.
         /// </summary>
@@ -370,6 +395,13 @@ namespace Atlassian.plvs {
         internal static System.Drawing.Bitmap unknown {
             get {
                 object obj = ResourceManager.GetObject("unknown", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap update_unavailable {
+            get {
+                object obj = ResourceManager.GetObject("update_unavailable", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
