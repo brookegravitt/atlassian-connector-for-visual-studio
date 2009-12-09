@@ -60,7 +60,9 @@ namespace Atlassian.plvs.models {
             [StringValue("Any User")]
             ANY = 1,
             [StringValue("Current User")]
-            CURRENT = 2
+            CURRENT = 2,
+            [StringValue("Unassigned")]
+            UNASSIGNED
         }
 
         public List<JiraProject> Projects { get; private set; }
@@ -151,10 +153,16 @@ namespace Atlassian.plvs.models {
                 sb.Append(first++ == 0 ? "" : "&").Append("priority=").Append(priority.Id);
             if (Reporter == UserType.CURRENT)
                 sb.Append(first++ == 0 ? "" : "&").Append("reporter=").Append(server.UserName);
-            // todo: we need to handle "Unassigned" case. But I have 
-            // no idea what the query for such case should be
-            if (Assignee == UserType.CURRENT)
-                sb.Append(first == 0 ? "" : "&").Append("assignee=").Append(server.UserName);
+            switch (Assignee) {
+                case UserType.CURRENT:
+                    sb.Append(first == 0 ? "" : "&").Append("assignee=").Append(server.UserName);
+                    break;
+                case UserType.UNASSIGNED:
+                    sb.Append(first == 0 ? "" : "&").Append("assigneSelect=unassigned");
+                    break;
+                default:
+                    break;
+            }
 
             return sb.ToString();
         }
