@@ -9,7 +9,15 @@
   <property name="build.type" value="SNAPSHOT" overwrite="false" readonly="false" />
   <property name="set.timestamp" value="false" overwrite="false" />
   <property name="build.stamp" value="00000000-0000" overwrite="false" readonly="false" />
-
+  <property name="upload.host" value="docs.atlassian.com" overwrite="false" />
+  <property name="upload.dir" value="/var/www/domains/atlassian.com/docs/htdocs/atlassian-vs-plugin" overwrite="false" />
+  <property name="download.url" value="http://docs.atlassian.com/atlassian-vs-plugin/Downloads" overwrite="false" />
+  <property name="snapshot.xml.file" value="latestPossibleVersion.xml" overwrite="false" />
+  <property name="scp.exe" value="c:/progra~1/putty/pscp.exe" overwrite="false" />
+  <property name="scp.key" value="c:/Users/kalamon/putty.keys/dac.private.ppk" overwrite="false" />
+  <property name="scp.opts" value="-i ${scp.key} -agent -q" overwrite="false" />
+  <property name="scp.login" value="jgorycki" overwrite="false" />
+  
   <!--  read-only properties-->
   <property name="main.project" value="plvs" />
   <property name="setup.project" value="plvs_Setup" />
@@ -46,6 +54,30 @@
           tofile="${setup.project}/bin/${configuration}/${setup.base.file.name}-${version}-${build.type}-${build.stamp}.msi" />
   </target>
 
+  <target name="snapshot.xml.update" depends="make.setup.file">
+    <xmlpoke
+       file="${snapshot.xml.file}" 
+       xpath="/response/version/number"
+       value="${version}-${build.type}-${build.stamp}" />
+    <xmlpoke
+       file="${snapshot.xml.file}" 
+       xpath="/response/version/downloadUrl"
+       value="${download.url}/${setup.base.file.name}-${version}-${build.type}-${build.stamp}.msi" />
+  </target>
+
+  <target name="upload.snapshot" depends="snapshot.xml.update">
+    <exec program="${scp.exe}">
+      <arg line="${scp.opts}" />
+      <arg value="${setup.project}/bin/${configuration}/${setup.base.file.name}-${version}-${build.type}-${build.stamp}.msi" />
+      <arg value="${scp.login}@${upload.host}:${upload.dir}/Downloads/${setup.base.file.name}-${version}-${build.type}-${build.stamp}.msi" />
+    </exec>
+    <exec program="${scp.exe}">
+      <arg line="${scp.opts}" />
+      <arg value="${snapshot.xml.file}" />
+      <arg value="${scp.login}@${upload.host}:${upload.dir}/${snapshot.xml.file}" />
+    </exec>
+  </target>
+  
   <target name="help">
     <echo>
       Targets:
