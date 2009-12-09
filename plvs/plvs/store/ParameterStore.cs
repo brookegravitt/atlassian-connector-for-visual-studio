@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -43,6 +44,10 @@ namespace Atlassian.plvs.store {
             using (BinaryWriter bw = new BinaryWriter(stream)) {
                 bw.Write(sb.ToString());
             }
+        }
+
+        public void clear() {
+            parameterMap.Clear();
         }
     }
 }
