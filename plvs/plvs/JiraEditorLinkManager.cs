@@ -8,7 +8,11 @@ using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace Atlassian.plvs {
     internal class JiraEditorLinkManager {
-        
+
+        private static readonly Regex BlockInOneLine = new Regex(@"/\*(.*)\*/");
+        private static readonly Regex BlockCommentStarted = new Regex(@"/\*(.*)");
+        private static readonly Regex BlockCommentEnded = new Regex(@"(.*)\*/");
+
         private class CommentStrings {
             public CommentStrings(string line, string blockOpen, string blockClose) {
                 Line = line;
@@ -46,10 +50,6 @@ namespace Atlassian.plvs {
             addMarkersToDocument(textLines);
         }
 
-        private static readonly Regex blockInOneLine = new Regex(@"/*(.*)*/");
-        private static readonly Regex blockCommentStarted = new Regex(@"/*(.*)");
-        private static readonly Regex blockCommentEnded = new Regex(@"(.*)*/");
-
         private static void addMarkersToDocument(IVsTextLines textLines) {
             int lineCount;
             textLines.GetLineCount(out lineCount);
@@ -60,59 +60,84 @@ namespace Atlassian.plvs {
             for (int lineNumber = 0; lineNumber < lineCount; ++lineNumber) {
                 string text;
                 int lineLength;
+
+                int issueCount = 0;
+
                 textLines.GetLengthOfLine(lineNumber, out lineLength);
                 textLines.GetLineText(lineNumber, 0, lineNumber, lineLength, out text);
 
                 if (text == null) continue;
 
-                //
-                // TEST ME!!!!
-                //
-//                if (commentMarkers.BlockOpen != null && commentMarkers.BlockClose != null) {
-//                    int current = 0;
-//                    MatchCollection matches;
-//                    if (isInBlockComment) {
-//                        matches = blockCommentEnded.Matches(text);
-//                        if (matches.Count > 0) {
-//                            scanCommentedLine(textLines, lineNumber, lineLength, matches[0].Value, 0);
-//                            current = matches[0].Length;
-//                        } else {
-//                            scanCommentedLine(textLines, lineNumber, lineLength, text, 0);
-//                            continue;
-//                        }
-//                    }
-//
-//                    matches = blockInOneLine.Matches(text, current);
-//                    for (int i = 0; i < matches.Count; ++i) {
-//                        scanCommentedLine(textLines, lineNumber, lineLength, matches[i].Value, matches[i].Index);
-//                        current = matches[i].Index + matches[i].Length;
-//                    }
-//
-//                    matches = blockCommentStarted.Matches(text, current);
-//                    if (matches.Count > 0) {
-//                        isInBlockComment = true;
-//                        scanCommentedLine(textLines, lineNumber, lineLength, matches[0].Value, current);
-//                    }
-//                }
+                if (commentMarkers.BlockOpen != null && commentMarkers.BlockClose != null) {
+                    int current = 0;
+                    MatchCollection matches;
+                    if (isInBlockComment) {
+                        matches = BlockCommentEnded.Matches(text);
+                        if (matches.Count > 0) {
+                            scanCommentedLine(textLines, lineNumber, matches[0].Value, 0, ref issueCount);
+                            current = matches[0].Length;
+                            isInBlockComment = false;
+                        } else {
+                            scanCommentedLine(textLines, lineNumber, text, 0, ref issueCount);
+                            maybeAddMarginMarker(textLines, lineNumber, lineLength, issueCount);
+                            continue;
+                        }
+                    } else {
+                        if (scanForLineComment(textLines, lineNumber, text, commentMarkers, ref issueCount)) {
+                            maybeAddMarginMarker(textLines, lineNumber, lineLength, issueCount);
+                            continue;
+                        }
+                    }
 
-                if (isInBlockComment || commentMarkers.Line == null) continue;
-                int lineCmtIdx = text.IndexOf(commentMarkers.Line);
-                if (lineCmtIdx != -1) {
-                    scanCommentedLine(textLines, lineNumber, lineLength, text.Substring(lineCmtIdx), lineCmtIdx);
+                    matches = BlockInOneLine.Matches(text, current);
+                    for (int i = 0; i < matches.Count; ++i) {
+                        scanCommentedLine(textLines, lineNumber, matches[i].Value, matches[i].Index, ref issueCount);
+                        current = matches[i].Index + matches[i].Length;
+                    }
+
+                    if (scanForLineComment(textLines, lineNumber, text, commentMarkers, ref issueCount)) {
+                        maybeAddMarginMarker(textLines, lineNumber, lineLength, issueCount);
+                        continue;
+                    }
+
+                    matches = BlockCommentStarted.Matches(text, current);
+                    if (matches.Count > 0) {
+                        isInBlockComment = true;
+                        scanCommentedLine(textLines, lineNumber, matches[0].Value, matches[0].Index, ref issueCount);
+                    }
+                } else {
+                    if (isInBlockComment || commentMarkers.Line == null) {
+                        maybeAddMarginMarker(textLines, lineNumber, lineLength, issueCount);
+                        continue;
+                    }
+
+                    scanForLineComment(textLines, lineNumber, text, commentMarkers, ref issueCount);
                 }
+                maybeAddMarginMarker(textLines, lineNumber, lineLength, issueCount);
             }
         }
 
-        private static void scanCommentedLine(IVsTextLines textLines, int lineNumber, int lineLength, string text, int offset) {//}, int cmtIdx) {
+        private static void maybeAddMarginMarker(IVsTextLines textLines, int lineNumber, int lineLength, int issueCount) {
+            if (issueCount > 0)
+                addMarker(textLines, lineNumber, 0, lineLength, JiraLinkMarginMarkerType.Id, new MarginMarkerClientEventSink(issueCount));
+        }
+
+        private static bool scanForLineComment(IVsTextLines textLines, int lineNumber, string text, CommentStrings commentMarkers, ref int count) {
+            int lineCmtIdx = text.IndexOf(commentMarkers.Line);
+            return lineCmtIdx != -1 && scanCommentedLine(textLines, lineNumber, text.Substring(lineCmtIdx), lineCmtIdx, ref count);
+        }
+
+        private static bool scanCommentedLine(IVsTextLines textLines, int lineNumber, string text, int offset, ref int count) {
             MatchCollection matches = JiraIssueUtils.ISSUE_REGEX.Matches(text);
             if (matches.Count > 0) {
-                addMarker(textLines, lineNumber, 0, lineLength, JiraLinkMarginMarkerType.Id, new TextMarkerClientEventSink(true, null));
+                count += matches.Count;
             }
             for (int j = 0; j < matches.Count; ++j) {
                 int index = matches[j].Index + offset;
                 addMarker(textLines, lineNumber, index, index + matches[j].Length, JiraLinkTextMarkerType.Id,
-                          new TextMarkerClientEventSink(false, matches[j].Value));
+                          new TextMarkerClientEventSink(matches[j].Value));
             }
+            return matches.Count > 0;
         }
 
         private static CommentStrings getCommentMarkerStrings(IVsTextLines lines) {
@@ -134,7 +159,7 @@ namespace Atlassian.plvs {
         }
 
         private static void addMarker(IVsTextLines textLines, int line, int start, int end, int markerType,
-                                      TextMarkerClientEventSink client) {
+                                      AbstractMarkerClientEventSink client) {
             IVsTextLineMarker[] markers = new IVsTextLineMarker[1];
             int hr = textLines.CreateLineMarker(markerType, line, start, line, end, client, markers);
             if (!ErrorHandler.Succeeded(hr)) return;

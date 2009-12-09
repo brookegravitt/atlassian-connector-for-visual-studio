@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows.Forms;
 using Atlassian.plvs.api;
 using Atlassian.plvs.models;
@@ -8,38 +7,22 @@ using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace Atlassian.plvs.eventsinks {
-    public sealed class TextMarkerClientEventSink : IVsTextMarkerClient {
-        private readonly bool marginMarker;
+    public sealed class TextMarkerClientEventSink : AbstractMarkerClientEventSink {
         private readonly string issueKey;
 
-        public TextMarkerClientEventSink(bool marginMarker, string issueKey) {
-            this.marginMarker = marginMarker;
+        public TextMarkerClientEventSink(string issueKey) {
             this.issueKey = issueKey;
         }
 
-        public IVsTextLineMarker Marker { get; set; }
-
-        #region IVsTextMarkerClient Members
-
-        public void MarkerInvalidated() {
-            JiraEditorLinkManager.OnMarkerInvalidated(Marker);
-        }
-
-        public int GetTipText(IVsTextMarker pMarker, string[] pbstrText) {
-            if (issueKey != null && !marginMarker)
+        public override int GetTipText(IVsTextMarker pMarker, string[] pbstrText) {
+            if (issueKey != null)
                 pbstrText[0] = "Double click to try open " + issueKey +
                                "\non the currently selected server,\nRight click for more options";
-            else if (marginMarker)
-                pbstrText[0] = "This line contains a link(s) to issues";
 
             return VSConstants.S_OK;
         }
 
-        public void OnBufferSave(string pszFileName) {}
-
-        public void OnBeforeBufferClose() {}
-
-        public int GetMarkerCommandInfo(IVsTextMarker pMarker, int iItem, string[] pbstrText, uint[] pcmdf) {
+        public override int GetMarkerCommandInfo(IVsTextMarker pMarker, int iItem, string[] pbstrText, uint[] pcmdf) {
             // For each command we add we have to specify that we support it.
             // Furthermore it should always be enabled.
             const uint menuItemFlags = (uint) (OLECMDF.OLECMDF_SUPPORTED | OLECMDF.OLECMDF_ENABLED);
@@ -66,14 +49,14 @@ namespace Atlassian.plvs.eventsinks {
 
                 case (int) MarkerCommandValues.mcvBodyDoubleClickCommand:
                     pcmdf[0] = menuItemFlags;
-                    return (marginMarker) ? VSConstants.S_FALSE : VSConstants.S_OK;
+                    return VSConstants.S_OK;
 
                 default:
                     return VSConstants.S_FALSE;
             }
         }
 
-        public int ExecMarkerCommand(IVsTextMarker pMarker, int iItem) {
+        public override int ExecMarkerCommand(IVsTextMarker pMarker, int iItem) {
             switch (iItem) {
                 case 0:
                     openInIde();
@@ -83,7 +66,7 @@ namespace Atlassian.plvs.eventsinks {
                     return VSConstants.S_OK;
 
                 case (int) MarkerCommandValues.mcvBodyDoubleClickCommand:
-                    if (!marginMarker) openInIde();
+                    openInIde();
                     return VSConstants.S_OK;
 
                 default:
@@ -128,13 +111,5 @@ namespace Atlassian.plvs.eventsinks {
             catch {}
 // ReSharper restore EmptyGeneralCatchClause
         }
-
-        public void OnAfterSpanReload() {}
-
-        public int OnAfterMarkerChange(IVsTextMarker pMarker) {
-            return VSConstants.S_OK;
-        }
-
-        #endregion
     }
 }

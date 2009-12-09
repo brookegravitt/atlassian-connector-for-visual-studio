@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Atlassian.plvs.models;
+using Atlassian.plvs.store;
 using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
@@ -73,10 +74,11 @@ namespace Atlassian.plvs.eventsinks {
             try {
                 JiraEditorLinkManager.OnSolutionClosed();
                 if (ToolWindowManager.Instance.AtlassianWindow == null) return VSConstants.S_OK;
-//                JiraServerModel.Instance.save();
-//                JiraCustomFilter.save();
+                JiraServerModel.Instance.clear();
+                ParameterStoreManager.Instance.clear();
+                // initialize with a clear server list
+                IssueListWindow.Instance.reinitialize();
                 JiraIssueListModel.Instance.removeAllListeners();
-//                RecentlyViewedIssuesModel.Instance.save();
                 IssueDetailsWindow.Instance.clearAllIssues();
                 IssueDetailsWindow.Instance.FrameVisible = false;
                 ToolWindowManager.Instance.AtlassianWindow = null;

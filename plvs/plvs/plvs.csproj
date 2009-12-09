@@ -115,6 +115,8 @@
     <Compile Include="dialogs\TestJiraConnection.Designer.cs">
       <DependentUpon>TestJiraConnection.cs</DependentUpon>
     </Compile>
+    <Compile Include="eventsinks\AbstractMarkerClientEventSink.cs" />
+    <Compile Include="eventsinks\MarginMarkerClientEventSink.cs" />
     <Compile Include="eventsinks\RunningDocTableEventSink.cs" />
     <Compile Include="eventsinks\SolutionEventSink.cs" />
     <Compile Include="eventsinks\TextBufferDataEventSink.cs" />

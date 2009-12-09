@@ -30,6 +30,12 @@ namespace Atlassian.plvs.store {
             return stores[type];
         }
 
+        public void clear() {
+            foreach (ParameterStore store in stores.Values) {
+                store.clear();
+            }
+        }
+
         public int SaveUserOptions(IVsSolutionPersistence pPersistence) {
             try {
                 foreach (StoreType type in Enum.GetValues(typeof (StoreType))) {
@@ -61,7 +67,7 @@ namespace Atlassian.plvs.store {
                         StoreType type = getTypeFromKey(pszKey);
                         stores[type].writeOptions(wrapper);
 // ReSharper disable EmptyGeneralCatchClause
-                    } catch (Exception e) {
+                    } catch (Exception) {
 // ReSharper restore EmptyGeneralCatchClause
                     }
                 }
@@ -80,7 +86,7 @@ namespace Atlassian.plvs.store {
                         StoreType type = getTypeFromKey(pszKey);
                         stores[type].readOptions(wrapper);
 // ReSharper disable EmptyGeneralCatchClause
-                    } catch (Exception e) {
+                    } catch (Exception) {
 // ReSharper restore EmptyGeneralCatchClause
                     }
                 }
