@@ -7,7 +7,6 @@
   <property name="nantcontrib-home" value="c:/devtools/nantcontrib-0.85/" overwrite="false" />
   <property name="version" value="0.0.0" overwrite="false" readonly="false" />
   <property name="build.type" value="SNAPSHOT" overwrite="false" readonly="false" />
-  <property name="set.timestamp" value="false" overwrite="false" />
   <property name="build.stamp" value="00000000-0000" overwrite="false" readonly="false" />
   <property name="upload.host" value="docs.atlassian.com" overwrite="false" />
   <property name="upload.dir" value="/var/www/domains/atlassian.com/docs/htdocs/atlassian-vs-plugin" overwrite="false" />
@@ -25,12 +24,12 @@
 
   <target name="version.update">
     <loadfile file="version.info" property="version"/>
-    <tstamp property="current.build.stamp" pattern="yyyyMMdd" verbose="true" />
+    <tstamp property="build.stamp" pattern="yyyyMMdd-HHmm" verbose="true" />
     <echo file="plvs/PlvsVersionInfo.cs">
       namespace Atlassian.plvs {
           public class PlvsVersionInfo {
               public static string Version { get { return "${version}"; } }
-              public static string Stamp { get { return "${current.build.stamp}"; } }
+              public static string Stamp { get { return "${build.stamp}"; } }
           }
       }
     </echo>
@@ -49,7 +48,6 @@
   </target>
 
   <target name="make.setup.file" depends="build.setup"  >
-    <tstamp property="build.stamp" pattern="yyyyMMdd-HHmm" verbose="true" />
     <copy file="${setup.project}/bin/${configuration}/${setup.project}.msi"
           tofile="${setup.project}/bin/${configuration}/${setup.base.file.name}-${version}-${build.type}-${build.stamp}.msi" />
   </target>
