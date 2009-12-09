@@ -1,0 +1,16 @@
+<response>
+  <version>
+    <number>0.1.0-SNAPSHOT-20091209-0953</number>
+    <downloadUrl>http://docs.atlassian.com/atlassian-vs-plugin/Downloads/atlassian-vs-connector-setup-0.1.0-SNAPSHOT-20091209-0953.msi</downloadUrl>
+    <releaseNotes><![CDATA[
+              <html><body>
+
+        <p>
+        This is a SNAPSHOT version. We do testing but cannot guarantee the major version stability level.         
+        </p>
+
+        </body></html>
+        ]]></releaseNotes>
+    <releaseNotesUrl>http://confluence.atlassian.com/display/IDEPLUGIN/IDE+Connector+Documentation</releaseNotesUrl>
+  </version>
+</response>
