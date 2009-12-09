@@ -273,76 +273,52 @@ namespace Atlassian.plvs {
 
             Thread metadataThread = new Thread(new ThreadStart(delegate {
                                                                    try {
+                                                                       JiraServerCache.Instance.clearProjects();
+                                                                       JiraServerCache.Instance.clearIssueTypes();
+                                                                       JiraServerCache.Instance.clearStatuses();
+                                                                       JiraServerCache.Instance.clearPriorities();
+
                                                                        foreach (JiraServer server in servers) {
-                                                                           status.setInfo("[" + server.Name +
-                                                                                          "] Loading project definitions...");
-                                                                           List<JiraProject> projects =
-                                                                               facade.getProjects(server);
-                                                                           JiraServerCache.Instance.clearProjects();
+                                                                           status.setInfo("[" + server.Name + "] Loading project definitions...");
+                                                                           List<JiraProject> projects = facade.getProjects(server);
                                                                            foreach (JiraProject proj in projects) {
-                                                                               JiraServerCache.Instance.addProject(
-                                                                                   server, proj);
+                                                                               JiraServerCache.Instance.addProject(server, proj);
                                                                            }
-                                                                           status.setInfo("[" + server.Name +
-                                                                                          "] Loading issue types...");
-                                                                           List<JiraNamedEntity> issueTypes =
-                                                                               facade.getIssueTypes(server);
-                                                                           JiraServerCache.Instance.clearIssueTypes();
+                                                                           status.setInfo("[" + server.Name + "] Loading issue types...");
+                                                                           List<JiraNamedEntity> issueTypes = facade.getIssueTypes(server);
                                                                            foreach (JiraNamedEntity type in issueTypes) {
-                                                                               JiraServerCache.Instance.addIssueType(
-                                                                                   server, type);
+                                                                               JiraServerCache.Instance.addIssueType(server, type);
                                                                                ImageCache.Instance.getImage(type.IconUrl);
                                                                            }
-                                                                           status.setInfo("[" + server.Name +
-                                                                                          "] Loading issue priorities...");
-                                                                           List<JiraNamedEntity> priorities =
-                                                                               facade.getPriorities(server);
-                                                                           JiraServerCache.Instance.clearPriorities();
+                                                                           status.setInfo("[" + server.Name + "] Loading issue priorities...");
+                                                                           List<JiraNamedEntity> priorities = facade.getPriorities(server);
                                                                            foreach (JiraNamedEntity prio in priorities) {
-                                                                               JiraServerCache.Instance.addPriority(
-                                                                                   server, prio);
+                                                                               JiraServerCache.Instance.addPriority(server, prio);
                                                                                ImageCache.Instance.getImage(prio.IconUrl);
                                                                            }
-                                                                           status.setInfo("[" + server.Name +
-                                                                                          "] Loading issue statuses...");
-                                                                           List<JiraNamedEntity> statuses =
-                                                                               facade.getStatuses(server);
-                                                                           JiraServerCache.Instance.clearStatuses();
+                                                                           status.setInfo("[" + server.Name + "] Loading issue statuses...");
+                                                                           List<JiraNamedEntity> statuses = facade.getStatuses(server);
                                                                            foreach (JiraNamedEntity s in statuses) {
-                                                                               JiraServerCache.Instance.addStatus(
-                                                                                   server, s);
+                                                                               JiraServerCache.Instance.addStatus(server, s);
                                                                                ImageCache.Instance.getImage(s.IconUrl);
                                                                            }
 
-                                                                           status.setInfo("[" + server.Name +
-                                                                                          "] Loading saved filters...");
-                                                                           List<JiraSavedFilter> filters =
-                                                                               facade.getSavedFilters(server);
+                                                                           status.setInfo("[" + server.Name + "] Loading saved filters...");
+                                                                           List<JiraSavedFilter> filters = facade.getSavedFilters(server);
                                                                            JiraServer jiraServer = server;
                                                                            Invoke(new MethodInvoker(delegate {
-                                                                                                        fillSavedFiltersForServer
-                                                                                                            (jiraServer,
-                                                                                                             filters);
-                                                                                                        status.setInfo(
-                                                                                                            "Loaded saved filters for server " +
-                                                                                                            jiraServer.
-                                                                                                                Name);
-                                                                                                        addCustomFilterNodes
-                                                                                                            (jiraServer);
+                                                                                                        fillSavedFiltersForServer(jiraServer, filters);
+                                                                                                        status.setInfo("Loaded saved filters for server " + jiraServer.Name);
+                                                                                                        addCustomFilterNodes(jiraServer);
                                                                                                     }));
                                                                        }
                                                                        Invoke(new MethodInvoker(delegate {
-                                                                                                    filtersTree.Nodes.
-                                                                                                        Add(
-                                                                                                        new RecentlyOpenIssuesTreeNode
-                                                                                                            (3));
-                                                                                                    filtersTree.
-                                                                                                        ExpandAll();
+                                                                            filtersTree.Nodes.Add(new RecentlyOpenIssuesTreeNode(3));
+                                                                                                    filtersTree.ExpandAll();
                                                                                                 }));
                                                                    }
                                                                    catch (Exception e) {
-                                                                       status.setError(
-                                                                           "Failed to load server metadata", e);
+                                                                       status.setError("Failed to load server metadata", e);
                                                                    }
                                                                }));
             metadataThread.Start();
