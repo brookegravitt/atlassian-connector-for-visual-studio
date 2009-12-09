@@ -99,6 +99,14 @@
 
           build.type       - build type stamp used.
                              Default: "SNAPSHOT"
+          
+          scp.exe          - location of the pscp.exe program
+          
+          scp.key          - location of the private key for pscp
+                             (key must not be passphrase-protected)
+          
+          scp.login        - login name for pscp
+          
     </echo>
   </target>
 </project>
