@@ -84,19 +84,20 @@
           clean           - cleans up the current configuration
           build.setup     - creates ${setup.project}.msi file
           make.setup.file - creates setup file with a target file name
-
+          upload.snapshot - builds a setup file and uploads to DAC
+      
       Build artifacts are stored in the
       ${setup.project}/bin/$${configuration} directory
 
       Overridable properties:
-      
-          configuration    - "Debug" or "Release". 
+
+          configuration    - "Debug" or "Release".
                              Default: "Release"
-                             
-          nantcontrib-home - Home of the NAnt-contrib package. 
+
+          nantcontrib-home - Home of the NAnt-contrib package.
                              Default: "c:/devtools/nantcontrib-0.85/"
-                             
-          build.type       - build type stamp used. 
+
+          build.type       - build type stamp used.
                              Default: "SNAPSHOT"
     </echo>
   </target>
