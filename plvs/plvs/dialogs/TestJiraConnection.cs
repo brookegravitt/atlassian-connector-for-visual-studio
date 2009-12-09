@@ -24,13 +24,17 @@ namespace Atlassian.plvs.dialogs {
                                                     catch (SoapSession.LoginException e) {
                                                         result = e.InnerException.Message;
                                                     }
-                                                    Invoke(new MethodInvoker(delegate { stopTest(result); }));
+                                                    Invoke(new MethodInvoker(() => stopTest(result)));
                                                 }));
 
             worker.Start();
         }
 
         private void buttonClose_Click(object sender, EventArgs e) {
+            stopOrClose();
+        }
+
+        private void stopOrClose() {
             if (!testInProgress) {
                 Close();
             }
@@ -46,6 +50,12 @@ namespace Atlassian.plvs.dialogs {
             status.Text = text;
             progress.Visible = false;
             buttonClose.Text = "Close";
+        }
+
+        private void TestJiraConnection_KeyPress(object sender, KeyPressEventArgs e) {
+            if (e.KeyChar.Equals(Keys.Escape)) {
+                stopOrClose();
+            }
         }
     }
 }

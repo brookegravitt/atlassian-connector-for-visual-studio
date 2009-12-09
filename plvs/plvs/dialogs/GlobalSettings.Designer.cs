@@ -52,6 +52,7 @@
             this.Name = "GlobalSettings";
             this.ShowIcon = false;
             this.Text = "Global Settings";
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.GlobalSettings_KeyPress);
             this.ResumeLayout(false);
             this.PerformLayout();
 

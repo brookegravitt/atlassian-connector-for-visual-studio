@@ -77,5 +77,11 @@ namespace Atlassian.plvs.dialogs {
             }
             Close();
         }
+
+        private void SearchIssue_KeyPress(object sender, KeyPressEventArgs e) {
+            if (e.KeyChar.Equals(Keys.Escape) && buttonCancel.Enabled) {
+                Close();
+            }
+        }
     }
 }

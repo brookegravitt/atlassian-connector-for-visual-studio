@@ -67,6 +67,7 @@
     <Compile Include="api\JiraServerFacade.cs" />
     <Compile Include="api\RssClient.cs" />
     <Compile Include="api\soap\SoapSession.cs" />
+    <Compile Include="attributes\StringValueAttribute.cs" />
     <Compile Include="Autoupdate.cs">
     </Compile>
     <Compile Include="dialogs\About.cs">
@@ -194,6 +195,7 @@
     <Compile Include="ui\StatusLabel.cs" />
     <Compile Include="ui\TreeNodeWithServer.cs" />
     <Compile Include="store\ParameterStoreManager.cs" />
+    <Compile Include="util\JiraCustomFilterUtils.cs" />
     <Compile Include="util\JiraIssueUtils.cs" />
     <Compile Include="util\StreamEater.cs" />
     <Compile Include="PlvsVersionInfo.cs" />

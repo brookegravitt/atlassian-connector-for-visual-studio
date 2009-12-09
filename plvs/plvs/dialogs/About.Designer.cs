@@ -77,6 +77,7 @@
             this.Name = "About";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "About Atlassian Visual Studio Connector";
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.About_KeyPress);
             ((System.ComponentModel.ISupportInitialize)(this.picture)).EndInit();
             this.ResumeLayout(false);
 
