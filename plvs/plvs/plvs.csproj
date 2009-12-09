@@ -67,6 +67,8 @@
     <Compile Include="api\JiraServerFacade.cs" />
     <Compile Include="api\RssClient.cs" />
     <Compile Include="api\soap\SoapSession.cs" />
+    <Compile Include="Autoupdate.cs">
+    </Compile>
     <Compile Include="dialogs\About.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -388,8 +390,11 @@
     <Content Include="Resources\icons\projectsettings.png" />
     <Content Include="Resources\icons\refresh.png" />
     <Content Include="Resources\icons\search-jira.png" />
+    <Content Include="Resources\icons\status_plugin.gif" />
+    <Content Include="Resources\icons\status_plugin.png" />
     <Content Include="Resources\icons\tab_jira.png" />
     <Content Include="Resources\icons\unknown.png" />
+    <Content Include="Resources\icons\update_unavailable.png" />
     <Content Include="Resources\icons\view_in_browser.png" />
     <None Include="LICENSE" />
     <None Include="Resources\texts\about_html.txt" />
