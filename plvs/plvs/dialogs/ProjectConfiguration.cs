@@ -105,5 +105,11 @@ namespace Atlassian.plvs.dialogs {
             JiraServerTreeNode selectedNode = (JiraServerTreeNode) serverTree.SelectedNode;
             new TestJiraConnection(facade, selectedNode.Server).ShowDialog();
         }
+
+        private void ProjectConfiguration_KeyPress(object sender, KeyPressEventArgs e) {
+            if (e.KeyChar.Equals(Keys.Escape)) {
+                Close();
+            }
+        }
     }
 }

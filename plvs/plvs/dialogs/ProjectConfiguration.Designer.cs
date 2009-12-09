@@ -39,7 +39,7 @@
             // serverTree
             // 
             this.serverTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                                                                           | System.Windows.Forms.AnchorStyles.Left)));
+                        | System.Windows.Forms.AnchorStyles.Left)));
             this.serverTree.HideSelection = false;
             this.serverTree.Location = new System.Drawing.Point(12, 41);
             this.serverTree.Name = "serverTree";
@@ -61,7 +61,7 @@
             // serverDetails
             // 
             this.serverDetails.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                                                                              | System.Windows.Forms.AnchorStyles.Right)));
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.serverDetails.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.serverDetails.Location = new System.Drawing.Point(242, 41);
             this.serverDetails.Multiline = true;
@@ -133,6 +133,7 @@
             this.Name = "ProjectConfiguration";
             this.ShowIcon = false;
             this.Text = "Project Configuration";
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ProjectConfiguration_KeyPress);
             this.ResumeLayout(false);
             this.PerformLayout();
 

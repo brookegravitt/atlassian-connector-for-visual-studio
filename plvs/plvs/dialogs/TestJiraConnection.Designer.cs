@@ -77,6 +77,7 @@
             this.MinimizeBox = false;
             this.Name = "TestJiraConnection";
             this.Text = "Test Connection to JIRA Server";
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TestJiraConnection_KeyPress);
             this.ResumeLayout(false);
             this.PerformLayout();
 

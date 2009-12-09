@@ -338,6 +338,7 @@
             this.Name = "EditCustomFilter";
             this.ShowIcon = false;
             this.Text = "Edit Custom Filter";
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.EditCustomFilter_KeyPress);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);

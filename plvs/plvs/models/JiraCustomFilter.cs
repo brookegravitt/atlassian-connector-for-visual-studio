@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using Atlassian.plvs.api;
+using Atlassian.plvs.attributes;
 using Atlassian.plvs.store;
+using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.models {
     public class JiraCustomFilter {
@@ -37,17 +39,48 @@ namespace Atlassian.plvs.models {
         private const string FILTER_COMPONENTS_ID = "_jiraCustomFilterComponentsId_";
         private const string FILTER_COMPONENTS_NAME = "_jiraCustomFilterComponentsName_";
 
+        private const string FILTER_STATUSES_COUNT = "_jiraCustomFilterStatusesCount_";
+        private const string FILTER_STATUSES_ID = "_jiraCustomFilterStatusesId_";
+        private const string FILTER_STATUSES_NAME = "_jiraCustomFilterStatusesName_";
+
+        private const string FILTER_RESOLUTIONS_COUNT = "_jiraCustomFilterResolutionsCount_";
+        private const string FILTER_RESOLUTIONS_ID = "_jiraCustomFilterResolutionsId_";
+        private const string FILTER_RESOLUTIONS_NAME = "_jiraCustomFilterResolutionsName_";
+
+        private const string FILTER_PRIORITIES_COUNT = "_jiraCustomFilterPrioritiesCount_";
+        private const string FILTER_PRIORITIES_ID = "_jiraCustomFilterPrioritiesId_";
+        private const string FILTER_PRIORITIES_NAME = "_jiraCustomFilterPrioritiesName_";
+        
+        private const string FILTER_REPORTER = "_jiraCustomFilterReporter_";
+
+        private const string FILTER_ASSIGNEE = "_jiraCustomFilterAssignee_";
+
+        public enum UserType {
+            UNDEFINED = 0,
+            [StringValue("Any User")]
+            ANY = 1,
+            [StringValue("Current User")]
+            CURRENT = 2
+        }
+
         public List<JiraProject> Projects { get; private set; }
         public List<JiraNamedEntity> IssueTypes { get; private set; }
         public List<JiraNamedEntity> FixForVersions { get; private set; }
         public List<JiraNamedEntity> AffectsVersions { get; private set; }
         public List<JiraNamedEntity> Components { get; private set; }
+        public List<JiraNamedEntity> Statuses { get; private set; }
+        public List<JiraNamedEntity> Resolutions { get; private set; }
+        public List<JiraNamedEntity> Priorities { get; private set; }
+        public UserType Reporter;
+        public UserType Assignee;
 
         private static readonly Dictionary<Guid, JiraCustomFilter> FILTERS = new Dictionary<Guid, JiraCustomFilter>();
 
         public bool Empty {
             get {
-                return Projects.Count + IssueTypes.Count + FixForVersions.Count + AffectsVersions.Count + Components.Count == 0;
+                return 0 == Projects.Count + IssueTypes.Count + FixForVersions.Count + AffectsVersions.Count
+                            + Components.Count + Resolutions.Count + Statuses.Count + Priorities.Count
+                       && Reporter == UserType.UNDEFINED && Assignee == UserType.UNDEFINED;
             }
         }
 
@@ -59,6 +92,11 @@ namespace Atlassian.plvs.models {
             FixForVersions = new List<JiraNamedEntity>();
             AffectsVersions = new List<JiraNamedEntity>();
             Components = new List<JiraNamedEntity>();
+            Statuses = new List<JiraNamedEntity>();
+            Priorities = new List<JiraNamedEntity>();
+            Resolutions = new List<JiraNamedEntity>();
+            Reporter = UserType.UNDEFINED;
+            Assignee = UserType.UNDEFINED;
         }
 
         public static List<JiraCustomFilter> getAll(JiraServer server) {
@@ -105,6 +143,18 @@ namespace Atlassian.plvs.models {
                 sb.Append(first++ == 0 ? "" : "&").Append("fixfor=").Append(version.Id);
             foreach (JiraNamedEntity comp in Components)
                 sb.Append(first++ == 0 ? "" : "&").Append("component=").Append(comp.Id);
+            foreach (JiraNamedEntity resolution in Resolutions)
+                sb.Append(first++ == 0 ? "" : "&").Append("resolution=").Append(resolution.Id);
+            foreach (JiraNamedEntity status in Statuses)
+                sb.Append(first++ == 0 ? "" : "&").Append("status=").Append(status.Id);
+            foreach (JiraNamedEntity priority in Priorities)
+                sb.Append(first++ == 0 ? "" : "&").Append("priority=").Append(priority.Id);
+            if (Reporter == UserType.CURRENT)
+                sb.Append(first++ == 0 ? "" : "&").Append("reporter=").Append(server.UserName);
+            // todo: we need to handle "Unassigned" case. But I have 
+            // no idea what the query for such case should be
+            if (Assignee == UserType.CURRENT)
+                sb.Append(first == 0 ? "" : "&").Append("assignee=").Append(server.UserName);
 
             return sb.ToString();
         }
@@ -142,6 +192,28 @@ namespace Atlassian.plvs.models {
                 foreach (JiraNamedEntity comp in Components)
                     sb.Append(comp.Name).Append(" ");
             }
+            if (Reporter != UserType.UNDEFINED) {
+                sb.Append("\nReporter: ").Append(Reporter.GetStringValue());
+            }
+            if (Assignee != UserType.UNDEFINED) {
+                sb.Append("\nAssignee: ").Append(Assignee.GetStringValue());
+            }
+            if (Statuses.Count > 0) {
+                sb.Append("\nStatuses: ");
+                foreach (JiraNamedEntity status in Statuses)
+                    sb.Append(status.Name).Append(" ");
+            }
+            if (Resolutions.Count > 0) {
+                sb.Append("\nResolutions: ");
+                foreach (JiraNamedEntity resolution in Resolutions)
+                    sb.Append(resolution.Name).Append(" ");
+            }
+            if (Priorities.Count > 0) {
+                sb.Append("\nPriorities: ");
+                foreach (JiraNamedEntity priority in Priorities)
+                    sb.Append(priority.Name).Append(" ");
+            }
+ 
             sb.Append("\n\nRight-click to edit filter definition");
 
             return sb.ToString();
@@ -175,6 +247,11 @@ namespace Atlassian.plvs.models {
                 loadFixVersions(store, filterGuid, filter);
                 loadAffectsVersions(store, filterGuid, filter);
                 loadComponents(store, filterGuid, filter);
+                loadReporter(store, filterGuid, filter);
+                loadAssignee(store, filterGuid, filter);
+                loadStatuses(store, filterGuid, filter);
+                loadResolutions(store, filterGuid, filter);
+                loadPriorities(store, filterGuid, filter);
 
                 FILTERS[filterGuid] = filter;
             }
@@ -197,8 +274,103 @@ namespace Atlassian.plvs.models {
                 storeFixVersions(store, filter.Key, f);
                 storeAffectsVersions(store, filter.Key, f);
                 storeComponents(store, filter.Key, f);
+                storeReporter(store, filter.Key, f);
+                storeAssignee(store, filter.Key, f);
+                storeStatuses(store, filter.Key, f);
+                storeResolutions(store, filter.Key, f);
+                storePriorities(store, filter.Key, f);
 
                 ++i;
+            }
+        }
+
+        private static void storeAssignee(ParameterStore store, Guid key, JiraCustomFilter f) {
+            store.storeParameter(getParamKey(key, FILTER_ASSIGNEE), f.Assignee.ToString());
+        }
+
+        private static void loadAssignee(ParameterStore store, Guid key, JiraCustomFilter f) {
+            string assigneeString = store.loadParameter(getParamKey(key, FILTER_ASSIGNEE), UserType.UNDEFINED.ToString());
+            try {
+                f.Assignee = (UserType)Enum.Parse(typeof(UserType), assigneeString);
+            } catch (Exception) {
+                f.Assignee = UserType.UNDEFINED;
+            }
+        }
+
+        private static void storeReporter(ParameterStore store, Guid key, JiraCustomFilter f) {
+            store.storeParameter(getParamKey(key, FILTER_REPORTER), f.Reporter.ToString());
+        }
+
+        private static void loadReporter(ParameterStore store, Guid key, JiraCustomFilter f) {
+            string reporterString = store.loadParameter(getParamKey(key, FILTER_REPORTER), UserType.UNDEFINED.ToString());
+            try {
+                f.Reporter = (UserType)Enum.Parse(typeof(UserType), reporterString);
+            } catch (Exception) {
+                f.Reporter = UserType.UNDEFINED;
+            }
+        }
+
+
+        private static void storeResolutions(ParameterStore store, Guid key, JiraCustomFilter f) {
+            int i = 0;
+
+            store.storeParameter(getParamKey(key, FILTER_RESOLUTIONS_COUNT), f.Resolutions.Count);
+            foreach (JiraNamedEntity resolution in f.Resolutions) {
+                store.storeParameter(getParamKey(key, FILTER_RESOLUTIONS_ID + i), resolution.Id);
+                store.storeParameter(getParamKey(key, FILTER_RESOLUTIONS_NAME + i), resolution.Name);
+                ++i;
+            }
+        }
+
+        private static void loadResolutions(ParameterStore store, Guid key, JiraCustomFilter f) {
+            int count = store.loadParameter(getParamKey(key, FILTER_RESOLUTIONS_COUNT), 0);
+            for (int i = 0; i < count; ++i) {
+                int id = store.loadParameter(getParamKey(key, FILTER_RESOLUTIONS_ID + i), 0);
+                string name = store.loadParameter(getParamKey(key, FILTER_RESOLUTIONS_NAME + i), null);
+                JiraNamedEntity resolution = new JiraNamedEntity(id, name, null);
+                f.Resolutions.Add(resolution);
+            }
+        }
+
+        private static void storeStatuses(ParameterStore store, Guid key, JiraCustomFilter f) {
+            int i = 0;
+
+            store.storeParameter(getParamKey(key, FILTER_STATUSES_COUNT), f.Statuses.Count);
+            foreach (JiraNamedEntity status in f.Statuses) {
+                store.storeParameter(getParamKey(key, FILTER_STATUSES_ID + i), status.Id);
+                store.storeParameter(getParamKey(key, FILTER_STATUSES_NAME + i), status.Name);
+                ++i;
+            }
+        }
+
+        private static void loadStatuses(ParameterStore store, Guid key, JiraCustomFilter f) {
+            int count = store.loadParameter(getParamKey(key, FILTER_STATUSES_COUNT), 0);
+            for (int i = 0; i < count; ++i) {
+                int id = store.loadParameter(getParamKey(key, FILTER_STATUSES_ID + i), 0);
+                string name = store.loadParameter(getParamKey(key, FILTER_STATUSES_NAME + i), null);
+                JiraNamedEntity status = new JiraNamedEntity(id, name, null);
+                f.Statuses.Add(status);
+            }
+        }
+
+        private static void storePriorities(ParameterStore store, Guid key, JiraCustomFilter f) {
+            int i = 0;
+
+            store.storeParameter(getParamKey(key, FILTER_PRIORITIES_COUNT), f.Priorities.Count);
+            foreach (JiraNamedEntity priority in f.Priorities) {
+                store.storeParameter(getParamKey(key, FILTER_PRIORITIES_ID + i), priority.Id);
+                store.storeParameter(getParamKey(key, FILTER_PRIORITIES_NAME + i), priority.Name);
+                ++i;
+            }
+        }
+
+        private static void loadPriorities(ParameterStore store, Guid key, JiraCustomFilter f) {
+            int count = store.loadParameter(getParamKey(key, FILTER_PRIORITIES_COUNT), 0);
+            for (int i = 0; i < count; ++i) {
+                int id = store.loadParameter(getParamKey(key, FILTER_PRIORITIES_ID + i), 0);
+                string name = store.loadParameter(getParamKey(key, FILTER_PRIORITIES_NAME + i), null);
+                JiraNamedEntity priority = new JiraNamedEntity(id, name, null);
+                f.Priorities.Add(priority);
             }
         }
 
