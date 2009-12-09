@@ -15,7 +15,7 @@
   <property name="snapshot.xml.file" value="latestPossibleVersion.xml" overwrite="false" />
   <property name="scp.exe" value="c:/progra~1/putty/pscp.exe" overwrite="false" />
   <property name="scp.key" value="c:/Users/kalamon/putty.keys/dac.private.ppk" overwrite="false" />
-  <property name="scp.opts" value="-i ${scp.key} -agent -q" overwrite="false" />
+  <property name="scp.opts" value="-i ${scp.key} -noagent -q" overwrite="false" />
   <property name="scp.login" value="jgorycki" overwrite="false" />
   
   <!--  read-only properties-->
