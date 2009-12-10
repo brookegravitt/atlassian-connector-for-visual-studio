@@ -20,9 +20,17 @@ namespace Atlassian.plvs.api {
             if (!sessionMap.TryGetValue(server.Url + server.UserName, out s)) {
                 s = new SoapSession(server.Url);
                 s.login(server.UserName, server.Password);
-                sessionMap.Add(server.Url + server.UserName, s);
+                sessionMap.Add(getSessionKey(server), s);
             }
             return s;
+        }
+
+        private static string getSessionKey(JiraServer server) {
+            return server.Url + server.UserName;
+        }
+
+        private void removeSession(JiraServer server) {
+            sessionMap.Remove(getSessionKey(server));
         }
 
         public void login(JiraServer server) {
@@ -30,19 +38,39 @@ namespace Atlassian.plvs.api {
         }
 
         public List<JiraProject> getProjects(JiraServer server) {
-            return getSoapSession(server).getProjects();
+            try {
+                return getSoapSession(server).getProjects();
+            } catch (Exception) {
+                removeSession(server);
+                throw;
+            }
         }
 
         public List<JiraNamedEntity> getIssueTypes(JiraServer server) {
-            return getSoapSession(server).getIssueTypes();
+            try {
+                return getSoapSession(server).getIssueTypes();
+            } catch (Exception) {
+                removeSession(server);
+                throw;
+            }
         }
 
         public List<JiraNamedEntity> getIssueTypes(JiraServer server, JiraProject project) {
-            return getSoapSession(server).getIssueTypes(project);
+            try {
+                return getSoapSession(server).getIssueTypes(project);
+            } catch (Exception) {
+                removeSession(server);
+                throw;
+            }
         }
 
         public List<JiraSavedFilter> getSavedFilters(JiraServer server) {
-            return getSoapSession(server).getSavedFilters();
+            try {
+                return getSoapSession(server).getSavedFilters();
+            } catch (Exception) {
+                removeSession(server);
+                throw;
+            }
         }
 
         public List<JiraIssue> getSavedFilterIssues(JiraServer server, JiraSavedFilter filter, int start, int count) {
@@ -61,39 +89,84 @@ namespace Atlassian.plvs.api {
         }
 
         public List<JiraNamedEntity> getPriorities(JiraServer server) {
-            return getSoapSession(server).getPriorities();
+            try {
+                return getSoapSession(server).getPriorities();
+            } catch (Exception) {
+                removeSession(server);
+                throw;
+            }
         }
 
         public List<JiraNamedEntity> getStatuses(JiraServer server) {
-            return getSoapSession(server).getStatuses();
+            try {
+                return getSoapSession(server).getStatuses();
+            } catch (Exception) {
+                removeSession(server);
+                throw;
+            }
         }
 
         public void addComment(JiraIssue issue, string comment) {
-            getSoapSession(issue.Server).addComment(issue, comment);
+            try {
+                getSoapSession(issue.Server).addComment(issue, comment);
+            } catch (Exception) {
+                removeSession(issue.Server);
+                throw;
+            }
         }
 
         public List<JiraNamedEntity> getActionsForIssue(JiraIssue issue) {
-            return getSoapSession(issue.Server).getActionsForIssue(issue);
+            try {
+                return getSoapSession(issue.Server).getActionsForIssue(issue);
+            } catch (Exception) {
+                removeSession(issue.Server);
+                throw;
+            }
         }
 
         public List<JiraField> getFieldsForAction(JiraIssue issue, int actionId) {
-            return getSoapSession(issue.Server).getFieldsForAction(issue, actionId);
+            try {
+                return getSoapSession(issue.Server).getFieldsForAction(issue, actionId);
+            } catch (Exception) {
+                removeSession(issue.Server);
+                throw;
+            }
         }
 
         public void runIssueActionWithoutParams(JiraIssue issue, JiraNamedEntity action) {
-            getSoapSession(issue.Server).runIssueActionWithoutParams(issue, action.Id);
+            try {
+                getSoapSession(issue.Server).runIssueActionWithoutParams(issue, action.Id);
+            } catch (Exception) {
+                removeSession(issue.Server);
+                throw;
+            }
         }
 
         public List<JiraNamedEntity> getComponents(JiraServer server, JiraProject project) {
-            return getSoapSession(server).getComponents(project);
+            try {
+                return getSoapSession(server).getComponents(project);
+            } catch (Exception) {
+                removeSession(server);
+                throw;
+            }
         }
 
         public List<JiraNamedEntity> getVersions(JiraServer server, JiraProject project) {
-            return getSoapSession(server).getVersions(project);
+            try {
+                return getSoapSession(server).getVersions(project);
+            } catch (Exception) {
+                removeSession(server);
+                throw;
+            }
         }
 
         public List<JiraNamedEntity> getResolutions(JiraServer server) {
-            return getSoapSession(server).getResolutions();
+            try {
+                return getSoapSession(server).getResolutions();
+            } catch (Exception) {
+                removeSession(server);
+                throw;
+            }
         }
     }
 }
