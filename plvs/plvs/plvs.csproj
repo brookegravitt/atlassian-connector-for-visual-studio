@@ -82,6 +82,12 @@
     <Compile Include="dialogs\AddOrEditJiraServer.Designer.cs">
       <DependentUpon>AddOrEditJiraServer.cs</DependentUpon>
     </Compile>
+    <Compile Include="dialogs\AutoUpdateDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\AutoUpdateDialog.Designer.cs">
+      <DependentUpon>AutoUpdateDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="dialogs\EditCustomFilter.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -218,6 +224,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\AddOrEditJiraServer.resx">
       <DependentUpon>AddOrEditJiraServer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\AutoUpdateDialog.resx">
+      <DependentUpon>AutoUpdateDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\EditCustomFilter.resx">
@@ -404,6 +414,7 @@
     <None Include="Resources\texts\comments_css.txt" />
     <None Include="Resources\texts\summary_and_description_css.txt" />
     <None Include="Resources\texts\toggler_javascript.txt" />
+    <Content Include="Resources\texts\autoupdate_html.txt" />
     <Content Include="third party\treeviewadv\Aga.Controls.dll" />
     <Content Include="third party\treeviewadv\license.txt" />
   </ItemGroup>

@@ -636,7 +636,8 @@ namespace Atlassian.plvs {
             runner.Start();
         }
 
-        public void setAutoupdateAvailable() {
+        public void setAutoupdateAvailable(Autoupdate.UpdateAction action) {
+            buttonUpdate.Click += delegate { action(); };
             Invoke(new MethodInvoker(delegate {
                                          buttonUpdate.Enabled = true;
                                          buttonUpdate.Visible = true;
@@ -644,6 +645,7 @@ namespace Atlassian.plvs {
         }
 
         public void setAutoupdateUnavailable(Exception exception) {
+            buttonUpdate.Click += delegate { MessageBox.Show("Unable to retrieve autoupdate information:\n\n" + exception.Message); };
             Invoke(new MethodInvoker(delegate {
                                          buttonUpdate.Enabled = true;
                                          buttonUpdate.Image = Resources.update_unavailable;

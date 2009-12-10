@@ -1,0 +1,11 @@
+﻿<div style="font-size:12px;font-family:Arial;">
+
+<div>New Version of the connector is available: <strong>{0}</strong></div>
+<br>
+<div style="font-size:12px;">Highlights of the new version:</div>
+
+<div style="font-size:10px;">{1}</div>
+
+<div><a href="{2}">See full release notes</a></div>
+
+</div>

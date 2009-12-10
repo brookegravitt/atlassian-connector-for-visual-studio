@@ -3,17 +3,31 @@ using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace Atlassian.plvs.dialogs {
-    public partial class About : Form {
+    public partial class AutoUpdateDialog : Form {
+        private readonly string updateUrl;
         private bool pageLoaded;
 
-        public About() {
+        public AutoUpdateDialog(string stamp, string updateUrl, string blurbText, string releaseNotesUrl) {
+            this.updateUrl = updateUrl;
+
             InitializeComponent();
 
-            picture.Image = Resources.atlassian_538x235;
-            browser.DocumentText = string.Format(Resources.about_html, PlvsVersionInfo.Version, PlvsVersionInfo.BuildType, PlvsVersionInfo.Stamp);
-            browser.ScrollBarsEnabled = false;
+            browser.DocumentText = string.Format(Resources.autoupdate_html, stamp, blurbText, releaseNotesUrl);
+            browser.ScrollBarsEnabled = true;
 
             StartPosition = FormStartPosition.CenterParent;
+
+            buttonUpdate.Click += buttonUpdate_Click;
+        }
+
+        void buttonUpdate_Click(object sender, EventArgs e) {
+            try {
+                Process.Start(updateUrl);
+                // ReSharper disable EmptyGeneralCatchClause
+            } catch (Exception) {
+                // ReSharper restore EmptyGeneralCatchClause
+            }
+            Close();
         }
 
         private void buttonClose_Click(object sender, EventArgs e) {
@@ -23,7 +37,12 @@ namespace Atlassian.plvs.dialogs {
         private void browser_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
             if (!pageLoaded) return;
             string url = e.Url.ToString();
-            Process.Start(url);
+            try {
+                Process.Start(url);
+// ReSharper disable EmptyGeneralCatchClause
+            } catch (Exception) {
+// ReSharper restore EmptyGeneralCatchClause
+            }
             e.Cancel = true;
         }
 
