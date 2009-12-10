@@ -29,6 +29,7 @@
       namespace Atlassian.plvs {
           public class PlvsVersionInfo {
               public static string Version { get { return "${version}"; } }
+              public static string BuildType { get { return "${build.type}"; } }
               public static string Stamp { get { return "${build.stamp}"; } }
           }
       }

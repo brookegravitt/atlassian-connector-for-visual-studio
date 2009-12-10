@@ -358,7 +358,7 @@
             this.buttonUpdate.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonUpdate.Name = "buttonUpdate";
             this.buttonUpdate.Size = new System.Drawing.Size(30, 20);
-            this.buttonUpdate.Text = "New Version Is Available";
+            this.buttonUpdate.Text = "New Version Available";
             // 
             // toolStripContainer1
             // 
