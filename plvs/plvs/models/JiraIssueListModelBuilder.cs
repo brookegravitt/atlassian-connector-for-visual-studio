@@ -27,6 +27,22 @@ namespace Atlassian.plvs.models {
             }
         }
 
+        public void rebuildModelWithPresetFilter(JiraIssueListModel model, JiraServer server, JiraPresetFilter filter) {
+            lock (this) {
+                List<JiraIssue> issues = facade.getPresetFilterIssues(server, filter, 0, GlobalSettings.JiraIssuesBatch);
+                model.clear(false);
+                model.addIssues(issues);
+            }
+        }
+
+        public void updateModelWithPresetFilter(JiraIssueListModel model, JiraServer server, JiraPresetFilter filter) {
+            lock (this) {
+                List<JiraIssue> issues = facade.getPresetFilterIssues(server, filter, model.Issues.Count,
+                                                                      GlobalSettings.JiraIssuesBatch);
+                model.addIssues(issues);
+            }
+        }
+
         public void rebuildModelWithCustomFilter(JiraIssueListModel model, JiraServer server, JiraCustomFilter filter) {
             lock (this) {
                 List<JiraIssue> issues = facade.getCustomFilterIssues(server, filter, 0, GlobalSettings.JiraIssuesBatch);

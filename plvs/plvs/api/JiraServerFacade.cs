@@ -83,6 +83,11 @@ namespace Atlassian.plvs.api {
             return rss.getCustomFilterIssues(filter.getFilterQueryString(), "priority", "DESC", start, count);
         }
 
+        public List<JiraIssue> getPresetFilterIssues(JiraServer server, JiraPresetFilter filter, int start, int count) {
+            RssClient rss = new RssClient(server);
+            return rss.getCustomFilterIssues(filter.getFilterQueryString(), filter.getSortBy(), "DESC", start, count);
+        }
+
         public JiraIssue getIssue(JiraServer server, string key) {
             RssClient rss = new RssClient(server);
             return rss.getIssue(key);
