@@ -3,7 +3,7 @@ using System.Reflection;
 using Atlassian.plvs.attributes;
 
 namespace Atlassian.plvs.util {
-    public static class JiraCustomFilterUtils {
+    public static class PlvsUtils {
         public static string GetStringValue(this Enum value) {
             Type type = value.GetType();
             FieldInfo fieldInfo = type.GetField(value.ToString());

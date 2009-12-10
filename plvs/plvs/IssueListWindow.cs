@@ -277,6 +277,7 @@ namespace Atlassian.plvs {
                                                                        JiraServerCache.Instance.clearIssueTypes();
                                                                        JiraServerCache.Instance.clearStatuses();
                                                                        JiraServerCache.Instance.clearPriorities();
+                                                                       JiraServerCache.Instance.clearResolutions();
 
                                                                        foreach (JiraServer server in servers) {
                                                                            status.setInfo("[" + server.Name + "] Loading project definitions...");
@@ -295,6 +296,11 @@ namespace Atlassian.plvs {
                                                                            foreach (JiraNamedEntity prio in priorities) {
                                                                                JiraServerCache.Instance.addPriority(server, prio);
                                                                                ImageCache.Instance.getImage(prio.IconUrl);
+                                                                           }
+                                                                           status.setInfo("[" + server.Name + "] Loading issue resolutions...");
+                                                                           List<JiraNamedEntity> resolutions = facade.getResolutions(server);
+                                                                           foreach (JiraNamedEntity res in resolutions) {
+                                                                               JiraServerCache.Instance.addResolution(server, res);
                                                                            }
                                                                            status.setInfo("[" + server.Name + "] Loading issue statuses...");
                                                                            List<JiraNamedEntity> statuses = facade.getStatuses(server);

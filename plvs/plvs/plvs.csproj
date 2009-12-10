@@ -188,14 +188,15 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ui\issues\IssueNode.cs" />
-    <Compile Include="ui\IssueTypeListViewItem.cs" />
+    <Compile Include="ui\JiraNamedEntityListViewItem.cs" />
     <Compile Include="ui\JiraSavedFilterTreeNode.cs" />
     <Compile Include="ui\JiraServerTreeNode.cs" />
     <Compile Include="ui\RecentlyOpenIssuesTreeNode.cs" />
     <Compile Include="ui\StatusLabel.cs" />
     <Compile Include="ui\TreeNodeWithServer.cs" />
     <Compile Include="store\ParameterStoreManager.cs" />
-    <Compile Include="util\JiraCustomFilterUtils.cs" />
+    <Compile Include="ui\UserTypeComboBoxItem.cs" />
+    <Compile Include="util\PlvsUtils.cs" />
     <Compile Include="util\JiraIssueUtils.cs" />
     <Compile Include="util\StreamEater.cs" />
     <Compile Include="PlvsVersionInfo.cs" />

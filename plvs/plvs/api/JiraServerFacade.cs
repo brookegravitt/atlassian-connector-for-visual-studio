@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Atlassian.plvs.api.soap;
 using Atlassian.plvs.models;
 
@@ -89,6 +90,10 @@ namespace Atlassian.plvs.api {
 
         public List<JiraNamedEntity> getVersions(JiraServer server, JiraProject project) {
             return getSoapSession(server).getVersions(project);
+        }
+
+        public List<JiraNamedEntity> getResolutions(JiraServer server) {
+            return getSoapSession(server).getResolutions();
         }
     }
 }
