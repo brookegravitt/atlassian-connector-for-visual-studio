@@ -351,7 +351,14 @@ namespace Atlassian.plvs {
             if (node == null) {
                 return;
             }
+            node.Nodes.Add(new JiraPresetFilterTreeNode(server, new JiraPresetFilterOutstanding(), 1));
+            node.Nodes.Add(new JiraPresetFilterTreeNode(server, new JiraPresetFilterUnscheduled(), 1));
+            node.Nodes.Add(new JiraPresetFilterTreeNode(server, new JiraPresetFilterAssignedToMe(), 1));
+            node.Nodes.Add(new JiraPresetFilterTreeNode(server, new JiraPresetFilterReportedByMe(), 1));
+            node.Nodes.Add(new JiraPresetFilterTreeNode(server, new JiraPresetFilterRecentlyResolved(), 1));
             node.Nodes.Add(new JiraPresetFilterTreeNode(server, new JiraPresetFilterRecentlyAdded(), 1));
+            node.Nodes.Add(new JiraPresetFilterTreeNode(server, new JiraPresetFilterRecentlyUpdated(), 1));
+            node.Nodes.Add(new JiraPresetFilterTreeNode(server, new JiraPresetFilterMostImportant(), 1));
         }
 
         private void addCustomFilterNodes(JiraServer server) {

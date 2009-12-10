@@ -1,15 +1,15 @@
 ﻿namespace Atlassian.plvs.models.presetFilters {
-    public class JiraPresetFilterRecentlyAdded: JiraPresetFilter {
-        public JiraPresetFilterRecentlyAdded() : base("Added Recently") { }
+    public class JiraPresetFilterRecentlyResolved : JiraPresetFilter {
+        public JiraPresetFilterRecentlyResolved() : base("Resolved Recently") { }
 
         #region Overrides of JiraPresetFilter
 
         public override string getFilterQueryStringNoProject() {
-            return "created:previous=-1w";
+            return "status=5&status=6&updated:previous=-1w";
         }
 
         public override string getSortBy() {
-            return "created";
+            return "updated";
         }
 
         #endregion
