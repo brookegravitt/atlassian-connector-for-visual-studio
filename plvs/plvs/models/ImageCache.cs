@@ -23,7 +23,7 @@ namespace Atlassian.plvs.models {
                     return cache[url];
                 }
                 try {
-                    Debug.WriteLine("ImageCache - Loading image for URL: " + url);
+//                    Debug.WriteLine("ImageCache - Loading image for URL: " + url);
                     HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
                     request.Timeout = 5000;
                     request.ReadWriteTimeout = 20000;

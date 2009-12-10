@@ -56,6 +56,7 @@ namespace Atlassian.plvs.models {
         private const string FILTER_ASSIGNEE = "_jiraCustomFilterAssignee_";
 
         public enum UserType {
+            [StringValue("")]
             UNDEFINED = 0,
             [StringValue("Any User")]
             ANY = 1,

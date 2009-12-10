@@ -73,6 +73,10 @@ namespace Atlassian.plvs.api.soap {
             return createEntityList(service.getVersions(token, project.Key));
         }
 
+        public List<JiraNamedEntity> getResolutions() {
+            return createEntityListFromConstants(service.getResolutions(token));
+        }
+
         private static List<JiraNamedEntity> createEntityList(IEnumerable<AbstractNamedRemoteEntity> entities) {
             List<JiraNamedEntity> list = new List<JiraNamedEntity>();
             foreach (AbstractNamedRemoteEntity val in entities) {

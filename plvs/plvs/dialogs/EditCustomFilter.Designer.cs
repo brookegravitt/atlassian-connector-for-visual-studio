@@ -41,11 +41,9 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.listBox8 = new System.Windows.Forms.ListBox();
-            this.listBox7 = new System.Windows.Forms.ListBox();
-            this.listBox6 = new System.Windows.Forms.ListBox();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.listBoxResolutions = new System.Windows.Forms.ListBox();
+            this.comboBoxAssignee = new System.Windows.Forms.ComboBox();
+            this.comboBoxReporter = new System.Windows.Forms.ComboBox();
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
@@ -53,6 +51,8 @@
             this.label6 = new System.Windows.Forms.Label();
             this.buttonOk = new System.Windows.Forms.Button();
             this.buttonClear = new System.Windows.Forms.Button();
+            this.listViewStatuses = new System.Windows.Forms.ListView();
+            this.listViewPriorities = new System.Windows.Forms.ListView();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -64,7 +64,7 @@
             this.buttonClose.Location = new System.Drawing.Point(802, 471);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(75, 23);
-            this.buttonClose.TabIndex = 5;
+            this.buttonClose.TabIndex = 2;
             this.buttonClose.Text = "Close";
             this.buttonClose.UseVisualStyleBackColor = true;
             this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
@@ -99,7 +99,7 @@
             this.listViewIssueTypes.Location = new System.Drawing.Point(12, 242);
             this.listViewIssueTypes.Name = "listViewIssueTypes";
             this.listViewIssueTypes.Size = new System.Drawing.Size(208, 178);
-            this.listViewIssueTypes.TabIndex = 5;
+            this.listViewIssueTypes.TabIndex = 1;
             this.listViewIssueTypes.UseCompatibleStateImageBehavior = false;
             this.listViewIssueTypes.View = System.Windows.Forms.View.Details;
             // 
@@ -143,7 +143,7 @@
             this.listBoxFixForVersions.Name = "listBoxFixForVersions";
             this.listBoxFixForVersions.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.listBoxFixForVersions.Size = new System.Drawing.Size(236, 121);
-            this.listBoxFixForVersions.TabIndex = 3;
+            this.listBoxFixForVersions.TabIndex = 0;
             // 
             // listBoxAffectsVersions
             // 
@@ -192,11 +192,11 @@
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.listBox8);
-            this.groupBox3.Controls.Add(this.listBox7);
-            this.groupBox3.Controls.Add(this.listBox6);
-            this.groupBox3.Controls.Add(this.comboBox2);
-            this.groupBox3.Controls.Add(this.comboBox1);
+            this.groupBox3.Controls.Add(this.listViewPriorities);
+            this.groupBox3.Controls.Add(this.listViewStatuses);
+            this.groupBox3.Controls.Add(this.listBoxResolutions);
+            this.groupBox3.Controls.Add(this.comboBoxAssignee);
+            this.groupBox3.Controls.Add(this.comboBoxReporter);
             this.groupBox3.Controls.Add(this.label10);
             this.groupBox3.Controls.Add(this.label9);
             this.groupBox3.Controls.Add(this.label8);
@@ -209,50 +209,35 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Issue Attributes";
             // 
-            // listBox8
+            // listBoxResolutions
             // 
-            this.listBox8.Enabled = false;
-            this.listBox8.FormattingEnabled = true;
-            this.listBox8.Location = new System.Drawing.Point(84, 325);
-            this.listBox8.Name = "listBox8";
-            this.listBox8.Size = new System.Drawing.Size(173, 95);
-            this.listBox8.TabIndex = 4;
+            this.listBoxResolutions.Enabled = false;
+            this.listBoxResolutions.FormattingEnabled = true;
+            this.listBoxResolutions.Location = new System.Drawing.Point(84, 219);
+            this.listBoxResolutions.Name = "listBoxResolutions";
+            this.listBoxResolutions.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.listBoxResolutions.Size = new System.Drawing.Size(173, 95);
+            this.listBoxResolutions.TabIndex = 3;
             // 
-            // listBox7
+            // comboBoxAssignee
             // 
-            this.listBox7.Enabled = false;
-            this.listBox7.FormattingEnabled = true;
-            this.listBox7.Location = new System.Drawing.Point(84, 219);
-            this.listBox7.Name = "listBox7";
-            this.listBox7.Size = new System.Drawing.Size(173, 95);
-            this.listBox7.TabIndex = 3;
+            this.comboBoxAssignee.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxAssignee.Enabled = false;
+            this.comboBoxAssignee.FormattingEnabled = true;
+            this.comboBoxAssignee.Location = new System.Drawing.Point(84, 61);
+            this.comboBoxAssignee.Name = "comboBoxAssignee";
+            this.comboBoxAssignee.Size = new System.Drawing.Size(173, 21);
+            this.comboBoxAssignee.TabIndex = 1;
             // 
-            // listBox6
+            // comboBoxReporter
             // 
-            this.listBox6.Enabled = false;
-            this.listBox6.FormattingEnabled = true;
-            this.listBox6.Location = new System.Drawing.Point(84, 112);
-            this.listBox6.Name = "listBox6";
-            this.listBox6.Size = new System.Drawing.Size(173, 95);
-            this.listBox6.TabIndex = 2;
-            // 
-            // comboBox2
-            // 
-            this.comboBox2.Enabled = false;
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(84, 61);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(173, 21);
-            this.comboBox2.TabIndex = 1;
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.Enabled = false;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(84, 34);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(173, 21);
-            this.comboBox1.TabIndex = 0;
+            this.comboBoxReporter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxReporter.Enabled = false;
+            this.comboBoxReporter.FormattingEnabled = true;
+            this.comboBoxReporter.Location = new System.Drawing.Point(84, 34);
+            this.comboBoxReporter.Name = "comboBoxReporter";
+            this.comboBoxReporter.Size = new System.Drawing.Size(173, 21);
+            this.comboBoxReporter.TabIndex = 0;
             // 
             // label10
             // 
@@ -305,7 +290,7 @@
             this.buttonOk.Location = new System.Drawing.Point(640, 471);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
-            this.buttonOk.TabIndex = 3;
+            this.buttonOk.TabIndex = 0;
             this.buttonOk.Text = "OK";
             this.buttonOk.UseVisualStyleBackColor = true;
             this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
@@ -316,10 +301,34 @@
             this.buttonClear.Location = new System.Drawing.Point(721, 471);
             this.buttonClear.Name = "buttonClear";
             this.buttonClear.Size = new System.Drawing.Size(75, 23);
-            this.buttonClear.TabIndex = 4;
+            this.buttonClear.TabIndex = 1;
             this.buttonClear.Text = "Clear Filter";
             this.buttonClear.UseVisualStyleBackColor = true;
             this.buttonClear.Click += new System.EventHandler(this.buttonClear_Click);
+            // 
+            // listViewStatuses
+            // 
+            this.listViewStatuses.FullRowSelect = true;
+            this.listViewStatuses.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.listViewStatuses.HideSelection = false;
+            this.listViewStatuses.Location = new System.Drawing.Point(84, 116);
+            this.listViewStatuses.Name = "listViewStatuses";
+            this.listViewStatuses.Size = new System.Drawing.Size(173, 91);
+            this.listViewStatuses.TabIndex = 2;
+            this.listViewStatuses.UseCompatibleStateImageBehavior = false;
+            this.listViewStatuses.View = System.Windows.Forms.View.Details;
+            // 
+            // listViewPriorities
+            // 
+            this.listViewPriorities.FullRowSelect = true;
+            this.listViewPriorities.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.listViewPriorities.HideSelection = false;
+            this.listViewPriorities.Location = new System.Drawing.Point(84, 325);
+            this.listViewPriorities.Name = "listViewPriorities";
+            this.listViewPriorities.Size = new System.Drawing.Size(173, 91);
+            this.listViewPriorities.TabIndex = 4;
+            this.listViewPriorities.UseCompatibleStateImageBehavior = false;
+            this.listViewPriorities.View = System.Windows.Forms.View.Details;
             // 
             // EditCustomFilter
             // 
@@ -364,11 +373,9 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.ListBox listBox8;
-        private System.Windows.Forms.ListBox listBox7;
-        private System.Windows.Forms.ListBox listBox6;
-        private System.Windows.Forms.ComboBox comboBox2;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ListBox listBoxResolutions;
+        private System.Windows.Forms.ComboBox comboBoxAssignee;
+        private System.Windows.Forms.ComboBox comboBoxReporter;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label8;
@@ -378,5 +385,7 @@
         private System.Windows.Forms.Button buttonClear;
         private System.Windows.Forms.ListView listViewIssueTypes;
         private System.Windows.Forms.ListBox listBoxFixForVersions;
+        private System.Windows.Forms.ListView listViewPriorities;
+        private System.Windows.Forms.ListView listViewStatuses;
     }
 }

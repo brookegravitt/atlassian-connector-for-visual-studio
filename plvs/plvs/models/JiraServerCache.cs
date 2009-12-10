@@ -22,6 +22,9 @@ namespace Atlassian.plvs.models {
         private readonly SortedDictionary<Guid, SortedDictionary<int, JiraNamedEntity>> statusCache =
             new SortedDictionary<Guid, SortedDictionary<int, JiraNamedEntity>>();
 
+        private readonly SortedDictionary<Guid, SortedDictionary<int, JiraNamedEntity>> resolutionCache =
+            new SortedDictionary<Guid, SortedDictionary<int, JiraNamedEntity>>();
+
         public SortedDictionary<string, JiraProject> getProjects(JiraServer server) {
             lock (projectCache) {
                 if (projectCache.ContainsKey(server.GUID)) {
@@ -115,6 +118,30 @@ namespace Atlassian.plvs.models {
         public void clearStatuses() {
             lock (statusCache) {
                 statusCache.Clear();
+            }
+        }
+
+        public SortedDictionary<int, JiraNamedEntity> getResolutions(JiraServer server) {
+            lock (resolutionCache) {
+                if (resolutionCache.ContainsKey(server.GUID)) {
+                    return resolutionCache[server.GUID];
+                }
+            }
+            return null;
+        }
+
+        public void addResolution(JiraServer server, JiraNamedEntity resolution) {
+            lock (resolutionCache) {
+                if (!resolutionCache.ContainsKey(server.GUID)) {
+                    resolutionCache[server.GUID] = new SortedDictionary<int, JiraNamedEntity>();
+                }
+                resolutionCache[server.GUID][resolution.Id] = resolution;
+            }
+        }
+
+        public void clearResolutions() {
+            lock(resolutionCache) {
+                resolutionCache.Clear();
             }
         }
     }
