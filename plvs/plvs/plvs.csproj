@@ -150,6 +150,8 @@
     <Compile Include="markers\JiraLinkMarginMarkerType.cs" />
     <Compile Include="markers\JiraLinkTextMarkerType.cs" />
     <Compile Include="markers\JiraLinkMarkerTypeProvider.cs" />
+    <Compile Include="models\JiraPresetFilter.cs" />
+    <Compile Include="models\presetFilters\JiraPresetFilterRecentlyAdded.cs" />
     <Compile Include="store\CredentialsVault.cs" />
     <Compile Include="models\ImageCache.cs" />
     <Compile Include="models\JiraCustomFilter.cs" />
@@ -185,7 +187,7 @@
     <Compile Include="store\DPApi.cs" />
     <Compile Include="store\ParameterStore.cs" />
     <Compile Include="ToolWindowManager.cs" />
-    <Compile Include="ui\CustomFilterTreeNode.cs" />
+    <Compile Include="ui\JiraCustomFilterTreeNode.cs" />
     <Compile Include="ui\issues\FilterContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -198,6 +200,7 @@
     <Compile Include="ui\JiraFilterGroupTreeNode.cs" />
     <Compile Include="ui\JiraNamedEntityListViewItem.cs" />
     <Compile Include="ui\JiraPresetFiltersGroupTreeNode.cs" />
+    <Compile Include="ui\JiraPresetFilterTreeNode.cs" />
     <Compile Include="ui\JiraSavedFiltersGroupTreeNode.cs" />
     <Compile Include="ui\JiraSavedFilterTreeNode.cs" />
     <Compile Include="ui\JiraServerTreeNode.cs" />

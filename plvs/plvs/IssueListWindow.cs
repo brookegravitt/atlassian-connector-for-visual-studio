@@ -7,6 +7,7 @@ using System.Threading;
 using Atlassian.plvs.api;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.models;
+using Atlassian.plvs.models.presetFilters;
 using Atlassian.plvs.ui;
 using Atlassian.plvs.ui.issues;
 using Aga.Controls.Tree;
@@ -194,7 +195,7 @@ namespace Atlassian.plvs {
             buttonRefresh.Enabled = filtersTree.SelectedNode != null &&
                                     (filtersTree.SelectedNode is JiraSavedFilterTreeNode
                                      || filtersTree.SelectedNode is RecentlyOpenIssuesTreeNode
-                                     || filtersTree.SelectedNode is CustomFilterTreeNode);
+                                     || filtersTree.SelectedNode is JiraCustomFilterTreeNode);
             buttonSearch.Enabled = filtersTree.SelectedNode != null && filtersTree.SelectedNode is TreeNodeWithServer;
         }
 
@@ -320,6 +321,7 @@ namespace Atlassian.plvs {
                     JiraServer jiraServer = server;
                     Invoke(new MethodInvoker(delegate {
                                                  addFilterGroupNodes(jiraServer);
+                                                 addPresetFilterNodes(jiraServer);
                                                  addSavedFilterNodes(jiraServer, filters);
                                                  status.setInfo("Loaded saved filters for server " + jiraServer.Name);
                                                  addCustomFilterNodes(jiraServer);
@@ -344,13 +346,21 @@ namespace Atlassian.plvs {
             node.Nodes.Add(new JiraCustomFiltersGroupTreeNode(server, 3));
         }
 
+        private void addPresetFilterNodes(JiraServer server) {
+            TreeNodeWithServer node = findGroupNode(server, typeof(JiraPresetFiltersGroupTreeNode));
+            if (node == null) {
+                return;
+            }
+            node.Nodes.Add(new JiraPresetFilterTreeNode(server, new JiraPresetFilterRecentlyAdded(), 1));
+        }
+
         private void addCustomFilterNodes(JiraServer server) {
             TreeNodeWithServer node = findGroupNode(server, typeof(JiraCustomFiltersGroupTreeNode));
             if (node == null) {
                 return;
             }
             foreach (JiraCustomFilter filter in JiraCustomFilter.getAll(server)) {
-                CustomFilterTreeNode cfNode = new CustomFilterTreeNode(server, filter, 1)
+                JiraCustomFilterTreeNode cfNode = new JiraCustomFilterTreeNode(server, filter, 1)
                                               {
                                                   ContextMenuStrip = new FilterContextMenu(server, filter, reloadIssues),
                                                   ToolTipText = server.Name
@@ -365,7 +375,8 @@ namespace Atlassian.plvs {
 
                                          if (!(filtersTree.SelectedNode is JiraSavedFilterTreeNode
                                                || filtersTree.SelectedNode is RecentlyOpenIssuesTreeNode
-                                               || filtersTree.SelectedNode is CustomFilterTreeNode)) return;
+                                               || filtersTree.SelectedNode is JiraCustomFilterTreeNode
+                                               || filtersTree.SelectedNode is JiraPresetFilterTreeNode)) return;
 
                                          status.setInfo("Loaded " + issues.Count + " issues");
 
@@ -451,7 +462,8 @@ namespace Atlassian.plvs {
             updateIssueListButtons();
             if (filtersTree.SelectedNode is JiraSavedFilterTreeNode
                 || filtersTree.SelectedNode is RecentlyOpenIssuesTreeNode
-                || filtersTree.SelectedNode is CustomFilterTreeNode) {
+                || filtersTree.SelectedNode is JiraCustomFilterTreeNode
+                || filtersTree.SelectedNode is JiraPresetFilterTreeNode) {
                 reloadIssues();
             }
             else {
@@ -462,14 +474,17 @@ namespace Atlassian.plvs {
         private void reloadIssues() {
             JiraSavedFilterTreeNode savedFilterNode = filtersTree.SelectedNode as JiraSavedFilterTreeNode;
             RecentlyOpenIssuesTreeNode recentIssuesNode = filtersTree.SelectedNode as RecentlyOpenIssuesTreeNode;
-            CustomFilterTreeNode customFilterNode = filtersTree.SelectedNode as CustomFilterTreeNode;
+            JiraCustomFilterTreeNode jiraCustomFilterNode = filtersTree.SelectedNode as JiraCustomFilterTreeNode;
+            JiraPresetFilterTreeNode presetFilterNode = filtersTree.SelectedNode as JiraPresetFilterTreeNode;
 
             Thread issueLoadThread = null;
 
             if (savedFilterNode != null)
                 issueLoadThread = reloadIssuesWithSavedFilter(savedFilterNode);
-            else if (customFilterNode != null && !customFilterNode.Filter.Empty)
-                issueLoadThread = reloadIssuesWithCustomFilter(customFilterNode);
+            else if (jiraCustomFilterNode != null && !jiraCustomFilterNode.Filter.Empty)
+                issueLoadThread = reloadIssuesWithCustomFilter(jiraCustomFilterNode);
+            else if (presetFilterNode != null)
+                issueLoadThread = reloadIssuesWithPresetFilter(presetFilterNode);
             else if (recentIssuesNode != null)
                 issueLoadThread = reloadIssuesWithRecentlyViewedIssues();
 
@@ -498,11 +513,10 @@ namespace Atlassian.plvs {
                                               }));
         }
 
-        private Thread reloadIssuesWithSavedFilter(JiraSavedFilterTreeNode savedFilterNode) {
+        private Thread reloadIssuesWithSavedFilter(JiraSavedFilterTreeNode node) {
             return new Thread(new ThreadStart(delegate {
                                                   try {
-                                                      builder.rebuildModelWithSavedFilter(model, savedFilterNode.Server,
-                                                                                          savedFilterNode.Filter);
+                                                      builder.rebuildModelWithSavedFilter(model, node.Server, node.Filter);
                                                   }
                                                   catch (Exception ex) {
                                                       status.setError(RETRIEVING_ISSUES_FAILED, ex);
@@ -521,11 +535,10 @@ namespace Atlassian.plvs {
                                               }));
         }
 
-        private Thread reloadIssuesWithCustomFilter(CustomFilterTreeNode node) {
+        private Thread reloadIssuesWithPresetFilter(JiraPresetFilterTreeNode node) {
             return new Thread(new ThreadStart(delegate {
                                                   try {
-                                                      builder.rebuildModelWithCustomFilter(model, node.Server,
-                                                                                           node.Filter);
+                                                      builder.rebuildModelWithPresetFilter(model, node.Server, node.Filter);
                                                   }
                                                   catch (Exception ex) {
                                                       status.setError(RETRIEVING_ISSUES_FAILED, ex);
@@ -533,11 +546,32 @@ namespace Atlassian.plvs {
                                               }));
         }
 
-        private Thread updateIssuesWithCustomFilter(CustomFilterTreeNode node) {
+        private Thread updateIssuesWithPresetFilter(JiraPresetFilterTreeNode node) {
             return new Thread(new ThreadStart(delegate {
                                                   try {
-                                                      builder.updateModelWithCustomFilter(model, node.Server,
-                                                                                          node.Filter);
+                                                      builder.updateModelWithPresetFilter(model, node.Server, node.Filter);
+                                                  }
+                                                  catch (Exception ex) {
+                                                      status.setError(RETRIEVING_ISSUES_FAILED, ex);
+                                                  }
+                                              }));
+        }
+
+        private Thread reloadIssuesWithCustomFilter(JiraCustomFilterTreeNode node) {
+            return new Thread(new ThreadStart(delegate {
+                                                  try {
+                                                      builder.rebuildModelWithCustomFilter(model, node.Server, node.Filter);
+                                                  }
+                                                  catch (Exception ex) {
+                                                      status.setError(RETRIEVING_ISSUES_FAILED, ex);
+                                                  }
+                                              }));
+        }
+
+        private Thread updateIssuesWithCustomFilter(JiraCustomFilterTreeNode node) {
+            return new Thread(new ThreadStart(delegate {
+                                                  try {
+                                                      builder.updateModelWithCustomFilter(model, node.Server, node.Filter);
                                                   }
                                                   catch (Exception ex) {
                                                       status.setError(RETRIEVING_ISSUES_FAILED, ex);
@@ -547,7 +581,8 @@ namespace Atlassian.plvs {
 
         private void getMoreIssues_Click(object sender, EventArgs e) {
             JiraSavedFilterTreeNode savedFilterNode = filtersTree.SelectedNode as JiraSavedFilterTreeNode;
-            CustomFilterTreeNode customFilterNode = filtersTree.SelectedNode as CustomFilterTreeNode;
+            JiraCustomFilterTreeNode customFilterNode = filtersTree.SelectedNode as JiraCustomFilterTreeNode;
+            JiraPresetFilterTreeNode presetFilterNode = filtersTree.SelectedNode as JiraPresetFilterTreeNode;
 
             Thread issueLoadThread = null;
 
@@ -555,6 +590,8 @@ namespace Atlassian.plvs {
                 issueLoadThread = updateIssuesWithSavedFilter(savedFilterNode);
             else if (customFilterNode != null && !customFilterNode.Filter.Empty)
                 issueLoadThread = updateIssuesWithCustomFilter(customFilterNode);
+            else if (presetFilterNode != null)
+                issueLoadThread = updateIssuesWithPresetFilter(presetFilterNode);
 
             loadIssuesInThread(issueLoadThread);
         }
