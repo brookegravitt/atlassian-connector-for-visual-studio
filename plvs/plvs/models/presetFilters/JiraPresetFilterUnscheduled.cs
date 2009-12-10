@@ -1,15 +1,15 @@
 ﻿namespace Atlassian.plvs.models.presetFilters {
-    public class JiraPresetFilterRecentlyAdded: JiraPresetFilter {
-        public JiraPresetFilterRecentlyAdded() : base("Added Recently") { }
+    public class JiraPresetFilterUnscheduled : JiraPresetFilter {
+        public JiraPresetFilterUnscheduled() : base("Unscheduled") { }
 
         #region Overrides of JiraPresetFilter
 
         public override string getFilterQueryStringNoProject() {
-            return "created:previous=-1w";
+            return "resolution=-1&fixfor=-1";
         }
 
         public override string getSortBy() {
-            return "created";
+            return "priority";
         }
 
         #endregion

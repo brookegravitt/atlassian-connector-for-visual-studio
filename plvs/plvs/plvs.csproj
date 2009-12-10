@@ -151,7 +151,14 @@
     <Compile Include="markers\JiraLinkTextMarkerType.cs" />
     <Compile Include="markers\JiraLinkMarkerTypeProvider.cs" />
     <Compile Include="models\JiraPresetFilter.cs" />
+    <Compile Include="models\presetFilters\JiraPresetFilterAssignedToMe.cs" />
+    <Compile Include="models\presetFilters\JiraPresetFilterMostImportant.cs" />
+    <Compile Include="models\presetFilters\JiraPresetFilterOutstanding.cs" />
     <Compile Include="models\presetFilters\JiraPresetFilterRecentlyAdded.cs" />
+    <Compile Include="models\presetFilters\JiraPresetFilterRecentlyResolved.cs" />
+    <Compile Include="models\presetFilters\JiraPresetFilterRecentlyUpdated.cs" />
+    <Compile Include="models\presetFilters\JiraPresetFilterReportedByMe.cs" />
+    <Compile Include="models\presetFilters\JiraPresetFilterUnscheduled.cs" />
     <Compile Include="store\CredentialsVault.cs" />
     <Compile Include="models\ImageCache.cs" />
     <Compile Include="models\JiraCustomFilter.cs" />
