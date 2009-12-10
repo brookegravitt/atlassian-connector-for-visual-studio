@@ -173,8 +173,10 @@ namespace Atlassian.plvs {
             filterTreeImages.Images.Clear();
 
             filterTreeImages.Images.Add(Resources.jira_blue_16);
+            filterTreeImages.Images.Add(Resources.ico_jira_filter);
             filterTreeImages.Images.Add(Resources.ico_jira_saved_filter);
             filterTreeImages.Images.Add(Resources.ico_jira_custom_filter);
+            filterTreeImages.Images.Add(Resources.ico_jira_preset_filter);
             filterTreeImages.Images.Add(Resources.ico_jira_recent_issues);
 
             filtersTree.ImageList = filterTreeImages;
@@ -271,72 +273,84 @@ namespace Atlassian.plvs {
                 filtersTree.Nodes.Add(new JiraServerTreeNode(server, 0));
             }
 
-            Thread metadataThread = new Thread(new ThreadStart(delegate {
-                                                                   try {
-                                                                       JiraServerCache.Instance.clearProjects();
-                                                                       JiraServerCache.Instance.clearIssueTypes();
-                                                                       JiraServerCache.Instance.clearStatuses();
-                                                                       JiraServerCache.Instance.clearPriorities();
-                                                                       JiraServerCache.Instance.clearResolutions();
-
-                                                                       foreach (JiraServer server in servers) {
-                                                                           status.setInfo("[" + server.Name + "] Loading project definitions...");
-                                                                           List<JiraProject> projects = facade.getProjects(server);
-                                                                           foreach (JiraProject proj in projects) {
-                                                                               JiraServerCache.Instance.addProject(server, proj);
-                                                                           }
-                                                                           status.setInfo("[" + server.Name + "] Loading issue types...");
-                                                                           List<JiraNamedEntity> issueTypes = facade.getIssueTypes(server);
-                                                                           foreach (JiraNamedEntity type in issueTypes) {
-                                                                               JiraServerCache.Instance.addIssueType(server, type);
-                                                                               ImageCache.Instance.getImage(type.IconUrl);
-                                                                           }
-                                                                           status.setInfo("[" + server.Name + "] Loading issue priorities...");
-                                                                           List<JiraNamedEntity> priorities = facade.getPriorities(server);
-                                                                           foreach (JiraNamedEntity prio in priorities) {
-                                                                               JiraServerCache.Instance.addPriority(server, prio);
-                                                                               ImageCache.Instance.getImage(prio.IconUrl);
-                                                                           }
-                                                                           status.setInfo("[" + server.Name + "] Loading issue resolutions...");
-                                                                           List<JiraNamedEntity> resolutions = facade.getResolutions(server);
-                                                                           foreach (JiraNamedEntity res in resolutions) {
-                                                                               JiraServerCache.Instance.addResolution(server, res);
-                                                                           }
-                                                                           status.setInfo("[" + server.Name + "] Loading issue statuses...");
-                                                                           List<JiraNamedEntity> statuses = facade.getStatuses(server);
-                                                                           foreach (JiraNamedEntity s in statuses) {
-                                                                               JiraServerCache.Instance.addStatus(server, s);
-                                                                               ImageCache.Instance.getImage(s.IconUrl);
-                                                                           }
-
-                                                                           status.setInfo("[" + server.Name + "] Loading saved filters...");
-                                                                           List<JiraSavedFilter> filters = facade.getSavedFilters(server);
-                                                                           JiraServer jiraServer = server;
-                                                                           Invoke(new MethodInvoker(delegate {
-                                                                                                        fillSavedFiltersForServer(jiraServer, filters);
-                                                                                                        status.setInfo("Loaded saved filters for server " + jiraServer.Name);
-                                                                                                        addCustomFilterNodes(jiraServer);
-                                                                                                    }));
-                                                                       }
-                                                                       Invoke(new MethodInvoker(delegate {
-                                                                            filtersTree.Nodes.Add(new RecentlyOpenIssuesTreeNode(3));
-                                                                                                    filtersTree.ExpandAll();
-                                                                                                }));
-                                                                   }
-                                                                   catch (Exception e) {
-                                                                       status.setError("Failed to load server metadata", e);
-                                                                   }
-                                                               }));
+            Thread metadataThread = new Thread(() => reloadKnownServersWorker(servers));
             metadataThread.Start();
         }
 
+        private void reloadKnownServersWorker(IEnumerable<JiraServer> servers) {
+            try {
+                JiraServerCache.Instance.clearProjects();
+                JiraServerCache.Instance.clearIssueTypes();
+                JiraServerCache.Instance.clearStatuses();
+                JiraServerCache.Instance.clearPriorities();
+                JiraServerCache.Instance.clearResolutions();
+
+                foreach (JiraServer server in servers) {
+                    status.setInfo("[" + server.Name + "] Loading project definitions...");
+                    List<JiraProject> projects = facade.getProjects(server);
+                    foreach (JiraProject proj in projects) {
+                        JiraServerCache.Instance.addProject(server, proj);
+                    }
+                    status.setInfo("[" + server.Name + "] Loading issue types...");
+                    List<JiraNamedEntity> issueTypes = facade.getIssueTypes(server);
+                    foreach (JiraNamedEntity type in issueTypes) {
+                        JiraServerCache.Instance.addIssueType(server, type);
+                        ImageCache.Instance.getImage(type.IconUrl);
+                    }
+                    status.setInfo("[" + server.Name + "] Loading issue priorities...");
+                    List<JiraNamedEntity> priorities = facade.getPriorities(server);
+                    foreach (JiraNamedEntity prio in priorities) {
+                        JiraServerCache.Instance.addPriority(server, prio);
+                        ImageCache.Instance.getImage(prio.IconUrl);
+                    }
+                    status.setInfo("[" + server.Name + "] Loading issue resolutions...");
+                    List<JiraNamedEntity> resolutions = facade.getResolutions(server);
+                    foreach (JiraNamedEntity res in resolutions) {
+                        JiraServerCache.Instance.addResolution(server, res);
+                    }
+                    status.setInfo("[" + server.Name + "] Loading issue statuses...");
+                    List<JiraNamedEntity> statuses = facade.getStatuses(server);
+                    foreach (JiraNamedEntity s in statuses) {
+                        JiraServerCache.Instance.addStatus(server, s);
+                        ImageCache.Instance.getImage(s.IconUrl);
+                    }
+
+                    status.setInfo("[" + server.Name + "] Loading saved filters...");
+                    List<JiraSavedFilter> filters = facade.getSavedFilters(server);
+                    JiraServer jiraServer = server;
+                    Invoke(new MethodInvoker(delegate {
+                                                 addFilterGroupNodes(jiraServer);
+                                                 addSavedFilterNodes(jiraServer, filters);
+                                                 status.setInfo("Loaded saved filters for server " + jiraServer.Name);
+                                                 addCustomFilterNodes(jiraServer);
+                                             }));
+                }
+                Invoke(new MethodInvoker(delegate {
+                                             filtersTree.Nodes.Add(new RecentlyOpenIssuesTreeNode(5));
+                                             filtersTree.ExpandAll();
+                                         }));
+            }
+            catch (Exception e) {
+                status.setError("Failed to load server metadata", e);
+            }
+        }
+
+        private void addFilterGroupNodes(JiraServer server) {
+            JiraServerTreeNode node = findServerNode(server);
+            if (node == null) return;
+
+            node.Nodes.Add(new JiraPresetFiltersGroupTreeNode(server, 4));
+            node.Nodes.Add(new JiraSavedFiltersGroupTreeNode(server, 2));
+            node.Nodes.Add(new JiraCustomFiltersGroupTreeNode(server, 3));
+        }
+
         private void addCustomFilterNodes(JiraServer server) {
-            JiraServerTreeNode node = findNode(server);
+            TreeNodeWithServer node = findGroupNode(server, typeof(JiraCustomFiltersGroupTreeNode));
             if (node == null) {
                 return;
             }
             foreach (JiraCustomFilter filter in JiraCustomFilter.getAll(server)) {
-                CustomFilterTreeNode cfNode = new CustomFilterTreeNode(server, filter, 2)
+                CustomFilterTreeNode cfNode = new CustomFilterTreeNode(server, filter, 1)
                                               {
                                                   ContextMenuStrip = new FilterContextMenu(server, filter, reloadIssues),
                                                   ToolTipText = server.Name
@@ -378,8 +392,8 @@ namespace Atlassian.plvs {
 
         public void issueChanged(JiraIssue issue) {}
 
-        private void fillSavedFiltersForServer(JiraServer server, IEnumerable<JiraSavedFilter> filters) {
-            JiraServerTreeNode node = findNode(server);
+        private void addSavedFilterNodes(JiraServer server, IEnumerable<JiraSavedFilter> filters) {
+            TreeNodeWithServer node = findGroupNode(server, typeof(JiraSavedFiltersGroupTreeNode));
             if (node == null) {
                 return;
             }
@@ -389,11 +403,22 @@ namespace Atlassian.plvs {
             node.ExpandAll();
         }
 
-        private JiraServerTreeNode findNode(JiraServer server) {
+        private JiraServerTreeNode findServerNode(JiraServer server) {
             foreach (TreeNode node in filtersTree.Nodes) {
-                JiraServerTreeNode tn = (JiraServerTreeNode) node;
+                JiraServerTreeNode tn = (JiraServerTreeNode)node;
                 if (tn.Server.GUID.Equals(server.GUID)) {
                     return tn;
+                }
+            }
+            return null;
+        }
+
+        private TreeNodeWithServer findGroupNode(JiraServer server, Type type) {
+            JiraServerTreeNode serverNode = findServerNode(server);
+            if (serverNode == null) return null;
+            foreach (TreeNode groupNode in serverNode.Nodes) {
+                if (type.IsAssignableFrom(groupNode.GetType())) {
+                    return (TreeNodeWithServer) groupNode;
                 }
             }
             return null;
@@ -604,36 +629,36 @@ namespace Atlassian.plvs {
                 return;
             }
 
-            Thread runner = new Thread(new ThreadStart(delegate {
-                                                           try {
-                                                               status.setInfo("Fetching issue " + key + "...");
-                                                               JiraIssue issue =
-                                                                   JiraServerFacade.Instance.getIssue(server, key);
-                                                               if (issue != null) {
-                                                                   status.setInfo("Issue " + key + " found");
-                                                                   Invoke(new MethodInvoker(delegate {
-                                                                                                if (onFinish != null) {
-                                                                                                    onFinish(true, null);
-                                                                                                }
-                                                                                                IssueDetailsWindow.
-                                                                                                    Instance.openIssue(
-                                                                                                    issue);
-                                                                                            }));
-                                                               }
-                                                           }
-                                                           catch (Exception ex) {
-                                                               status.setError("Failed to find issue " + key, ex);
-                                                               Invoke(new MethodInvoker(delegate {
-                                                                                            string message = "Unable to find issue " +
-                                                                                                       key + " on server \"" +
-                                                                                                       server.Name + "\"\n\n" + ex.Message;
-                                                                                            if (onFinish != null) {
-                                                                                                onFinish(false, message);
-                                                                                            }
-                                                                                        }));
-                                                           }
-                                                       }));
+            Thread runner = new Thread(() => finishAndOpenIssueWorker(key, server, onFinish));
             runner.Start();
+        }
+
+        private void finishAndOpenIssueWorker(string key, JiraServer server, FindFinished onFinish) {
+            try {
+                status.setInfo("Fetching issue " + key + "...");
+                JiraIssue issue =
+                    JiraServerFacade.Instance.getIssue(server, key);
+                if (issue != null) {
+                    status.setInfo("Issue " + key + " found");
+                    Invoke(new MethodInvoker(delegate {
+                                                 if (onFinish != null) {
+                                                     onFinish(true, null);
+                                                 }
+                                                 IssueDetailsWindow.Instance.openIssue(issue);
+                                             }));
+                }
+            }
+            catch (Exception ex) {
+                status.setError("Failed to find issue " + key, ex);
+                Invoke(new MethodInvoker(delegate {
+                                             string message = "Unable to find issue " +
+                                                              key + " on server \"" +
+                                                              server.Name + "\"\n\n" + ex.Message;
+                                             if (onFinish != null) {
+                                                 onFinish(false, message);
+                                             }
+                                         }));
+            }
         }
 
         public void setAutoupdateAvailable(Autoupdate.UpdateAction action) {

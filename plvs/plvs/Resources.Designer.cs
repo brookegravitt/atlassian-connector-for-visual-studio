@@ -105,7 +105,17 @@ namespace Atlassian.plvs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;div style=&quot;font-size:12px;font-family:Arial;&quot;&gt;
+        ///
+        ///&lt;div&gt;New Version of the connector is available: &lt;strong&gt;{0}&lt;/strong&gt;&lt;/div&gt;
+        ///&lt;br&gt;
+        ///&lt;div style=&quot;font-size:12px;&quot;&gt;Highlights of the new version:&lt;/div&gt;
+        ///
+        ///&lt;div style=&quot;font-size:10px;&quot;&gt;{1}&lt;/div&gt;
+        ///
+        ///&lt;div&gt;&lt;a href=&quot;{2}&quot;&gt;See full release notes&lt;/a&gt;&lt;/div&gt;
+        ///
+        ///&lt;/div&gt;.
         /// </summary>
         internal static string autoupdate_html {
             get {
@@ -210,6 +220,20 @@ namespace Atlassian.plvs {
         internal static System.Drawing.Bitmap ico_jira_custom_filter {
             get {
                 object obj = ResourceManager.GetObject("ico_jira_custom_filter", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap ico_jira_filter {
+            get {
+                object obj = ResourceManager.GetObject("ico_jira_filter", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap ico_jira_preset_filter {
+            get {
+                object obj = ResourceManager.GetObject("ico_jira_preset_filter", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
