@@ -194,7 +194,11 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ui\issues\IssueNode.cs" />
+    <Compile Include="ui\JiraCustomFiltersGroupTreeNode.cs" />
+    <Compile Include="ui\JiraFilterGroupTreeNode.cs" />
     <Compile Include="ui\JiraNamedEntityListViewItem.cs" />
+    <Compile Include="ui\JiraPresetFiltersGroupTreeNode.cs" />
+    <Compile Include="ui\JiraSavedFiltersGroupTreeNode.cs" />
     <Compile Include="ui\JiraSavedFilterTreeNode.cs" />
     <Compile Include="ui\JiraServerTreeNode.cs" />
     <Compile Include="ui\RecentlyOpenIssuesTreeNode.cs" />
@@ -386,6 +390,8 @@
     <Content Include="Resources\icons\find-jira.png" />
     <Content Include="Resources\icons\global_properties.png" />
     <Content Include="Resources\icons\ico_jira_custom_filter.png" />
+    <Content Include="Resources\icons\ico_jira_filter.png" />
+    <Content Include="Resources\icons\ico_jira_preset_filter.png" />
     <Content Include="Resources\icons\ico_jira_recent_issues.png" />
     <Content Include="Resources\icons\ico_jira_saved_filter.png" />
     <Content Include="Resources\icons\ide_plugin_16.bmp" />
