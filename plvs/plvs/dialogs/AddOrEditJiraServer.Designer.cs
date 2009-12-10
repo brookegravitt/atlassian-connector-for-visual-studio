@@ -144,6 +144,7 @@
             this.Controls.Add(this.buttonAddOrEdit);
             this.Controls.Add(this.buttonCancel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.KeyPreview = true;
             this.Name = "AddOrEditJiraServer";
             this.Text = "AddOrEditJiraServer";
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.AddOrEditJiraServer_KeyPress);

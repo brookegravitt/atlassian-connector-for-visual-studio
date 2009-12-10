@@ -81,7 +81,7 @@ namespace Atlassian.plvs.dialogs {
         }
 
         private void AddOrEditJiraServer_KeyPress(object sender, KeyPressEventArgs e) {
-            if (!e.KeyChar.Equals(Keys.Escape)) return;
+            if (e.KeyChar != (char) Keys.Escape) return;
             DialogResult = DialogResult.Cancel;
             Close();
         }

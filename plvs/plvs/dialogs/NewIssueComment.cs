@@ -18,10 +18,9 @@ namespace Atlassian.plvs.dialogs {
         }
 
         private void NewIssueComment_KeyPress(object sender, KeyPressEventArgs e) {
-            if (e.KeyChar.Equals(Keys.Escape)) {
-                DialogResult = DialogResult.Cancel;
-                Close();
-            }
+            if (e.KeyChar != (char) Keys.Escape) return;
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
     }
 }

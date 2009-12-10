@@ -15,7 +15,7 @@ namespace Atlassian.plvs.dialogs {
         public bool Changed { get; private set; }
 
         public EditCustomFilter(JiraServer server, JiraCustomFilter filter) {
-            this.server = server;
+        this.server = server;
             this.filter = filter;
 
             InitializeComponent();
@@ -33,6 +33,8 @@ namespace Atlassian.plvs.dialogs {
             refillFixFor(null);
             refillComponents(null);
             refillAffectsVersions(null);
+//            refillReporter();
+//            refillAssignee();
 
             manageSelections();
 
@@ -109,44 +111,7 @@ namespace Atlassian.plvs.dialogs {
                 setAllEnabled(false);
                 JiraProject project = listBoxProjects.SelectedItems[0] as JiraProject;
 
-                Thread runner = new Thread(new ThreadStart(delegate {
-                                                               try {
-                                                                   List<JiraNamedEntity> issueTypes =
-                                                                       JiraServerFacade.Instance.getIssueTypes(server,
-                                                                                                               project);
-                                                                   List<JiraNamedEntity> comps =
-                                                                       JiraServerFacade.Instance.getComponents(server,
-                                                                                                               project);
-                                                                   List<JiraNamedEntity> versions =
-                                                                       JiraServerFacade.Instance.getVersions(server,
-                                                                                                             project);
-                                                                   versions.Reverse();
-                                                                   Invoke(new MethodInvoker(delegate {
-                                                                                                refillIssueTypes(
-                                                                                                    issueTypes);
-                                                                                                refillComponents(comps);
-                                                                                                refillFixFor(versions);
-                                                                                                refillAffectsVersions(
-                                                                                                    versions);
-
-                                                                                                if (initial)
-                                                                                                    setProjectRelatedSelections
-                                                                                                        ();
-
-                                                                                                setAllEnabled(true);
-                                                                                            }));
-                                                               }
-                                                               catch (Exception ex) {
-                                                                   if (ex is InvalidOperationException) {
-                                                                       // probably the window got closed while we were fetching data
-                                                                       Debug.WriteLine(ex.Message);
-                                                                   }
-                                                                   else
-                                                                       MessageBox.Show(
-                                                                           "Unable to retrieve project-related data: " +
-                                                                           ex.Message, "Error");
-                                                               }
-                                                           }));
+                Thread runner = new Thread(() => setProjectRelatedValuesRunner(project, initial));
                 runner.Start();
             }
             else {
@@ -155,8 +120,38 @@ namespace Atlassian.plvs.dialogs {
                 refillFixFor(null);
                 refillAffectsVersions(null);
 
-                if (initial)
+                if (initial) {
                     setProjectRelatedSelections();
+                }
+            }
+        }
+
+        private void setProjectRelatedValuesRunner(JiraProject project, bool initial) {
+            try {
+                List<JiraNamedEntity> issueTypes = JiraServerFacade.Instance.getIssueTypes(server, project);
+                List<JiraNamedEntity> comps = JiraServerFacade.Instance.getComponents(server, project);
+                List<JiraNamedEntity> versions = JiraServerFacade.Instance.getVersions(server, project);
+                versions.Reverse();
+                Invoke(new MethodInvoker(delegate {
+                                             refillIssueTypes(issueTypes);
+                                             refillComponents(comps);
+                                             refillFixFor(versions);
+                                             refillAffectsVersions(versions);
+
+                                             if (initial)
+                                                 setProjectRelatedSelections();
+
+                                             setAllEnabled(true);
+                                         }));
+            }
+            catch (Exception ex) {
+                if (ex is InvalidOperationException) {
+                    // probably the window got closed while we were fetching data
+                    Debug.WriteLine(ex.Message);
+                }
+                else {
+                    MessageBox.Show("Unable to retrieve project-related data: " + ex.Message, "Error");
+                }
             }
         }
 
@@ -260,7 +255,7 @@ namespace Atlassian.plvs.dialogs {
         }
 
         private void EditCustomFilter_KeyPress(object sender, KeyPressEventArgs e) {
-            if (e.KeyChar.Equals(Keys.Escape)) {
+            if (e.KeyChar == (char) Keys.Escape) {
                 Close();
             }
         }

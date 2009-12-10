@@ -75,6 +75,7 @@
             this.Controls.Add(this.commentText);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
+            this.KeyPreview = true;
             this.Name = "NewIssueComment";
             this.Text = "Add Comment";
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.NewIssueComment_KeyPress);

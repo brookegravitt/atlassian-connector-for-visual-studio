@@ -73,6 +73,7 @@
             this.Controls.Add(this.status);
             this.Controls.Add(this.progress);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "TestJiraConnection";

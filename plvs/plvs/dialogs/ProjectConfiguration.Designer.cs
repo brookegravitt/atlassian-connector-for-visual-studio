@@ -128,6 +128,7 @@
             this.Controls.Add(this.serverDetails);
             this.Controls.Add(this.buttonClose);
             this.Controls.Add(this.serverTree);
+            this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ProjectConfiguration";
