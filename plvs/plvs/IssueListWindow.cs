@@ -46,9 +46,9 @@ namespace Atlassian.plvs {
 
         private void setupGroupByCombo() {
             foreach (JiraIssueGroupByComboItem.GroupBy groupBy in Enum.GetValues(typeof (JiraIssueGroupByComboItem.GroupBy))) {
-                comboGroupBy.Items.Add(new JiraIssueGroupByComboItem(groupBy));
+                comboGroupBy.Items.Add(new JiraIssueGroupByComboItem(groupBy, model));
             }
-            comboGroupBy.SelectedIndex = 0;
+            comboGroupBy.SelectedIndexChanged += comboGroupBy_SelectedIndexChanged;
         }
 
         private void registerIssueModelListener() {
@@ -80,8 +80,7 @@ namespace Atlassian.plvs {
 
             issuesTree = new TreeViewAdv();
 
-            ITreeModel treeModel = new FlatIssueTreeModel(model);
-            issuesTree.Model = treeModel;
+            comboGroupBy.SelectedIndex = 0;
 
             issueTreeContainer.ContentPanel.Controls.Add(issuesTree);
             issuesTree.Dock = DockStyle.Fill;
@@ -189,6 +188,24 @@ namespace Atlassian.plvs {
             filterTreeImages.Images.Add(Resources.ico_jira_recent_issues);
 
             filtersTree.ImageList = filterTreeImages;
+        }
+
+        private void comboGroupBy_SelectedIndexChanged(object sender, EventArgs e) {
+            AbstractIssueTreeModel oldTreeModel = issuesTree.Model as AbstractIssueTreeModel;
+            if (oldTreeModel != null) {
+                oldTreeModel.shutdown();
+            }
+
+            JiraIssueGroupByComboItem item = comboGroupBy.SelectedItem as JiraIssueGroupByComboItem;
+            if (item == null) {
+                return;
+            }
+            AbstractIssueTreeModel treeModel = item.TreeModel;
+            // just in case :)
+            treeModel.shutdown();
+
+            treeModel.init();
+            issuesTree.Model = treeModel;
         }
 
         private void issuesTree_SelectionChanged(object sender, EventArgs e) {
@@ -394,14 +411,6 @@ namespace Atlassian.plvs {
                                                || filtersTree.SelectedNode is JiraPresetFilterTreeNode)) return;
 
                                          status.setInfo("Loaded " + issues.Count + " issues");
-
-//                    FlatIssueTreeModel oldModel = issuesTree.Model as FlatIssueTreeModel;
-//                    if (oldModel != null)
-//                    {
-//                        oldModel.shutdown();
-//                    }
-//                    ITreeModel treeModel = new FlatIssueTreeModel(model);
-//                    issuesTree.Model = treeModel;
 
                                          getMoreIssues.Visible =
                                              !(filtersTree.SelectedNode is RecentlyOpenIssuesTreeNode)

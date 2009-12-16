@@ -6,21 +6,13 @@ using Atlassian.plvs.api;
 using Atlassian.plvs.models;
 
 namespace Atlassian.plvs.ui.issues {
-    internal class FlatIssueTreeModel : ITreeModel, JiraIssueListModelListener {
-        private readonly JiraIssueListModel model;
+    internal class FlatIssueTreeModel : AbstractIssueTreeModel {
         private readonly List<IssueNode> nodes = new List<IssueNode>();
 
-        public FlatIssueTreeModel(JiraIssueListModel model) {
-            this.model = model;
-            fillModel(model.Issues);
-            model.addListener(this);
+        public FlatIssueTreeModel(JiraIssueListModel model) : base(model) {
         }
 
-        public void shutdown() {
-            model.removeListener(this);
-        }
-
-        private void fillModel(IEnumerable<JiraIssue> issues) {
+        protected override void fillModel(IEnumerable<JiraIssue> issues) {
             nodes.Clear();
 
             foreach (var issue in issues) {
@@ -34,19 +26,19 @@ namespace Atlassian.plvs.ui.issues {
 
         #region ITreeModel Members
 
-        IEnumerable ITreeModel.GetChildren(TreePath treePath) {
+        public override IEnumerable GetChildren(TreePath treePath) {
             return treePath.IsEmpty() ? nodes : null;
         }
 
-        bool ITreeModel.IsLeaf(TreePath treePath) {
+        public override bool IsLeaf(TreePath treePath) {
             return true;
         }
 
-        public void modelChanged() {
+        public override void modelChanged() {
             fillModel(model.Issues);
         }
 
-        public void issueChanged(JiraIssue issue) {
+        public override void issueChanged(JiraIssue issue) {
             foreach (var node in nodes) {
                 if (node.Issue.Id != issue.Id) continue;
 
@@ -59,15 +51,14 @@ namespace Atlassian.plvs.ui.issues {
             }
         }
 
-        public void updateIssue(JiraIssue issue) {}
+        #region Overrides of AbstractIssueTreeModel
 
-        public event EventHandler<TreeModelEventArgs> NodesChanged;
+        public override event EventHandler<TreeModelEventArgs> NodesChanged;
+        public override event EventHandler<TreeModelEventArgs> NodesInserted;
+        public override event EventHandler<TreeModelEventArgs> NodesRemoved;
+        public override event EventHandler<TreePathEventArgs> StructureChanged;
 
-        public event EventHandler<TreeModelEventArgs> NodesInserted;
-
-        public event EventHandler<TreeModelEventArgs> NodesRemoved;
-
-        public event EventHandler<TreePathEventArgs> StructureChanged;
+        #endregion
 
         #endregion
     }
