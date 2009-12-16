@@ -6,7 +6,7 @@ namespace Atlassian.plvs.ui {
         public JiraCustomFilter.UserType Type { get; private set; }
 
         public UserTypeComboBoxItem(JiraCustomFilter.UserType type) {
-            this.Type = type;
+            Type = type;
         }
 
         public override string ToString() {

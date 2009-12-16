@@ -42,6 +42,8 @@
             this.buttonRefreshAll = new System.Windows.Forms.ToolStripButton();
             this.issueTreeContainer = new System.Windows.Forms.ToolStripContainer();
             this.toolStrip2 = new System.Windows.Forms.ToolStrip();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            this.comboGroupBy = new System.Windows.Forms.ToolStripComboBox();
             this.buttonOpen = new System.Windows.Forms.ToolStripButton();
             this.buttonViewInBrowser = new System.Windows.Forms.ToolStripButton();
             this.buttonEditInBrowser = new System.Windows.Forms.ToolStripButton();
@@ -83,7 +85,7 @@
             // mainContainer.ContentPanel
             // 
             this.mainContainer.ContentPanel.Controls.Add(this.productTabs);
-            this.mainContainer.ContentPanel.Size = new System.Drawing.Size(677, 294);
+            this.mainContainer.ContentPanel.Size = new System.Drawing.Size(685, 294);
             this.mainContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             // 
             // mainContainer.LeftToolStripPanel
@@ -102,7 +104,7 @@
             this.productTabs.Location = new System.Drawing.Point(0, 0);
             this.productTabs.Name = "productTabs";
             this.productTabs.SelectedIndex = 0;
-            this.productTabs.Size = new System.Drawing.Size(677, 294);
+            this.productTabs.Size = new System.Drawing.Size(685, 294);
             this.productTabs.TabIndex = 0;
             // 
             // tabJira
@@ -111,7 +113,7 @@
             this.tabJira.Location = new System.Drawing.Point(4, 22);
             this.tabJira.Name = "tabJira";
             this.tabJira.Padding = new System.Windows.Forms.Padding(3);
-            this.tabJira.Size = new System.Drawing.Size(669, 268);
+            this.tabJira.Size = new System.Drawing.Size(677, 268);
             this.tabJira.TabIndex = 0;
             this.tabJira.Text = "Issues - JIRA";
             this.tabJira.UseVisualStyleBackColor = true;
@@ -126,11 +128,11 @@
             // jiraContainer.ContentPanel
             // 
             this.jiraContainer.ContentPanel.Controls.Add(this.jiraSplitter);
-            this.jiraContainer.ContentPanel.Size = new System.Drawing.Size(663, 215);
+            this.jiraContainer.ContentPanel.Size = new System.Drawing.Size(671, 215);
             this.jiraContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.jiraContainer.Location = new System.Drawing.Point(3, 3);
             this.jiraContainer.Name = "jiraContainer";
-            this.jiraContainer.Size = new System.Drawing.Size(663, 262);
+            this.jiraContainer.Size = new System.Drawing.Size(671, 262);
             this.jiraContainer.TabIndex = 0;
             this.jiraContainer.Text = "toolStripContainer1";
             // 
@@ -142,7 +144,7 @@
             this.getMoreIssues});
             this.statusStrip.Location = new System.Drawing.Point(0, 0);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(663, 22);
+            this.statusStrip.Size = new System.Drawing.Size(671, 22);
             this.statusStrip.TabIndex = 0;
             // 
             // jiraStatus
@@ -173,8 +175,8 @@
             // jiraSplitter.Panel2
             // 
             this.jiraSplitter.Panel2.Controls.Add(this.issueTreeContainer);
-            this.jiraSplitter.Size = new System.Drawing.Size(663, 215);
-            this.jiraSplitter.SplitterDistance = 176;
+            this.jiraSplitter.Size = new System.Drawing.Size(671, 215);
+            this.jiraSplitter.SplitterDistance = 178;
             this.jiraSplitter.TabIndex = 0;
             // 
             // filterTreeContainer
@@ -183,11 +185,11 @@
             // filterTreeContainer.ContentPanel
             // 
             this.filterTreeContainer.ContentPanel.Controls.Add(this.filtersTree);
-            this.filterTreeContainer.ContentPanel.Size = new System.Drawing.Size(176, 190);
+            this.filterTreeContainer.ContentPanel.Size = new System.Drawing.Size(178, 190);
             this.filterTreeContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.filterTreeContainer.Location = new System.Drawing.Point(0, 0);
             this.filterTreeContainer.Name = "filterTreeContainer";
-            this.filterTreeContainer.Size = new System.Drawing.Size(176, 215);
+            this.filterTreeContainer.Size = new System.Drawing.Size(178, 215);
             this.filterTreeContainer.TabIndex = 0;
             this.filterTreeContainer.Text = "toolStripContainer2";
             // 
@@ -201,7 +203,7 @@
             this.filtersTree.HideSelection = false;
             this.filtersTree.Location = new System.Drawing.Point(0, 0);
             this.filtersTree.Name = "filtersTree";
-            this.filtersTree.Size = new System.Drawing.Size(176, 190);
+            this.filtersTree.Size = new System.Drawing.Size(178, 190);
             this.filtersTree.TabIndex = 0;
             this.filtersTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.filtersTree_AfterSelect);
             this.filtersTree.MouseMove += new System.Windows.Forms.MouseEventHandler(this.filtersTree_MouseMove);
@@ -231,11 +233,11 @@
             // 
             // issueTreeContainer.ContentPanel
             // 
-            this.issueTreeContainer.ContentPanel.Size = new System.Drawing.Size(483, 190);
+            this.issueTreeContainer.ContentPanel.Size = new System.Drawing.Size(489, 190);
             this.issueTreeContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.issueTreeContainer.Location = new System.Drawing.Point(0, 0);
             this.issueTreeContainer.Name = "issueTreeContainer";
-            this.issueTreeContainer.Size = new System.Drawing.Size(483, 215);
+            this.issueTreeContainer.Size = new System.Drawing.Size(489, 215);
             this.issueTreeContainer.TabIndex = 0;
             this.issueTreeContainer.Text = "toolStripContainer2";
             // 
@@ -247,6 +249,8 @@
             // 
             this.toolStrip2.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripLabel1,
+            this.comboGroupBy,
             this.buttonOpen,
             this.buttonViewInBrowser,
             this.buttonEditInBrowser,
@@ -254,8 +258,20 @@
             this.buttonRefresh});
             this.toolStrip2.Location = new System.Drawing.Point(3, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(127, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(306, 25);
             this.toolStrip2.TabIndex = 0;
+            // 
+            // toolStripLabel1
+            // 
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            this.toolStripLabel1.Size = new System.Drawing.Size(56, 22);
+            this.toolStripLabel1.Text = "Group By";
+            // 
+            // comboGroupBy
+            // 
+            this.comboGroupBy.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboGroupBy.Name = "comboGroupBy";
+            this.comboGroupBy.Size = new System.Drawing.Size(121, 25);
             // 
             // buttonOpen
             // 
@@ -317,7 +333,7 @@
             this.buttonUpdate});
             this.globalToolBar.Location = new System.Drawing.Point(0, 3);
             this.globalToolBar.Name = "globalToolBar";
-            this.globalToolBar.Size = new System.Drawing.Size(32, 122);
+            this.globalToolBar.Size = new System.Drawing.Size(24, 103);
             this.globalToolBar.TabIndex = 0;
             // 
             // buttonProjectProperties
@@ -326,7 +342,7 @@
             this.buttonProjectProperties.Image = global::Atlassian.plvs.Resources.projectsettings;
             this.buttonProjectProperties.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonProjectProperties.Name = "buttonProjectProperties";
-            this.buttonProjectProperties.Size = new System.Drawing.Size(30, 20);
+            this.buttonProjectProperties.Size = new System.Drawing.Size(22, 20);
             this.buttonProjectProperties.Text = "Project Configuration";
             this.buttonProjectProperties.Click += new System.EventHandler(this.buttonProjectProperties_Click);
             // 
@@ -336,7 +352,7 @@
             this.buttonGlobalProperties.Image = global::Atlassian.plvs.Resources.global_properties;
             this.buttonGlobalProperties.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonGlobalProperties.Name = "buttonGlobalProperties";
-            this.buttonGlobalProperties.Size = new System.Drawing.Size(30, 20);
+            this.buttonGlobalProperties.Size = new System.Drawing.Size(22, 20);
             this.buttonGlobalProperties.Text = "Global Configuration";
             this.buttonGlobalProperties.Click += new System.EventHandler(this.buttonGlobalProperties_Click);
             // 
@@ -346,7 +362,7 @@
             this.buttonAbout.Image = global::Atlassian.plvs.Resources.about;
             this.buttonAbout.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonAbout.Name = "buttonAbout";
-            this.buttonAbout.Size = new System.Drawing.Size(30, 20);
+            this.buttonAbout.Size = new System.Drawing.Size(22, 20);
             this.buttonAbout.Text = "About";
             this.buttonAbout.Click += new System.EventHandler(this.buttonAbout_Click);
             // 
@@ -357,7 +373,7 @@
             this.buttonUpdate.Image = global::Atlassian.plvs.Resources.status_plugin;
             this.buttonUpdate.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonUpdate.Name = "buttonUpdate";
-            this.buttonUpdate.Size = new System.Drawing.Size(30, 20);
+            this.buttonUpdate.Size = new System.Drawing.Size(22, 20);
             this.buttonUpdate.Text = "New Version Available";
             // 
             // toolStripContainer1
@@ -452,5 +468,7 @@
         private System.Windows.Forms.ToolTip filtersTreeToolTip;
         private System.Windows.Forms.ToolStripButton buttonGlobalProperties;
         private System.Windows.Forms.ToolStripButton buttonUpdate;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
+        private System.Windows.Forms.ToolStripComboBox comboGroupBy;
     }
 }
