@@ -29,6 +29,7 @@ namespace Atlassian.plvs {
 
         public IssueListWindow() {
             InitializeComponent();
+            setupGroupByCombo();
 
             status = new StatusLabel(statusStrip, jiraStatus);
 
@@ -41,6 +42,13 @@ namespace Atlassian.plvs {
             buttonUpdate.Visible = false;
 
             Instance = this;
+        }
+
+        private void setupGroupByCombo() {
+            foreach (JiraIssueGroupByComboItem.GroupBy groupBy in Enum.GetValues(typeof (JiraIssueGroupByComboItem.GroupBy))) {
+                comboGroupBy.Items.Add(new JiraIssueGroupByComboItem(groupBy));
+            }
+            comboGroupBy.SelectedIndex = 0;
         }
 
         private void registerIssueModelListener() {

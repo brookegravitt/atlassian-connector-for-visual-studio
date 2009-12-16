@@ -205,6 +205,8 @@
     <Compile Include="ui\issues\IssueNode.cs" />
     <Compile Include="ui\JiraCustomFiltersGroupTreeNode.cs" />
     <Compile Include="ui\JiraFilterGroupTreeNode.cs" />
+    <Compile Include="ui\JiraIssueGroupByCombo.cs">
+    </Compile>
     <Compile Include="ui\JiraNamedEntityListViewItem.cs" />
     <Compile Include="ui\JiraPresetFiltersGroupTreeNode.cs" />
     <Compile Include="ui\JiraPresetFilterTreeNode.cs" />
