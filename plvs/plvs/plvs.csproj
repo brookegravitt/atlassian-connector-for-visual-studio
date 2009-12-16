@@ -194,6 +194,7 @@
     <Compile Include="store\DPApi.cs" />
     <Compile Include="store\ParameterStore.cs" />
     <Compile Include="ToolWindowManager.cs" />
+    <Compile Include="ui\issues\AbstractIssueTreeModel.cs" />
     <Compile Include="ui\JiraCustomFilterTreeNode.cs" />
     <Compile Include="ui\issues\FilterContextMenu.cs">
       <SubType>Component</SubType>
