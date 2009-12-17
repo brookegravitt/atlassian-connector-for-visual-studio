@@ -42,7 +42,7 @@
             this.buttonRefreshAll = new System.Windows.Forms.ToolStripButton();
             this.issueTreeContainer = new System.Windows.Forms.ToolStripContainer();
             this.toolStrip2 = new System.Windows.Forms.ToolStrip();
-            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            this.labelGroupBy = new System.Windows.Forms.ToolStripLabel();
             this.comboGroupBy = new System.Windows.Forms.ToolStripComboBox();
             this.buttonOpen = new System.Windows.Forms.ToolStripButton();
             this.buttonViewInBrowser = new System.Windows.Forms.ToolStripButton();
@@ -249,7 +249,7 @@
             // 
             this.toolStrip2.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripLabel1,
+            this.labelGroupBy,
             this.comboGroupBy,
             this.buttonOpen,
             this.buttonViewInBrowser,
@@ -258,14 +258,14 @@
             this.buttonRefresh});
             this.toolStrip2.Location = new System.Drawing.Point(3, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(306, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(337, 25);
             this.toolStrip2.TabIndex = 0;
             // 
-            // toolStripLabel1
+            // labelGroupBy
             // 
-            this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(56, 22);
-            this.toolStripLabel1.Text = "Group By";
+            this.labelGroupBy.Name = "labelGroupBy";
+            this.labelGroupBy.Size = new System.Drawing.Size(56, 22);
+            this.labelGroupBy.Text = "Group By";
             // 
             // comboGroupBy
             // 
@@ -468,7 +468,7 @@
         private System.Windows.Forms.ToolTip filtersTreeToolTip;
         private System.Windows.Forms.ToolStripButton buttonGlobalProperties;
         private System.Windows.Forms.ToolStripButton buttonUpdate;
-        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
+        private System.Windows.Forms.ToolStripLabel labelGroupBy;
         private System.Windows.Forms.ToolStripComboBox comboGroupBy;
     }
 }

@@ -191,16 +191,27 @@ namespace Atlassian.plvs {
         }
 
         private void comboGroupBy_SelectedIndexChanged(object sender, EventArgs e) {
+            updateIssuesTreeModel();
+        }
+
+        private void updateIssuesTreeModel() {
             AbstractIssueTreeModel oldTreeModel = issuesTree.Model as AbstractIssueTreeModel;
             if (oldTreeModel != null) {
                 oldTreeModel.shutdown();
             }
 
-            JiraIssueGroupByComboItem item = comboGroupBy.SelectedItem as JiraIssueGroupByComboItem;
-            if (item == null) {
-                return;
+            AbstractIssueTreeModel treeModel;
+
+            if (filtersTree.SelectedNode is RecentlyOpenIssuesTreeNode) {
+                treeModel = new FlatIssueTreeModel(model);
+            } else {
+                JiraIssueGroupByComboItem item = comboGroupBy.SelectedItem as JiraIssueGroupByComboItem;
+                if (item == null) {
+                    return;
+                }
+                treeModel = item.TreeModel;
             }
-            AbstractIssueTreeModel treeModel = item.TreeModel;
+
             // just in case :)
             treeModel.shutdown();
 
@@ -222,6 +233,9 @@ namespace Atlassian.plvs {
                                      || filtersTree.SelectedNode is RecentlyOpenIssuesTreeNode
                                      || filtersTree.SelectedNode is JiraCustomFilterTreeNode);
             buttonSearch.Enabled = filtersTree.SelectedNode != null && filtersTree.SelectedNode is TreeNodeWithServer;
+            comboGroupBy.Enabled = !(filtersTree.SelectedNode is RecentlyOpenIssuesTreeNode);
+            comboGroupBy.Visible = comboGroupBy.Enabled;
+            labelGroupBy.Visible = comboGroupBy.Visible;
         }
 
         private delegate void IssueAction(JiraIssue issue);
@@ -484,6 +498,7 @@ namespace Atlassian.plvs {
 
         private void filtersTree_AfterSelect(object sender, TreeViewEventArgs e) {
             updateIssueListButtons();
+            updateIssuesTreeModel();
             if (filtersTree.SelectedNode is JiraSavedFilterTreeNode
                 || filtersTree.SelectedNode is RecentlyOpenIssuesTreeNode
                 || filtersTree.SelectedNode is JiraCustomFilterTreeNode
