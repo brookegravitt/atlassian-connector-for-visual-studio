@@ -54,7 +54,6 @@ namespace Atlassian.plvs {
 
             if (i.Equals(issue)) return;
 
-//            issue = i;
             buttonRefresh.Enabled = false;
             runRefreshThread();
         }
