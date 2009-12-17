@@ -16,8 +16,8 @@ namespace Atlassian.plvs.models {
         private readonly SortedDictionary<Guid, SortedDictionary<int, JiraNamedEntity>> issueTypeCache =
             new SortedDictionary<Guid, SortedDictionary<int, JiraNamedEntity>>();
 
-        private readonly SortedDictionary<Guid, SortedDictionary<int, JiraNamedEntity>> priorityCache =
-            new SortedDictionary<Guid, SortedDictionary<int, JiraNamedEntity>>();
+        private readonly SortedDictionary<Guid, List<JiraNamedEntity>> priorityCache =
+            new SortedDictionary<Guid, List<JiraNamedEntity>>();
 
         private readonly SortedDictionary<Guid, SortedDictionary<int, JiraNamedEntity>> statusCache =
             new SortedDictionary<Guid, SortedDictionary<int, JiraNamedEntity>>();
@@ -73,7 +73,7 @@ namespace Atlassian.plvs.models {
             }
         }
 
-        public SortedDictionary<int, JiraNamedEntity> getPriorities(JiraServer server) {
+        public List<JiraNamedEntity> getPriorities(JiraServer server) {
             lock (priorityCache) {
                 if (priorityCache.ContainsKey(server.GUID)) {
                     return priorityCache[server.GUID];
@@ -85,9 +85,9 @@ namespace Atlassian.plvs.models {
         public void addPriority(JiraServer server, JiraNamedEntity priority) {
             lock (priorityCache) {
                 if (!priorityCache.ContainsKey(server.GUID)) {
-                    priorityCache[server.GUID] = new SortedDictionary<int, JiraNamedEntity>();
+                    priorityCache[server.GUID] = new List<JiraNamedEntity>();
                 }
-                priorityCache[server.GUID][priority.Id] = priority;
+                priorityCache[server.GUID].Add(priority);
             }
         }
 

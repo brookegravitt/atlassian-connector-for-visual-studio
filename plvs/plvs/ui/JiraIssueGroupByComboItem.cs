@@ -12,10 +12,10 @@ namespace Atlassian.plvs.ui {
         public enum GroupBy {
             [StringValue("None")] NONE,
             [StringValue("Project")] PROJECT,
-            [StringValue("Type")] TYPE,
-            [StringValue("Status")] STATUS,
+//            [StringValue("Type")] TYPE,
+//            [StringValue("Status")] STATUS,
             [StringValue("Priority")] PRIORITY,
-            [StringValue("Last Updated")] LAST_UPDATED
+//            [StringValue("Last Updated")] LAST_UPDATED
         }
 
         private delegate AbstractIssueTreeModel CreateTreeModel(JiraIssueListModel model);
@@ -27,7 +27,7 @@ namespace Atlassian.plvs.ui {
                     {GroupBy.PROJECT, model => new GroupedByProjectIssueTreeModel(model)},
 //                    {GroupBy.TYPE, model => new FlatIssueTreeModel(model)},
 //                    {GroupBy.STATUS, model => new FlatIssueTreeModel(model)},
-//                    {GroupBy.PRIORITY, model => new FlatIssueTreeModel(model)},
+                    {GroupBy.PRIORITY, model => new GroupedByPriorityIssueTreeModel(model)},
 //                    {GroupBy.LAST_UPDATED, model => new FlatIssueTreeModel(model)},
                 };
 

@@ -200,6 +200,7 @@
     <Compile Include="ui\issues\issuegroupnodes\ByProjectIssueGroupNode.cs" />
     <Compile Include="ui\issues\treemodels\AbstractGroupingIssueTreeModel.cs" />
     <Compile Include="ui\issues\treemodels\AbstractIssueTreeModel.cs" />
+    <Compile Include="ui\issues\treemodels\GroupedByPriorityIssueTreeModel.cs" />
     <Compile Include="ui\issues\treemodels\GroupedByProjectIssueTreeModel.cs" />
     <Compile Include="ui\issuefilternodes\JiraCustomFilterTreeNode.cs" />
     <Compile Include="ui\issues\FilterContextMenu.cs">

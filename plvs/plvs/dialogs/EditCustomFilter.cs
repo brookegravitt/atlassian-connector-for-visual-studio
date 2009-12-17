@@ -32,7 +32,7 @@ namespace Atlassian.plvs.dialogs {
             SortedDictionary<string, JiraProject> projects = JiraServerCache.Instance.getProjects(server);
             SortedDictionary<int, JiraNamedEntity> statuses = JiraServerCache.Instance.getStatues(server);
             SortedDictionary<int, JiraNamedEntity> resolutions = JiraServerCache.Instance.getResolutions(server);
-            SortedDictionary<int, JiraNamedEntity> priorities = JiraServerCache.Instance.getPriorities(server);
+            List<JiraNamedEntity> priorities = JiraServerCache.Instance.getPriorities(server);
 
             refillProjects(projects);
             refillStatuses(statuses);
@@ -121,7 +121,7 @@ namespace Atlassian.plvs.dialogs {
             comboBoxReporter.Items.Add(new UserTypeComboBoxItem(JiraCustomFilter.UserType.CURRENT));
         }
 
-        private void refillPriorities(SortedDictionary<int, JiraNamedEntity> priorities) {
+        private void refillPriorities(IEnumerable<JiraNamedEntity> priorities) {
             listViewPriorities.Items.Clear();
 
             if (priorities == null) return;
@@ -130,9 +130,9 @@ namespace Atlassian.plvs.dialogs {
 
             int i = 0;
 
-            foreach (int key in priorities.Keys) {
-                imageList.Images.Add(ImageCache.Instance.getImage(priorities[key].IconUrl));
-                ListViewItem lvi = new JiraNamedEntityListViewItem(priorities[key], i);
+            foreach (JiraNamedEntity prio in priorities) {
+                imageList.Images.Add(ImageCache.Instance.getImage(prio.IconUrl));
+                ListViewItem lvi = new JiraNamedEntityListViewItem(prio, i);
                 listViewPriorities.Items.Add(lvi);
                 ++i;
             }
