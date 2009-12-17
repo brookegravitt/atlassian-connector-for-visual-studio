@@ -74,8 +74,6 @@ namespace Atlassian.plvs {
         private readonly TreeColumn colUpdated = new TreeColumn();
         private readonly NodeIcon controlIcon = new NodeIcon();
         private readonly NodeTextBox controlName = new BoldableNodeTextBox();
-//        private readonly NodeIcon controlIssueGroupIcon = new NodeIcon();
-//        private readonly NodeTextBox controlIssueGroupName = new BoldableNodeTextBox();
         private readonly NodeTextBox controlStatusText = new NodeTextBox();
         private readonly NodeIcon controlStatusIcon = new NodeIcon();
         private readonly NodeIcon controlPriorityIcon = new NodeIcon();
@@ -128,21 +126,11 @@ namespace Atlassian.plvs {
             controlIcon.DataPropertyName = "Icon";
             controlIcon.LeftMargin = i++;
 
-//            controlIssueGroupIcon.ParentColumn = colKeyAndSummary;
-//            controlIssueGroupIcon.DataPropertyName = "IssueGroupIcon";
-//            controlIssueGroupIcon.LeftMargin = i++;
-
             controlName.ParentColumn = colKeyAndSummary;
             controlName.DataPropertyName = "Name";
             controlName.Trimming = StringTrimming.EllipsisCharacter;
             controlName.UseCompatibleTextRendering = true;
             controlName.LeftMargin = i++;
-
-//            controlIssueGroupName.ParentColumn = colKeyAndSummary;
-//            controlIssueGroupName.DataPropertyName = "IssueGroupName";
-//            controlIssueGroupName.Trimming = StringTrimming.EllipsisCharacter;
-//            controlIssueGroupName.UseCompatibleTextRendering = false;
-//            controlIssueGroupName.LeftMargin = i++;
 
             controlPriorityIcon.ParentColumn = colPriority;
             controlPriorityIcon.DataPropertyName = "PriorityIcon";

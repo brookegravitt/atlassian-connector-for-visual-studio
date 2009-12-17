@@ -52,9 +52,12 @@ namespace Atlassian.plvs.models {
             lock (issues) {
                 foreach (var i in Issues) {
                     if (!i.Id.Equals(issue.Id)) continue;
-                    issues.Remove(i);
-                    issues.Add(issue);
-                    notifyListenersOfIssueChange(issue);
+                    if (!i.Server.GUID.Equals(issue.Server.GUID)) continue;
+                    if (!i.Equals(issue)) {
+                        issues.Remove(i);
+                        issues.Add(issue);
+                        notifyListenersOfIssueChange(issue);
+                    }
                     break;
                 }
             }

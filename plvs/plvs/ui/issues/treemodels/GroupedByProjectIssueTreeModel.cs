@@ -9,8 +9,8 @@ using Atlassian.plvs.ui.issues.issuegroupnodes;
 namespace Atlassian.plvs.ui.issues.treemodels {
     internal class GroupedByProjectIssueTreeModel : AbstractIssueTreeModel {
 
-        private readonly SortedDictionary<string, ByProjectIssueGroupNode> groupNodes = 
-            new SortedDictionary<string, ByProjectIssueGroupNode>();
+        private readonly SortedDictionary<string, AbstractIssueGroupNode> groupNodes = 
+            new SortedDictionary<string, AbstractIssueGroupNode>();
 
         public GroupedByProjectIssueTreeModel(JiraIssueListModel model)
             : base(model) {
@@ -20,7 +20,7 @@ namespace Atlassian.plvs.ui.issues.treemodels {
             groupNodes.Clear();
 
             foreach (var issue in issues) {
-                ByProjectIssueGroupNode group = findProjectGroupNode(issue);
+                AbstractIssueGroupNode group = findProjectGroupNode(issue);
                 group.IssueNodes.Add(new IssueNode(issue));
             }
 
@@ -29,7 +29,7 @@ namespace Atlassian.plvs.ui.issues.treemodels {
             }
         }
 
-        private ByProjectIssueGroupNode findProjectGroupNode(JiraIssue issue) {
+        private AbstractIssueGroupNode findProjectGroupNode(JiraIssue issue) {
             if (!groupNodes.ContainsKey(issue.ProjectKey)) {
                 SortedDictionary<string, JiraProject> projects = JiraServerCache.Instance.getProjects(issue.Server);
                 groupNodes[issue.ProjectKey] = new ByProjectIssueGroupNode(projects[issue.ProjectKey]);
@@ -43,7 +43,7 @@ namespace Atlassian.plvs.ui.issues.treemodels {
             if (treePath.IsEmpty()) {
                 return groupNodes.Values;
             }
-            ByProjectIssueGroupNode groupNode = treePath.LastNode as ByProjectIssueGroupNode;
+            AbstractIssueGroupNode groupNode = treePath.LastNode as AbstractIssueGroupNode;
             return groupNode != null ? groupNode.IssueNodes : null;
         }
 
@@ -56,16 +56,15 @@ namespace Atlassian.plvs.ui.issues.treemodels {
         }
 
         public override void issueChanged(JiraIssue issue) {
-//            foreach (var node in nodes) {
-//                if (node.Issue.Id != issue.Id) continue;
-
-//                node.Issue = issue;
-//                if (NodesChanged != null) {
-//                    NodesChanged(this, new TreeModelEventArgs(TreePath.Empty, new object[] {node}));
-//                }
-
-//                return;
-//            }
+            foreach (var groupNode in groupNodes.Values) {
+                foreach (var issueNode in groupNode.IssueNodes) {
+                    if (issueNode.Issue.Id != issue.Id) continue;
+                    issueNode.Issue = issue;
+                    if (NodesChanged != null) {
+                        NodesChanged(this, new TreeModelEventArgs(new TreePath(groupNode), new object[] {issueNode}));
+                    }
+                }
+            }
         }
 
         #region Overrides of AbstractIssueTreeModel
