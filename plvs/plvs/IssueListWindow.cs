@@ -68,7 +68,7 @@ namespace Atlassian.plvs {
             model.addListener(this);
         }
 
-        private readonly TreeColumn colKeyAndSummary = new TreeColumn();
+        private readonly TreeColumn colName = new TreeColumn();
         private readonly TreeColumn colStatus = new TreeColumn();
         private readonly TreeColumn colPriority = new TreeColumn();
         private readonly TreeColumn colUpdated = new TreeColumn();
@@ -80,8 +80,8 @@ namespace Atlassian.plvs {
         private readonly NodeTextBox controlUpdated = new NodeTextBox();
         private const string RETRIEVING_ISSUES_FAILED = "Retrieving issues failed";
         private const int MARGIN = 16;
-        private const int STATUS_WIDTH = 100;
-        private const int UPDATED_WIDTH = 300;
+        private const int STATUS_WIDTH = 150;
+        private const int UPDATED_WIDTH = 150;
         private const int PRIORITY_WIDTH = 24;
 
         private readonly ImageList filterTreeImages = new ImageList();
@@ -116,17 +116,17 @@ namespace Atlassian.plvs {
                                         };
             IssueContextMenu strip = new IssueContextMenu(model, status, issuesTree, items);
             issuesTree.ContextMenuStrip = strip;
-            colKeyAndSummary.Header = "Summary";
+            colName.Header = "Summary";
             colStatus.Header = "Status";
             colPriority.Header = "P";
             colUpdated.Header = "Updated";
 
             int i = 0;
-            controlIcon.ParentColumn = colKeyAndSummary;
+            controlIcon.ParentColumn = colName;
             controlIcon.DataPropertyName = "Icon";
             controlIcon.LeftMargin = i++;
 
-            controlName.ParentColumn = colKeyAndSummary;
+            controlName.ParentColumn = colName;
             controlName.DataPropertyName = "Name";
             controlName.Trimming = StringTrimming.EllipsisCharacter;
             controlName.UseCompatibleTextRendering = true;
@@ -153,13 +153,11 @@ namespace Atlassian.plvs {
             controlUpdated.TextAlign = HorizontalAlignment.Right;
             controlUpdated.LeftMargin = i;
 
-            issuesTree.Columns.Add(colKeyAndSummary);
+            issuesTree.Columns.Add(colName);
             issuesTree.Columns.Add(colPriority);
             issuesTree.Columns.Add(colStatus);
             issuesTree.Columns.Add(colUpdated);
 
-//            issuesTree.NodeControls.Add(controlIssueGroupIcon);
-//            issuesTree.NodeControls.Add(controlIssueGroupName);
             issuesTree.NodeControls.Add(controlIcon);
             issuesTree.NodeControls.Add(controlName);
             issuesTree.NodeControls.Add(controlPriorityIcon);
@@ -179,7 +177,7 @@ namespace Atlassian.plvs {
             colStatus.Width = STATUS_WIDTH;
             colStatus.MinColumnWidth = STATUS_WIDTH;
             colStatus.MaxColumnWidth = STATUS_WIDTH;
-            colKeyAndSummary.TextAlign = HorizontalAlignment.Left;
+            colName.TextAlign = HorizontalAlignment.Left;
             colPriority.TooltipText = "Priority";
             colStatus.TextAlign = HorizontalAlignment.Left;
             colPriority.TextAlign = HorizontalAlignment.Left;
@@ -313,9 +311,9 @@ namespace Atlassian.plvs {
             if (summaryWidth < 0) {
                 summaryWidth = 4*PRIORITY_WIDTH;
             }
-            colKeyAndSummary.Width = summaryWidth;
-//            colKeyAndSummary.MinColumnWidth = summaryWidth;
-//            colKeyAndSummary.MaxColumnWidth = summaryWidth;
+            colName.Width = summaryWidth;
+//            colName.MinColumnWidth = summaryWidth;
+//            colName.MaxColumnWidth = summaryWidth;
         }
 
         private void issuesTree_SizeChanged(object sender, EventArgs e) {

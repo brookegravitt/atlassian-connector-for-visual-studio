@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using Aga.Controls.Tree;
+﻿using System.Collections.Generic;
 using Atlassian.plvs.api;
 using Atlassian.plvs.models;
 using Atlassian.plvs.ui.issues.issuegroupnodes;
 
 namespace Atlassian.plvs.ui.issues.treemodels {
-    internal class GroupedByProjectIssueTreeModel : AbstractIssueTreeModel {
+    internal class GroupedByProjectIssueTreeModel : AbstractGroupingIssueTreeModel {
 
         private readonly SortedDictionary<string, AbstractIssueGroupNode> groupNodes = 
             new SortedDictionary<string, AbstractIssueGroupNode>();
@@ -16,20 +13,7 @@ namespace Atlassian.plvs.ui.issues.treemodels {
             : base(model) {
         }
 
-        protected override void fillModel(IEnumerable<JiraIssue> issues) {
-            groupNodes.Clear();
-
-            foreach (var issue in issues) {
-                AbstractIssueGroupNode group = findProjectGroupNode(issue);
-                group.IssueNodes.Add(new IssueNode(issue));
-            }
-
-            if (StructureChanged != null) {
-                StructureChanged(this, new TreePathEventArgs(TreePath.Empty));
-            }
-        }
-
-        private AbstractIssueGroupNode findProjectGroupNode(JiraIssue issue) {
+        protected override AbstractIssueGroupNode findGroupNode(JiraIssue issue) {
             if (!groupNodes.ContainsKey(issue.ProjectKey)) {
                 SortedDictionary<string, JiraProject> projects = JiraServerCache.Instance.getProjects(issue.Server);
                 groupNodes[issue.ProjectKey] = new ByProjectIssueGroupNode(projects[issue.ProjectKey]);
@@ -37,45 +21,12 @@ namespace Atlassian.plvs.ui.issues.treemodels {
             return groupNodes[issue.ProjectKey];
         }
 
-        #region ITreeModel Members
-
-        public override IEnumerable GetChildren(TreePath treePath) {
-            if (treePath.IsEmpty()) {
-                return groupNodes.Values;
-            }
-            AbstractIssueGroupNode groupNode = treePath.LastNode as AbstractIssueGroupNode;
-            return groupNode != null ? groupNode.IssueNodes : null;
+        protected override IEnumerable<AbstractIssueGroupNode> getGroupNodes() {
+            return groupNodes.Values;
         }
 
-        public override bool IsLeaf(TreePath treePath) {
-            return treePath.LastNode is IssueNode;
+        protected override void clearGroupNodes() {
+            groupNodes.Clear();
         }
-
-        public override void modelChanged() {
-            fillModel(model.Issues);
-        }
-
-        public override void issueChanged(JiraIssue issue) {
-            foreach (var groupNode in groupNodes.Values) {
-                foreach (var issueNode in groupNode.IssueNodes) {
-                    if (issueNode.Issue.Id != issue.Id) continue;
-                    issueNode.Issue = issue;
-                    if (NodesChanged != null) {
-                        NodesChanged(this, new TreeModelEventArgs(new TreePath(groupNode), new object[] {issueNode}));
-                    }
-                }
-            }
-        }
-
-        #region Overrides of AbstractIssueTreeModel
-
-        public override event EventHandler<TreeModelEventArgs> NodesChanged;
-        public override event EventHandler<TreeModelEventArgs> NodesInserted;
-        public override event EventHandler<TreeModelEventArgs> NodesRemoved;
-        public override event EventHandler<TreePathEventArgs> StructureChanged;
-
-        #endregion
-
-        #endregion
     }
 }
