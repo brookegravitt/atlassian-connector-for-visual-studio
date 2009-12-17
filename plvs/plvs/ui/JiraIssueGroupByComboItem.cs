@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Atlassian.plvs.attributes;
 using Atlassian.plvs.models;
-using Atlassian.plvs.ui.issues;
+using Atlassian.plvs.ui.issues.treemodels;
 using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.ui {
@@ -24,7 +24,7 @@ namespace Atlassian.plvs.ui {
             new SortedDictionary<GroupBy, CreateTreeModel>
                 {
                     {GroupBy.NONE, model => new FlatIssueTreeModel(model)},
-//                    {GroupBy.PROJECT, model => new FlatIssueTreeModel(model)},
+                    {GroupBy.PROJECT, model => new GroupedByProjectIssueTreeModel(model)},
 //                    {GroupBy.TYPE, model => new FlatIssueTreeModel(model)},
 //                    {GroupBy.STATUS, model => new FlatIssueTreeModel(model)},
 //                    {GroupBy.PRIORITY, model => new FlatIssueTreeModel(model)},

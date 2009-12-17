@@ -4,18 +4,18 @@ using Atlassian.plvs.models;
 using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.ui.issues {
-    public class IssueNode {
+    public class IssueNode : AbstractIssueTreeNode {
         public JiraIssue Issue { get; set; }
 
         public IssueNode(JiraIssue issue) {
             Issue = issue;
         }
 
-        public Image IssueTypeIcon {
+        public override Image Icon {
             get { return ImageCache.Instance.getImage(Issue.IssueTypeIconUrl); }
         }
 
-        public string KeyAndSummary {
+        public override string Name {
             get { return Issue.Key + " - " + Issue.Summary; }
         }
 

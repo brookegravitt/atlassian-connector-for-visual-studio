@@ -4,7 +4,7 @@ using System.Text;
 using System.Windows.Forms;
 using Atlassian.plvs.api;
 using Atlassian.plvs.models;
-using Atlassian.plvs.ui;
+using Atlassian.plvs.ui.issuefilternodes;
 
 namespace Atlassian.plvs.dialogs {
     public partial class ProjectConfiguration : Form {

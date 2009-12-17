@@ -28,6 +28,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(IssueListWindow));
             this.mainContainer = new System.Windows.Forms.ToolStripContainer();
             this.productTabs = new System.Windows.Forms.TabControl();
             this.tabJira = new System.Windows.Forms.TabPage();
@@ -56,6 +57,8 @@
             this.buttonUpdate = new System.Windows.Forms.ToolStripButton();
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
             this.filtersTreeToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.buttonExpandAll = new System.Windows.Forms.ToolStripButton();
+            this.buttonCollapseAll = new System.Windows.Forms.ToolStripButton();
             this.mainContainer.ContentPanel.SuspendLayout();
             this.mainContainer.LeftToolStripPanel.SuspendLayout();
             this.mainContainer.SuspendLayout();
@@ -251,6 +254,8 @@
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.labelGroupBy,
             this.comboGroupBy,
+            this.buttonExpandAll,
+            this.buttonCollapseAll,
             this.buttonOpen,
             this.buttonViewInBrowser,
             this.buttonEditInBrowser,
@@ -258,7 +263,7 @@
             this.buttonRefresh});
             this.toolStrip2.Location = new System.Drawing.Point(3, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(337, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(383, 25);
             this.toolStrip2.TabIndex = 0;
             // 
             // labelGroupBy
@@ -393,6 +398,26 @@
             // 
             this.filtersTreeToolTip.ToolTipTitle = "Custom Filter Summary";
             // 
+            // buttonExpandAll
+            // 
+            this.buttonExpandAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonExpandAll.Image = Resources.expand_all;
+            this.buttonExpandAll.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonExpandAll.Name = "buttonExpandAll";
+            this.buttonExpandAll.Size = new System.Drawing.Size(23, 22);
+            this.buttonExpandAll.Text = "Expand All";
+            this.buttonExpandAll.Click += new System.EventHandler(this.buttonExpandAll_Click);
+            // 
+            // buttonCollapseAll
+            // 
+            this.buttonCollapseAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonCollapseAll.Image = Resources.collapse_all;
+            this.buttonCollapseAll.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonCollapseAll.Name = "buttonCollapseAll";
+            this.buttonCollapseAll.Size = new System.Drawing.Size(23, 22);
+            this.buttonCollapseAll.Text = "Collapse All";
+            this.buttonCollapseAll.Click += new System.EventHandler(this.buttonCollapseAll_Click);
+            // 
             // IssueListWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -470,5 +495,7 @@
         private System.Windows.Forms.ToolStripButton buttonUpdate;
         private System.Windows.Forms.ToolStripLabel labelGroupBy;
         private System.Windows.Forms.ToolStripComboBox comboGroupBy;
+        private System.Windows.Forms.ToolStripButton buttonExpandAll;
+        private System.Windows.Forms.ToolStripButton buttonCollapseAll;
     }
 }

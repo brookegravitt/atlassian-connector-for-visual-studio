@@ -1,6 +1,6 @@
 ﻿using Atlassian.plvs.api;
 
-namespace Atlassian.plvs.ui {
+namespace Atlassian.plvs.ui.issuefilternodes {
     public class JiraServerTreeNode : TreeNodeWithServer {
         private JiraServer server;
 

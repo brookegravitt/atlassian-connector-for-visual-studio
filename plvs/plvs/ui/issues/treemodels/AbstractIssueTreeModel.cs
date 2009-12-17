@@ -5,7 +5,7 @@ using Aga.Controls.Tree;
 using Atlassian.plvs.api;
 using Atlassian.plvs.models;
 
-namespace Atlassian.plvs.ui.issues {
+namespace Atlassian.plvs.ui.issues.treemodels {
     public abstract class AbstractIssueTreeModel : ITreeModel, JiraIssueListModelListener {
         
         protected JiraIssueListModel model { get; private set; }

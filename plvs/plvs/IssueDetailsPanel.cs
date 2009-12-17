@@ -83,6 +83,7 @@ namespace Atlassian.plvs {
                                                                status.setInfo("Retrieving issue details...");
                                                                issue = facade.getIssue(issue.Server, issue.Key);
                                                                status.setInfo("Issue details retrieved");
+                                                               Invoke(new MethodInvoker(() => model.updateIssue(issue)));
                                                            }
                                                            catch (Exception e) {
                                                                status.setError("Failed to retrieve issue details", e);

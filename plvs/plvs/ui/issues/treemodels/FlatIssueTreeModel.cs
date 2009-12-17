@@ -5,7 +5,7 @@ using Aga.Controls.Tree;
 using Atlassian.plvs.api;
 using Atlassian.plvs.models;
 
-namespace Atlassian.plvs.ui.issues {
+namespace Atlassian.plvs.ui.issues.treemodels {
     internal class FlatIssueTreeModel : AbstractIssueTreeModel {
         private readonly List<IssueNode> nodes = new List<IssueNode>();
 
