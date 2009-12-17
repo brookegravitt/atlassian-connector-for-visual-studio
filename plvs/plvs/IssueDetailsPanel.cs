@@ -50,7 +50,11 @@ namespace Atlassian.plvs {
 
         public void issueChanged(JiraIssue i) {
             if (!i.Id.Equals(issue.Id)) return;
-            issue = i;
+            if (!i.Server.GUID.Equals(issue.Server.GUID)) return;
+
+            if (i.Equals(issue)) return;
+
+//            issue = i;
             buttonRefresh.Enabled = false;
             runRefreshThread();
         }

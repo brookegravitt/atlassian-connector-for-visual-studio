@@ -267,32 +267,18 @@ namespace Atlassian.plvs.api {
             eq &= other.PriorityIconUrl.Equals(PriorityIconUrl);
             eq &= other.StatusId == StatusId;
             eq &= other.PriorityId == PriorityId;
-            eq &= compareComments(other.comments, comments);
-            eq &= compareVersions(other.versions, versions);
-            eq &= compareFixVersions(other.fixVersions, fixVersions);
-            eq &= compareComponents(other.components, components);
+            eq &= compareLists(other.comments, comments);
+            eq &= compareLists(other.versions, versions);
+            eq &= compareLists(other.fixVersions, fixVersions);
+            eq &= compareLists(other.components, components);
 
             return eq;
         }
 
-        private static bool compareComments(IList<Comment> lhs, IList<Comment> rhs) {
-            return compareLists(lhs, rhs);
-        }
-
-        private static bool compareFixVersions(IList<string> lhs, IList<string> rhs) {
-            return compareLists(lhs, rhs);
-        }
-
-        private static bool compareVersions(IList<string> lhs, IList<string> rhs) {
-            return compareLists(lhs, rhs);
-        }
-
-        private static bool compareComponents(IList<string> lhs, IList<string> rhs) {
-            return compareLists(lhs, rhs);
-        }
-
         private static bool compareLists<T>(IList<T> lhs, IList<T> rhs) {
-            if (!ReferenceEquals(lhs, rhs)) return false;
+            if (lhs == null && rhs == null) return true;
+            if (lhs == null || rhs == null) return false;
+
             if (lhs.Count != rhs.Count) return false;
             for (int i = 0; i < lhs.Count; ++i) {
                 if (!lhs[i].Equals(rhs[i])) return false;
