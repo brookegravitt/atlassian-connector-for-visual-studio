@@ -1,7 +1,7 @@
 ﻿using System;
 using Atlassian.plvs.api;
 
-namespace Atlassian.plvs.ui {
+namespace Atlassian.plvs.ui.issuefilternodes {
     internal class JiraSavedFilterTreeNode : TreeNodeWithServer {
         private readonly JiraServer server;
 

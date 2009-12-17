@@ -1,20 +1,21 @@
 ﻿using System;
-using Atlassian.plvs.api;
 using Atlassian.plvs.models;
+using Atlassian.plvs.api;
 
-namespace Atlassian.plvs.ui {
-    internal class JiraCustomFilterTreeNode : TreeNodeWithServer {
+namespace Atlassian.plvs.ui.issuefilternodes {
+    internal class JiraPresetFilterTreeNode : TreeNodeWithServer {
         private readonly JiraServer server;
 
-        public JiraCustomFilterTreeNode(JiraServer server, JiraCustomFilter filter, int imageIdx)
-            : base("Custom Filter", imageIdx) {
+        public JiraPresetFilterTreeNode(JiraServer server, JiraPresetFilter filter, int imageIdx)
+            : base(filter.Name, imageIdx) {
+
             this.server = server;
             Filter = filter;
 
             Tag = filter;
         }
 
-        public JiraCustomFilter Filter { get; private set; }
+        public JiraPresetFilter Filter { get; private set; }
 
         public override JiraServer Server {
             get { return server; }

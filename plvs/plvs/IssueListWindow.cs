@@ -9,9 +9,11 @@ using Atlassian.plvs.dialogs;
 using Atlassian.plvs.models;
 using Atlassian.plvs.models.presetFilters;
 using Atlassian.plvs.ui;
+using Atlassian.plvs.ui.issuefilternodes;
 using Atlassian.plvs.ui.issues;
 using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
+using Atlassian.plvs.ui.issues.treemodels;
 
 namespace Atlassian.plvs {
     public partial class IssueListWindow : UserControl, JiraIssueListModelListener {
@@ -51,6 +53,17 @@ namespace Atlassian.plvs {
             comboGroupBy.SelectedIndexChanged += comboGroupBy_SelectedIndexChanged;
         }
 
+        private class BoldableNodeTextBox : NodeTextBox {
+            protected override void OnDrawText(DrawEventArgs args) {
+                args.Font = new Font(args.Font, FontStyle.Bold);
+                base.OnDrawText(args);
+            }
+
+            protected override bool DrawTextMustBeFired(TreeNodeAdv node) {
+                return !(node.Tag is IssueNode);
+            }
+        }
+
         private void registerIssueModelListener() {
             model.addListener(this);
         }
@@ -59,8 +72,10 @@ namespace Atlassian.plvs {
         private readonly TreeColumn colStatus = new TreeColumn();
         private readonly TreeColumn colPriority = new TreeColumn();
         private readonly TreeColumn colUpdated = new TreeColumn();
-        private readonly NodeIcon controlIssueTypeIcon = new NodeIcon();
-        private readonly NodeTextBox controlKeyAndSummary = new NodeTextBox();
+        private readonly NodeIcon controlIcon = new NodeIcon();
+        private readonly NodeTextBox controlName = new BoldableNodeTextBox();
+//        private readonly NodeIcon controlIssueGroupIcon = new NodeIcon();
+//        private readonly NodeTextBox controlIssueGroupName = new BoldableNodeTextBox();
         private readonly NodeTextBox controlStatusText = new NodeTextBox();
         private readonly NodeIcon controlStatusIcon = new NodeIcon();
         private readonly NodeIcon controlPriorityIcon = new NodeIcon();
@@ -109,15 +124,25 @@ namespace Atlassian.plvs {
             colUpdated.Header = "Updated";
 
             int i = 0;
-            controlIssueTypeIcon.ParentColumn = colKeyAndSummary;
-            controlIssueTypeIcon.DataPropertyName = "IssueTypeIcon";
-            controlIssueTypeIcon.LeftMargin = i++;
+            controlIcon.ParentColumn = colKeyAndSummary;
+            controlIcon.DataPropertyName = "Icon";
+            controlIcon.LeftMargin = i++;
 
-            controlKeyAndSummary.ParentColumn = colKeyAndSummary;
-            controlKeyAndSummary.DataPropertyName = "KeyAndSummary";
-            controlKeyAndSummary.Trimming = StringTrimming.EllipsisCharacter;
-            controlKeyAndSummary.UseCompatibleTextRendering = true;
-            controlKeyAndSummary.LeftMargin = i++;
+//            controlIssueGroupIcon.ParentColumn = colKeyAndSummary;
+//            controlIssueGroupIcon.DataPropertyName = "IssueGroupIcon";
+//            controlIssueGroupIcon.LeftMargin = i++;
+
+            controlName.ParentColumn = colKeyAndSummary;
+            controlName.DataPropertyName = "Name";
+            controlName.Trimming = StringTrimming.EllipsisCharacter;
+            controlName.UseCompatibleTextRendering = true;
+            controlName.LeftMargin = i++;
+
+//            controlIssueGroupName.ParentColumn = colKeyAndSummary;
+//            controlIssueGroupName.DataPropertyName = "IssueGroupName";
+//            controlIssueGroupName.Trimming = StringTrimming.EllipsisCharacter;
+//            controlIssueGroupName.UseCompatibleTextRendering = false;
+//            controlIssueGroupName.LeftMargin = i++;
 
             controlPriorityIcon.ParentColumn = colPriority;
             controlPriorityIcon.DataPropertyName = "PriorityIcon";
@@ -145,8 +170,10 @@ namespace Atlassian.plvs {
             issuesTree.Columns.Add(colStatus);
             issuesTree.Columns.Add(colUpdated);
 
-            issuesTree.NodeControls.Add(controlIssueTypeIcon);
-            issuesTree.NodeControls.Add(controlKeyAndSummary);
+//            issuesTree.NodeControls.Add(controlIssueGroupIcon);
+//            issuesTree.NodeControls.Add(controlIssueGroupName);
+            issuesTree.NodeControls.Add(controlIcon);
+            issuesTree.NodeControls.Add(controlName);
             issuesTree.NodeControls.Add(controlPriorityIcon);
             issuesTree.NodeControls.Add(controlStatusIcon);
             issuesTree.NodeControls.Add(controlStatusText);
@@ -192,6 +219,8 @@ namespace Atlassian.plvs {
 
         private void comboGroupBy_SelectedIndexChanged(object sender, EventArgs e) {
             updateIssuesTreeModel();
+            updateIssueListButtons();
+            expandIssuesTree();
         }
 
         private void updateIssuesTreeModel() {
@@ -212,11 +241,11 @@ namespace Atlassian.plvs {
                 treeModel = item.TreeModel;
             }
 
-            // just in case :)
+            // just in case somebody reuses the old model object :)
             treeModel.shutdown();
-
-            treeModel.init();
             issuesTree.Model = treeModel;
+            treeModel.StructureChanged += issuesTree_StructureChanged;
+            treeModel.init();
         }
 
         private void issuesTree_SelectionChanged(object sender, EventArgs e) {
@@ -233,9 +262,18 @@ namespace Atlassian.plvs {
                                      || filtersTree.SelectedNode is RecentlyOpenIssuesTreeNode
                                      || filtersTree.SelectedNode is JiraCustomFilterTreeNode);
             buttonSearch.Enabled = filtersTree.SelectedNode != null && filtersTree.SelectedNode is TreeNodeWithServer;
-            comboGroupBy.Enabled = !(filtersTree.SelectedNode is RecentlyOpenIssuesTreeNode);
-            comboGroupBy.Visible = comboGroupBy.Enabled;
-            labelGroupBy.Visible = comboGroupBy.Visible;
+
+            bool groupingControlsEnabled = !(filtersTree.SelectedNode is RecentlyOpenIssuesTreeNode);
+            comboGroupBy.Enabled = groupingControlsEnabled;
+            comboGroupBy.Visible = groupingControlsEnabled;
+            labelGroupBy.Visible = groupingControlsEnabled;
+
+            JiraIssueGroupByComboItem selected = comboGroupBy.SelectedItem as JiraIssueGroupByComboItem;
+            Boolean notNone = selected != null && selected.By != JiraIssueGroupByComboItem.GroupBy.NONE;
+            buttonExpandAll.Visible = groupingControlsEnabled && notNone;
+            buttonExpandAll.Enabled = groupingControlsEnabled && notNone;
+            buttonCollapseAll.Visible = groupingControlsEnabled && notNone;
+            buttonCollapseAll.Enabled = groupingControlsEnabled && notNone;
         }
 
         private delegate void IssueAction(JiraIssue issue);
@@ -294,6 +332,10 @@ namespace Atlassian.plvs {
 
         private void issuesTree_SizeChanged(object sender, EventArgs e) {
             setSummaryColumnWidth();
+        }
+
+        private void issuesTree_StructureChanged(object sender, TreePathEventArgs e) {
+            expandIssuesTree();
         }
 
         private void reloadKnownJiraServers() {
@@ -752,6 +794,26 @@ namespace Atlassian.plvs {
                                          buttonUpdate.Image = Resources.update_unavailable;
                                          buttonUpdate.Visible = true;
                                      }));
+        }
+
+        private void buttonExpandAll_Click(object sender, EventArgs e) {
+            expandIssuesTree();
+        }
+
+        private void buttonCollapseAll_Click(object sender, EventArgs e) {
+            collapseIssuesTree();
+        }
+
+        private void expandIssuesTree() {
+            if (issuesTree != null) {
+                issuesTree.ExpandAll();
+            }
+        }
+
+        private void collapseIssuesTree() {
+            if (issuesTree != null) {
+                issuesTree.CollapseAll();
+            }
         }
     }
 }
