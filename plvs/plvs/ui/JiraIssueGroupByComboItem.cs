@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Atlassian.plvs.attributes;
 using Atlassian.plvs.models;
+using Atlassian.plvs.ui.issues.issuegroupnodes;
 using Atlassian.plvs.ui.issues.treemodels;
 using Atlassian.plvs.util;
 
@@ -12,7 +13,7 @@ namespace Atlassian.plvs.ui {
         public enum GroupBy {
             [StringValue("None")] NONE,
             [StringValue("Project")] PROJECT,
-//            [StringValue("Type")] TYPE,
+            [StringValue("Type")] TYPE,
 //            [StringValue("Status")] STATUS,
             [StringValue("Priority")] PRIORITY,
 //            [StringValue("Last Updated")] LAST_UPDATED
@@ -25,7 +26,7 @@ namespace Atlassian.plvs.ui {
                 {
                     {GroupBy.NONE, model => new FlatIssueTreeModel(model)},
                     {GroupBy.PROJECT, model => new GroupedByProjectIssueTreeModel(model)},
-//                    {GroupBy.TYPE, model => new FlatIssueTreeModel(model)},
+                    {GroupBy.TYPE, model => new GroupedByTypeIssueTreeModel(model)},
 //                    {GroupBy.STATUS, model => new FlatIssueTreeModel(model)},
                     {GroupBy.PRIORITY, model => new GroupedByPriorityIssueTreeModel(model)},
 //                    {GroupBy.LAST_UPDATED, model => new FlatIssueTreeModel(model)},

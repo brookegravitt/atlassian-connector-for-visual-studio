@@ -53,6 +53,10 @@ namespace Atlassian.plvs.api.soap {
             return createEntityListFromConstants(service.getIssueTypes(token));
         }
 
+        public List<JiraNamedEntity> getSubtaskIssueTypes() {
+            return createEntityListFromConstants(service.getSubTaskIssueTypes(token));
+        }
+
         public List<JiraNamedEntity> getIssueTypes(JiraProject project) {
             return createEntityListFromConstants(service.getIssueTypesForProject(token, project.Id.ToString()));
         }
@@ -77,22 +81,6 @@ namespace Atlassian.plvs.api.soap {
             return createEntityListFromConstants(service.getResolutions(token));
         }
 
-        private static List<JiraNamedEntity> createEntityList(IEnumerable<AbstractNamedRemoteEntity> entities) {
-            List<JiraNamedEntity> list = new List<JiraNamedEntity>();
-            foreach (AbstractNamedRemoteEntity val in entities) {
-                list.Add(new JiraNamedEntity(int.Parse(val.id), val.name, null));
-            }
-            return list;
-        }
-
-        private static List<JiraNamedEntity> createEntityListFromConstants(IEnumerable<AbstractRemoteConstant> vals) {
-            List<JiraNamedEntity> list = new List<JiraNamedEntity>();
-            foreach (AbstractRemoteConstant val in vals) {
-                list.Add(new JiraNamedEntity(int.Parse(val.id), val.name, val.icon));
-            }
-            return list;
-        }
-
         public List<JiraNamedEntity> getActionsForIssue(JiraIssue issue) {
             RemoteNamedObject[] actions = service.getAvailableActions(token, issue.Key);
             List<JiraNamedEntity> list = new List<JiraNamedEntity>();
@@ -114,5 +102,25 @@ namespace Atlassian.plvs.api.soap {
         public void runIssueActionWithoutParams(JiraIssue issue, int id) {
             service.progressWorkflowAction(token, issue.Key, id.ToString(), null);
         }
+
+        #region private parts
+
+        private static List<JiraNamedEntity> createEntityList(IEnumerable<AbstractNamedRemoteEntity> entities) {
+            List<JiraNamedEntity> list = new List<JiraNamedEntity>();
+            foreach (AbstractNamedRemoteEntity val in entities) {
+                list.Add(new JiraNamedEntity(int.Parse(val.id), val.name, null));
+            }
+            return list;
+        }
+
+        private static List<JiraNamedEntity> createEntityListFromConstants(IEnumerable<AbstractRemoteConstant> vals) {
+            List<JiraNamedEntity> list = new List<JiraNamedEntity>();
+            foreach (AbstractRemoteConstant val in vals) {
+                list.Add(new JiraNamedEntity(int.Parse(val.id), val.name, val.icon));
+            }
+            return list;
+        }
+
+        #endregion
     }
 }
