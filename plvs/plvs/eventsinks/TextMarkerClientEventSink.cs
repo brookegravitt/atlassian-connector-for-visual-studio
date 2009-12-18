@@ -78,7 +78,7 @@ namespace Atlassian.plvs.eventsinks {
             if (issueKey == null) return;
 
             bool found = false;
-            foreach (JiraIssue issue in JiraIssueListModel.Instance.Issues) {
+            foreach (JiraIssue issue in JiraIssueListModelImpl.Instance.Issues) {
                 if (!issue.Key.Equals(issueKey)) continue;
                 IssueDetailsWindow.Instance.openIssue(issue);
                 found = true;

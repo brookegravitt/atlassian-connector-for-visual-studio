@@ -150,6 +150,8 @@
     <Compile Include="markers\JiraLinkMarginMarkerType.cs" />
     <Compile Include="markers\JiraLinkTextMarkerType.cs" />
     <Compile Include="markers\JiraLinkMarkerTypeProvider.cs" />
+    <Compile Include="models\JiraIssueListModelImpl.cs" />
+    <Compile Include="models\JiraIssueListSearchingModel.cs" />
     <Compile Include="models\JiraPresetFilter.cs" />
     <Compile Include="models\presetFilters\JiraPresetFilterAssignedToMe.cs" />
     <Compile Include="models\presetFilters\JiraPresetFilterMostImportant.cs" />
