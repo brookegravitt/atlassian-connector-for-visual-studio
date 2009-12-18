@@ -198,8 +198,10 @@
     <Compile Include="ui\issues\issuegroupnodes\AbstractIssueGroupNode.cs" />
     <Compile Include="ui\issues\issuegroupnodes\ByPriorityIssueGroupNode.cs" />
     <Compile Include="ui\issues\issuegroupnodes\ByProjectIssueGroupNode.cs" />
+    <Compile Include="ui\issues\issuegroupnodes\ByTypeIssueGroupNode.cs" />
     <Compile Include="ui\issues\treemodels\AbstractGroupingIssueTreeModel.cs" />
     <Compile Include="ui\issues\treemodels\AbstractIssueTreeModel.cs" />
+    <Compile Include="ui\issues\treemodels\GroupedByTypeIssueTreeModel.cs" />
     <Compile Include="ui\issues\treemodels\GroupedByPriorityIssueTreeModel.cs" />
     <Compile Include="ui\issues\treemodels\GroupedByProjectIssueTreeModel.cs" />
     <Compile Include="ui\issuefilternodes\JiraCustomFilterTreeNode.cs" />

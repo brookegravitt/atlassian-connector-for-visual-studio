@@ -359,23 +359,32 @@ namespace Atlassian.plvs {
                     foreach (JiraProject proj in projects) {
                         JiraServerCache.Instance.addProject(server, proj);
                     }
+
                     status.setInfo("[" + server.Name + "] Loading issue types...");
                     List<JiraNamedEntity> issueTypes = facade.getIssueTypes(server);
                     foreach (JiraNamedEntity type in issueTypes) {
                         JiraServerCache.Instance.addIssueType(server, type);
                         ImageCache.Instance.getImage(type.IconUrl);
                     }
+                    List<JiraNamedEntity> subtaskIssueTypes = facade.getSubtaskIssueTypes(server);
+                    foreach (JiraNamedEntity type in subtaskIssueTypes) {
+                        JiraServerCache.Instance.addIssueType(server, type);
+                        ImageCache.Instance.getImage(type.IconUrl);
+                    }
+
                     status.setInfo("[" + server.Name + "] Loading issue priorities...");
                     List<JiraNamedEntity> priorities = facade.getPriorities(server);
                     foreach (JiraNamedEntity prio in priorities) {
                         JiraServerCache.Instance.addPriority(server, prio);
                         ImageCache.Instance.getImage(prio.IconUrl);
                     }
+
                     status.setInfo("[" + server.Name + "] Loading issue resolutions...");
                     List<JiraNamedEntity> resolutions = facade.getResolutions(server);
                     foreach (JiraNamedEntity res in resolutions) {
                         JiraServerCache.Instance.addResolution(server, res);
                     }
+
                     status.setInfo("[" + server.Name + "] Loading issue statuses...");
                     List<JiraNamedEntity> statuses = facade.getStatuses(server);
                     foreach (JiraNamedEntity s in statuses) {
