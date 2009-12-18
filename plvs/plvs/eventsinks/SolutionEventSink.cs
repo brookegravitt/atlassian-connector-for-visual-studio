@@ -78,7 +78,7 @@ namespace Atlassian.plvs.eventsinks {
                 ParameterStoreManager.Instance.clear();
                 // initialize with a clear server list
                 IssueListWindow.Instance.reinitialize();
-                JiraIssueListModel.Instance.removeAllListeners();
+                JiraIssueListModelImpl.Instance.removeAllListeners();
                 IssueDetailsWindow.Instance.clearAllIssues();
                 IssueDetailsWindow.Instance.FrameVisible = false;
                 ToolWindowManager.Instance.AtlassianWindow = null;

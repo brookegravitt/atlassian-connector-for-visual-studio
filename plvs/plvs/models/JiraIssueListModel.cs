@@ -2,77 +2,20 @@
 using Atlassian.plvs.api;
 
 namespace Atlassian.plvs.models {
-    public class JiraIssueListModel {
-        private static readonly JiraIssueListModel INSTANCE = new JiraIssueListModel();
+    public interface JiraIssueListModel {
 
-        private readonly List<JiraIssueListModelListener> listeners = new List<JiraIssueListModelListener>();
-        private readonly List<JiraIssue> issues = new List<JiraIssue>();
+        ICollection<JiraIssue> Issues { get; }
 
-        public ICollection<JiraIssue> Issues {
-            get { return issues; }
-        }
+        void addListener(JiraIssueListModelListener l);
 
-        private JiraIssueListModel() {}
+        void removeListener(JiraIssueListModelListener l);
 
-        public static JiraIssueListModel Instance {
-            get { return INSTANCE; }
-        }
+        void removeAllListeners();
 
-        public void addListener(JiraIssueListModelListener l) {
-            listeners.Add(l);
-        }
+        void clear(bool notify);
 
-        public void removeListener(JiraIssueListModelListener l) {
-            listeners.Remove(l);
-        }
+        void addIssues(ICollection<JiraIssue> newIssues);
 
-        public void removeAllListeners() {
-            listeners.Clear();
-        }
-
-        public void clear(bool notify) {
-            lock (issues) {
-                issues.Clear();
-                if (notify) {
-                    notifyListenersOfModelChange();
-                }
-            }
-        }
-
-        public void addIssues(ICollection<JiraIssue> newIssues) {
-            lock (issues) {
-                foreach (var issue in newIssues) {
-                    issues.Add(issue);
-                }
-                notifyListenersOfModelChange();
-            }
-        }
-
-        public void updateIssue(JiraIssue issue) {
-            lock (issues) {
-                foreach (var i in Issues) {
-                    if (!i.Id.Equals(issue.Id)) continue;
-                    if (!i.Server.GUID.Equals(issue.Server.GUID)) continue;
-                    if (!i.Equals(issue)) {
-                        issues.Remove(i);
-                        issues.Add(issue);
-                        notifyListenersOfIssueChange(issue);
-                    }
-                    break;
-                }
-            }
-        }
-
-        private void notifyListenersOfIssueChange(JiraIssue issue) {
-            foreach (var l in listeners) {
-                l.issueChanged(issue);
-            }
-        }
-
-        private void notifyListenersOfModelChange() {
-            foreach (var l in listeners) {
-                l.modelChanged();
-            }
-        }
+        void updateIssue(JiraIssue issue);
     }
 }

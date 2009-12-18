@@ -27,7 +27,7 @@ namespace Atlassian.plvs {
             }
         }
 
-        private readonly JiraIssueListModel model = JiraIssueListModel.Instance;
+        private readonly JiraIssueListModel model = JiraIssueListModelImpl.Instance;
 
         public Solution Solution { get; set; }
 

@@ -23,7 +23,9 @@ namespace Atlassian.plvs {
 
         private readonly JiraIssueListModelBuilder builder;
 
-        private readonly JiraIssueListModel model = JiraIssueListModel.Instance;
+        private static readonly JiraIssueListModel MODEL = JiraIssueListModelImpl.Instance;
+
+        private readonly JiraIssueListSearchingModel searchingModel = new JiraIssueListSearchingModel(MODEL);
 
         private readonly StatusLabel status;
 
@@ -48,7 +50,7 @@ namespace Atlassian.plvs {
 
         private void setupGroupByCombo() {
             foreach (JiraIssueGroupByComboItem.GroupBy groupBy in Enum.GetValues(typeof (JiraIssueGroupByComboItem.GroupBy))) {
-                comboGroupBy.Items.Add(new JiraIssueGroupByComboItem(groupBy, model));
+                comboGroupBy.Items.Add(new JiraIssueGroupByComboItem(groupBy, searchingModel));
             }
             comboGroupBy.SelectedIndexChanged += comboGroupBy_SelectedIndexChanged;
         }
@@ -65,7 +67,7 @@ namespace Atlassian.plvs {
         }
 
         private void registerIssueModelListener() {
-            model.addListener(this);
+            searchingModel.addListener(this);
         }
 
         private readonly TreeColumn colName = new TreeColumn();
@@ -114,7 +116,7 @@ namespace Atlassian.plvs {
                                             new ToolStripMenuItem("Edit in Browser", Resources.edit_in_browser,
                                                                   new EventHandler(browseEditIssue)),
                                         };
-            IssueContextMenu strip = new IssueContextMenu(model, status, issuesTree, items);
+            IssueContextMenu strip = new IssueContextMenu(searchingModel, status, issuesTree, items);
             issuesTree.ContextMenuStrip = strip;
             colName.Header = "Summary";
             colStatus.Header = "Status";
@@ -218,7 +220,7 @@ namespace Atlassian.plvs {
             AbstractIssueTreeModel treeModel;
 
             if (filtersTree.SelectedNode is RecentlyOpenIssuesTreeNode) {
-                treeModel = new FlatIssueTreeModel(model);
+                treeModel = new FlatIssueTreeModel(searchingModel);
             } else {
                 JiraIssueGroupByComboItem item = comboGroupBy.SelectedItem as JiraIssueGroupByComboItem;
                 if (item == null) {
@@ -246,7 +248,8 @@ namespace Atlassian.plvs {
             buttonRefresh.Enabled = filtersTree.SelectedNode != null &&
                                     (filtersTree.SelectedNode is JiraSavedFilterTreeNode
                                      || filtersTree.SelectedNode is RecentlyOpenIssuesTreeNode
-                                     || filtersTree.SelectedNode is JiraCustomFilterTreeNode);
+                                     || filtersTree.SelectedNode is JiraCustomFilterTreeNode
+                                     || filtersTree.SelectedNode is JiraPresetFilterTreeNode);
             buttonSearch.Enabled = filtersTree.SelectedNode != null && filtersTree.SelectedNode is TreeNodeWithServer;
 
             bool groupingControlsEnabled = !(filtersTree.SelectedNode is RecentlyOpenIssuesTreeNode);
@@ -326,7 +329,7 @@ namespace Atlassian.plvs {
 
         private void reloadKnownJiraServers() {
             filtersTree.Nodes.Clear();
-            model.clear(true);
+            searchingModel.clear(true);
 
             getMoreIssues.Visible = false;
 
@@ -454,18 +457,16 @@ namespace Atlassian.plvs {
 
         public void modelChanged() {
             Invoke(new MethodInvoker(delegate {
-                                         ICollection<JiraIssue> issues = model.Issues;
-
                                          if (!(filtersTree.SelectedNode is JiraSavedFilterTreeNode
                                                || filtersTree.SelectedNode is RecentlyOpenIssuesTreeNode
                                                || filtersTree.SelectedNode is JiraCustomFilterTreeNode
                                                || filtersTree.SelectedNode is JiraPresetFilterTreeNode)) return;
 
-                                         status.setInfo("Loaded " + issues.Count + " issues");
+                                         status.setInfo("Loaded " + MODEL.Issues.Count + " issues");
 
                                          getMoreIssues.Visible =
                                              !(filtersTree.SelectedNode is RecentlyOpenIssuesTreeNode)
-                                             && model.Issues.Count > 0
+                                             && MODEL.Issues.Count > 0
                                              && probablyHaveMoreIssues();
 
                                          updateIssueListButtons();
@@ -473,7 +474,7 @@ namespace Atlassian.plvs {
         }
 
         private bool probablyHaveMoreIssues() {
-            return model.Issues.Count%GlobalSettings.JiraIssuesBatch == 0;
+            return MODEL.Issues.Count%GlobalSettings.JiraIssuesBatch == 0;
         }
 
         public void issueChanged(JiraIssue issue) {}
@@ -524,16 +525,19 @@ namespace Atlassian.plvs {
         }
 
         private void buttonRefreshAll_Click(object sender, EventArgs e) {
+            comboFind.Text = "";
             reloadKnownJiraServers();
         }
 
         public void reinitialize() {
+            searchingModel.reinit(MODEL);
             registerIssueModelListener();
             Invoke(new MethodInvoker(initIssuesTree));
             reloadKnownJiraServers();
         }
 
         private void filtersTree_AfterSelect(object sender, TreeViewEventArgs e) {
+            comboFind.Text = "";
             updateIssueListButtons();
             updateIssuesTreeModel();
             if (filtersTree.SelectedNode is JiraSavedFilterTreeNode
@@ -543,7 +547,7 @@ namespace Atlassian.plvs {
                 reloadIssues();
             }
             else {
-                model.clear(true);
+                searchingModel.clear(true);
             }
         }
 
@@ -569,7 +573,7 @@ namespace Atlassian.plvs {
 
         private void loadIssuesInThread(Thread issueLoadThread) {
             if (issueLoadThread == null) {
-                model.clear(true);
+                searchingModel.clear(true);
                 return;
             }
 
@@ -581,7 +585,7 @@ namespace Atlassian.plvs {
         private Thread reloadIssuesWithRecentlyViewedIssues() {
             return new Thread(new ThreadStart(delegate {
                                                   try {
-                                                      builder.rebuildModelWithRecentlyViewedIssues(model);
+                                                      builder.rebuildModelWithRecentlyViewedIssues(MODEL);
                                                   }
                                                   catch (Exception ex) {
                                                       status.setError(RETRIEVING_ISSUES_FAILED, ex);
@@ -592,7 +596,7 @@ namespace Atlassian.plvs {
         private Thread reloadIssuesWithSavedFilter(JiraSavedFilterTreeNode node) {
             return new Thread(new ThreadStart(delegate {
                                                   try {
-                                                      builder.rebuildModelWithSavedFilter(model, node.Server, node.Filter);
+                                                      builder.rebuildModelWithSavedFilter(MODEL, node.Server, node.Filter);
                                                   }
                                                   catch (Exception ex) {
                                                       status.setError(RETRIEVING_ISSUES_FAILED, ex);
@@ -603,7 +607,7 @@ namespace Atlassian.plvs {
         private Thread updateIssuesWithSavedFilter(JiraSavedFilterTreeNode node) {
             return new Thread(new ThreadStart(delegate {
                                                   try {
-                                                      builder.updateModelWithSavedFilter(model, node.Server, node.Filter);
+                                                      builder.updateModelWithSavedFilter(MODEL, node.Server, node.Filter);
                                                   }
                                                   catch (Exception ex) {
                                                       status.setError(RETRIEVING_ISSUES_FAILED, ex);
@@ -614,7 +618,7 @@ namespace Atlassian.plvs {
         private Thread reloadIssuesWithPresetFilter(JiraPresetFilterTreeNode node) {
             return new Thread(new ThreadStart(delegate {
                                                   try {
-                                                      builder.rebuildModelWithPresetFilter(model, node.Server, node.Filter);
+                                                      builder.rebuildModelWithPresetFilter(MODEL, node.Server, node.Filter);
                                                   }
                                                   catch (Exception ex) {
                                                       status.setError(RETRIEVING_ISSUES_FAILED, ex);
@@ -625,7 +629,7 @@ namespace Atlassian.plvs {
         private Thread updateIssuesWithPresetFilter(JiraPresetFilterTreeNode node) {
             return new Thread(new ThreadStart(delegate {
                                                   try {
-                                                      builder.updateModelWithPresetFilter(model, node.Server, node.Filter);
+                                                      builder.updateModelWithPresetFilter(MODEL, node.Server, node.Filter);
                                                   }
                                                   catch (Exception ex) {
                                                       status.setError(RETRIEVING_ISSUES_FAILED, ex);
@@ -636,7 +640,7 @@ namespace Atlassian.plvs {
         private Thread reloadIssuesWithCustomFilter(JiraCustomFilterTreeNode node) {
             return new Thread(new ThreadStart(delegate {
                                                   try {
-                                                      builder.rebuildModelWithCustomFilter(model, node.Server, node.Filter);
+                                                      builder.rebuildModelWithCustomFilter(MODEL, node.Server, node.Filter);
                                                   }
                                                   catch (Exception ex) {
                                                       status.setError(RETRIEVING_ISSUES_FAILED, ex);
@@ -647,7 +651,7 @@ namespace Atlassian.plvs {
         private Thread updateIssuesWithCustomFilter(JiraCustomFilterTreeNode node) {
             return new Thread(new ThreadStart(delegate {
                                                   try {
-                                                      builder.updateModelWithCustomFilter(model, node.Server, node.Filter);
+                                                      builder.updateModelWithCustomFilter(MODEL, node.Server, node.Filter);
                                                   }
                                                   catch (Exception ex) {
                                                       status.setError(RETRIEVING_ISSUES_FAILED, ex);
@@ -685,13 +689,14 @@ namespace Atlassian.plvs {
         }
 
         private void buttonRefresh_Click(object sender, EventArgs e) {
+            comboFind.Text = "";
             reloadIssues();
         }
 
         private void buttonSearch_Click(object sender, EventArgs e) {
             TreeNodeWithServer node = filtersTree.SelectedNode as TreeNodeWithServer;
             if (node == null) return;
-            SearchIssue dlg = new SearchIssue(node.Server, model, status);
+            SearchIssue dlg = new SearchIssue(node.Server, MODEL, status);
             dlg.ShowDialog(this);
         }
 
@@ -809,6 +814,35 @@ namespace Atlassian.plvs {
             if (issuesTree != null) {
                 issuesTree.CollapseAll();
             }
+        }
+
+        private void comboFind_KeyPress(object sender, KeyPressEventArgs e) {
+            if (e.KeyChar == (char) Keys.Enter) {
+                addFindComboText(comboFind.Text);
+            }
+        }
+
+        private void updateSearchingModel(string text) {
+            searchingModel.Query = text;   
+        }
+
+        private void addFindComboText(string text) {
+            foreach (var item in comboFind.Items) {
+                if (item.ToString().Equals(text)) {
+                    return;
+                }
+            }
+            if (text.Length > 0) {
+                comboFind.Items.Add(text);
+            }
+        }
+
+        private void comboFind_SelectedIndexChanged(object sender, EventArgs e) {
+            updateSearchingModel(comboFind.Text);
+        }
+
+        private void comboFind_TextChanged(object sender, EventArgs e) {
+            updateSearchingModel(comboFind.Text);
         }
     }
 }
