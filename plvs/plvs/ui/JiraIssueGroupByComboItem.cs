@@ -16,7 +16,7 @@ namespace Atlassian.plvs.ui {
             [StringValue("Type")] TYPE,
             [StringValue("Status")] STATUS,
             [StringValue("Priority")] PRIORITY,
-//            [StringValue("Last Updated")] LAST_UPDATED
+            [StringValue("Last Updated")] LAST_UPDATED
         }
 
         private delegate AbstractIssueTreeModel CreateTreeModel(JiraIssueListModel model);
@@ -29,7 +29,7 @@ namespace Atlassian.plvs.ui {
                     {GroupBy.TYPE, model => new GroupedByTypeIssueTreeModel(model)},
                     {GroupBy.STATUS, model => new GroupedByStatusIssueTreeModel(model)},
                     {GroupBy.PRIORITY, model => new GroupedByPriorityIssueTreeModel(model)},
-//                    {GroupBy.LAST_UPDATED, model => new FlatIssueTreeModel(model)},
+                    {GroupBy.LAST_UPDATED, model => new GroupedByLastUpdatedIssueTreeModel(model)},
                 };
 
         public JiraIssueGroupByComboItem(GroupBy groupBy, JiraIssueListModel model) {
