@@ -425,7 +425,11 @@ namespace Atlassian.plvs {
 
             node.Nodes.Add(new JiraPresetFiltersGroupTreeNode(server, 4));
             node.Nodes.Add(new JiraSavedFiltersGroupTreeNode(server, 2));
-            node.Nodes.Add(new JiraCustomFiltersGroupTreeNode(server, 3));
+            node.Nodes.Add(new JiraCustomFiltersGroupTreeNode(server, 3)
+                           {
+                               ContextMenuStrip = new CustomFilterGroupContextMenu(addCustomFilter),
+                               ToolTipText = "Right-click to add filter"
+                           });
         }
 
         private void addPresetFilterNodes(JiraServer server) {
@@ -456,8 +460,8 @@ namespace Atlassian.plvs {
         private JiraCustomFilterTreeNode addCustomFilterTreeNode(JiraServer server, TreeNode node, JiraCustomFilter filter) {
             JiraCustomFilterTreeNode cfNode = new JiraCustomFilterTreeNode(server, filter, 1)
                                               {
-                                                  ContextMenuStrip = new FilterContextMenu(server, filter, editCustomFilter, removeCustomFilter),
-                                                  ToolTipText = server.Name
+                                                  ContextMenuStrip = new CustomFilterContextMenu(server, filter, editCustomFilter, removeCustomFilter),
+//                                                  ToolTipText = server.Name
                                               };
             node.Nodes.Add(cfNode);
             return cfNode;

@@ -225,7 +225,7 @@
             this.buttonEditFilter});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(135, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(104, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonRefreshAll
@@ -466,10 +466,6 @@
             this.toolStripContainer1.Size = new System.Drawing.Size(852, 336);
             this.toolStripContainer1.TabIndex = 0;
             this.toolStripContainer1.Text = "toolStripContainer1";
-            // 
-            // filtersTreeToolTip
-            // 
-            this.filtersTreeToolTip.ToolTipTitle = "Custom Filter Summary";
             // 
             // IssueListWindow
             // 
