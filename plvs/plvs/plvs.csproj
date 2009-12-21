@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -133,6 +133,7 @@
     <Compile Include="eventsinks\TextManagerEventSink.cs" />
     <Compile Include="eventsinks\TextMarkerClientEventSink.cs" />
     <Compile Include="ExceptionBuilder.cs" />
+    <Compile Include="IssueActionRunner.cs" />
     <Compile Include="IssueDetailsPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -440,6 +441,7 @@
     <None Include="markers\Markers.reg" />
     <None Include="Resources\icons\pazu_32.bmp" />
     <Content Include="Resources\icons\pazu_32.ico" />
+    <Content Include="Resources\icons\pin_other.png" />
     <Content Include="Resources\icons\plus.png" />
     <Content Include="Resources\icons\projectsettings.png" />
     <Content Include="Resources\icons\refresh.png" />

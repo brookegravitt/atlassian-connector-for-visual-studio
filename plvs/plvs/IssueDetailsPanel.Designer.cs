@@ -50,6 +50,7 @@ namespace Atlassian.plvs {
             this.buttonViewInBrowser = new System.Windows.Forms.ToolStripButton();
             this.buttonRefresh = new System.Windows.Forms.ToolStripButton();
             this.buttonClose = new System.Windows.Forms.ToolStripButton();
+            this.dropDownIssueActions = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -94,7 +95,7 @@ namespace Atlassian.plvs {
             // 
             this.statusStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                                                                                         this.jiraStatus});
+            this.jiraStatus});
             this.statusStrip.Location = new System.Drawing.Point(0, 0);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(785, 22);
@@ -223,9 +224,9 @@ namespace Atlassian.plvs {
             // 
             this.toolStrip2.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                                                                                        this.buttonAddComment,
-                                                                                        this.buttonExpandAll,
-                                                                                        this.buttonCollapseAll});
+            this.buttonAddComment,
+            this.buttonExpandAll,
+            this.buttonCollapseAll});
             this.toolStrip2.Location = new System.Drawing.Point(3, 0);
             this.toolStrip2.Name = "toolStrip2";
             this.toolStrip2.Size = new System.Drawing.Size(79, 25);
@@ -234,7 +235,7 @@ namespace Atlassian.plvs {
             // buttonAddComment
             // 
             this.buttonAddComment.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonAddComment.Image = Resources.new_comment;
+            this.buttonAddComment.Image = global::Atlassian.plvs.Resources.new_comment;
             this.buttonAddComment.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonAddComment.Name = "buttonAddComment";
             this.buttonAddComment.Size = new System.Drawing.Size(23, 22);
@@ -244,7 +245,7 @@ namespace Atlassian.plvs {
             // buttonExpandAll
             // 
             this.buttonExpandAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonExpandAll.Image = Resources.expand_all;
+            this.buttonExpandAll.Image = global::Atlassian.plvs.Resources.expand_all;
             this.buttonExpandAll.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonExpandAll.Name = "buttonExpandAll";
             this.buttonExpandAll.Size = new System.Drawing.Size(23, 22);
@@ -254,7 +255,7 @@ namespace Atlassian.plvs {
             // buttonCollapseAll
             // 
             this.buttonCollapseAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonCollapseAll.Image = Resources.collapse_all;
+            this.buttonCollapseAll.Image = global::Atlassian.plvs.Resources.collapse_all;
             this.buttonCollapseAll.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonCollapseAll.Name = "buttonCollapseAll";
             this.buttonCollapseAll.Size = new System.Drawing.Size(23, 22);
@@ -275,18 +276,19 @@ namespace Atlassian.plvs {
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                                                                                        this.buttonViewInBrowser,
-                                                                                        this.buttonRefresh,
-                                                                                        this.buttonClose});
+            this.buttonViewInBrowser,
+            this.buttonRefresh,
+            this.buttonClose,
+            this.dropDownIssueActions});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(79, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(139, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonViewInBrowser
             // 
             this.buttonViewInBrowser.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonViewInBrowser.Image = Resources.view_in_browser;
+            this.buttonViewInBrowser.Image = global::Atlassian.plvs.Resources.view_in_browser;
             this.buttonViewInBrowser.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonViewInBrowser.Name = "buttonViewInBrowser";
             this.buttonViewInBrowser.Size = new System.Drawing.Size(23, 22);
@@ -296,7 +298,7 @@ namespace Atlassian.plvs {
             // buttonRefresh
             // 
             this.buttonRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonRefresh.Image = Resources.refresh;
+            this.buttonRefresh.Image = global::Atlassian.plvs.Resources.refresh;
             this.buttonRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonRefresh.Name = "buttonRefresh";
             this.buttonRefresh.Size = new System.Drawing.Size(23, 22);
@@ -306,12 +308,22 @@ namespace Atlassian.plvs {
             // buttonClose
             // 
             this.buttonClose.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonClose.Image = Resources.close;
+            this.buttonClose.Image = global::Atlassian.plvs.Resources.close;
             this.buttonClose.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(23, 22);
             this.buttonClose.Text = "Close";
             this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
+            // 
+            // dropDownIssueActions
+            // 
+            this.dropDownIssueActions.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.dropDownIssueActions.Image = global::Atlassian.plvs.Resources.pin_other;
+            this.dropDownIssueActions.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.dropDownIssueActions.Name = "dropDownIssueActions";
+            this.dropDownIssueActions.Size = new System.Drawing.Size(29, 22);
+            this.dropDownIssueActions.Text = "Issue Actions";
+            this.dropDownIssueActions.DropDownOpened += new System.EventHandler(this.dropDownIssueActions_DropDownOpened);
             // 
             // IssueDetailsPanel
             // 
@@ -374,5 +386,6 @@ namespace Atlassian.plvs {
         private System.Windows.Forms.ToolStripButton buttonClose;
         private System.Windows.Forms.ToolStripStatusLabel jiraStatus;
         private System.Windows.Forms.ToolStripButton buttonViewInBrowser;
+        private System.Windows.Forms.ToolStripDropDownButton dropDownIssueActions;
     }
 }

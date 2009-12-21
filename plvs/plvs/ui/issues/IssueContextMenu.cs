@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
 using Aga.Controls.Tree;
@@ -63,50 +62,13 @@ namespace Atlassian.plvs.ui.issues {
                                              var actionCopy = action;
                                              ToolStripMenuItem item = new ToolStripMenuItem(
                                                  action.Name, null,
-                                                 new EventHandler(delegate { runAction(actionCopy); }));
+                                                 new EventHandler(delegate {
+                                                                      IssueActionRunner.runAction(this, actionCopy, model, issue, status);
+                                                                  }));
                                              Items.Add(item);
                                          }
                                      }));
         }
 
-        private void runAction(JiraNamedEntity action) {
-            Thread runner = new Thread(new ThreadStart(delegate {
-                                                           try {
-                                                               status.setInfo("Retrieveing fields for action \"" +
-                                                                              action.Name + "\"...");
-                                                               var fields =
-                                                                   JiraServerFacade.Instance.getFieldsForAction(issue,
-                                                                                                                action.
-                                                                                                                    Id);
-                                                               if (fields == null || fields.Count == 0) {
-                                                                   runActionLocally(action);
-                                                               }
-                                                               else {
-                                                                   status.setInfo("Action \"" + action.Name
-                                                                                  +
-                                                                                  "\" requires input fields, opening action screen in the browser...");
-                                                                   Process.Start(issue.Server.Url
-                                                                                 +
-                                                                                 "/secure/WorkflowUIDispatcher.jspa?id=" +
-                                                                                 issue.Id
-                                                                                 + "&action=" + action.Id);
-                                                               }
-                                                           }
-                                                           catch (Exception e) {
-                                                               status.setError(
-                                                                   "Failed to run action " + action.Name + " on issue " +
-                                                                   issue.Key, e);
-                                                           }
-                                                       }));
-            runner.Start();
-        }
-
-        private void runActionLocally(JiraNamedEntity action) {
-            status.setInfo("Running action \"" + action.Name + "\" on issue " + issue.Key + "...");
-            JiraServerFacade.Instance.runIssueActionWithoutParams(issue, action);
-            status.setInfo("Action \"" + action.Name + "\" successfully run on issue " + issue.Key);
-            var newIssue = JiraServerFacade.Instance.getIssue(issue.Server, issue.Key);
-            Invoke(new MethodInvoker(() => model.updateIssue(newIssue)));
-        }
     }
 }

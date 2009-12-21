@@ -44,6 +44,8 @@ namespace Atlassian.plvs {
 
             this.tabWindow = tabWindow;
             this.myTab = myTab;
+
+            dropDownIssueActions.DropDownItems.Add("dummy");
         }
 
         public void modelChanged() {
@@ -417,6 +419,32 @@ namespace Atlassian.plvs {
 
         private void buttonViewInBrowser_Click(object sender, EventArgs e) {
             Process.Start(issue.Server.Url + "/browse/" + issue.Key);
+        }
+
+        private void dropDownIssueActions_DropDownOpened(object sender, EventArgs e) {
+            dropDownIssueActions.DropDownItems.Clear();
+
+            Thread loaderThread = new Thread(addIssueActionItems);
+            loaderThread.Start();
+        }
+
+        private void addIssueActionItems() {
+            List<JiraNamedEntity> actions = null;
+            try {
+                actions = JiraServerFacade.Instance.getActionsForIssue(issue);
+            } catch (Exception ex) {
+                status.setError("Failed to retrieve issue actions", ex);
+            }
+            if (actions == null || actions.Count == 0) return;
+
+            Invoke(new MethodInvoker(delegate {
+                foreach (var action in actions) {
+                    var actionCopy = action;
+                    ToolStripMenuItem item = new ToolStripMenuItem(action.Name, null, 
+                        new EventHandler(delegate { IssueActionRunner.runAction(this, actionCopy, model, issue, status); }));
+                    dropDownIssueActions.DropDownItems.Add(item);
+                }
+            }));
         }
     }
 }
