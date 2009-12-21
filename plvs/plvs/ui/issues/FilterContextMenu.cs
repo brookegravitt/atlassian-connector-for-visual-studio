@@ -2,27 +2,29 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using Atlassian.plvs.api;
-using Atlassian.plvs.dialogs;
 using Atlassian.plvs.models;
 
 namespace Atlassian.plvs.ui.issues {
     public sealed class FilterContextMenu : ContextMenuStrip {
         private readonly JiraServer server;
         private readonly JiraCustomFilter filter;
-        private readonly RunOnEditDialogOk runOnEditDialogOk;
+        private readonly MenuSelectionAction editAction;
+        private readonly MenuSelectionAction removeAction;
 
         private readonly ToolStripMenuItem[] items;
 
-        public delegate void RunOnEditDialogOk();
+        public delegate void MenuSelectionAction();
 
-        public FilterContextMenu(JiraServer server, JiraCustomFilter filter, RunOnEditDialogOk runOnEditDialogOk) {
+        public FilterContextMenu(JiraServer server, JiraCustomFilter filter, MenuSelectionAction editAction, MenuSelectionAction removeAction) {
             this.server = server;
             this.filter = filter;
-            this.runOnEditDialogOk = runOnEditDialogOk;
+            this.editAction = editAction;
+            this.removeAction = removeAction;
 
             items = new[]
                     {
-                        new ToolStripMenuItem("Edit Filter", Resources.edit_in_browser, new EventHandler(editFilter)),
+                        new ToolStripMenuItem("Edit Filter", Resources.edit, new EventHandler(editFilter)),
+                        new ToolStripMenuItem("Remove Filter", Resources.minus, new EventHandler(removeFilter)), 
                         new ToolStripMenuItem("View Filter in Browser", Resources.view_in_browser,
                                               new EventHandler(browseFilter)),
                     };
@@ -36,8 +38,9 @@ namespace Atlassian.plvs.ui.issues {
             Items.Clear();
 
             Items.Add(items[0]);
+            Items.Add(items[1]);
             if (!filter.Empty) {
-                Items.Add(items[1]);
+                Items.Add(items[2]);
             }
         }
 
@@ -52,10 +55,11 @@ namespace Atlassian.plvs.ui.issues {
         }
 
         private void editFilter(object sender, EventArgs e) {
-            EditCustomFilter ecf = new EditCustomFilter(server, filter);
-            ecf.ShowDialog();
-            if (ecf.Changed && runOnEditDialogOk != null)
-                runOnEditDialogOk();
+            editAction();
+        }
+
+        private void removeFilter(object sender, EventArgs e) {
+            removeAction();
         }
     }
 }

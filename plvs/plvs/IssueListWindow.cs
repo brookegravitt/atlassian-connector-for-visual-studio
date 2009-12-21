@@ -263,6 +263,9 @@ namespace Atlassian.plvs {
             buttonExpandAll.Enabled = groupingControlsEnabled && notNone;
             buttonCollapseAll.Visible = groupingControlsEnabled && notNone;
             buttonCollapseAll.Enabled = groupingControlsEnabled && notNone;
+            buttonEditFilter.Enabled = filtersTree.SelectedNode is JiraCustomFilterTreeNode;
+            buttonRemoveFilter.Enabled = filtersTree.SelectedNode is JiraCustomFilterTreeNode;
+            buttonAddFilter.Enabled = filtersTree.SelectedNode is JiraCustomFiltersGroupTreeNode;
         }
 
         private delegate void IssueAction(JiraIssue issue);
@@ -446,13 +449,18 @@ namespace Atlassian.plvs {
                 return;
             }
             foreach (JiraCustomFilter filter in JiraCustomFilter.getAll(server)) {
-                JiraCustomFilterTreeNode cfNode = new JiraCustomFilterTreeNode(server, filter, 1)
+                addCustomFilterTreeNode(server, node, filter);
+            }
+        }
+
+        private JiraCustomFilterTreeNode addCustomFilterTreeNode(JiraServer server, TreeNode node, JiraCustomFilter filter) {
+            JiraCustomFilterTreeNode cfNode = new JiraCustomFilterTreeNode(server, filter, 1)
                                               {
-                                                  ContextMenuStrip = new FilterContextMenu(server, filter, reloadIssues),
+                                                  ContextMenuStrip = new FilterContextMenu(server, filter, editCustomFilter, removeCustomFilter),
                                                   ToolTipText = server.Name
                                               };
-                node.Nodes.Add(cfNode);
-            }
+            node.Nodes.Add(cfNode);
+            return cfNode;
         }
 
         public void modelChanged() {
@@ -473,7 +481,7 @@ namespace Atlassian.plvs {
                                      }));
         }
 
-        private bool probablyHaveMoreIssues() {
+        private static bool probablyHaveMoreIssues() {
             return MODEL.Issues.Count%GlobalSettings.JiraIssuesBatch == 0;
         }
 
@@ -843,6 +851,70 @@ namespace Atlassian.plvs {
 
         private void comboFind_TextChanged(object sender, EventArgs e) {
             updateSearchingModel(comboFind.Text);
+        }
+
+        private void buttonAddFilter_Click(object sender, EventArgs e) {
+            addCustomFilter();
+        }
+
+        private void addCustomFilter() {
+            JiraServer server = getCurrentlySelectedServer();
+            if (server == null) {
+                return;
+            }
+            TreeNodeWithServer node = findGroupNode(server, typeof(JiraCustomFiltersGroupTreeNode));
+            if (node == null) {
+                return;
+            }
+            JiraCustomFilter newFilter = new JiraCustomFilter(server);
+            EditCustomFilter ecf = new EditCustomFilter(server, newFilter);
+            ecf.ShowDialog();
+            if (!ecf.Changed) return;
+            JiraCustomFilter.add(newFilter);
+            JiraCustomFilterTreeNode newNode = addCustomFilterTreeNode(server, node, newFilter);
+            filtersTree.SelectedNode = newNode;
+        }
+
+        private void buttonRemoveFilter_Click(object sender, EventArgs e) {
+            removeCustomFilter();
+        }
+
+        private void removeCustomFilter() {
+            JiraCustomFilterTreeNode node = filtersTree.SelectedNode as JiraCustomFilterTreeNode;
+            if (node == null) {
+                return;
+            }
+            DialogResult result =
+                MessageBox.Show("Do you really want to remove this custom filter?", "Question", MessageBoxButtons.YesNo);
+            if (DialogResult.Yes != result) return;
+
+            TreeNodeWithServer groupNode = findGroupNode(node.Server, typeof (JiraCustomFiltersGroupTreeNode));
+            if (groupNode == null) return;
+
+            groupNode.Nodes.Remove(node);
+            filtersTree.SelectedNode = groupNode;
+            JiraCustomFilter.remove(node.Filter);
+            reloadIssues();
+        }
+
+        private void buttonEditFilter_Click(object sender, EventArgs e) {
+            editCustomFilter();
+        }
+
+        private void editCustomFilter() {
+            JiraCustomFilterTreeNode node = filtersTree.SelectedNode as JiraCustomFilterTreeNode;
+            if (node == null) {
+                return;
+            }
+            
+            EditCustomFilter ecf = new EditCustomFilter(node.Server, node.Filter);
+            ecf.ShowDialog();
+            if (!ecf.Changed) return;
+
+            node.setFilterName(node.Filter.Name);
+
+            JiraCustomFilter.save();
+            reloadIssues();
         }
     }
 }
