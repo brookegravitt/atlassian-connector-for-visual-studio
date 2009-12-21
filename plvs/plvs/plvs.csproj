@@ -197,6 +197,9 @@
     <Compile Include="store\ParameterStore.cs" />
     <Compile Include="ToolWindowManager.cs" />
     <Compile Include="ui\issues\AbstractIssueTreeNode.cs" />
+    <Compile Include="ui\issues\CustomFilterGroupContextMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ui\issues\issuegroupnodes\AbstractIssueGroupNode.cs" />
     <Compile Include="ui\issues\issuegroupnodes\ByPriorityIssueGroupNode.cs" />
     <Compile Include="ui\issues\issuegroupnodes\ByProjectIssueGroupNode.cs" />
@@ -212,7 +215,7 @@
     <Compile Include="ui\issues\treemodels\GroupedByPriorityIssueTreeModel.cs" />
     <Compile Include="ui\issues\treemodels\GroupedByProjectIssueTreeModel.cs" />
     <Compile Include="ui\issuefilternodes\JiraCustomFilterTreeNode.cs" />
-    <Compile Include="ui\issues\FilterContextMenu.cs">
+    <Compile Include="ui\issues\CustomFilterContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ui\issues\treemodels\FlatIssueTreeModel.cs" />

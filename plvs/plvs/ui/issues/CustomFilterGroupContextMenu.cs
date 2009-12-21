@@ -1,0 +1,35 @@
+﻿using System;
+using System.Windows.Forms;
+
+namespace Atlassian.plvs.ui.issues {
+    public sealed class CustomFilterGroupContextMenu : ContextMenuStrip {
+
+        private readonly ToolStripMenuItem[] items;
+        private readonly AddFilterAction addFilterAction;
+
+        public delegate void AddFilterAction();
+
+        public CustomFilterGroupContextMenu(AddFilterAction addFilterAction) {
+            this.addFilterAction  = addFilterAction;
+
+            items = new[]
+                    {
+                        new ToolStripMenuItem("Add Filter", Resources.plus, new EventHandler(addFilter)),
+                    };
+
+            Items.Add("dummy");
+
+            Opened += filterContextMenuOpened;
+        }
+
+        private void filterContextMenuOpened(object sender, EventArgs e) {
+            Items.Clear();
+
+            Items.Add(items[0]);
+        }
+
+        private void addFilter(object sender, EventArgs e) {
+            addFilterAction();
+        }
+    }
+}

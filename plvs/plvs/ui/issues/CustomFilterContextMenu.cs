@@ -5,7 +5,7 @@ using Atlassian.plvs.api;
 using Atlassian.plvs.models;
 
 namespace Atlassian.plvs.ui.issues {
-    public sealed class FilterContextMenu : ContextMenuStrip {
+    public sealed class CustomFilterContextMenu : ContextMenuStrip {
         private readonly JiraServer server;
         private readonly JiraCustomFilter filter;
         private readonly MenuSelectionAction editAction;
@@ -15,7 +15,7 @@ namespace Atlassian.plvs.ui.issues {
 
         public delegate void MenuSelectionAction();
 
-        public FilterContextMenu(JiraServer server, JiraCustomFilter filter, MenuSelectionAction editAction, MenuSelectionAction removeAction) {
+        public CustomFilterContextMenu(JiraServer server, JiraCustomFilter filter, MenuSelectionAction editAction, MenuSelectionAction removeAction) {
             this.server = server;
             this.filter = filter;
             this.editAction = editAction;
