@@ -3,14 +3,12 @@ using Atlassian.plvs.api;
 using Atlassian.plvs.models;
 
 namespace Atlassian.plvs.ui.issuefilternodes {
-    internal class JiraCustomFilterTreeNode : TreeNodeWithServer {
+    public class JiraCustomFilterTreeNode : TreeNodeWithServer {
         private readonly JiraServer server;
 
-        public JiraCustomFilterTreeNode(JiraServer server, JiraCustomFilter filter, int imageIdx)
-            : base(filter.Name, imageIdx) {
+        public JiraCustomFilterTreeNode(JiraServer server, JiraCustomFilter filter, int imageIdx) : base(filter.Name, imageIdx) {
             this.server = server;
             Filter = filter;
-
             Tag = filter;
         }
 

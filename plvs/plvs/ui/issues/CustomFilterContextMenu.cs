@@ -3,21 +3,22 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using Atlassian.plvs.api;
 using Atlassian.plvs.models;
+using Atlassian.plvs.ui.issuefilternodes;
 
 namespace Atlassian.plvs.ui.issues {
     public sealed class CustomFilterContextMenu : ContextMenuStrip {
         private readonly JiraServer server;
-        private readonly JiraCustomFilter filter;
+        private readonly JiraCustomFilterTreeNode filterNode;
         private readonly MenuSelectionAction editAction;
         private readonly MenuSelectionAction removeAction;
 
         private readonly ToolStripMenuItem[] items;
 
-        public delegate void MenuSelectionAction();
+        public delegate void MenuSelectionAction(JiraCustomFilterTreeNode filterNode);
 
-        public CustomFilterContextMenu(JiraServer server, JiraCustomFilter filter, MenuSelectionAction editAction, MenuSelectionAction removeAction) {
+        public CustomFilterContextMenu(JiraServer server, JiraCustomFilterTreeNode filterNode, MenuSelectionAction editAction, MenuSelectionAction removeAction) {
             this.server = server;
-            this.filter = filter;
+            this.filterNode = filterNode;
             this.editAction = editAction;
             this.removeAction = removeAction;
 
@@ -39,7 +40,7 @@ namespace Atlassian.plvs.ui.issues {
 
             Items.Add(items[0]);
             Items.Add(items[1]);
-            if (!filter.Empty) {
+            if (!filterNode.Filter.Empty) {
                 Items.Add(items[2]);
             }
         }
@@ -47,7 +48,7 @@ namespace Atlassian.plvs.ui.issues {
         private void browseFilter(object sender, EventArgs e) {
             string url = server.Url;
             try {
-                Process.Start(url + filter.getBrowserQueryString());
+                Process.Start(url + filterNode.Filter.getBrowserQueryString());
             }
             catch (Exception ex) {
                 Debug.WriteLine(ex.Message);
@@ -55,11 +56,11 @@ namespace Atlassian.plvs.ui.issues {
         }
 
         private void editFilter(object sender, EventArgs e) {
-            editAction();
+            editAction(filterNode);
         }
 
         private void removeFilter(object sender, EventArgs e) {
-            removeAction();
+            removeAction(filterNode);
         }
     }
 }
