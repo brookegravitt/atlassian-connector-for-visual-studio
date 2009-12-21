@@ -40,6 +40,9 @@
             this.filtersTree = new System.Windows.Forms.TreeView();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.buttonRefreshAll = new System.Windows.Forms.ToolStripButton();
+            this.buttonAddFilter = new System.Windows.Forms.ToolStripButton();
+            this.buttonRemoveFilter = new System.Windows.Forms.ToolStripButton();
+            this.buttonEditFilter = new System.Windows.Forms.ToolStripButton();
             this.issueTreeContainer = new System.Windows.Forms.ToolStripContainer();
             this.toolStrip2 = new System.Windows.Forms.ToolStrip();
             this.labelNarrow = new System.Windows.Forms.ToolStripLabel();
@@ -154,14 +157,14 @@
             // jiraStatus
             // 
             this.jiraStatus.Name = "jiraStatus";
-            this.jiraStatus.Size = new System.Drawing.Size(38, 17);
+            this.jiraStatus.Size = new System.Drawing.Size(39, 17);
             this.jiraStatus.Text = "Ready";
             // 
             // getMoreIssues
             // 
             this.getMoreIssues.IsLink = true;
             this.getMoreIssues.Name = "getMoreIssues";
-            this.getMoreIssues.Size = new System.Drawing.Size(97, 17);
+            this.getMoreIssues.Size = new System.Drawing.Size(99, 17);
             this.getMoreIssues.Text = "Get More Issues...";
             this.getMoreIssues.Visible = false;
             this.getMoreIssues.Click += new System.EventHandler(this.getMoreIssues_Click);
@@ -216,10 +219,13 @@
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.buttonRefreshAll});
+            this.buttonRefreshAll,
+            this.buttonAddFilter,
+            this.buttonRemoveFilter,
+            this.buttonEditFilter});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(33, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(135, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonRefreshAll
@@ -231,6 +237,36 @@
             this.buttonRefreshAll.Size = new System.Drawing.Size(23, 22);
             this.buttonRefreshAll.Text = "Refresh All";
             this.buttonRefreshAll.Click += new System.EventHandler(this.buttonRefreshAll_Click);
+            // 
+            // buttonAddFilter
+            // 
+            this.buttonAddFilter.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonAddFilter.Image = global::Atlassian.plvs.Resources.plus;
+            this.buttonAddFilter.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonAddFilter.Name = "buttonAddFilter";
+            this.buttonAddFilter.Size = new System.Drawing.Size(23, 22);
+            this.buttonAddFilter.Text = "Add Custom Filter";
+            this.buttonAddFilter.Click += new System.EventHandler(this.buttonAddFilter_Click);
+            // 
+            // buttonRemoveFilter
+            // 
+            this.buttonRemoveFilter.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonRemoveFilter.Image = global::Atlassian.plvs.Resources.minus;
+            this.buttonRemoveFilter.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonRemoveFilter.Name = "buttonRemoveFilter";
+            this.buttonRemoveFilter.Size = new System.Drawing.Size(23, 22);
+            this.buttonRemoveFilter.Text = "Remove Custom Filter";
+            this.buttonRemoveFilter.Click += new System.EventHandler(this.buttonRemoveFilter_Click);
+            // 
+            // buttonEditFilter
+            // 
+            this.buttonEditFilter.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonEditFilter.Image = global::Atlassian.plvs.Resources.edit;
+            this.buttonEditFilter.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonEditFilter.Name = "buttonEditFilter";
+            this.buttonEditFilter.Size = new System.Drawing.Size(23, 22);
+            this.buttonEditFilter.Text = "Edit Custom Filter";
+            this.buttonEditFilter.Click += new System.EventHandler(this.buttonEditFilter_Click);
             // 
             // issueTreeContainer
             // 
@@ -266,13 +302,13 @@
             this.buttonRefresh});
             this.toolStrip2.Location = new System.Drawing.Point(3, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(555, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(534, 25);
             this.toolStrip2.TabIndex = 0;
             // 
             // labelNarrow
             // 
             this.labelNarrow.Name = "labelNarrow";
-            this.labelNarrow.Size = new System.Drawing.Size(27, 22);
+            this.labelNarrow.Size = new System.Drawing.Size(30, 22);
             this.labelNarrow.Text = "Find";
             // 
             // comboFind
@@ -286,7 +322,7 @@
             // labelGroupBy
             // 
             this.labelGroupBy.Name = "labelGroupBy";
-            this.labelGroupBy.Size = new System.Drawing.Size(51, 22);
+            this.labelGroupBy.Size = new System.Drawing.Size(56, 22);
             this.labelGroupBy.Text = "Group By";
             // 
             // comboGroupBy
@@ -375,7 +411,7 @@
             this.buttonUpdate});
             this.globalToolBar.Location = new System.Drawing.Point(0, 3);
             this.globalToolBar.Name = "globalToolBar";
-            this.globalToolBar.Size = new System.Drawing.Size(24, 101);
+            this.globalToolBar.Size = new System.Drawing.Size(24, 103);
             this.globalToolBar.TabIndex = 0;
             // 
             // buttonProjectProperties
@@ -516,5 +552,8 @@
         private System.Windows.Forms.ToolStripButton buttonCollapseAll;
         private System.Windows.Forms.ToolStripLabel labelNarrow;
         private System.Windows.Forms.ToolStripComboBox comboFind;
+        private System.Windows.Forms.ToolStripButton buttonAddFilter;
+        private System.Windows.Forms.ToolStripButton buttonRemoveFilter;
+        private System.Windows.Forms.ToolStripButton buttonEditFilter;
     }
 }

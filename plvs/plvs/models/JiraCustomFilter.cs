@@ -8,7 +8,8 @@ using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.models {
     public class JiraCustomFilter {
-        private readonly JiraServer server;
+        private JiraServer server;
+        private readonly Guid guid;
 
         private const string ISSUE_NAVIGATOR =
             "/secure/IssueNavigator.jspa?refreshFilter=false&reset=update&show=View+%3E%3E";
@@ -55,6 +56,10 @@ namespace Atlassian.plvs.models {
 
         private const string FILTER_ASSIGNEE = "_jiraCustomFilterAssignee_";
 
+        private const string FILTER_NAME = "_jiraCustomFilterName_";
+
+        private const string CUSTOM_FILTER_DEFAULT_NAME = "Custom Filter";
+
         public enum UserType {
             [StringValue("")]
             UNDEFINED = 0,
@@ -76,6 +81,7 @@ namespace Atlassian.plvs.models {
         public List<JiraNamedEntity> Priorities { get; private set; }
         public UserType Reporter;
         public UserType Assignee;
+        public string Name { get; set; }
 
         private static readonly Dictionary<Guid, JiraCustomFilter> FILTERS = new Dictionary<Guid, JiraCustomFilter>();
 
@@ -87,8 +93,18 @@ namespace Atlassian.plvs.models {
             }
         }
 
-        private JiraCustomFilter(JiraServer server) {
-            this.server = server;
+        public JiraCustomFilter(JiraServer server, Guid guid) {
+            init(server);
+            this.guid = guid;
+        }
+
+        public JiraCustomFilter(JiraServer server) {
+            init(server);
+            guid = Guid.NewGuid();
+        }
+
+        private void init(JiraServer srv) {
+            server = srv;
 
             Projects = new List<JiraProject>();
             IssueTypes = new List<JiraNamedEntity>();
@@ -100,14 +116,31 @@ namespace Atlassian.plvs.models {
             Resolutions = new List<JiraNamedEntity>();
             Reporter = UserType.UNDEFINED;
             Assignee = UserType.UNDEFINED;
+            Name = CUSTOM_FILTER_DEFAULT_NAME;
         }
 
         public static List<JiraCustomFilter> getAll(JiraServer server) {
-            List<JiraCustomFilter> list = new List<JiraCustomFilter>(1);
-            if (!FILTERS.ContainsKey(server.GUID))
-                FILTERS[server.GUID] = new JiraCustomFilter(server);
-            list.Add(FILTERS[server.GUID]);
+            List<JiraCustomFilter> list = new List<JiraCustomFilter>();
+            foreach (JiraCustomFilter filter in FILTERS.Values) {
+                if (filter.server.GUID.Equals(server.GUID)) {
+                    list.Add(filter);
+                }
+            }
             return list;
+        }
+
+        public static void add(JiraCustomFilter filter) {
+            if (FILTERS.ContainsKey(filter.guid)) {
+                throw new Exception("Filter Exists");
+            }
+            FILTERS[filter.guid] = filter;
+            save();
+        }
+
+        public static void remove(JiraCustomFilter filter) {
+            if (!FILTERS.ContainsKey(filter.guid)) return;
+            FILTERS.Remove(filter.guid);
+            save();
         }
 
         public static void clear() {
@@ -249,7 +282,9 @@ namespace Atlassian.plvs.models {
                 }
                 if (server == null) continue;
 
-                JiraCustomFilter filter = new JiraCustomFilter(server);
+                JiraCustomFilter filter = new JiraCustomFilter(server, filterGuid);
+
+                filter.Name = store.loadParameter(getParamKey(filterGuid, FILTER_NAME + filterGuidStr), CUSTOM_FILTER_DEFAULT_NAME);
 
                 loadProjects(store, filterGuid, filter);
                 loadIssueTypes(store, filterGuid, filter);
@@ -273,10 +308,11 @@ namespace Atlassian.plvs.models {
             int i = 0;
             foreach (var filter in FILTERS) {
                 store.storeParameter(FILTER_GUID + i, filter.Key.ToString());
-                store.storeParameter(getParamKey(filter.Key, FILTER_SERVER_GUID + filter.Key),
-                                                     filter.Key.ToString());
+                store.storeParameter(getParamKey(filter.Key, FILTER_SERVER_GUID + filter.Key), filter.Value.server.GUID.ToString());
 
                 JiraCustomFilter f = filter.Value;
+
+                store.storeParameter(getParamKey(filter.Key, FILTER_NAME + filter.Key), filter.Value.Name);
 
                 storeProjects(store, filter.Key, f);
                 storeIssueTypes(store, filter.Key, f);

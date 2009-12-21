@@ -7,7 +7,7 @@ namespace Atlassian.plvs.ui.issuefilternodes {
         private readonly JiraServer server;
 
         public JiraCustomFilterTreeNode(JiraServer server, JiraCustomFilter filter, int imageIdx)
-            : base("Custom Filter", imageIdx) {
+            : base(filter.Name, imageIdx) {
             this.server = server;
             Filter = filter;
 
@@ -15,6 +15,10 @@ namespace Atlassian.plvs.ui.issuefilternodes {
         }
 
         public JiraCustomFilter Filter { get; private set; }
+
+        public void setFilterName(string newName) {
+            Text = newName;
+        }
 
         public override JiraServer Server {
             get { return server; }

@@ -41,6 +41,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.listViewPriorities = new System.Windows.Forms.ListView();
+            this.listViewStatuses = new System.Windows.Forms.ListView();
             this.listBoxResolutions = new System.Windows.Forms.ListBox();
             this.comboBoxAssignee = new System.Windows.Forms.ComboBox();
             this.comboBoxReporter = new System.Windows.Forms.ComboBox();
@@ -51,8 +53,8 @@
             this.label6 = new System.Windows.Forms.Label();
             this.buttonOk = new System.Windows.Forms.Button();
             this.buttonClear = new System.Windows.Forms.Button();
-            this.listViewStatuses = new System.Windows.Forms.ListView();
-            this.listViewPriorities = new System.Windows.Forms.ListView();
+            this.textBoxFilterName = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -61,7 +63,7 @@
             // buttonClose
             // 
             this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonClose.Location = new System.Drawing.Point(802, 471);
+            this.buttonClose.Location = new System.Drawing.Point(802, 495);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(75, 23);
             this.buttonClose.TabIndex = 2;
@@ -209,6 +211,30 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Issue Attributes";
             // 
+            // listViewPriorities
+            // 
+            this.listViewPriorities.FullRowSelect = true;
+            this.listViewPriorities.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.listViewPriorities.HideSelection = false;
+            this.listViewPriorities.Location = new System.Drawing.Point(84, 325);
+            this.listViewPriorities.Name = "listViewPriorities";
+            this.listViewPriorities.Size = new System.Drawing.Size(173, 91);
+            this.listViewPriorities.TabIndex = 4;
+            this.listViewPriorities.UseCompatibleStateImageBehavior = false;
+            this.listViewPriorities.View = System.Windows.Forms.View.Details;
+            // 
+            // listViewStatuses
+            // 
+            this.listViewStatuses.FullRowSelect = true;
+            this.listViewStatuses.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.listViewStatuses.HideSelection = false;
+            this.listViewStatuses.Location = new System.Drawing.Point(84, 116);
+            this.listViewStatuses.Name = "listViewStatuses";
+            this.listViewStatuses.Size = new System.Drawing.Size(173, 91);
+            this.listViewStatuses.TabIndex = 2;
+            this.listViewStatuses.UseCompatibleStateImageBehavior = false;
+            this.listViewStatuses.View = System.Windows.Forms.View.Details;
+            // 
             // listBoxResolutions
             // 
             this.listBoxResolutions.Enabled = false;
@@ -287,7 +313,7 @@
             // buttonOk
             // 
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonOk.Location = new System.Drawing.Point(640, 471);
+            this.buttonOk.Location = new System.Drawing.Point(640, 495);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
             this.buttonOk.TabIndex = 0;
@@ -298,7 +324,7 @@
             // buttonClear
             // 
             this.buttonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonClear.Location = new System.Drawing.Point(721, 471);
+            this.buttonClear.Location = new System.Drawing.Point(721, 495);
             this.buttonClear.Name = "buttonClear";
             this.buttonClear.Size = new System.Drawing.Size(75, 23);
             this.buttonClear.TabIndex = 1;
@@ -306,35 +332,30 @@
             this.buttonClear.UseVisualStyleBackColor = true;
             this.buttonClear.Click += new System.EventHandler(this.buttonClear_Click);
             // 
-            // listViewStatuses
+            // textBoxFilterName
             // 
-            this.listViewStatuses.FullRowSelect = true;
-            this.listViewStatuses.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            this.listViewStatuses.HideSelection = false;
-            this.listViewStatuses.Location = new System.Drawing.Point(84, 116);
-            this.listViewStatuses.Name = "listViewStatuses";
-            this.listViewStatuses.Size = new System.Drawing.Size(173, 91);
-            this.listViewStatuses.TabIndex = 2;
-            this.listViewStatuses.UseCompatibleStateImageBehavior = false;
-            this.listViewStatuses.View = System.Windows.Forms.View.Details;
+            this.textBoxFilterName.Location = new System.Drawing.Point(70, 462);
+            this.textBoxFilterName.Name = "textBoxFilterName";
+            this.textBoxFilterName.Size = new System.Drawing.Size(807, 20);
+            this.textBoxFilterName.TabIndex = 3;
+            this.textBoxFilterName.TextChanged += new System.EventHandler(this.textBoxFilterName_TextChanged);
             // 
-            // listViewPriorities
+            // label11
             // 
-            this.listViewPriorities.FullRowSelect = true;
-            this.listViewPriorities.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            this.listViewPriorities.HideSelection = false;
-            this.listViewPriorities.Location = new System.Drawing.Point(84, 325);
-            this.listViewPriorities.Name = "listViewPriorities";
-            this.listViewPriorities.Size = new System.Drawing.Size(173, 91);
-            this.listViewPriorities.TabIndex = 4;
-            this.listViewPriorities.UseCompatibleStateImageBehavior = false;
-            this.listViewPriorities.View = System.Windows.Forms.View.Details;
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(4, 465);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(60, 13);
+            this.label11.TabIndex = 4;
+            this.label11.Text = "Filter Name";
             // 
             // EditCustomFilter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(889, 512);
+            this.ClientSize = new System.Drawing.Size(889, 536);
+            this.Controls.Add(this.label11);
+            this.Controls.Add(this.textBoxFilterName);
             this.Controls.Add(this.buttonClear);
             this.Controls.Add(this.buttonOk);
             this.Controls.Add(this.groupBox3);
@@ -356,6 +377,7 @@
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -387,5 +409,7 @@
         private System.Windows.Forms.ListBox listBoxFixForVersions;
         private System.Windows.Forms.ListView listViewPriorities;
         private System.Windows.Forms.ListView listViewStatuses;
+        private System.Windows.Forms.TextBox textBoxFilterName;
+        private System.Windows.Forms.Label label11;
     }
 }

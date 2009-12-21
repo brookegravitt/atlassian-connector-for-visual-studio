@@ -34,6 +34,8 @@ namespace Atlassian.plvs.dialogs {
             SortedDictionary<int, JiraNamedEntity> resolutions = JiraServerCache.Instance.getResolutions(server);
             List<JiraNamedEntity> priorities = JiraServerCache.Instance.getPriorities(server);
 
+            textBoxFilterName.Text = filter.Name;
+
             refillProjects(projects);
             refillStatuses(statuses);
             refillResolutions(resolutions);
@@ -315,8 +317,9 @@ namespace Atlassian.plvs.dialogs {
             listBoxResolutions.Enabled = enabled;
             listViewPriorities.Enabled = enabled;
 
-            buttonOk.Enabled = enabled;
             buttonClear.Enabled = enabled;
+            textBoxFilterName.Enabled = enabled;
+            buttonOk.Enabled = textBoxFilterName.Text.Length > 0;
         }
 
         private void buttonClear_Click(object sender, EventArgs e) {
@@ -327,6 +330,9 @@ namespace Atlassian.plvs.dialogs {
 
         private void buttonOk_Click(object sender, EventArgs e) {
             clearFilterValues();
+            
+            filter.Name = textBoxFilterName.Text.Trim();
+
             foreach (var item in listBoxProjects.SelectedItems) {
                 JiraProject proj = item as JiraProject;
                 if (proj != null)
@@ -388,7 +394,6 @@ namespace Atlassian.plvs.dialogs {
             }
 
             Changed = true;
-            JiraCustomFilter.save();
             Close();
         }
 
@@ -423,6 +428,10 @@ namespace Atlassian.plvs.dialogs {
             if (e.KeyChar == (char) Keys.Escape) {
                 Close();
             }
+        }
+
+        private void textBoxFilterName_TextChanged(object sender, EventArgs e) {
+            buttonOk.Enabled = textBoxFilterName.Text.Trim().Length > 0;
         }
     }
 }
