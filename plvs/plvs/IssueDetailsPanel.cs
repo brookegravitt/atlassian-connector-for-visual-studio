@@ -46,7 +46,16 @@ namespace Atlassian.plvs {
             this.myTab = myTab;
         }
 
-        public void modelChanged() {}
+        public void modelChanged() {
+            Invoke(new MethodInvoker(delegate {
+                                         // this is crude. But issueChanged() will do its job of 
+                                         // filtering out the proper issue if it still exists in 
+                                         // the model and comparing it what we currently have
+                                         foreach (var jiraIssue in model.Issues) {
+                                             issueChanged(jiraIssue);
+                                         }
+                                     }));
+        }
 
         public void issueChanged(JiraIssue i) {
             if (!i.Id.Equals(issue.Id)) return;
