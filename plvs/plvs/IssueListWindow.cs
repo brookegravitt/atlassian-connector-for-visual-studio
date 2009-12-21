@@ -425,11 +425,9 @@ namespace Atlassian.plvs {
 
             node.Nodes.Add(new JiraPresetFiltersGroupTreeNode(server, 4));
             node.Nodes.Add(new JiraSavedFiltersGroupTreeNode(server, 2));
-            node.Nodes.Add(new JiraCustomFiltersGroupTreeNode(server, 3)
-                           {
-                               ContextMenuStrip = new CustomFilterGroupContextMenu(addCustomFilter),
-                               ToolTipText = "Right-click to add filter"
-                           });
+            JiraCustomFiltersGroupTreeNode customFiltersGroupTreeNode = new JiraCustomFiltersGroupTreeNode(server, 3);
+            customFiltersGroupTreeNode.ContextMenuStrip = new CustomFilterGroupContextMenu(customFiltersGroupTreeNode, addCustomFilter);
+            node.Nodes.Add(customFiltersGroupTreeNode);
         }
 
         private void addPresetFilterNodes(JiraServer server) {
@@ -458,11 +456,9 @@ namespace Atlassian.plvs {
         }
 
         private JiraCustomFilterTreeNode addCustomFilterTreeNode(JiraServer server, TreeNode node, JiraCustomFilter filter) {
-            JiraCustomFilterTreeNode cfNode = new JiraCustomFilterTreeNode(server, filter, 1)
-                                              {
-                                                  ContextMenuStrip = new CustomFilterContextMenu(server, filter, editCustomFilter, removeCustomFilter),
-//                                                  ToolTipText = server.Name
-                                              };
+            JiraCustomFilterTreeNode cfNode = new JiraCustomFilterTreeNode(server, filter, 1);
+            cfNode.ContextMenuStrip = new CustomFilterContextMenu(server, cfNode, editCustomFilter, removeCustomFilter);
+
             node.Nodes.Add(cfNode);
             return cfNode;
         }
@@ -858,33 +854,33 @@ namespace Atlassian.plvs {
         }
 
         private void buttonAddFilter_Click(object sender, EventArgs e) {
-            addCustomFilter();
-        }
-
-        private void addCustomFilter() {
             JiraServer server = getCurrentlySelectedServer();
             if (server == null) {
                 return;
             }
             TreeNodeWithServer node = findGroupNode(server, typeof(JiraCustomFiltersGroupTreeNode));
+            addCustomFilter(node);
+        }
+
+        private void addCustomFilter(TreeNodeWithServer node) {
             if (node == null) {
                 return;
             }
-            JiraCustomFilter newFilter = new JiraCustomFilter(server);
-            EditCustomFilter ecf = new EditCustomFilter(server, newFilter);
+            JiraCustomFilter newFilter = new JiraCustomFilter(node.Server);
+            EditCustomFilter ecf = new EditCustomFilter(node.Server, newFilter);
             ecf.ShowDialog();
             if (!ecf.Changed) return;
             JiraCustomFilter.add(newFilter);
-            JiraCustomFilterTreeNode newNode = addCustomFilterTreeNode(server, node, newFilter);
+            JiraCustomFilterTreeNode newNode = addCustomFilterTreeNode(node.Server, node, newFilter);
             filtersTree.SelectedNode = newNode;
         }
 
         private void buttonRemoveFilter_Click(object sender, EventArgs e) {
-            removeCustomFilter();
+            JiraCustomFilterTreeNode node = filtersTree.SelectedNode as JiraCustomFilterTreeNode;
+            removeCustomFilter(node);
         }
 
-        private void removeCustomFilter() {
-            JiraCustomFilterTreeNode node = filtersTree.SelectedNode as JiraCustomFilterTreeNode;
+        private void removeCustomFilter(JiraCustomFilterTreeNode node) {
             if (node == null) {
                 return;
             }
@@ -902,11 +898,11 @@ namespace Atlassian.plvs {
         }
 
         private void buttonEditFilter_Click(object sender, EventArgs e) {
-            editCustomFilter();
+            JiraCustomFilterTreeNode node = filtersTree.SelectedNode as JiraCustomFilterTreeNode;
+            editCustomFilter(node);
         }
 
-        private void editCustomFilter() {
-            JiraCustomFilterTreeNode node = filtersTree.SelectedNode as JiraCustomFilterTreeNode;
+        private void editCustomFilter(JiraCustomFilterTreeNode node) {
             if (node == null) {
                 return;
             }

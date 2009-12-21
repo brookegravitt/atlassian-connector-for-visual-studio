@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Windows.Forms;
+using Atlassian.plvs.ui.issuefilternodes;
 
 namespace Atlassian.plvs.ui.issues {
     public sealed class CustomFilterGroupContextMenu : ContextMenuStrip {
 
         private readonly ToolStripMenuItem[] items;
+        private readonly JiraCustomFiltersGroupTreeNode groupTreeNode;
         private readonly AddFilterAction addFilterAction;
 
-        public delegate void AddFilterAction();
+        public delegate void AddFilterAction(JiraCustomFiltersGroupTreeNode groupTreeNode);
 
-        public CustomFilterGroupContextMenu(AddFilterAction addFilterAction) {
+        public CustomFilterGroupContextMenu(JiraCustomFiltersGroupTreeNode groupTreeNode, AddFilterAction addFilterAction) {
+            this.groupTreeNode = groupTreeNode;
             this.addFilterAction  = addFilterAction;
 
             items = new[]
@@ -29,7 +32,7 @@ namespace Atlassian.plvs.ui.issues {
         }
 
         private void addFilter(object sender, EventArgs e) {
-            addFilterAction();
+            addFilterAction(groupTreeNode);
         }
     }
 }
