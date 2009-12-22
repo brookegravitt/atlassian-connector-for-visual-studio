@@ -127,6 +127,10 @@ namespace Atlassian.plvs.api {
         private T wrapExceptions<T>(JiraServer server, Wrapped<T> wrapped) {
             try {
                 return wrapped();
+            } catch (System.Web.Services.Protocols.SoapException) {
+                // let's retry _just once_ - PLVS-27
+                removeSession(server);
+                return wrapped();
             } catch (Exception) {
                 removeSession(server);
                 throw;
@@ -136,6 +140,10 @@ namespace Atlassian.plvs.api {
         private delegate void WrappedVoid();
         private void wrapExceptionsVoid(JiraServer server, WrappedVoid wrapped) {
             try {
+                wrapped();
+            } catch (System.Web.Services.Protocols.SoapException) {
+                // let's retry _just once_ - PLVS-27
+                removeSession(server);
                 wrapped();
             } catch (Exception) {
                 removeSession(server);
