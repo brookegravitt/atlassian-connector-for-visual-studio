@@ -82,6 +82,7 @@ namespace Atlassian.plvs {
         private readonly NodeIcon controlPriorityIcon = new NodeIcon();
         private readonly NodeTextBox controlUpdated = new NodeTextBox();
         private const string RETRIEVING_ISSUES_FAILED = "Retrieving issues failed";
+        private const string QUESTION_CAPTION = "Question";
         private const int MARGIN = 16;
         private const int STATUS_WIDTH = 150;
         private const int UPDATED_WIDTH = 150;
@@ -424,7 +425,11 @@ namespace Atlassian.plvs {
             JiraServerTreeNode node = findServerNode(server);
             if (node == null) return;
 
-            node.Nodes.Add(new JiraPresetFiltersGroupTreeNode(server, 4));
+            JiraPresetFiltersGroupTreeNode presetFiltersGroupTreeNode = new JiraPresetFiltersGroupTreeNode(server, 4);
+            presetFiltersGroupTreeNode.ContextMenuStrip = new PresetFilterGroupContextMenu(presetFiltersGroupTreeNode,
+                                                                                           setAllPresetFiltersProject,
+                                                                                           clearAllPresetFiltersProject);
+            node.Nodes.Add(presetFiltersGroupTreeNode);
             node.Nodes.Add(new JiraSavedFiltersGroupTreeNode(server, 2));
             JiraCustomFiltersGroupTreeNode customFiltersGroupTreeNode = new JiraCustomFiltersGroupTreeNode(server, 3);
             customFiltersGroupTreeNode.ContextMenuStrip = new CustomFilterGroupContextMenu(customFiltersGroupTreeNode, addCustomFilter);
@@ -465,6 +470,36 @@ namespace Atlassian.plvs {
             filterNode.setProject(null);
             filtersTree.SelectedNode = filterNode;
             reloadIssues();
+        }
+
+        private void setAllPresetFiltersProject(JiraPresetFiltersGroupTreeNode groupNode) {
+            SelectJiraProject dlg = new SelectJiraProject(JiraServerCache.Instance.getProjects(groupNode.Server).Values, groupNode.Project);
+            dlg.ShowDialog();
+            JiraProject project = dlg.getSelectedProject();
+            if (project == null) return;
+
+            foreach (var n in groupNode.Nodes) {
+                JiraPresetFilterTreeNode node = n as JiraPresetFilterTreeNode;
+                if (node == null) continue;
+                node.setProject(project);
+                if (filtersTree.SelectedNode == node) {
+                    reloadIssues();
+                }
+            }
+        }
+
+        private void clearAllPresetFiltersProject(JiraPresetFiltersGroupTreeNode groupNode) {
+            DialogResult result = MessageBox.Show("Do you really want to clear projects from all preset filters?", QUESTION_CAPTION, MessageBoxButtons.YesNo);
+            if (DialogResult.Yes != result) return;
+
+            foreach (var n in groupNode.Nodes) {
+                JiraPresetFilterTreeNode node = n as JiraPresetFilterTreeNode;
+                if (node == null) continue;
+                node.setProject(null);
+                if (filtersTree.SelectedNode == node) {
+                    reloadIssues();
+                }
+            }
         }
 
         private void addCustomFilterNodes(JiraServer server) {
@@ -907,7 +942,7 @@ namespace Atlassian.plvs {
                 return;
             }
             DialogResult result =
-                MessageBox.Show("Do you really want to remove this custom filter?", "Question", MessageBoxButtons.YesNo);
+                MessageBox.Show("Do you really want to remove this custom filter?", QUESTION_CAPTION, MessageBoxButtons.YesNo);
             if (DialogResult.Yes != result) return;
 
             TreeNodeWithServer groupNode = findGroupNode(node.Server, typeof (JiraCustomFiltersGroupTreeNode));
