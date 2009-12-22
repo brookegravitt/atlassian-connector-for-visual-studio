@@ -2,10 +2,9 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using Atlassian.plvs.api;
-using Atlassian.plvs.models;
 using Atlassian.plvs.ui.issuefilternodes;
 
-namespace Atlassian.plvs.ui.issues {
+namespace Atlassian.plvs.ui.issues.menus {
     public sealed class CustomFilterContextMenu : ContextMenuStrip {
         private readonly JiraServer server;
         private readonly JiraCustomFilterTreeNode filterNode;

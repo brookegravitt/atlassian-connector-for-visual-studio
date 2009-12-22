@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using Atlassian.plvs.ui.issuefilternodes;
 
-namespace Atlassian.plvs.ui.issues {
+namespace Atlassian.plvs.ui.issues.menus {
     public sealed class CustomFilterGroupContextMenu : ContextMenuStrip {
 
         private readonly ToolStripMenuItem[] items;

@@ -7,7 +7,7 @@ using Aga.Controls.Tree;
 using Atlassian.plvs.api;
 using Atlassian.plvs.models;
 
-namespace Atlassian.plvs.ui.issues {
+namespace Atlassian.plvs.ui.issues.menus {
     public sealed class IssueContextMenu : ContextMenuStrip {
         private readonly JiraIssueListModel model;
         private readonly StatusLabel status;
