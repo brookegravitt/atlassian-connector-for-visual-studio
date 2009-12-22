@@ -204,6 +204,9 @@
     <Compile Include="store\ParameterStore.cs" />
     <Compile Include="ToolWindowManager.cs" />
     <Compile Include="ui\issues\AbstractIssueTreeNode.cs" />
+    <Compile Include="ui\issues\menus\PresetFilterGroupContextMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ui\issues\menus\CustomFilterGroupContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>
