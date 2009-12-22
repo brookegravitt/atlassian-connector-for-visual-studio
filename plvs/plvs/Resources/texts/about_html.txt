@@ -1,6 +1,6 @@
 <div style="text-align:center;font-size:10px;font-family:Arial;">
 
-The Atlassian Connector for Microsoft Visual Studio is an Visual Studio Add-in that lets you work<br>
+The Atlassian Connector for Microsoft Visual Studio is an Visual Studio package that lets you work<br>
 with the Atlassian products within your IDE. Now you don't have to switch between websites,<br>
 email messages and news feeds to see what's happening to your project and your code.<br>
 Instead, you can see the relevant <a href="http://www.atlassian.com/software/jira/">JIRA</a> issues
