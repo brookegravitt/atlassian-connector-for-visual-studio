@@ -54,10 +54,13 @@ namespace Atlassian.plvs.ui.issues.treemodels {
             foreach (var groupNode in getGroupNodes()) {
                 foreach (var issueNode in groupNode.IssueNodes) {
                     if (issueNode.Issue.Id != issue.Id) continue;
-                    issueNode.Issue = issue;
-                    if (NodesChanged != null) {
+                    if (findGroupNode(issue) != groupNode) {
+                        fillModel(model.Issues);
+                    } else if (NodesChanged != null) {
+                        issueNode.Issue = issue;
                         NodesChanged(this, new TreeModelEventArgs(new TreePath(groupNode), new object[] { issueNode }));
                     }
+                    return;
                 }
             }
         }
