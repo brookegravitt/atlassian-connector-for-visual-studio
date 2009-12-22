@@ -1,18 +1,32 @@
 ﻿using System;
 using Atlassian.plvs.models;
 using Atlassian.plvs.api;
+using Atlassian.plvs.ui.issues.menus;
 
 namespace Atlassian.plvs.ui.issuefilternodes {
-    internal class JiraPresetFilterTreeNode : TreeNodeWithServer {
+    public sealed class JiraPresetFilterTreeNode : TreeNodeWithServer {
         private readonly JiraServer server;
 
-        public JiraPresetFilterTreeNode(JiraServer server, JiraPresetFilter filter, int imageIdx)
+        public JiraPresetFilterTreeNode(JiraServer server, JiraPresetFilter filter, 
+            PresetFilterContextMenu.MenuSelectionAction setProjectAction, 
+            PresetFilterContextMenu.MenuSelectionAction clearProjectAction, int imageIdx)
             : base(filter.Name, imageIdx) {
 
             this.server = server;
             Filter = filter;
 
-            Tag = filter;
+            Tag = "Right-click to set or clear project";
+
+            ContextMenuStrip = new PresetFilterContextMenu(this, setProjectAction, clearProjectAction);
+        }
+
+        public void setProject(JiraProject project) {
+            Filter.Project = project;
+            if (project == null) {
+                Text = Filter.Name;
+            } else {
+                Text = Filter.Name + " (" + project.Key + ")";
+            }
         }
 
         public JiraPresetFilter Filter { get; private set; }

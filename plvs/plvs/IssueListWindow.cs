@@ -13,6 +13,7 @@ using Atlassian.plvs.ui.issuefilternodes;
 using Atlassian.plvs.ui.issues;
 using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
+using Atlassian.plvs.ui.issues.menus;
 using Atlassian.plvs.ui.issues.treemodels;
 
 namespace Atlassian.plvs {
@@ -435,14 +436,35 @@ namespace Atlassian.plvs {
             if (node == null) {
                 return;
             }
-            node.Nodes.Add(new JiraPresetFilterTreeNode(server, new JiraPresetFilterOutstanding(), 1));
-            node.Nodes.Add(new JiraPresetFilterTreeNode(server, new JiraPresetFilterUnscheduled(), 1));
-            node.Nodes.Add(new JiraPresetFilterTreeNode(server, new JiraPresetFilterAssignedToMe(), 1));
-            node.Nodes.Add(new JiraPresetFilterTreeNode(server, new JiraPresetFilterReportedByMe(), 1));
-            node.Nodes.Add(new JiraPresetFilterTreeNode(server, new JiraPresetFilterRecentlyResolved(), 1));
-            node.Nodes.Add(new JiraPresetFilterTreeNode(server, new JiraPresetFilterRecentlyAdded(), 1));
-            node.Nodes.Add(new JiraPresetFilterTreeNode(server, new JiraPresetFilterRecentlyUpdated(), 1));
-            node.Nodes.Add(new JiraPresetFilterTreeNode(server, new JiraPresetFilterMostImportant(), 1));
+            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterUnscheduled()));
+            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterOutstanding()));
+            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterAssignedToMe()));
+            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterReportedByMe()));
+            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterRecentlyResolved()));
+            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterRecentlyAdded()));
+            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterRecentlyUpdated()));
+            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterMostImportant()));
+
+        }
+
+        private JiraPresetFilterTreeNode buildPresetFilterNode(JiraServer server, JiraPresetFilter filter) {
+            return new JiraPresetFilterTreeNode(server, filter, setPresetFilterProject, clearPresetFilterProject, 1);
+        }
+
+        private void setPresetFilterProject(JiraPresetFilterTreeNode filterNode) {
+            SelectJiraProject dlg = new SelectJiraProject(JiraServerCache.Instance.getProjects(filterNode.Server).Values, filterNode.Filter.Project);
+            dlg.ShowDialog();
+            JiraProject project = dlg.getSelectedProject();
+            if (project == null) return;
+            filterNode.setProject(project);
+            filtersTree.SelectedNode = filterNode;
+            reloadIssues();
+        }
+
+        private void clearPresetFilterProject(JiraPresetFilterTreeNode filterNode) {
+            filterNode.setProject(null);
+            filtersTree.SelectedNode = filterNode;
+            reloadIssues();
         }
 
         private void addCustomFilterNodes(JiraServer server) {
