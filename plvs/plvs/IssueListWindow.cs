@@ -439,15 +439,14 @@ namespace Atlassian.plvs {
             if (node == null) {
                 return;
             }
-            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterUnscheduled()));
-            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterOutstanding()));
-            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterAssignedToMe()));
-            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterReportedByMe()));
-            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterRecentlyResolved()));
-            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterRecentlyAdded()));
-            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterRecentlyUpdated()));
-            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterMostImportant()));
-
+            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterUnscheduled(server)));
+            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterOutstanding(server)));
+            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterAssignedToMe(server)));
+            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterReportedByMe(server)));
+            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterRecentlyResolved(server)));
+            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterRecentlyAdded(server)));
+            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterRecentlyUpdated(server)));
+            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterMostImportant(server)));
         }
 
         private JiraPresetFilterTreeNode buildPresetFilterNode(JiraServer server, JiraPresetFilter filter) {

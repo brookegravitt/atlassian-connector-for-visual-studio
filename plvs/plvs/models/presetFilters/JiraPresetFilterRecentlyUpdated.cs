@@ -1,6 +1,8 @@
-﻿namespace Atlassian.plvs.models.presetFilters {
+﻿using Atlassian.plvs.api;
+
+namespace Atlassian.plvs.models.presetFilters {
     public class JiraPresetFilterRecentlyUpdated : JiraPresetFilter {
-        public JiraPresetFilterRecentlyUpdated() : base("Updated Recently") { }
+        public JiraPresetFilterRecentlyUpdated(JiraServer server) : base(server, "Updated Recently") { }
 
         #region Overrides of JiraPresetFilter
 

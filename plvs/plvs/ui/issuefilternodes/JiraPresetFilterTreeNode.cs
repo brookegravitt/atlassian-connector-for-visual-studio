@@ -22,11 +22,7 @@ namespace Atlassian.plvs.ui.issuefilternodes {
 
         public void setProject(JiraProject project) {
             Filter.Project = project;
-            if (project == null) {
-                Text = Filter.Name;
-            } else {
-                Text = Filter.Name + " (" + project.Key + ")";
-            }
+            Text = Filter.Name;
         }
 
         public JiraPresetFilter Filter { get; private set; }

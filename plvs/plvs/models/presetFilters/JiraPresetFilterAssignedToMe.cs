@@ -1,6 +1,8 @@
-﻿namespace Atlassian.plvs.models.presetFilters {
+﻿using Atlassian.plvs.api;
+
+namespace Atlassian.plvs.models.presetFilters {
     public class JiraPresetFilterAssignedToMe : JiraPresetFilter {
-        public JiraPresetFilterAssignedToMe() : base("Assigned To Me") { }
+        public JiraPresetFilterAssignedToMe(JiraServer server) : base(server, "Assigned To Me") { }
 
         #region Overrides of JiraPresetFilter
 

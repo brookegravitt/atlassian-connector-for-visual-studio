@@ -1,6 +1,8 @@
-﻿namespace Atlassian.plvs.models.presetFilters {
+﻿using Atlassian.plvs.api;
+
+namespace Atlassian.plvs.models.presetFilters {
     public class JiraPresetFilterReportedByMe : JiraPresetFilter {
-        public JiraPresetFilterReportedByMe() : base("Reported By Me") { }
+        public JiraPresetFilterReportedByMe(JiraServer server) : base(server, "Reported By Me") { }
 
         #region Overrides of JiraPresetFilter
 
