@@ -238,6 +238,12 @@
     <Compile Include="ui\issues\IssueNode.cs" />
     <Compile Include="ui\issuefilternodes\JiraCustomFiltersGroupTreeNode.cs" />
     <Compile Include="ui\issuefilternodes\JiraFilterGroupTreeNode.cs" />
+    <Compile Include="ui\JiraIssueGroupByCombo.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ui\JiraIssueGroupByCombo.Designer.cs">
+      <DependentUpon>JiraIssueGroupByCombo.cs</DependentUpon>
+    </Compile>
     <Compile Include="ui\JiraIssueGroupByComboItem.cs">
     </Compile>
     <Compile Include="ui\JiraNamedEntityListViewItem.cs" />

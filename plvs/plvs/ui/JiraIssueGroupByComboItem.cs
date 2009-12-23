@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Atlassian.plvs.attributes;
 using Atlassian.plvs.models;
-using Atlassian.plvs.ui.issues.issuegroupnodes;
 using Atlassian.plvs.ui.issues.treemodels;
 using Atlassian.plvs.util;
 
