@@ -8,6 +8,7 @@ using Atlassian.plvs.api;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.models;
 using Atlassian.plvs.models.presetFilters;
+using Atlassian.plvs.store;
 using Atlassian.plvs.ui;
 using Atlassian.plvs.ui.issuefilternodes;
 using Atlassian.plvs.ui.issues;
@@ -89,6 +90,15 @@ namespace Atlassian.plvs {
         private const int PRIORITY_WIDTH = 24;
 
         private readonly ImageList filterTreeImages = new ImageList();
+
+        private const string FILTERS_TREE_RECENT_PARAM = "JiraFilterTree.recentlyViewed";
+        private const string FILTERS_TREE_SERVER_PARAM = "JiraFilterTree.server";
+        private const string FILTERS_TREE_FILTER_GROUP_PARAM = "JiraFilterTree.filter.group";
+        private const string FILTERS_TREE_FILTER_PARAM = "JiraFilterTree.filter";
+
+        private const string PRESET_FILTER_GROUP_NAME = "PRESETS";
+        private const string CUSTOM_FILTER_GROUP_NAME = "CUSTOM";
+        private const string SAVED_FILTER_GROUP_NAME = "SAVED";
 
         private void initIssuesTree() {
             if (issuesTree != null) {
@@ -412,7 +422,8 @@ namespace Atlassian.plvs {
                 Invoke(new MethodInvoker(delegate {
                                              filtersTree.Nodes.Add(new RecentlyOpenIssuesTreeNode(5));
                                              filtersTree.ExpandAll();
-                                         }));
+                                             restoreLastSelectedFilterItem();
+                }));
             }
             catch (Exception e) {
                 status.setError("Failed to load server metadata", e);
@@ -612,6 +623,127 @@ namespace Atlassian.plvs {
             else {
                 searchingModel.clear(true);
             }
+
+            rememberLastSelectedFilterItem();
+        }
+
+        private void rememberLastSelectedFilterItem() {
+            ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
+            var selectedNode = filtersTree.SelectedNode;
+            bool recentlyViewed = selectedNode is RecentlyOpenIssuesTreeNode;
+            store.storeParameter(FILTERS_TREE_RECENT_PARAM, recentlyViewed ? 1 : 0);
+
+            TreeNodeWithServer nodeWithServer = selectedNode as TreeNodeWithServer;
+            if (nodeWithServer != null) {
+                store.storeParameter(FILTERS_TREE_SERVER_PARAM, nodeWithServer.Server.GUID.ToString());
+            }
+            JiraPresetFiltersGroupTreeNode pgtn = selectedNode as JiraPresetFiltersGroupTreeNode;
+            JiraCustomFiltersGroupTreeNode cgtn = selectedNode as JiraCustomFiltersGroupTreeNode;
+            JiraSavedFiltersGroupTreeNode sgtn = selectedNode as JiraSavedFiltersGroupTreeNode;
+            if (pgtn != null) {
+                store.storeParameter(FILTERS_TREE_FILTER_GROUP_PARAM, PRESET_FILTER_GROUP_NAME);
+                store.storeParameter(FILTERS_TREE_FILTER_PARAM, null);
+            } else {
+                if (cgtn != null) {
+                    store.storeParameter(FILTERS_TREE_FILTER_GROUP_PARAM, CUSTOM_FILTER_GROUP_NAME);
+                    store.storeParameter(FILTERS_TREE_FILTER_PARAM, null);
+                } else {
+                    if (sgtn != null) {
+                        store.storeParameter(FILTERS_TREE_FILTER_GROUP_PARAM, SAVED_FILTER_GROUP_NAME);
+                        store.storeParameter(FILTERS_TREE_FILTER_PARAM, null);
+                    } else {
+                        JiraPresetFilterTreeNode ptn = selectedNode as JiraPresetFilterTreeNode;
+                        JiraCustomFilterTreeNode ctn = selectedNode as JiraCustomFilterTreeNode;
+                        JiraSavedFilterTreeNode stn = selectedNode as JiraSavedFilterTreeNode;
+                        if (ptn != null) {
+                            store.storeParameter(FILTERS_TREE_FILTER_GROUP_PARAM, PRESET_FILTER_GROUP_NAME);
+                            store.storeParameter(FILTERS_TREE_FILTER_PARAM, ptn.Filter.GetType().ToString());
+                        } else if (ctn != null) {
+                            store.storeParameter(FILTERS_TREE_FILTER_GROUP_PARAM, CUSTOM_FILTER_GROUP_NAME);
+                            store.storeParameter(FILTERS_TREE_FILTER_PARAM, ctn.Filter.Guid.ToString());
+                        } else if (stn != null) {
+                            store.storeParameter(FILTERS_TREE_FILTER_GROUP_PARAM, SAVED_FILTER_GROUP_NAME);
+                            store.storeParameter(FILTERS_TREE_FILTER_PARAM, stn.Filter.Id);
+                        } else {
+                            store.storeParameter(FILTERS_TREE_FILTER_GROUP_PARAM, null);
+                            store.storeParameter(FILTERS_TREE_FILTER_PARAM, null);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void restoreLastSelectedFilterItem() {
+            ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
+            bool recentlyViewed = store.loadParameter(FILTERS_TREE_RECENT_PARAM, 0) != 0;
+            if (recentlyViewed) {
+                foreach (TreeNode node in filtersTree.Nodes) {
+                    if (!(node is RecentlyOpenIssuesTreeNode)) continue;
+                    filtersTree.SelectedNode = node;
+                    break;
+                }
+            } else {
+                string serverGuid = store.loadParameter(FILTERS_TREE_SERVER_PARAM, null);
+                foreach (var node in filtersTree.Nodes) {
+                    TreeNodeWithServer tnws = node as TreeNodeWithServer;
+                    if (tnws == null) continue;
+                    if (!tnws.Server.GUID.ToString().Equals(serverGuid)) continue;
+                    string group = store.loadParameter(FILTERS_TREE_FILTER_GROUP_PARAM, null);
+                    if (group == null) {
+                        filtersTree.SelectedNode = tnws;
+                    } else {
+                        string filter = store.loadParameter(FILTERS_TREE_FILTER_PARAM, null);
+                        TreeNodeWithServer groupNode;
+                        switch (group) {
+                            case PRESET_FILTER_GROUP_NAME:
+                                groupNode = findGroupNode(tnws.Server, typeof(JiraPresetFiltersGroupTreeNode));
+                                if (selectFilterNode(filter, groupNode, comparePresetFilterNodeToString)) {
+                                    return;
+                                }
+                                break;
+                            case SAVED_FILTER_GROUP_NAME:
+                                groupNode = findGroupNode(tnws.Server, typeof(JiraSavedFiltersGroupTreeNode));
+                                if (selectFilterNode(filter, groupNode, compareSavedFilterNodeToString)) {
+                                    return;
+                                }
+                                break;
+                            case CUSTOM_FILTER_GROUP_NAME:
+                                groupNode = findGroupNode(tnws.Server, typeof (JiraCustomFiltersGroupTreeNode));
+                                if (selectFilterNode(filter, groupNode, compareCustomFilterNodeToString)) {
+                                    return;
+                                }
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+        private static bool compareCustomFilterNodeToString(TreeNode node, string filter) {
+            return filter.Equals((((JiraCustomFilterTreeNode) node).Filter.Guid.ToString()));
+        }
+
+        private static bool compareSavedFilterNodeToString(TreeNode node, string filter) {
+            return filter.Equals((((JiraSavedFilterTreeNode) node).Filter.Id).ToString());
+        }
+
+        private static bool comparePresetFilterNodeToString(TreeNode node, string filter) {
+            return filter.Equals(((JiraPresetFilterTreeNode) node).Filter.GetType().ToString());
+        }
+
+        private delegate bool CompareFilterNodeToString(TreeNode node, string filter);
+
+        private bool selectFilterNode(string filter, TreeNode groupNode, CompareFilterNodeToString compare) {
+            if (filter == null) {
+                filtersTree.SelectedNode = groupNode;
+                return true;
+            }
+            foreach (TreeNode fn in groupNode.Nodes) {
+                if (!compare(fn, filter)) continue;
+                filtersTree.SelectedNode = fn;
+                return true;
+            }
+            return false;
         }
 
         private void reloadIssues() {
