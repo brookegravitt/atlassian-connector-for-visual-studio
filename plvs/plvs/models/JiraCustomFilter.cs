@@ -9,7 +9,7 @@ using Atlassian.plvs.util;
 namespace Atlassian.plvs.models {
     public class JiraCustomFilter {
         private JiraServer server;
-        private readonly Guid guid;
+        public readonly Guid Guid;
 
         private const string ISSUE_NAVIGATOR =
             "/secure/IssueNavigator.jspa?refreshFilter=false&reset=update&show=View+%3E%3E";
@@ -95,12 +95,12 @@ namespace Atlassian.plvs.models {
 
         public JiraCustomFilter(JiraServer server, Guid guid) {
             init(server);
-            this.guid = guid;
+            Guid = guid;
         }
 
         public JiraCustomFilter(JiraServer server) {
             init(server);
-            guid = Guid.NewGuid();
+            Guid = Guid.NewGuid();
         }
 
         private void init(JiraServer srv) {
@@ -130,16 +130,16 @@ namespace Atlassian.plvs.models {
         }
 
         public static void add(JiraCustomFilter filter) {
-            if (FILTERS.ContainsKey(filter.guid)) {
+            if (FILTERS.ContainsKey(filter.Guid)) {
                 throw new Exception("Filter Exists");
             }
-            FILTERS[filter.guid] = filter;
+            FILTERS[filter.Guid] = filter;
             save();
         }
 
         public static void remove(JiraCustomFilter filter) {
-            if (!FILTERS.ContainsKey(filter.guid)) return;
-            FILTERS.Remove(filter.guid);
+            if (!FILTERS.ContainsKey(filter.Guid)) return;
+            FILTERS.Remove(filter.Guid);
             save();
         }
 
