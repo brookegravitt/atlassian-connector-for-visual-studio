@@ -1,4 +1,6 @@
-﻿namespace Atlassian.plvs {
+﻿using Atlassian.plvs.ui;
+
+namespace Atlassian.plvs {
     partial class IssueListWindow
     {
         /// <summary> 
@@ -48,7 +50,7 @@
             this.labelNarrow = new System.Windows.Forms.ToolStripLabel();
             this.comboFind = new System.Windows.Forms.ToolStripComboBox();
             this.labelGroupBy = new System.Windows.Forms.ToolStripLabel();
-            this.comboGroupBy = new System.Windows.Forms.ToolStripComboBox();
+            this.comboGroupBy = new JiraIssueGroupByCombo();
             this.buttonExpandAll = new System.Windows.Forms.ToolStripButton();
             this.buttonCollapseAll = new System.Windows.Forms.ToolStripButton();
             this.buttonOpen = new System.Windows.Forms.ToolStripButton();
@@ -543,7 +545,7 @@
         private System.Windows.Forms.ToolStripButton buttonGlobalProperties;
         private System.Windows.Forms.ToolStripButton buttonUpdate;
         private System.Windows.Forms.ToolStripLabel labelGroupBy;
-        private System.Windows.Forms.ToolStripComboBox comboGroupBy;
+        private JiraIssueGroupByCombo comboGroupBy;
         private System.Windows.Forms.ToolStripButton buttonExpandAll;
         private System.Windows.Forms.ToolStripButton buttonCollapseAll;
         private System.Windows.Forms.ToolStripLabel labelNarrow;

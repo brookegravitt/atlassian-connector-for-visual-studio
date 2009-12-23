@@ -97,8 +97,6 @@ namespace Atlassian.plvs {
 
             issuesTree = new TreeViewAdv();
 
-            comboGroupBy.SelectedIndex = 0;
-
             issueTreeContainer.ContentPanel.Controls.Add(issuesTree);
             issuesTree.Dock = DockStyle.Fill;
             issuesTree.SelectionMode = TreeSelectionMode.Single;
@@ -599,6 +597,7 @@ namespace Atlassian.plvs {
             registerIssueModelListener();
             Invoke(new MethodInvoker(initIssuesTree));
             reloadKnownJiraServers();
+            comboGroupBy.restoreSelectedIndex();
         }
 
         private void filtersTree_AfterSelect(object sender, TreeViewEventArgs e) {
