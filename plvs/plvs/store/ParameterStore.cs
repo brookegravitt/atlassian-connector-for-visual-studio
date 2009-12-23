@@ -39,6 +39,7 @@ namespace Atlassian.plvs.store {
         public void writeOptions(Stream stream) {
             StringBuilder sb = new StringBuilder();
             foreach (KeyValuePair<string, string> pair in parameterMap) {
+                if (pair.Value == null) continue;
                 sb.Append(pair.Key).Append("=").Append(pair.Value).Append('\n');
             }
             using (BinaryWriter bw = new BinaryWriter(stream)) {

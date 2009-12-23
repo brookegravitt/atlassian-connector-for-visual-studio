@@ -1,6 +1,8 @@
-﻿namespace Atlassian.plvs.models.presetFilters {
+﻿using Atlassian.plvs.api;
+
+namespace Atlassian.plvs.models.presetFilters {
     public class JiraPresetFilterUnscheduled : JiraPresetFilter {
-        public JiraPresetFilterUnscheduled() : base("Unscheduled") { }
+        public JiraPresetFilterUnscheduled(JiraServer server) : base(server, "Unscheduled") { }
 
         #region Overrides of JiraPresetFilter
 

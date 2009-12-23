@@ -1,6 +1,8 @@
-﻿namespace Atlassian.plvs.models.presetFilters {
+﻿using Atlassian.plvs.api;
+
+namespace Atlassian.plvs.models.presetFilters {
     public class JiraPresetFilterOutstanding : JiraPresetFilter {
-        public JiraPresetFilterOutstanding() : base("Outstanding") { }
+        public JiraPresetFilterOutstanding(JiraServer server) : base(server, "Outstanding") { }
 
         #region Overrides of JiraPresetFilter
 

@@ -1,6 +1,8 @@
-﻿namespace Atlassian.plvs.models.presetFilters {
+﻿using Atlassian.plvs.api;
+
+namespace Atlassian.plvs.models.presetFilters {
     public class JiraPresetFilterMostImportant : JiraPresetFilter {
-        public JiraPresetFilterMostImportant() : base("Most Important") { }
+        public JiraPresetFilterMostImportant(JiraServer server) : base(server, "Most Important") { }
 
         #region Overrides of JiraPresetFilter
 
