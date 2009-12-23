@@ -54,9 +54,11 @@ namespace Atlassian.plvs.ui.issues.treemodels {
         #region Overrides of AbstractIssueTreeModel
 
         public override event EventHandler<TreeModelEventArgs> NodesChanged;
+        public override event EventHandler<TreePathEventArgs> StructureChanged;
+
+        #pragma warning disable 67
         public override event EventHandler<TreeModelEventArgs> NodesInserted;
         public override event EventHandler<TreeModelEventArgs> NodesRemoved;
-        public override event EventHandler<TreePathEventArgs> StructureChanged;
 
         #endregion
 
