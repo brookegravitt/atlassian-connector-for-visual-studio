@@ -5,8 +5,9 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml.XPath;
 using Atlassian.plvs.dialogs;
+using Atlassian.plvs.windows;
 
-namespace Atlassian.plvs {
+namespace Atlassian.plvs.autoupdate {
     public class Autoupdate {
         private static readonly Autoupdate INSTANCE = new Autoupdate();
         private bool initialized;

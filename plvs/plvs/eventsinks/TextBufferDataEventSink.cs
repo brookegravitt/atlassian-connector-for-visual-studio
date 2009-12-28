@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio;
+﻿using Atlassian.plvs.markers;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.TextManager.Interop;
 

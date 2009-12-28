@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio;
+﻿using Atlassian.plvs.markers;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace Atlassian.plvs.eventsinks {

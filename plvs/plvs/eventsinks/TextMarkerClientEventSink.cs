@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using Atlassian.plvs.api;
 using Atlassian.plvs.models;
+using Atlassian.plvs.windows;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.TextManager.Interop;

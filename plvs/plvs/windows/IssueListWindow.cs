@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Threading;
 using Atlassian.plvs.api;
+using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.models;
 using Atlassian.plvs.models.presetFilters;
@@ -17,7 +18,7 @@ using Aga.Controls.Tree.NodeControls;
 using Atlassian.plvs.ui.issues.menus;
 using Atlassian.plvs.ui.issues.treemodels;
 
-namespace Atlassian.plvs {
+namespace Atlassian.plvs.windows {
     public partial class IssueListWindow : UserControl {
         private readonly JiraServerFacade facade = JiraServerFacade.Instance;
 
@@ -423,7 +424,7 @@ namespace Atlassian.plvs {
                                              filtersTree.Nodes.Add(new RecentlyOpenIssuesTreeNode(5));
                                              filtersTree.ExpandAll();
                                              restoreLastSelectedFilterItem();
-                }));
+                                         }));
             }
             catch (Exception e) {
                 status.setError("Failed to load server metadata", e);

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace Atlassian.plvs {
+namespace Atlassian.plvs.util {
     internal static class ExceptionBuilder
     {
         /// <summary>

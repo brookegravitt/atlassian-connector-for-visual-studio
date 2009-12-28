@@ -6,6 +6,7 @@ using Atlassian.plvs.api;
 using Atlassian.plvs.models;
 using Atlassian.plvs.ui;
 using Atlassian.plvs.util;
+using Atlassian.plvs.windows;
 
 namespace Atlassian.plvs.dialogs {
     public sealed partial class SearchIssue : Form {

@@ -15,7 +15,7 @@ using EnvDTE;
 using Process=System.Diagnostics.Process;
 using Thread=System.Threading.Thread;
 
-namespace Atlassian.plvs {
+namespace Atlassian.plvs.windows {
     public partial class IssueDetailsPanel : UserControl {
         private readonly JiraIssueListModel model;
         private readonly Solution solution;
@@ -127,7 +127,7 @@ namespace Atlassian.plvs {
                 sb.Append("<div class=\"comment_header\">")
                     .Append("<div class=\"author\">").Append(issue.Comments[i].Author)
                     .Append(" <span class=\"date\">").Append(
-                        JiraIssueUtils.getTimeStringFromIssueDateTime(JiraIssueUtils.getDateTimeFromJiraTimeString(issue.Comments[i].Created)))
+                    JiraIssueUtils.getTimeStringFromIssueDateTime(JiraIssueUtils.getDateTimeFromJiraTimeString(issue.Comments[i].Created)))
                     .Append("</span></div>")
                     .Append("<a href=\"javascript:toggle('")
                     .Append(i).Append("', '").Append(i).Append("control');\"><div class=\"toggler\" id=\"")
@@ -445,13 +445,13 @@ namespace Atlassian.plvs {
             if (actions == null || actions.Count == 0) return;
 
             Invoke(new MethodInvoker(delegate {
-                foreach (var action in actions) {
-                    var actionCopy = action;
-                    ToolStripMenuItem item = new ToolStripMenuItem(action.Name, null, 
-                        new EventHandler(delegate { IssueActionRunner.runAction(this, actionCopy, model, issue, status); }));
-                    dropDownIssueActions.DropDownItems.Add(item);
-                }
-            }));
+                                         foreach (var action in actions) {
+                                             var actionCopy = action;
+                                             ToolStripMenuItem item = new ToolStripMenuItem(action.Name, null, 
+                                                                                            new EventHandler(delegate { IssueActionRunner.runAction(this, actionCopy, model, issue, status); }));
+                                             dropDownIssueActions.DropDownItems.Add(item);
+                                         }
+                                     }));
         }
     }
 }

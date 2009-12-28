@@ -1,6 +1,6 @@
 ﻿using Atlassian.plvs.ui;
 
-namespace Atlassian.plvs {
+namespace Atlassian.plvs.windows {
     partial class IssueListWindow
     {
         /// <summary> 
@@ -149,8 +149,8 @@ namespace Atlassian.plvs {
             // 
             this.statusStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.jiraStatus,
-            this.getMoreIssues});
+                                                                                         this.jiraStatus,
+                                                                                         this.getMoreIssues});
             this.statusStrip.Location = new System.Drawing.Point(0, 0);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(814, 22);
@@ -221,10 +221,10 @@ namespace Atlassian.plvs {
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.buttonRefreshAll,
-            this.buttonAddFilter,
-            this.buttonRemoveFilter,
-            this.buttonEditFilter});
+                                                                                        this.buttonRefreshAll,
+                                                                                        this.buttonAddFilter,
+                                                                                        this.buttonRemoveFilter,
+                                                                                        this.buttonEditFilter});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(104, 25);
@@ -291,17 +291,17 @@ namespace Atlassian.plvs {
             // 
             this.toolStrip2.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.labelNarrow,
-            this.comboFind,
-            this.labelGroupBy,
-            this.comboGroupBy,
-            this.buttonExpandAll,
-            this.buttonCollapseAll,
-            this.buttonOpen,
-            this.buttonViewInBrowser,
-            this.buttonEditInBrowser,
-            this.buttonSearch,
-            this.buttonRefresh});
+                                                                                        this.labelNarrow,
+                                                                                        this.comboFind,
+                                                                                        this.labelGroupBy,
+                                                                                        this.comboGroupBy,
+                                                                                        this.buttonExpandAll,
+                                                                                        this.buttonCollapseAll,
+                                                                                        this.buttonOpen,
+                                                                                        this.buttonViewInBrowser,
+                                                                                        this.buttonEditInBrowser,
+                                                                                        this.buttonSearch,
+                                                                                        this.buttonRefresh});
             this.toolStrip2.Location = new System.Drawing.Point(3, 0);
             this.toolStrip2.Name = "toolStrip2";
             this.toolStrip2.Size = new System.Drawing.Size(534, 25);
@@ -407,10 +407,10 @@ namespace Atlassian.plvs {
             // 
             this.globalToolBar.Dock = System.Windows.Forms.DockStyle.None;
             this.globalToolBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.buttonProjectProperties,
-            this.buttonGlobalProperties,
-            this.buttonAbout,
-            this.buttonUpdate});
+                                                                                           this.buttonProjectProperties,
+                                                                                           this.buttonGlobalProperties,
+                                                                                           this.buttonAbout,
+                                                                                           this.buttonUpdate});
             this.globalToolBar.Location = new System.Drawing.Point(0, 3);
             this.globalToolBar.Name = "globalToolBar";
             this.globalToolBar.Size = new System.Drawing.Size(24, 103);

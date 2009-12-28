@@ -68,7 +68,7 @@
     <Compile Include="api\RssClient.cs" />
     <Compile Include="api\soap\SoapSession.cs" />
     <Compile Include="attributes\StringValueAttribute.cs" />
-    <Compile Include="Autoupdate.cs">
+    <Compile Include="autoupdate\Autoupdate.cs">
     </Compile>
     <Compile Include="dialogs\About.cs">
       <SubType>Form</SubType>
@@ -138,22 +138,22 @@
     <Compile Include="eventsinks\TextLinesEventSink.cs" />
     <Compile Include="eventsinks\TextManagerEventSink.cs" />
     <Compile Include="eventsinks\TextMarkerClientEventSink.cs" />
-    <Compile Include="ExceptionBuilder.cs" />
-    <Compile Include="IssueActionRunner.cs" />
-    <Compile Include="IssueDetailsPanel.cs">
+    <Compile Include="util\ExceptionBuilder.cs" />
+    <Compile Include="util\IssueActionRunner.cs" />
+    <Compile Include="windows\IssueDetailsPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="IssueDetailsPanel.Designer.cs">
+    <Compile Include="windows\IssueDetailsPanel.Designer.cs">
       <DependentUpon>IssueDetailsPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="IssueDetailsToolWindow.cs" />
-    <Compile Include="IssueDetailsWindow.cs">
+    <Compile Include="windows\IssueDetailsToolWindow.cs" />
+    <Compile Include="windows\IssueDetailsWindow.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="IssueDetailsWindow.Designer.cs">
+    <Compile Include="windows\IssueDetailsWindow.Designer.cs">
       <DependentUpon>IssueDetailsWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="JiraEditorLinkManager.cs" />
+    <Compile Include="markers\JiraEditorLinkManager.cs" />
     <Compile Include="markers\JiraLinkMarginMarkerType.cs" />
     <Compile Include="markers\JiraLinkTextMarkerType.cs" />
     <Compile Include="markers\JiraLinkMarkerTypeProvider.cs" />
@@ -177,12 +177,12 @@
     <Compile Include="models\JiraServerModel.cs" />
     <Compile Include="models\RecentlyViewedIssue.cs" />
     <Compile Include="models\RecentlyViewedIssuesModel.cs" />
-    <Compile Include="AtlassianToolWindow.cs" />
+    <Compile Include="windows\AtlassianToolWindow.cs" />
     <Compile Include="Guids.cs" />
-    <Compile Include="IssueListWindow.cs">
+    <Compile Include="windows\IssueListWindow.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="IssueListWindow.Designer.cs">
+    <Compile Include="windows\IssueListWindow.Designer.cs">
       <DependentUpon>IssueListWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
@@ -201,7 +201,7 @@
     <Compile Include="PkgCmdID.cs" />
     <Compile Include="store\DPApi.cs" />
     <Compile Include="store\ParameterStore.cs" />
-    <Compile Include="ToolWindowManager.cs" />
+    <Compile Include="windows\ToolWindowManager.cs" />
     <Compile Include="ui\issues\AbstractIssueTreeNode.cs" />
     <Compile Include="ui\issues\menus\PresetFilterGroupContextMenu.cs">
       <SubType>Component</SubType>
@@ -311,15 +311,15 @@
       <DependentUpon>TestJiraConnection.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="IssueDetailsPanel.resx">
+    <EmbeddedResource Include="windows\IssueDetailsPanel.resx">
       <DependentUpon>IssueDetailsPanel.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="IssueDetailsWindow.resx">
+    <EmbeddedResource Include="windows\IssueDetailsWindow.resx">
       <DependentUpon>IssueDetailsWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="IssueListWindow.resx">
+    <EmbeddedResource Include="windows\IssueListWindow.resx">
       <DependentUpon>IssueListWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
