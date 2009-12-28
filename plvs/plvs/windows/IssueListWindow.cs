@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Windows.Forms;
 using System.Threading;
 using Atlassian.plvs.api;
@@ -12,15 +11,13 @@ using Atlassian.plvs.ui;
 using Atlassian.plvs.ui.issuefilternodes;
 using Atlassian.plvs.ui.issues;
 using Aga.Controls.Tree;
-using Aga.Controls.Tree.NodeControls;
-using Atlassian.plvs.ui.issues.menus;
 using Atlassian.plvs.ui.issues.treemodels;
 
 namespace Atlassian.plvs.windows {
     public partial class IssueListWindow : UserControl {
         private readonly JiraServerFacade facade = JiraServerFacade.Instance;
 
-        private TreeViewAdv issuesTree;
+        private JiraIssueTree issuesTree;
 
         private readonly JiraIssueListModelBuilder builder;
 
@@ -56,55 +53,20 @@ namespace Atlassian.plvs.windows {
             comboGroupBy.SelectedIndexChanged += comboGroupBy_SelectedIndexChanged;
         }
 
-        private class BoldableNodeTextBox : NodeTextBox {
-            protected override void OnDrawText(DrawEventArgs args) {
-                args.Font = new Font(args.Font, FontStyle.Bold);
-                base.OnDrawText(args);
-            }
-
-            protected override bool DrawTextMustBeFired(TreeNodeAdv node) {
-                return !(node.Tag is IssueNode);
-            }
-        }
-
         private void registerIssueModelListener() {
             searchingModel.ModelChanged += searchingModel_ModelChanged;
         }
 
-        private readonly TreeColumn colName = new TreeColumn();
-        private readonly TreeColumn colStatus = new TreeColumn();
-        private readonly TreeColumn colPriority = new TreeColumn();
-        private readonly TreeColumn colUpdated = new TreeColumn();
-        private readonly NodeIcon controlIcon = new NodeIcon();
-        private readonly NodeTextBox controlName = new BoldableNodeTextBox();
-        private readonly NodeTextBox controlStatusText = new NodeTextBox();
-        private readonly NodeIcon controlStatusIcon = new NodeIcon();
-        private readonly NodeIcon controlPriorityIcon = new NodeIcon();
-        private readonly NodeTextBox controlUpdated = new NodeTextBox();
         private const string RETRIEVING_ISSUES_FAILED = "Retrieving issues failed";
-        private const int MARGIN = 16;
-        private const int STATUS_WIDTH = 150;
-        private const int UPDATED_WIDTH = 150;
-        private const int PRIORITY_WIDTH = 24;
 
         private void initIssuesTree() {
             if (issuesTree != null) {
                 issueTreeContainer.ContentPanel.Controls.Remove(issuesTree);
             }
 
-            issuesTree = new TreeViewAdv();
+            issuesTree = new JiraIssueTree(jiraSplitter.Panel2, status, searchingModel);
 
-            issueTreeContainer.ContentPanel.Controls.Add(issuesTree);
-            issuesTree.Dock = DockStyle.Fill;
-            issuesTree.SelectionMode = TreeSelectionMode.Single;
-            issuesTree.FullRowSelect = true;
-            issuesTree.GridLineStyle = GridLineStyle.None;
-            issuesTree.UseColumns = true;
-            issuesTree.NodeMouseDoubleClick += issuesTree_NodeMouseDoubleClick;
-            issuesTree.KeyPress += issuesTree_KeyPress;
-            issuesTree.SelectionChanged += issuesTree_SelectionChanged;
-
-            ToolStripMenuItem[] items = new[]
+            issuesTree.addContextMenu(new[]
                                         {
                                             new ToolStripMenuItem("Open in IDE", Resources.open_in_ide,
                                                                   new EventHandler(openIssue)),
@@ -112,77 +74,13 @@ namespace Atlassian.plvs.windows {
                                                                   new EventHandler(browseIssue)),
                                             new ToolStripMenuItem("Edit in Browser", Resources.edit_in_browser,
                                                                   new EventHandler(browseEditIssue)),
-                                        };
-            IssueContextMenu strip = new IssueContextMenu(searchingModel, status, issuesTree, items);
-            issuesTree.ContextMenuStrip = strip;
-            colName.Header = "Summary";
-            colStatus.Header = "Status";
-            colPriority.Header = "P";
-            colUpdated.Header = "Updated";
+                                        });
 
-            int i = 0;
-            controlIcon.ParentColumn = colName;
-            controlIcon.DataPropertyName = "Icon";
-            controlIcon.LeftMargin = i++;
+            issuesTree.NodeMouseDoubleClick += issuesTree_NodeMouseDoubleClick;
+            issuesTree.KeyPress += issuesTree_KeyPress;
+            issuesTree.SelectionChanged += issuesTree_SelectionChanged;
 
-            controlName.ParentColumn = colName;
-            controlName.DataPropertyName = "Name";
-            controlName.Trimming = StringTrimming.EllipsisCharacter;
-            controlName.UseCompatibleTextRendering = true;
-            controlName.LeftMargin = i++;
-
-            controlPriorityIcon.ParentColumn = colPriority;
-            controlPriorityIcon.DataPropertyName = "PriorityIcon";
-            controlPriorityIcon.LeftMargin = i++;
-
-            controlStatusIcon.ParentColumn = colStatus;
-            controlStatusIcon.DataPropertyName = "StatusIcon";
-            controlStatusIcon.LeftMargin = i++;
-
-            controlStatusText.ParentColumn = colStatus;
-            controlStatusText.DataPropertyName = "StatusText";
-            controlStatusText.Trimming = StringTrimming.EllipsisCharacter;
-            controlStatusText.UseCompatibleTextRendering = true;
-            controlStatusText.LeftMargin = i++;
-
-            controlUpdated.ParentColumn = colUpdated;
-            controlUpdated.DataPropertyName = "Updated";
-            controlUpdated.Trimming = StringTrimming.EllipsisCharacter;
-            controlUpdated.UseCompatibleTextRendering = true;
-            controlUpdated.TextAlign = HorizontalAlignment.Right;
-            controlUpdated.LeftMargin = i;
-
-            issuesTree.Columns.Add(colName);
-            issuesTree.Columns.Add(colPriority);
-            issuesTree.Columns.Add(colStatus);
-            issuesTree.Columns.Add(colUpdated);
-
-            issuesTree.NodeControls.Add(controlIcon);
-            issuesTree.NodeControls.Add(controlName);
-            issuesTree.NodeControls.Add(controlPriorityIcon);
-            issuesTree.NodeControls.Add(controlStatusIcon);
-            issuesTree.NodeControls.Add(controlStatusText);
-            issuesTree.NodeControls.Add(controlUpdated);
-
-            setSummaryColumnWidth();
-
-            colPriority.TextAlign = HorizontalAlignment.Left;
-            colPriority.Width = PRIORITY_WIDTH;
-            colPriority.MinColumnWidth = PRIORITY_WIDTH;
-            colPriority.MaxColumnWidth = PRIORITY_WIDTH;
-            colUpdated.Width = UPDATED_WIDTH;
-            colUpdated.MinColumnWidth = UPDATED_WIDTH;
-            colUpdated.MaxColumnWidth = UPDATED_WIDTH;
-            colStatus.Width = STATUS_WIDTH;
-            colStatus.MinColumnWidth = STATUS_WIDTH;
-            colStatus.MaxColumnWidth = STATUS_WIDTH;
-            colName.TextAlign = HorizontalAlignment.Left;
-            colPriority.TooltipText = "Priority";
-            colStatus.TextAlign = HorizontalAlignment.Left;
-            colPriority.TextAlign = HorizontalAlignment.Left;
-            colUpdated.TextAlign = HorizontalAlignment.Right;
-
-            jiraSplitter.Panel2.SizeChanged += issuesTree_SizeChanged;
+            issueTreeContainer.ContentPanel.Controls.Add(issuesTree);
 
             updateIssueListButtons();
         }
@@ -216,10 +114,6 @@ namespace Atlassian.plvs.windows {
             issuesTree.Model = issueTreeModel;
             issueTreeModel.StructureChanged += issuesTree_StructureChanged;
             issueTreeModel.init();
-        }
-
-        private void issuesTree_SelectionChanged(object sender, EventArgs e) {
-            Invoke(new MethodInvoker(updateIssueListButtons));
         }
 
         private void updateIssueListButtons() {
@@ -283,25 +177,12 @@ namespace Atlassian.plvs.windows {
             runSelectedIssueAction(openSelectedIssue);
         }
 
+        private void issuesTree_SelectionChanged(object sender, EventArgs e) {
+            Invoke(new MethodInvoker(updateIssueListButtons));
+        }
+
         private static void openSelectedIssue(JiraIssue issue) {
             IssueDetailsWindow.Instance.openIssue(issue);
-        }
-
-        private void setSummaryColumnWidth() {
-            // todo: well, this is lame. figure out how to handle filling first column to occupy all space in a propper manner
-            int summaryWidth = jiraSplitter.Panel2.Width
-                               - PRIORITY_WIDTH - UPDATED_WIDTH - STATUS_WIDTH
-                               - SystemInformation.VerticalScrollBarWidth - MARGIN;
-            if (summaryWidth < 0) {
-                summaryWidth = 4*PRIORITY_WIDTH;
-            }
-            colName.Width = summaryWidth;
-//            colName.MinColumnWidth = summaryWidth;
-//            colName.MaxColumnWidth = summaryWidth;
-        }
-
-        private void issuesTree_SizeChanged(object sender, EventArgs e) {
-            setSummaryColumnWidth();
         }
 
         private void issuesTree_StructureChanged(object sender, TreePathEventArgs e) {
