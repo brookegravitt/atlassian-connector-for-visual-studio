@@ -1,4 +1,4 @@
-﻿namespace Atlassian.plvs {
+﻿namespace Atlassian.plvs.windows {
     partial class IssueDetailsWindow
     {
         /// <summary> 

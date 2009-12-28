@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.Shell;
 
-namespace Atlassian.plvs {
+namespace Atlassian.plvs.windows {
     [Guid("06c81945-10ef-4d72-8daf-32d29f7e9573")]
     public class AtlassianToolWindow : ToolWindowPane {
         private readonly IssueListWindow control;

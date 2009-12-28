@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using Atlassian.plvs.util;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.TextManager.Interop;

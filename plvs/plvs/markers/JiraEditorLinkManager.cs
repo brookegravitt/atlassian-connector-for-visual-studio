@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using Atlassian.plvs.eventsinks;
-using Atlassian.plvs.markers;
 using Atlassian.plvs.util;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.TextManager.Interop;
 
-namespace Atlassian.plvs {
+namespace Atlassian.plvs.markers {
     internal class JiraEditorLinkManager {
 
         private static readonly Regex BlockInOneLine = new Regex(@"/\*(.*)\*/");

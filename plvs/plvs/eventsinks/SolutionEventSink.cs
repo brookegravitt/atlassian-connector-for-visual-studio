@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
+using Atlassian.plvs.markers;
 using Atlassian.plvs.models;
 using Atlassian.plvs.store;
+using Atlassian.plvs.windows;
 using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;

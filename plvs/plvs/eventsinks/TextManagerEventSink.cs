@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Atlassian.plvs.markers;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.TextManager.Interop;

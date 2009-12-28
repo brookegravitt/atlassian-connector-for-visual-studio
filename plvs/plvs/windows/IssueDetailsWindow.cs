@@ -6,7 +6,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
-namespace Atlassian.plvs {
+namespace Atlassian.plvs.windows {
     public partial class IssueDetailsWindow : UserControl {
         public static IssueDetailsWindow Instance { get; private set; }
 

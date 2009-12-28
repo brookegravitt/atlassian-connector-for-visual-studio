@@ -2,8 +2,7 @@
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
-namespace Atlassian.plvs
-{
+namespace Atlassian.plvs.windows {
     public class ToolWindowManager {
         public ToolWindowPane AtlassianWindow { get; set; }
         public ToolWindowPane IssueDetailsWindow { get; set; }
