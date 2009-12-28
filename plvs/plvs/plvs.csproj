@@ -173,7 +173,6 @@
     <Compile Include="models\JiraCustomFilter.cs" />
     <Compile Include="models\JiraIssueListModel.cs" />
     <Compile Include="models\JiraIssueListModelBuilder.cs" />
-    <Compile Include="models\JiraIssueListModelListener.cs" />
     <Compile Include="models\JiraServerCache.cs" />
     <Compile Include="models\JiraServerModel.cs" />
     <Compile Include="models\RecentlyViewedIssue.cs" />

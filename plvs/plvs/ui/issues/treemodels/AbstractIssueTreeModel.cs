@@ -6,7 +6,7 @@ using Atlassian.plvs.api;
 using Atlassian.plvs.models;
 
 namespace Atlassian.plvs.ui.issues.treemodels {
-    public abstract class AbstractIssueTreeModel : ITreeModel, JiraIssueListModelListener {
+    public abstract class AbstractIssueTreeModel : ITreeModel {
         
         protected JiraIssueListModel model { get; private set; }
 
@@ -16,18 +16,22 @@ namespace Atlassian.plvs.ui.issues.treemodels {
 
         public void init() {
             fillModel(model.Issues);
-            model.addListener(this);
+            model.ModelChanged += model_ModelChanged;
+            model.IssueChanged += model_IssueChanged;
         }
 
+        protected abstract void model_IssueChanged(object sender, IssueChangedEventArgs e);
+
+        protected abstract void model_ModelChanged(object sender, EventArgs e);
+
         public void shutdown() {
-            model.removeListener(this);
+            model.ModelChanged -= model_ModelChanged;
+            model.IssueChanged -= model_IssueChanged;
         }
 
         protected abstract void fillModel(IEnumerable<JiraIssue> issues);
 
         #region ITreeModel Members
-
-//        public void updateIssue(JiraIssue issue) {}
 
         public abstract IEnumerable GetChildren(TreePath treePath);
         public abstract bool IsLeaf(TreePath treePath);
@@ -35,14 +39,6 @@ namespace Atlassian.plvs.ui.issues.treemodels {
         public abstract event EventHandler<TreeModelEventArgs> NodesInserted;
         public abstract event EventHandler<TreeModelEventArgs> NodesRemoved;
         public abstract event EventHandler<TreePathEventArgs> StructureChanged;
-
-        #endregion
-
-        #region Implementation of JiraIssueListModelListener
-
-        public abstract void modelChanged();
-        
-        public abstract void issueChanged(JiraIssue issue);
 
         #endregion
     }

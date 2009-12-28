@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Atlassian.plvs.api;
 
 namespace Atlassian.plvs.models {
@@ -8,7 +9,6 @@ namespace Atlassian.plvs.models {
         
         private static readonly JiraIssueListModel INSTANCE = new JiraIssueListModelImpl();
 
-        private readonly List<JiraIssueListModelListener> listeners = new List<JiraIssueListModelListener>();
         private readonly List<JiraIssue> issues = new List<JiraIssue>();
 
         #endregion
@@ -21,16 +21,9 @@ namespace Atlassian.plvs.models {
             get { return INSTANCE; }
         }
 
-        public void addListener(JiraIssueListModelListener l) {
-            listeners.Add(l);
-        }
-
-        public void removeListener(JiraIssueListModelListener l) {
-            listeners.Remove(l);
-        }
-
         public void removeAllListeners() {
-            listeners.Clear();
+            ModelChanged = null;
+            IssueChanged = null;
         }
 
         public void clear(bool notify) {
@@ -66,17 +59,20 @@ namespace Atlassian.plvs.models {
             }
         }
 
+        public event EventHandler<EventArgs> ModelChanged;
+        public event EventHandler<IssueChangedEventArgs> IssueChanged;
+
         #region private parts
 
         private void notifyListenersOfIssueChange(JiraIssue issue) {
-            foreach (var l in listeners) {
-                l.issueChanged(issue);
+            if (IssueChanged != null) {
+                IssueChanged(this, new IssueChangedEventArgs(issue));
             }
         }
 
         private void notifyListenersOfModelChange() {
-            foreach (var l in listeners) {
-                l.modelChanged();
+            if (ModelChanged != null) {
+                ModelChanged(this, new EventArgs());
             }
         }
 

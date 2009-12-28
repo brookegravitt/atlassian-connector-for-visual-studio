@@ -18,7 +18,7 @@ using Atlassian.plvs.ui.issues.menus;
 using Atlassian.plvs.ui.issues.treemodels;
 
 namespace Atlassian.plvs {
-    public partial class IssueListWindow : UserControl, JiraIssueListModelListener {
+    public partial class IssueListWindow : UserControl {
         private readonly JiraServerFacade facade = JiraServerFacade.Instance;
 
         private TreeViewAdv issuesTree;
@@ -69,7 +69,7 @@ namespace Atlassian.plvs {
         }
 
         private void registerIssueModelListener() {
-            searchingModel.addListener(this);
+            searchingModel.ModelChanged += searchingModel_ModelChanged;
         }
 
         private readonly TreeColumn colName = new TreeColumn();
@@ -528,7 +528,7 @@ namespace Atlassian.plvs {
             return cfNode;
         }
 
-        public void modelChanged() {
+        private void searchingModel_ModelChanged(object sender, EventArgs e) {
             Invoke(new MethodInvoker(delegate {
                                          if (!(filtersTree.SelectedNode is JiraSavedFilterTreeNode
                                                || filtersTree.SelectedNode is RecentlyOpenIssuesTreeNode
@@ -549,8 +549,6 @@ namespace Atlassian.plvs {
         private static bool probablyHaveMoreIssues() {
             return MODEL.Issues.Count%GlobalSettings.JiraIssuesBatch == 0;
         }
-
-        public void issueChanged(JiraIssue issue) {}
 
         private void addSavedFilterNodes(JiraServer server, IEnumerable<JiraSavedFilter> filters) {
             TreeNodeWithServer node = findGroupNode(server, typeof(JiraSavedFiltersGroupTreeNode));

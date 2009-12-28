@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Atlassian.plvs.api;
 
 namespace Atlassian.plvs.models {
-    class JiraIssueListSearchingModel : JiraIssueListModel, JiraIssueListModelListener {
+    class JiraIssueListSearchingModel : JiraIssueListModel {
         private JiraIssueListModel model;
         private string query;
         public string Query { get { return query; } set { setQuery(value); } }
-        private readonly List<JiraIssueListModelListener> listeners = new List<JiraIssueListModelListener>();
 
         public JiraIssueListSearchingModel(JiraIssueListModel model) {
             reinit(model);
@@ -15,11 +15,13 @@ namespace Atlassian.plvs.models {
         public void reinit(JiraIssueListModel m) {
             model = m;
             shutdown();
-            model.addListener(this);
+            model.IssueChanged += model_IssueChanged;
+            model.ModelChanged += model_ModelChanged;
         }
 
         public void shutdown() {
-            model.removeListener(this);
+            model.IssueChanged -= model_IssueChanged;
+            model.ModelChanged -= model_ModelChanged;
             removeAllListeners();
         }
 
@@ -28,8 +30,8 @@ namespace Atlassian.plvs.models {
                 return;
             }
             query = q;
-            foreach (var listener in listeners) {
-                listener.modelChanged();
+            if (ModelChanged != null) {
+                ModelChanged(this, new EventArgs());
             }
         }
 
@@ -51,20 +53,15 @@ namespace Atlassian.plvs.models {
         }
 
         private bool matches(JiraIssue issue) {
-            return issue.Key.ToLower().Contains(Query.ToLower()) 
-                || issue.Summary.ToLower().Contains(Query.ToLower());
+            return issue.Key.ToLower().Contains(Query.ToLower()) || issue.Summary.ToLower().Contains(Query.ToLower());
         }
 
-        public void addListener(JiraIssueListModelListener l) {
-            listeners.Add(l);
-        }
-
-        public void removeListener(JiraIssueListModelListener l) {
-            listeners.Remove(l);
-        }
+        public event EventHandler<EventArgs> ModelChanged;
+        public event EventHandler<IssueChangedEventArgs> IssueChanged;
 
         public void removeAllListeners() {
-            listeners.Clear();
+            ModelChanged = null;
+            IssueChanged = null;
         }
 
         public void clear(bool notify) {
@@ -79,18 +76,18 @@ namespace Atlassian.plvs.models {
             model.updateIssue(issue);
         }
 
-        public void modelChanged() {
-            foreach (var listener in listeners) {
-                listener.modelChanged();
+        private void model_ModelChanged(object sender, EventArgs e) {
+            if (ModelChanged != null) {
+                ModelChanged(this, new EventArgs());
             }
         }
 
-        public void issueChanged(JiraIssue issue) {
-            if (!string.IsNullOrEmpty(Query) && !matches(issue)) {
+        private void model_IssueChanged(object sender, IssueChangedEventArgs e) {
+            if (!string.IsNullOrEmpty(Query) && !matches(e.Issue)) {
                 return;
             }
-            foreach (var listener in listeners) {
-                listener.issueChanged(issue);
+            if (IssueChanged != null) {
+                IssueChanged(this, new IssueChangedEventArgs(e.Issue));
             }
         }
     }
