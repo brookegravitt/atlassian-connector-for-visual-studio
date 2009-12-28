@@ -34,15 +34,15 @@ namespace Atlassian.plvs.ui.issues.treemodels {
             return true;
         }
 
-        public override void modelChanged() {
+        protected override void model_ModelChanged(object sender, EventArgs e) {
             fillModel(model.Issues);
         }
 
-        public override void issueChanged(JiraIssue issue) {
+        protected override void model_IssueChanged(object sender, IssueChangedEventArgs e) {
             foreach (var node in nodes) {
-                if (node.Issue.Id != issue.Id) continue;
+                if (node.Issue.Id != e.Issue.Id) continue;
 
-                node.Issue = issue;
+                node.Issue = e.Issue;
                 if (NodesChanged != null) {
                     NodesChanged(this, new TreeModelEventArgs(TreePath.Empty, new object[] {node}));
                 }

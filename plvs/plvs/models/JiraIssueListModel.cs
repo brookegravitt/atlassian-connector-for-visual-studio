@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Atlassian.plvs.api;
 
 namespace Atlassian.plvs.models {
@@ -6,9 +7,8 @@ namespace Atlassian.plvs.models {
 
         ICollection<JiraIssue> Issues { get; }
 
-        void addListener(JiraIssueListModelListener l);
-
-        void removeListener(JiraIssueListModelListener l);
+        event EventHandler<EventArgs> ModelChanged;
+        event EventHandler<IssueChangedEventArgs> IssueChanged;
 
         void removeAllListeners();
 
@@ -17,5 +17,12 @@ namespace Atlassian.plvs.models {
         void addIssues(ICollection<JiraIssue> newIssues);
 
         void updateIssue(JiraIssue issue);
+    }
+
+    public class IssueChangedEventArgs : EventArgs {
+        public JiraIssue Issue { get; private set; }
+        public IssueChangedEventArgs(JiraIssue issue) {
+            Issue = issue;
+        }
     }
 }

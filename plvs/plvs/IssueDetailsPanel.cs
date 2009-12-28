@@ -16,7 +16,7 @@ using Process=System.Diagnostics.Process;
 using Thread=System.Threading.Thread;
 
 namespace Atlassian.plvs {
-    public partial class IssueDetailsPanel : UserControl, JiraIssueListModelListener {
+    public partial class IssueDetailsPanel : UserControl {
         private readonly JiraIssueListModel model;
         private readonly Solution solution;
 
@@ -48,37 +48,45 @@ namespace Atlassian.plvs {
             dropDownIssueActions.DropDownItems.Add("dummy");
         }
 
-        public void modelChanged() {
+        private void addModelListeners() {
+            model.IssueChanged += model_IssueChanged;
+            model.ModelChanged += model_ModelChanged;
+        }
+
+        private void removeModelListeners() {
+            model.IssueChanged -= model_IssueChanged;
+            model.ModelChanged -= model_ModelChanged;
+        }
+
+        private void model_ModelChanged(object sender, EventArgs e) {
             Invoke(new MethodInvoker(delegate {
                                          // this is crude. But issueChanged() will do its job of 
                                          // filtering out the proper issue if it still exists in 
                                          // the model and comparing it what we currently have
                                          foreach (var jiraIssue in model.Issues) {
-                                             issueChanged(jiraIssue);
+                                             model_IssueChanged(sender, new IssueChangedEventArgs(jiraIssue));
                                          }
                                      }));
         }
 
-        public void issueChanged(JiraIssue i) {
-            if (!i.Id.Equals(issue.Id)) return;
-            if (!i.Server.GUID.Equals(issue.Server.GUID)) return;
-
-            if (i.Equals(issue)) return;
-
+        private void model_IssueChanged(object sender, IssueChangedEventArgs e) {
+            if (!e.Issue.Id.Equals(issue.Id)) return;
+            if (!e.Issue.Server.GUID.Equals(issue.Server.GUID)) return;
+            if (e.Issue.Equals(issue)) return;
             buttonRefresh.Enabled = false;
             runRefreshThread();
         }
 
         private void IssueDetailsPanel_VisibleChanged(object sender, EventArgs e) {
             if (Visible) {
-                model.addListener(this);
+                addModelListeners();
 
                 rebuildAllPanels(false);
                 status.setInfo("No issue details yet");
                 runRefreshThread();
             }
             else {
-                model.removeListener(this);
+                removeModelListeners();
             }
         }
 
@@ -280,8 +288,7 @@ namespace Atlassian.plvs {
                                                                      try {
                                                                          status.setInfo("Adding comment to issue...");
                                                                          facade.addComment(issue, dlg.CommentBody);
-                                                                         status.setInfo(
-                                                                             "Comment added, refreshing view...");
+                                                                         status.setInfo("Comment added, refreshing view...");
                                                                          runRefreshThread();
                                                                      }
                                                                      catch (Exception ex) {

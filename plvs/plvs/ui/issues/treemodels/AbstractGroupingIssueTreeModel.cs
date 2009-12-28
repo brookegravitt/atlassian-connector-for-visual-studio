@@ -46,18 +46,18 @@ namespace Atlassian.plvs.ui.issues.treemodels {
             return treePath.LastNode is IssueNode;
         }
 
-        public override void modelChanged() {
+        protected override void model_ModelChanged(object sender, EventArgs e) {
             fillModel(model.Issues);
         }
 
-        public override void issueChanged(JiraIssue issue) {
+        protected override void model_IssueChanged(object sender, IssueChangedEventArgs e) {
             foreach (var groupNode in getGroupNodes()) {
                 foreach (var issueNode in groupNode.IssueNodes) {
-                    if (issueNode.Issue.Id != issue.Id) continue;
-                    if (findGroupNode(issue) != groupNode) {
+                    if (issueNode.Issue.Id != e.Issue.Id) continue;
+                    if (findGroupNode(e.Issue) != groupNode) {
                         fillModel(model.Issues);
                     } else if (NodesChanged != null) {
-                        issueNode.Issue = issue;
+                        issueNode.Issue = e.Issue;
                         NodesChanged(this, new TreeModelEventArgs(new TreePath(groupNode), new object[] { issueNode }));
                     }
                     return;
