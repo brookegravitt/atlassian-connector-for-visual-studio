@@ -138,6 +138,10 @@
     <Compile Include="eventsinks\TextLinesEventSink.cs" />
     <Compile Include="eventsinks\TextManagerEventSink.cs" />
     <Compile Include="eventsinks\TextMarkerClientEventSink.cs" />
+    <Compile Include="ui\JiraFiltersTree.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="util\Constants.cs" />
     <Compile Include="util\ExceptionBuilder.cs" />
     <Compile Include="util\IssueActionRunner.cs" />
     <Compile Include="windows\IssueDetailsPanel.cs">

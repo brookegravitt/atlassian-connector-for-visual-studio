@@ -8,8 +8,6 @@ using Atlassian.plvs.api;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.models;
-using Atlassian.plvs.models.presetFilters;
-using Atlassian.plvs.store;
 using Atlassian.plvs.ui;
 using Atlassian.plvs.ui.issuefilternodes;
 using Atlassian.plvs.ui.issues;
@@ -43,8 +41,8 @@ namespace Atlassian.plvs.windows {
             registerIssueModelListener();
             builder = new JiraIssueListModelBuilder(facade);
 
-            filtersTreeToolTip.SetToolTip(filtersTree, "");
-            filtersTreeToolTip.Active = true;
+            filtersTree.setReloadIssuesCallback(reloadIssues);
+            filtersTree.addToolTip(filtersTreeToolTip);
 
             buttonUpdate.Visible = false;
 
@@ -84,22 +82,10 @@ namespace Atlassian.plvs.windows {
         private readonly NodeIcon controlPriorityIcon = new NodeIcon();
         private readonly NodeTextBox controlUpdated = new NodeTextBox();
         private const string RETRIEVING_ISSUES_FAILED = "Retrieving issues failed";
-        private const string QUESTION_CAPTION = "Question";
         private const int MARGIN = 16;
         private const int STATUS_WIDTH = 150;
         private const int UPDATED_WIDTH = 150;
         private const int PRIORITY_WIDTH = 24;
-
-        private readonly ImageList filterTreeImages = new ImageList();
-
-        private const string FILTERS_TREE_RECENT_PARAM = "JiraFilterTree.recentlyViewed";
-        private const string FILTERS_TREE_SERVER_PARAM = "JiraFilterTree.server";
-        private const string FILTERS_TREE_FILTER_GROUP_PARAM = "JiraFilterTree.filter.group";
-        private const string FILTERS_TREE_FILTER_PARAM = "JiraFilterTree.filter";
-
-        private const string PRESET_FILTER_GROUP_NAME = "PRESETS";
-        private const string CUSTOM_FILTER_GROUP_NAME = "CUSTOM";
-        private const string SAVED_FILTER_GROUP_NAME = "SAVED";
 
         private void initIssuesTree() {
             if (issuesTree != null) {
@@ -199,21 +185,6 @@ namespace Atlassian.plvs.windows {
             jiraSplitter.Panel2.SizeChanged += issuesTree_SizeChanged;
 
             updateIssueListButtons();
-
-            initImageList();
-        }
-
-        private void initImageList() {
-            filterTreeImages.Images.Clear();
-
-            filterTreeImages.Images.Add(Resources.jira_blue_16);
-            filterTreeImages.Images.Add(Resources.ico_jira_filter);
-            filterTreeImages.Images.Add(Resources.ico_jira_saved_filter);
-            filterTreeImages.Images.Add(Resources.ico_jira_custom_filter);
-            filterTreeImages.Images.Add(Resources.ico_jira_preset_filter);
-            filterTreeImages.Images.Add(Resources.ico_jira_recent_issues);
-
-            filtersTree.ImageList = filterTreeImages;
         }
 
         private void comboGroupBy_SelectedIndexChanged(object sender, EventArgs e) {
@@ -223,28 +194,28 @@ namespace Atlassian.plvs.windows {
         }
 
         private void updateIssuesTreeModel() {
-            AbstractIssueTreeModel oldTreeModel = issuesTree.Model as AbstractIssueTreeModel;
-            if (oldTreeModel != null) {
-                oldTreeModel.shutdown();
+            AbstractIssueTreeModel oldIssueTreeModel = issuesTree.Model as AbstractIssueTreeModel;
+            if (oldIssueTreeModel != null) {
+                oldIssueTreeModel.shutdown();
             }
 
-            AbstractIssueTreeModel treeModel;
+            AbstractIssueTreeModel issueTreeModel;
 
-            if (filtersTree.SelectedNode is RecentlyOpenIssuesTreeNode) {
-                treeModel = new FlatIssueTreeModel(searchingModel);
+            if (filtersTree.RecentlyViewedSelected) {
+                issueTreeModel = new FlatIssueTreeModel(searchingModel);
             } else {
                 JiraIssueGroupByComboItem item = comboGroupBy.SelectedItem as JiraIssueGroupByComboItem;
                 if (item == null) {
                     return;
                 }
-                treeModel = item.TreeModel;
+                issueTreeModel = item.TreeModel;
             }
 
             // just in case somebody reuses the old model object :)
-            treeModel.shutdown();
-            issuesTree.Model = treeModel;
-            treeModel.StructureChanged += issuesTree_StructureChanged;
-            treeModel.init();
+            issueTreeModel.shutdown();
+            issuesTree.Model = issueTreeModel;
+            issueTreeModel.StructureChanged += issuesTree_StructureChanged;
+            issueTreeModel.init();
         }
 
         private void issuesTree_SelectionChanged(object sender, EventArgs e) {
@@ -256,14 +227,10 @@ namespace Atlassian.plvs.windows {
             buttonViewInBrowser.Enabled = issueSelected;
             buttonEditInBrowser.Enabled = issueSelected;
             buttonOpen.Enabled = issueSelected;
-            buttonRefresh.Enabled = filtersTree.SelectedNode != null &&
-                                    (filtersTree.SelectedNode is JiraSavedFilterTreeNode
-                                     || filtersTree.SelectedNode is RecentlyOpenIssuesTreeNode
-                                     || filtersTree.SelectedNode is JiraCustomFilterTreeNode
-                                     || filtersTree.SelectedNode is JiraPresetFilterTreeNode);
-            buttonSearch.Enabled = filtersTree.SelectedNode != null && filtersTree.SelectedNode is TreeNodeWithServer;
+            buttonRefresh.Enabled = filtersTree.FilterOrRecentlyViewedSelected;
+            buttonSearch.Enabled = filtersTree.NodeWithServerSelected;
 
-            bool groupingControlsEnabled = !(filtersTree.SelectedNode is RecentlyOpenIssuesTreeNode);
+            bool groupingControlsEnabled = !(filtersTree.RecentlyViewedSelected);
             comboGroupBy.Enabled = groupingControlsEnabled;
             comboGroupBy.Visible = groupingControlsEnabled;
             labelGroupBy.Visible = groupingControlsEnabled;
@@ -342,7 +309,7 @@ namespace Atlassian.plvs.windows {
         }
 
         private void reloadKnownJiraServers() {
-            filtersTree.Nodes.Clear();
+            filtersTree.clear();
             searchingModel.clear(true);
 
             getMoreIssues.Visible = false;
@@ -354,9 +321,7 @@ namespace Atlassian.plvs.windows {
                 return;
             }
 
-            foreach (JiraServer server in servers) {
-                filtersTree.Nodes.Add(new JiraServerTreeNode(server, 0));
-            }
+            filtersTree.addServerNodes(servers);
 
             Thread metadataThread = new Thread(() => reloadKnownServersWorker(servers));
             metadataThread.Start();
@@ -413,17 +378,17 @@ namespace Atlassian.plvs.windows {
                     List<JiraSavedFilter> filters = facade.getSavedFilters(server);
                     JiraServer jiraServer = server;
                     Invoke(new MethodInvoker(delegate {
-                                                 addFilterGroupNodes(jiraServer);
-                                                 addPresetFilterNodes(jiraServer);
-                                                 addSavedFilterNodes(jiraServer, filters);
+                                                 filtersTree.addFilterGroupNodes(jiraServer);
+                                                 filtersTree.addPresetFilterNodes(jiraServer);
+                                                 filtersTree.addSavedFilterNodes(jiraServer, filters);
                                                  status.setInfo("Loaded saved filters for server " + jiraServer.Name);
-                                                 addCustomFilterNodes(jiraServer);
+                                                 filtersTree.addCustomFilterNodes(jiraServer);
                                              }));
                 }
                 Invoke(new MethodInvoker(delegate {
-                                             filtersTree.Nodes.Add(new RecentlyOpenIssuesTreeNode(5));
+                                             filtersTree.addRecentlyViewedNode();
                                              filtersTree.ExpandAll();
-                                             restoreLastSelectedFilterItem();
+                                             filtersTree.restoreLastSelectedFilterItem();
                                          }));
             }
             catch (Exception e) {
@@ -431,156 +396,18 @@ namespace Atlassian.plvs.windows {
             }
         }
 
-        private void addFilterGroupNodes(JiraServer server) {
-            JiraServerTreeNode node = findServerNode(server);
-            if (node == null) return;
-
-            JiraPresetFiltersGroupTreeNode presetFiltersGroupTreeNode = new JiraPresetFiltersGroupTreeNode(server, 4);
-            presetFiltersGroupTreeNode.ContextMenuStrip = new PresetFilterGroupContextMenu(presetFiltersGroupTreeNode,
-                                                                                           setAllPresetFiltersProject,
-                                                                                           clearAllPresetFiltersProject);
-            node.Nodes.Add(presetFiltersGroupTreeNode);
-            node.Nodes.Add(new JiraSavedFiltersGroupTreeNode(server, 2));
-            JiraCustomFiltersGroupTreeNode customFiltersGroupTreeNode = new JiraCustomFiltersGroupTreeNode(server, 3);
-            customFiltersGroupTreeNode.ContextMenuStrip = new CustomFilterGroupContextMenu(customFiltersGroupTreeNode, addCustomFilter);
-            node.Nodes.Add(customFiltersGroupTreeNode);
-        }
-
-        private void addPresetFilterNodes(JiraServer server) {
-            TreeNodeWithServer node = findGroupNode(server, typeof(JiraPresetFiltersGroupTreeNode));
-            if (node == null) {
-                return;
-            }
-            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterUnscheduled(server)));
-            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterOutstanding(server)));
-            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterAssignedToMe(server)));
-            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterReportedByMe(server)));
-            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterRecentlyResolved(server)));
-            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterRecentlyAdded(server)));
-            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterRecentlyUpdated(server)));
-            node.Nodes.Add(buildPresetFilterNode(server, new JiraPresetFilterMostImportant(server)));
-        }
-
-        private JiraPresetFilterTreeNode buildPresetFilterNode(JiraServer server, JiraPresetFilter filter) {
-            return new JiraPresetFilterTreeNode(server, filter, setPresetFilterProject, clearPresetFilterProject, 1);
-        }
-
-        private void setPresetFilterProject(JiraPresetFilterTreeNode filterNode) {
-            SelectJiraProject dlg = new SelectJiraProject(JiraServerCache.Instance.getProjects(filterNode.Server).Values, filterNode.Filter.Project);
-            dlg.ShowDialog();
-            JiraProject project = dlg.getSelectedProject();
-            if (project == null) return;
-            filterNode.setProject(project);
-            filtersTree.SelectedNode = filterNode;
-            reloadIssues();
-        }
-
-        private void clearPresetFilterProject(JiraPresetFilterTreeNode filterNode) {
-            filterNode.setProject(null);
-            filtersTree.SelectedNode = filterNode;
-            reloadIssues();
-        }
-
-        private void setAllPresetFiltersProject(JiraPresetFiltersGroupTreeNode groupNode) {
-            SelectJiraProject dlg = new SelectJiraProject(JiraServerCache.Instance.getProjects(groupNode.Server).Values, groupNode.Project);
-            dlg.ShowDialog();
-            JiraProject project = dlg.getSelectedProject();
-            if (project == null) return;
-
-            foreach (var n in groupNode.Nodes) {
-                JiraPresetFilterTreeNode node = n as JiraPresetFilterTreeNode;
-                if (node == null) continue;
-                node.setProject(project);
-                if (filtersTree.SelectedNode == node) {
-                    reloadIssues();
-                }
-            }
-        }
-
-        private void clearAllPresetFiltersProject(JiraPresetFiltersGroupTreeNode groupNode) {
-            DialogResult result = MessageBox.Show("Do you really want to clear projects from all preset filters?", QUESTION_CAPTION, MessageBoxButtons.YesNo);
-            if (DialogResult.Yes != result) return;
-
-            foreach (var n in groupNode.Nodes) {
-                JiraPresetFilterTreeNode node = n as JiraPresetFilterTreeNode;
-                if (node == null) continue;
-                node.setProject(null);
-                if (filtersTree.SelectedNode == node) {
-                    reloadIssues();
-                }
-            }
-        }
-
-        private void addCustomFilterNodes(JiraServer server) {
-            TreeNodeWithServer node = findGroupNode(server, typeof(JiraCustomFiltersGroupTreeNode));
-            if (node == null) {
-                return;
-            }
-            foreach (JiraCustomFilter filter in JiraCustomFilter.getAll(server)) {
-                addCustomFilterTreeNode(server, node, filter);
-            }
-        }
-
-        private JiraCustomFilterTreeNode addCustomFilterTreeNode(JiraServer server, TreeNode node, JiraCustomFilter filter) {
-            JiraCustomFilterTreeNode cfNode = new JiraCustomFilterTreeNode(server, filter, 1);
-            cfNode.ContextMenuStrip = new CustomFilterContextMenu(server, cfNode, editCustomFilter, removeCustomFilter);
-
-            node.Nodes.Add(cfNode);
-            return cfNode;
-        }
-
         private void searchingModel_ModelChanged(object sender, EventArgs e) {
             Invoke(new MethodInvoker(delegate {
-                                         if (!(filtersTree.SelectedNode is JiraSavedFilterTreeNode
-                                               || filtersTree.SelectedNode is RecentlyOpenIssuesTreeNode
-                                               || filtersTree.SelectedNode is JiraCustomFilterTreeNode
-                                               || filtersTree.SelectedNode is JiraPresetFilterTreeNode)) return;
-
+                                         if (!(filtersTree.FilterOrRecentlyViewedSelected)) return;
                                          status.setInfo("Loaded " + MODEL.Issues.Count + " issues");
-
-                                         getMoreIssues.Visible =
-                                             !(filtersTree.SelectedNode is RecentlyOpenIssuesTreeNode)
-                                             && MODEL.Issues.Count > 0
-                                             && probablyHaveMoreIssues();
-
+                                         getMoreIssues.Visible = !(filtersTree.RecentlyViewedSelected) && MODEL.Issues.Count > 0 &&
+                                                                 probablyHaveMoreIssues();
                                          updateIssueListButtons();
                                      }));
         }
 
         private static bool probablyHaveMoreIssues() {
             return MODEL.Issues.Count%GlobalSettings.JiraIssuesBatch == 0;
-        }
-
-        private void addSavedFilterNodes(JiraServer server, IEnumerable<JiraSavedFilter> filters) {
-            TreeNodeWithServer node = findGroupNode(server, typeof(JiraSavedFiltersGroupTreeNode));
-            if (node == null) {
-                return;
-            }
-            foreach (JiraSavedFilter filter in filters) {
-                node.Nodes.Add(new JiraSavedFilterTreeNode(server, filter, 1));
-            }
-            node.ExpandAll();
-        }
-
-        private JiraServerTreeNode findServerNode(JiraServer server) {
-            foreach (TreeNode node in filtersTree.Nodes) {
-                JiraServerTreeNode tn = (JiraServerTreeNode)node;
-                if (tn.Server.GUID.Equals(server.GUID)) {
-                    return tn;
-                }
-            }
-            return null;
-        }
-
-        private TreeNodeWithServer findGroupNode(JiraServer server, Type type) {
-            JiraServerTreeNode serverNode = findServerNode(server);
-            if (serverNode == null) return null;
-            foreach (TreeNode groupNode in serverNode.Nodes) {
-                if (type.IsAssignableFrom(groupNode.GetType())) {
-                    return (TreeNodeWithServer) groupNode;
-                }
-            }
-            return null;
         }
 
         private void buttonProjectProperties_Click(object sender, EventArgs e) {
@@ -613,150 +440,29 @@ namespace Atlassian.plvs.windows {
             comboFind.Text = "";
             updateIssueListButtons();
             updateIssuesTreeModel();
-            if (filtersTree.SelectedNode is JiraSavedFilterTreeNode
-                || filtersTree.SelectedNode is RecentlyOpenIssuesTreeNode
-                || filtersTree.SelectedNode is JiraCustomFilterTreeNode
-                || filtersTree.SelectedNode is JiraPresetFilterTreeNode) {
+            if (filtersTree.FilterOrRecentlyViewedSelected) {
                 reloadIssues();
-            }
-            else {
+            } else {
                 searchingModel.clear(true);
             }
 
-            rememberLastSelectedFilterItem();
-        }
-
-        private void rememberLastSelectedFilterItem() {
-            ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
-            var selectedNode = filtersTree.SelectedNode;
-            bool recentlyViewed = selectedNode is RecentlyOpenIssuesTreeNode;
-            store.storeParameter(FILTERS_TREE_RECENT_PARAM, recentlyViewed ? 1 : 0);
-
-            TreeNodeWithServer nodeWithServer = selectedNode as TreeNodeWithServer;
-            if (nodeWithServer != null) {
-                store.storeParameter(FILTERS_TREE_SERVER_PARAM, nodeWithServer.Server.GUID.ToString());
-            }
-            JiraPresetFiltersGroupTreeNode pgtn = selectedNode as JiraPresetFiltersGroupTreeNode;
-            JiraCustomFiltersGroupTreeNode cgtn = selectedNode as JiraCustomFiltersGroupTreeNode;
-            JiraSavedFiltersGroupTreeNode sgtn = selectedNode as JiraSavedFiltersGroupTreeNode;
-            if (pgtn != null) {
-                store.storeParameter(FILTERS_TREE_FILTER_GROUP_PARAM, PRESET_FILTER_GROUP_NAME);
-                store.storeParameter(FILTERS_TREE_FILTER_PARAM, null);
-            } else {
-                if (cgtn != null) {
-                    store.storeParameter(FILTERS_TREE_FILTER_GROUP_PARAM, CUSTOM_FILTER_GROUP_NAME);
-                    store.storeParameter(FILTERS_TREE_FILTER_PARAM, null);
-                } else {
-                    if (sgtn != null) {
-                        store.storeParameter(FILTERS_TREE_FILTER_GROUP_PARAM, SAVED_FILTER_GROUP_NAME);
-                        store.storeParameter(FILTERS_TREE_FILTER_PARAM, null);
-                    } else {
-                        JiraPresetFilterTreeNode ptn = selectedNode as JiraPresetFilterTreeNode;
-                        JiraCustomFilterTreeNode ctn = selectedNode as JiraCustomFilterTreeNode;
-                        JiraSavedFilterTreeNode stn = selectedNode as JiraSavedFilterTreeNode;
-                        if (ptn != null) {
-                            store.storeParameter(FILTERS_TREE_FILTER_GROUP_PARAM, PRESET_FILTER_GROUP_NAME);
-                            store.storeParameter(FILTERS_TREE_FILTER_PARAM, ptn.Filter.GetType().ToString());
-                        } else if (ctn != null) {
-                            store.storeParameter(FILTERS_TREE_FILTER_GROUP_PARAM, CUSTOM_FILTER_GROUP_NAME);
-                            store.storeParameter(FILTERS_TREE_FILTER_PARAM, ctn.Filter.Guid.ToString());
-                        } else if (stn != null) {
-                            store.storeParameter(FILTERS_TREE_FILTER_GROUP_PARAM, SAVED_FILTER_GROUP_NAME);
-                            store.storeParameter(FILTERS_TREE_FILTER_PARAM, stn.Filter.Id);
-                        } else {
-                            store.storeParameter(FILTERS_TREE_FILTER_GROUP_PARAM, null);
-                            store.storeParameter(FILTERS_TREE_FILTER_PARAM, null);
-                        }
-                    }
-                }
-            }
-        }
-
-        private void restoreLastSelectedFilterItem() {
-            ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
-            bool recentlyViewed = store.loadParameter(FILTERS_TREE_RECENT_PARAM, 0) != 0;
-            if (recentlyViewed) {
-                foreach (TreeNode node in filtersTree.Nodes) {
-                    if (!(node is RecentlyOpenIssuesTreeNode)) continue;
-                    filtersTree.SelectedNode = node;
-                    break;
-                }
-            } else {
-                string serverGuid = store.loadParameter(FILTERS_TREE_SERVER_PARAM, null);
-                foreach (var node in filtersTree.Nodes) {
-                    TreeNodeWithServer tnws = node as TreeNodeWithServer;
-                    if (tnws == null) continue;
-                    if (!tnws.Server.GUID.ToString().Equals(serverGuid)) continue;
-                    string group = store.loadParameter(FILTERS_TREE_FILTER_GROUP_PARAM, null);
-                    if (group == null) {
-                        filtersTree.SelectedNode = tnws;
-                    } else {
-                        string filter = store.loadParameter(FILTERS_TREE_FILTER_PARAM, null);
-                        TreeNodeWithServer groupNode;
-                        switch (group) {
-                            case PRESET_FILTER_GROUP_NAME:
-                                groupNode = findGroupNode(tnws.Server, typeof(JiraPresetFiltersGroupTreeNode));
-                                if (selectFilterNode(filter, groupNode, comparePresetFilterNodeToString)) {
-                                    return;
-                                }
-                                break;
-                            case SAVED_FILTER_GROUP_NAME:
-                                groupNode = findGroupNode(tnws.Server, typeof(JiraSavedFiltersGroupTreeNode));
-                                if (selectFilterNode(filter, groupNode, compareSavedFilterNodeToString)) {
-                                    return;
-                                }
-                                break;
-                            case CUSTOM_FILTER_GROUP_NAME:
-                                groupNode = findGroupNode(tnws.Server, typeof (JiraCustomFiltersGroupTreeNode));
-                                if (selectFilterNode(filter, groupNode, compareCustomFilterNodeToString)) {
-                                    return;
-                                }
-                                break;
-                        }
-                    }
-                }
-            }
-        }
-
-        private static bool compareCustomFilterNodeToString(TreeNode node, string filter) {
-            return filter.Equals((((JiraCustomFilterTreeNode) node).Filter.Guid.ToString()));
-        }
-
-        private static bool compareSavedFilterNodeToString(TreeNode node, string filter) {
-            return filter.Equals((((JiraSavedFilterTreeNode) node).Filter.Id).ToString());
-        }
-
-        private static bool comparePresetFilterNodeToString(TreeNode node, string filter) {
-            return filter.Equals(((JiraPresetFilterTreeNode) node).Filter.GetType().ToString());
-        }
-
-        private delegate bool CompareFilterNodeToString(TreeNode node, string filter);
-
-        private bool selectFilterNode(string filter, TreeNode groupNode, CompareFilterNodeToString compare) {
-            if (filter == null) {
-                filtersTree.SelectedNode = groupNode;
-                return true;
-            }
-            foreach (TreeNode fn in groupNode.Nodes) {
-                if (!compare(fn, filter)) continue;
-                filtersTree.SelectedNode = fn;
-                return true;
-            }
-            return false;
+            filtersTree.rememberLastSelectedFilterItem();
         }
 
         private void reloadIssues() {
-            JiraSavedFilterTreeNode savedFilterNode = filtersTree.SelectedNode as JiraSavedFilterTreeNode;
-            RecentlyOpenIssuesTreeNode recentIssuesNode = filtersTree.SelectedNode as RecentlyOpenIssuesTreeNode;
-            JiraCustomFilterTreeNode jiraCustomFilterNode = filtersTree.SelectedNode as JiraCustomFilterTreeNode;
-            JiraPresetFilterTreeNode presetFilterNode = filtersTree.SelectedNode as JiraPresetFilterTreeNode;
+            JiraSavedFilterTreeNode savedFilterNode;
+            RecentlyOpenIssuesTreeNode recentIssuesNode;
+            JiraCustomFilterTreeNode customFilterNode;
+            JiraPresetFilterTreeNode presetFilterNode;
+
+            filtersTree.getAndCastSelectedNode(out savedFilterNode, out recentIssuesNode, out customFilterNode, out presetFilterNode);
 
             Thread issueLoadThread = null;
 
             if (savedFilterNode != null)
                 issueLoadThread = reloadIssuesWithSavedFilter(savedFilterNode);
-            else if (jiraCustomFilterNode != null && !jiraCustomFilterNode.Filter.Empty)
-                issueLoadThread = reloadIssuesWithCustomFilter(jiraCustomFilterNode);
+            else if (customFilterNode != null && !customFilterNode.Filter.Empty)
+                issueLoadThread = reloadIssuesWithCustomFilter(customFilterNode);
             else if (presetFilterNode != null)
                 issueLoadThread = reloadIssuesWithPresetFilter(presetFilterNode);
             else if (recentIssuesNode != null)
@@ -854,9 +560,13 @@ namespace Atlassian.plvs.windows {
         }
 
         private void getMoreIssues_Click(object sender, EventArgs e) {
-            JiraSavedFilterTreeNode savedFilterNode = filtersTree.SelectedNode as JiraSavedFilterTreeNode;
-            JiraCustomFilterTreeNode customFilterNode = filtersTree.SelectedNode as JiraCustomFilterTreeNode;
-            JiraPresetFilterTreeNode presetFilterNode = filtersTree.SelectedNode as JiraPresetFilterTreeNode;
+
+            JiraSavedFilterTreeNode savedFilterNode;
+            RecentlyOpenIssuesTreeNode recentIssuesNode;
+            JiraCustomFilterTreeNode customFilterNode;
+            JiraPresetFilterTreeNode presetFilterNode;
+
+            filtersTree.getAndCastSelectedNode(out savedFilterNode, out recentIssuesNode, out customFilterNode, out presetFilterNode);
 
             Thread issueLoadThread = null;
 
@@ -894,32 +604,6 @@ namespace Atlassian.plvs.windows {
             dlg.ShowDialog(this);
         }
 
-        //
-        // from http://support.microsoft.com/kb/322634
-        //
-        private void filtersTree_MouseMove(object sender, MouseEventArgs e) {
-            // Get the node at the current mouse pointer location.
-            TreeNode theNode = filtersTree.GetNodeAt(e.X, e.Y);
-
-            // Set a ToolTip only if the mouse pointer is actually paused on a node.
-            if ((theNode != null)) {
-                // Verify that the tag property is not "null".
-                if (theNode.Tag != null) {
-                    // Change the ToolTip only if the pointer moved to a new node.
-                    if (theNode.Tag.ToString() != filtersTreeToolTip.GetToolTip(filtersTree)) {
-                        filtersTreeToolTip.SetToolTip(filtersTree, theNode.Tag.ToString());
-                    }
-                }
-                else {
-                    filtersTreeToolTip.SetToolTip(filtersTree, "");
-                }
-            }
-            else // Pointer is not over a node so clear the ToolTip.
-            {
-                filtersTreeToolTip.SetToolTip(filtersTree, "");
-            }
-        }
-
         private void buttonGlobalProperties_Click(object sender, EventArgs e) {
             GlobalSettings globals = new GlobalSettings();
             globals.ShowDialog();
@@ -927,13 +611,8 @@ namespace Atlassian.plvs.windows {
 
         public delegate void FindFinished(bool success, string message);
 
-        public JiraServer getCurrentlySelectedServer() {
-            TreeNodeWithServer node = filtersTree.SelectedNode as TreeNodeWithServer;
-            return node == null ? null : node.Server;
-        }
-
         public void findAndOpenIssue(string key, FindFinished onFinish) {
-            JiraServer server = getCurrentlySelectedServer();
+            JiraServer server = filtersTree.getCurrentlySelectedServer();
             if (server == null) {
                 if (onFinish != null) {
                     onFinish(false, "No JIRA server selected");
@@ -1040,67 +719,21 @@ namespace Atlassian.plvs.windows {
         }
 
         private void buttonAddFilter_Click(object sender, EventArgs e) {
-            JiraServer server = getCurrentlySelectedServer();
-            if (server == null) {
-                return;
-            }
-            TreeNodeWithServer node = findGroupNode(server, typeof(JiraCustomFiltersGroupTreeNode));
-            addCustomFilter(node);
-        }
-
-        private void addCustomFilter(TreeNodeWithServer node) {
-            if (node == null) {
-                return;
-            }
-            JiraCustomFilter newFilter = new JiraCustomFilter(node.Server);
-            EditCustomFilter ecf = new EditCustomFilter(node.Server, newFilter);
-            ecf.ShowDialog();
-            if (!ecf.Changed) return;
-            JiraCustomFilter.add(newFilter);
-            JiraCustomFilterTreeNode newNode = addCustomFilterTreeNode(node.Server, node, newFilter);
-            filtersTree.SelectedNode = newNode;
+            filtersTree.addCustomFilter();
         }
 
         private void buttonRemoveFilter_Click(object sender, EventArgs e) {
             JiraCustomFilterTreeNode node = filtersTree.SelectedNode as JiraCustomFilterTreeNode;
-            removeCustomFilter(node);
-        }
-
-        private void removeCustomFilter(JiraCustomFilterTreeNode node) {
-            if (node == null) {
-                return;
-            }
-            DialogResult result =
-                MessageBox.Show("Do you really want to remove this custom filter?", QUESTION_CAPTION, MessageBoxButtons.YesNo);
-            if (DialogResult.Yes != result) return;
-
-            TreeNodeWithServer groupNode = findGroupNode(node.Server, typeof (JiraCustomFiltersGroupTreeNode));
-            if (groupNode == null) return;
-
-            groupNode.Nodes.Remove(node);
-            filtersTree.SelectedNode = groupNode;
-            JiraCustomFilter.remove(node.Filter);
-            reloadIssues();
+            filtersTree.removeCustomFilter(node);
         }
 
         private void buttonEditFilter_Click(object sender, EventArgs e) {
             JiraCustomFilterTreeNode node = filtersTree.SelectedNode as JiraCustomFilterTreeNode;
-            editCustomFilter(node);
+            filtersTree.editCustomFilter(node);
         }
 
-        private void editCustomFilter(JiraCustomFilterTreeNode node) {
-            if (node == null) {
-                return;
-            }
-            
-            EditCustomFilter ecf = new EditCustomFilter(node.Server, node.Filter);
-            ecf.ShowDialog();
-            if (!ecf.Changed) return;
-
-            node.setFilterName(node.Filter.Name);
-
-            JiraCustomFilter.save();
-            reloadIssues();
+        public JiraServer getCurrentlySelectedServer() {
+            return filtersTree.getCurrentlySelectedServer();
         }
     }
 }

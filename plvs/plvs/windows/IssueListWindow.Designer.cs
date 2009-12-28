@@ -39,7 +39,7 @@ namespace Atlassian.plvs.windows {
             this.getMoreIssues = new System.Windows.Forms.ToolStripStatusLabel();
             this.jiraSplitter = new System.Windows.Forms.SplitContainer();
             this.filterTreeContainer = new System.Windows.Forms.ToolStripContainer();
-            this.filtersTree = new System.Windows.Forms.TreeView();
+            this.filtersTree = new JiraFiltersTree();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.buttonRefreshAll = new System.Windows.Forms.ToolStripButton();
             this.buttonAddFilter = new System.Windows.Forms.ToolStripButton();
@@ -215,7 +215,6 @@ namespace Atlassian.plvs.windows {
             this.filtersTree.Size = new System.Drawing.Size(215, 207);
             this.filtersTree.TabIndex = 0;
             this.filtersTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.filtersTree_AfterSelect);
-            this.filtersTree.MouseMove += new System.Windows.Forms.MouseEventHandler(this.filtersTree_MouseMove);
             // 
             // toolStrip1
             // 
@@ -534,7 +533,7 @@ namespace Atlassian.plvs.windows {
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton buttonRefreshAll;
         private System.Windows.Forms.ToolStrip toolStrip2;
-        private System.Windows.Forms.TreeView filtersTree;
+        private JiraFiltersTree filtersTree;
         private System.Windows.Forms.ToolStripStatusLabel getMoreIssues;
         private System.Windows.Forms.ToolStripButton buttonOpen;
         private System.Windows.Forms.ToolStripButton buttonViewInBrowser;
