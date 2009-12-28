@@ -12,6 +12,7 @@ using Atlassian.plvs.models;
 using Atlassian.plvs.ui;
 using Atlassian.plvs.util;
 using EnvDTE;
+using Constants=EnvDTE.Constants;
 using Process=System.Diagnostics.Process;
 using Thread=System.Threading.Thread;
 

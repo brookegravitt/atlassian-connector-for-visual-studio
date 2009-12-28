@@ -2,7 +2,7 @@
 using Atlassian.plvs.api;
 
 namespace Atlassian.plvs.ui.issuefilternodes {
-    internal class JiraSavedFilterTreeNode : TreeNodeWithServer {
+    public class JiraSavedFilterTreeNode : TreeNodeWithServer {
         private readonly JiraServer server;
 
         public JiraSavedFilterTreeNode(JiraServer server, JiraSavedFilter filter, int imageIdx)
