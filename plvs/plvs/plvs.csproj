@@ -141,6 +141,9 @@
     <Compile Include="ui\JiraFiltersTree.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ui\JiraIssueTree.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="util\Constants.cs" />
     <Compile Include="util\ExceptionBuilder.cs" />
     <Compile Include="util\IssueActionRunner.cs" />
