@@ -4,6 +4,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api;
 using Atlassian.plvs.models;
+using Atlassian.plvs.store;
 using Atlassian.plvs.ui;
 using Atlassian.plvs.windows;
 
@@ -11,14 +12,29 @@ namespace Atlassian.plvs.dialogs {
     public partial class CreateIssue : Form {
         private readonly JiraServer server;
 
+        private const string PROJECT = "createIssueDialog_selectedProject_";
+        private const string ISSUE_TYPE = "createIssueDialog_selectedIssueType_";
+        private const string PRIORITY = "createIssueDialog_selectedPriority_";
+        private const string COMPS_SIZE = "createIssueDialog_selectedComponentsSize_";
+        private const string COMPS_SEL = "createIssueDialog_selectedComponent_";
+        private const string AFFECTS_SIZE = "createIssueDialog_selectedAffectsVersionsSize_";
+        private const string AFFECTS_SEL = "createIssueDialog_selectedAffectsVersion_";
+        private const string FIXES_SIZE = "createIssueDialog_selectedFixVersionsSize_";
+        private const string FIXES_SEL = "createIssueDialog_selectedFixVersion_";
+
+        private bool initialUpdate = false;
+
         public CreateIssue(JiraServer server) {
             this.server = server;
             InitializeComponent();
+
+            ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
 
             SortedDictionary<string, JiraProject> projects = JiraServerCache.Instance.getProjects(server);
             foreach (var project in projects.Values) {
                 comboProjects.Items.Add(project);
             }
+
             List<JiraNamedEntity> priorities = JiraServerCache.Instance.getPriorities(server);
             ImageList imageList = new ImageList();
             int i = 0;
@@ -30,7 +46,20 @@ namespace Atlassian.plvs.dialogs {
             comboPriorities.ImageList = imageList;
 
             if (priorities.Count > 0) {
-                comboPriorities.SelectedIndex = priorities.Count/2;
+                int idx = store.loadParameter(PRIORITY + server.GUID, -1);
+                if (idx != -1 && comboPriorities.Items.Count > idx) {
+                    comboPriorities.SelectedIndex = idx;
+                } else {
+                    comboPriorities.SelectedIndex = priorities.Count/2;
+                }
+            }
+
+            if (projects.Count > 0) {
+                int idx = store.loadParameter(PROJECT + server.GUID, -1);
+                if (idx != -1 && comboProjects.Items.Count > idx) {
+                    initialUpdate = true;
+                    comboProjects.SelectedIndex = idx;
+                }
             }
         }
 
@@ -50,6 +79,8 @@ namespace Atlassian.plvs.dialogs {
         }
 
         private void projectUpdateWorker(JiraProject project) {
+            ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
+
             List<JiraNamedEntity> issueTypes =
                 JiraServerFacade.Instance.getIssueTypes(server, project);
             List<JiraNamedEntity> comps = JiraServerFacade.Instance.getComponents(server, project);
@@ -57,31 +88,75 @@ namespace Atlassian.plvs.dialogs {
             // newest versions first
             versions.Reverse();
             Invoke(new MethodInvoker(delegate {
-                                         fillIssueTypes(issueTypes);
-                                         fillComponents(comps);
-                                         fillVersions(versions);
+                                         fillIssueTypes(issueTypes, store);
+                                         fillComponents(comps, store);
+                                         fillVersions(versions, store);
                                          setAllEnabled(true);
                                          updateButtons();
+                                         initialUpdate = false;
                                      }));
         }
 
-        private void fillVersions(IEnumerable<JiraNamedEntity> versions) {
+        private void fillVersions(IEnumerable<JiraNamedEntity> versions, ParameterStore store) {
             listAffectsVersions.Items.Clear();
             listFixVersions.Items.Clear();
             foreach (var version in versions) {
                 listAffectsVersions.Items.Add(version);
                 listFixVersions.Items.Add(version);
             }
+            if (!initialUpdate) {
+                return;
+            }
+            int cnt = store.loadParameter(AFFECTS_SIZE + server.GUID, 0);
+            if (cnt > 0) {
+                for (int i = 0; i < cnt; ++i) {
+                    int sel = store.loadParameter(AFFECTS_SEL + i + "_" + server.GUID, -1);
+                    if (sel == -1) {
+                        continue;
+                    }
+                    if (listAffectsVersions.Items.Count > sel) {
+                        listAffectsVersions.SelectedIndices.Add(sel);
+                    }
+                }
+            }
+            cnt = store.loadParameter(FIXES_SIZE + server.GUID, 0);
+            if (cnt > 0) {
+                for (int i = 0; i < cnt; ++i) {
+                    int sel = store.loadParameter(FIXES_SEL + i + "_" + server.GUID, -1);
+                    if (sel == -1) {
+                        continue;
+                    }
+                    if (listFixVersions.Items.Count > sel) {
+                        listFixVersions.SelectedIndices.Add(sel);
+                    }
+                }
+            }
         }
 
-        private void fillComponents(IEnumerable<JiraNamedEntity> comps) {
+        private void fillComponents(IEnumerable<JiraNamedEntity> comps, ParameterStore store) {
             listComponents.Items.Clear();
             foreach (var comp in comps) {
                 listComponents.Items.Add(comp);
             }
+            if (!initialUpdate) {
+                return;
+            }
+            int cnt = store.loadParameter(COMPS_SIZE + server.GUID, 0);
+            if (cnt <= 0) {
+                return;
+            }
+            for (int i = 0; i < cnt; ++i) {
+                int sel = store.loadParameter(COMPS_SEL + i + "_" + server.GUID, -1);
+                if (sel == -1) {
+                    continue;
+                }
+                if (listComponents.Items.Count > sel) {
+                    listComponents.SelectedIndices.Add(sel);
+                }
+            }
         }
 
-        private void fillIssueTypes(IEnumerable<JiraNamedEntity> issueTypes) {
+        private void fillIssueTypes(ICollection<JiraNamedEntity> issueTypes, ParameterStore store) {
             ImageList imageList = new ImageList();
             comboTypes.Items.Clear();
             int i = 0;
@@ -92,6 +167,15 @@ namespace Atlassian.plvs.dialogs {
                 ++i;
             }
             comboTypes.ImageList = imageList;
+
+            if (initialUpdate) {
+                if (issueTypes.Count > 0) {
+                    int idx = store.loadParameter(ISSUE_TYPE + server.GUID, -1);
+                    if (idx != -1 && comboTypes.Items.Count > idx) {
+                        comboTypes.SelectedIndex = idx;
+                    }
+                }
+            }
         }
 
         private void setAllEnabled(bool enabled) {
@@ -124,6 +208,7 @@ namespace Atlassian.plvs.dialogs {
         }
 
         private void buttonCreate_Click(object sender, EventArgs e) {
+            saveSelectedValues();
             JiraIssue issue = createIssueTemplate();
             setAllEnabled(false);
             buttonCancel.Enabled = false;
@@ -131,17 +216,41 @@ namespace Atlassian.plvs.dialogs {
             t.Start();
         }
 
+        private void saveSelectedValues() {
+            ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
+            store.storeParameter(PROJECT + server.GUID, comboProjects.SelectedIndex);
+            store.storeParameter(ISSUE_TYPE + server.GUID, comboTypes.SelectedIndex);
+            store.storeParameter(PRIORITY + server.GUID, comboPriorities.SelectedIndex);
+            store.storeParameter(COMPS_SIZE + server.GUID, listComponents.SelectedIndices.Count);
+            int i = 0;
+            foreach (int index in listComponents.SelectedIndices) {
+                store.storeParameter(COMPS_SEL + (i++) + "_" + server.GUID, index);
+            }
+
+            store.storeParameter(AFFECTS_SIZE + server.GUID, listAffectsVersions.SelectedIndices.Count);
+            i = 0;
+            foreach (int index in listAffectsVersions.SelectedIndices) {
+                store.storeParameter(AFFECTS_SEL + (i++) + "_" + server.GUID, index);
+            }
+            store.storeParameter(FIXES_SIZE + server.GUID, listFixVersions.SelectedIndices.Count);
+            i = 0;
+            foreach (int index in listFixVersions.SelectedIndices) {
+                store.storeParameter(FIXES_SEL + (i++) + "_" + server.GUID, index);
+            }
+        }
+
         private JiraIssue createIssueTemplate() {
             JiraIssue issue = new JiraIssue
-                              {
-                                  Summary = textSummary.Text,
-                                  Description = textDescription.Text,
-                                  ProjectKey = ((JiraProject) comboProjects.SelectedItem).Key,
-                                  IssueTypeId =
-                                      ((ComboBoxWithImagesItem<JiraNamedEntity>) comboTypes.SelectedItem).Value.Id,
-                                  PriorityId =
-                                      ((ComboBoxWithImagesItem<JiraNamedEntity>) comboPriorities.SelectedItem).Value.Id
-                              };
+                                  {
+                                      Summary = textSummary.Text,
+                                      Description = textDescription.Text,
+                                      ProjectKey = ((JiraProject) comboProjects.SelectedItem).Key,
+                                      IssueTypeId =
+                                          ((ComboBoxWithImagesItem<JiraNamedEntity>) comboTypes.SelectedItem).Value.Id,
+                                      PriorityId =
+                                          ((ComboBoxWithImagesItem<JiraNamedEntity>) comboPriorities.SelectedItem).Value
+                                          .Id
+                                  };
 
             if (listComponents.SelectedItems.Count > 0) {
                 List<string> comps = new List<string>();
