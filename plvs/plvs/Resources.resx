@@ -253,4 +253,7 @@
   <data name="pin_other" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\icons\pin_other.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="add_jira" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\icons\add_jira.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

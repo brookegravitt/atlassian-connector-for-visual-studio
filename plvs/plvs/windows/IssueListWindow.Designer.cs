@@ -50,12 +50,13 @@ namespace Atlassian.plvs.windows {
             this.labelNarrow = new System.Windows.Forms.ToolStripLabel();
             this.comboFind = new System.Windows.Forms.ToolStripComboBox();
             this.labelGroupBy = new System.Windows.Forms.ToolStripLabel();
-            this.comboGroupBy = new JiraIssueGroupByCombo();
+            this.comboGroupBy = new JiraIssueGroupByCombo(this.components);
             this.buttonExpandAll = new System.Windows.Forms.ToolStripButton();
             this.buttonCollapseAll = new System.Windows.Forms.ToolStripButton();
             this.buttonOpen = new System.Windows.Forms.ToolStripButton();
             this.buttonViewInBrowser = new System.Windows.Forms.ToolStripButton();
             this.buttonEditInBrowser = new System.Windows.Forms.ToolStripButton();
+            this.buttonCreate = new System.Windows.Forms.ToolStripButton();
             this.buttonSearch = new System.Windows.Forms.ToolStripButton();
             this.buttonRefresh = new System.Windows.Forms.ToolStripButton();
             this.globalToolBar = new System.Windows.Forms.ToolStrip();
@@ -149,8 +150,8 @@ namespace Atlassian.plvs.windows {
             // 
             this.statusStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                                                                                         this.jiraStatus,
-                                                                                         this.getMoreIssues});
+            this.jiraStatus,
+            this.getMoreIssues});
             this.statusStrip.Location = new System.Drawing.Point(0, 0);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(814, 22);
@@ -159,14 +160,14 @@ namespace Atlassian.plvs.windows {
             // jiraStatus
             // 
             this.jiraStatus.Name = "jiraStatus";
-            this.jiraStatus.Size = new System.Drawing.Size(39, 17);
+            this.jiraStatus.Size = new System.Drawing.Size(38, 17);
             this.jiraStatus.Text = "Ready";
             // 
             // getMoreIssues
             // 
             this.getMoreIssues.IsLink = true;
             this.getMoreIssues.Name = "getMoreIssues";
-            this.getMoreIssues.Size = new System.Drawing.Size(99, 17);
+            this.getMoreIssues.Size = new System.Drawing.Size(97, 17);
             this.getMoreIssues.Text = "Get More Issues...";
             this.getMoreIssues.Visible = false;
             this.getMoreIssues.Click += new System.EventHandler(this.getMoreIssues_Click);
@@ -210,8 +211,10 @@ namespace Atlassian.plvs.windows {
             // 
             this.filtersTree.Dock = System.Windows.Forms.DockStyle.Fill;
             this.filtersTree.HideSelection = false;
+            this.filtersTree.ImageIndex = 0;
             this.filtersTree.Location = new System.Drawing.Point(0, 0);
             this.filtersTree.Name = "filtersTree";
+            this.filtersTree.SelectedImageIndex = 0;
             this.filtersTree.Size = new System.Drawing.Size(215, 207);
             this.filtersTree.TabIndex = 0;
             this.filtersTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.filtersTree_AfterSelect);
@@ -220,13 +223,13 @@ namespace Atlassian.plvs.windows {
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                                                                                        this.buttonRefreshAll,
-                                                                                        this.buttonAddFilter,
-                                                                                        this.buttonRemoveFilter,
-                                                                                        this.buttonEditFilter});
+            this.buttonRefreshAll,
+            this.buttonAddFilter,
+            this.buttonRemoveFilter,
+            this.buttonEditFilter});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(104, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(102, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonRefreshAll
@@ -290,26 +293,27 @@ namespace Atlassian.plvs.windows {
             // 
             this.toolStrip2.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                                                                                        this.labelNarrow,
-                                                                                        this.comboFind,
-                                                                                        this.labelGroupBy,
-                                                                                        this.comboGroupBy,
-                                                                                        this.buttonExpandAll,
-                                                                                        this.buttonCollapseAll,
-                                                                                        this.buttonOpen,
-                                                                                        this.buttonViewInBrowser,
-                                                                                        this.buttonEditInBrowser,
-                                                                                        this.buttonSearch,
-                                                                                        this.buttonRefresh});
+            this.labelNarrow,
+            this.comboFind,
+            this.labelGroupBy,
+            this.comboGroupBy,
+            this.buttonExpandAll,
+            this.buttonCollapseAll,
+            this.buttonOpen,
+            this.buttonViewInBrowser,
+            this.buttonEditInBrowser,
+            this.buttonCreate,
+            this.buttonSearch,
+            this.buttonRefresh});
             this.toolStrip2.Location = new System.Drawing.Point(3, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(534, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(547, 25);
             this.toolStrip2.TabIndex = 0;
             // 
             // labelNarrow
             // 
             this.labelNarrow.Name = "labelNarrow";
-            this.labelNarrow.Size = new System.Drawing.Size(30, 22);
+            this.labelNarrow.Size = new System.Drawing.Size(27, 22);
             this.labelNarrow.Text = "Find";
             // 
             // comboFind
@@ -323,7 +327,7 @@ namespace Atlassian.plvs.windows {
             // labelGroupBy
             // 
             this.labelGroupBy.Name = "labelGroupBy";
-            this.labelGroupBy.Size = new System.Drawing.Size(56, 22);
+            this.labelGroupBy.Size = new System.Drawing.Size(51, 22);
             this.labelGroupBy.Text = "Group By";
             // 
             // comboGroupBy
@@ -382,6 +386,16 @@ namespace Atlassian.plvs.windows {
             this.buttonEditInBrowser.Text = "Edit in Browser";
             this.buttonEditInBrowser.Click += new System.EventHandler(this.buttonEditInBrowser_Click);
             // 
+            // buttonCreate
+            // 
+            this.buttonCreate.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonCreate.Image = global::Atlassian.plvs.Resources.add_jira;
+            this.buttonCreate.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonCreate.Name = "buttonCreate";
+            this.buttonCreate.Size = new System.Drawing.Size(23, 22);
+            this.buttonCreate.Text = "Create Issue";
+            this.buttonCreate.Click += new System.EventHandler(this.buttonCreate_Click);
+            // 
             // buttonSearch
             // 
             this.buttonSearch.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -389,7 +403,7 @@ namespace Atlassian.plvs.windows {
             this.buttonSearch.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonSearch.Name = "buttonSearch";
             this.buttonSearch.Size = new System.Drawing.Size(23, 22);
-            this.buttonSearch.Text = "Search Issue";
+            this.buttonSearch.Text = "Find Issue";
             this.buttonSearch.Click += new System.EventHandler(this.buttonSearch_Click);
             // 
             // buttonRefresh
@@ -406,13 +420,13 @@ namespace Atlassian.plvs.windows {
             // 
             this.globalToolBar.Dock = System.Windows.Forms.DockStyle.None;
             this.globalToolBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                                                                                           this.buttonProjectProperties,
-                                                                                           this.buttonGlobalProperties,
-                                                                                           this.buttonAbout,
-                                                                                           this.buttonUpdate});
+            this.buttonProjectProperties,
+            this.buttonGlobalProperties,
+            this.buttonAbout,
+            this.buttonUpdate});
             this.globalToolBar.Location = new System.Drawing.Point(0, 3);
             this.globalToolBar.Name = "globalToolBar";
-            this.globalToolBar.Size = new System.Drawing.Size(24, 103);
+            this.globalToolBar.Size = new System.Drawing.Size(24, 101);
             this.globalToolBar.TabIndex = 0;
             // 
             // buttonProjectProperties
@@ -552,5 +566,6 @@ namespace Atlassian.plvs.windows {
         private System.Windows.Forms.ToolStripButton buttonAddFilter;
         private System.Windows.Forms.ToolStripButton buttonRemoveFilter;
         private System.Windows.Forms.ToolStripButton buttonEditFilter;
+        private System.Windows.Forms.ToolStripButton buttonCreate;
     }
 }
