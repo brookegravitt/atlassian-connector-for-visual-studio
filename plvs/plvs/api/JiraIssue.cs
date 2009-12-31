@@ -37,11 +37,13 @@ namespace Atlassian.plvs.api {
 
         private readonly List<Comment> comments = new List<Comment>();
 
-        private readonly List<string> versions = new List<string>();
+        private List<string> versions = new List<string>();
 
-        private readonly List<string> fixVersions = new List<string>();
+        private List<string> fixVersions = new List<string>();
 
-        private readonly List<string> components = new List<string>();
+        private List<string> components = new List<string>();
+
+        public JiraIssue() {}
 
         public JiraIssue(JiraServer server, XPathNavigator nav) {
             Server = server;
@@ -147,17 +149,17 @@ namespace Atlassian.plvs.api {
 
         public string IssueType { get; private set; }
 
-        public int IssueTypeId { get; private set; }
+        public int IssueTypeId { get; set; }
 
         public string IssueTypeIconUrl { get; private set; }
 
-        public string Description { get; private set; }
+        public string Description { get; set; }
 
         public int Id { get; private set; }
 
         public string Key { get; private set; }
 
-        public string Summary { get; private set; }
+        public string Summary { get; set; }
 
         public string Status { get; private set; }
 
@@ -175,13 +177,13 @@ namespace Atlassian.plvs.api {
 
         public string Reporter { get; private set; }
 
-        public string Assignee { get; private set; }
+        public string Assignee { get; set; }
 
         public DateTime CreationDate { get; private set; }
 
         public DateTime UpdateDate { get; private set; }
 
-        public string ProjectKey { get; private set; }
+        public string ProjectKey { get; set; }
 
         public string Environment { get; private set; }
 
@@ -203,14 +205,17 @@ namespace Atlassian.plvs.api {
 
         public List<string> Versions {
             get { return versions; }
+            set { versions = value; }
         }
 
         public List<string> FixVersions {
             get { return fixVersions; }
+            set { fixVersions = value; }
         }
 
         public List<string> Components {
             get { return components; }
+            set { components = value; }
         }
 
         private static string getAttributeSafely(XPathNavigator nav, string name, string defaultValue) {

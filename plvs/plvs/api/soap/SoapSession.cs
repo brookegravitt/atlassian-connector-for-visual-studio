@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Atlassian.plvs.Atlassian.plvs.api.soap.service;
+using Atlassian.plvs.models;
 
 namespace Atlassian.plvs.api.soap {
     public class SoapSession {
@@ -40,6 +41,72 @@ namespace Atlassian.plvs.api.soap {
             return list;
         }
 
+        public string createIssue(JiraIssue issue) {
+            RemoteIssue ri = new RemoteIssue
+                                 {
+                                     project = issue.ProjectKey,
+                                     type = issue.IssueTypeId.ToString(),
+                                     priority = issue.PriorityId.ToString(),
+                                     summary = issue.Summary,
+                                     description = issue.Description,
+                                 };
+            if (issue.Assignee != null) {
+                ri.assignee = issue.Assignee;
+            }
+
+            if (issue.Components != null && issue.Components.Count > 0) {
+                RemoteComponent[] components = service.getComponents(token, issue.ProjectKey);
+                List<RemoteComponent> comps = new List<RemoteComponent>();
+                for (int i = 0; i < issue.Components.Count; ++i) {
+                    foreach (RemoteComponent component in components) {
+                        // fixme: a bit problematic part. What if two components have the same name?
+                        // I suppose JiraIssue class has to be fixed, but that would require more problematic
+                        // construction of it during server query
+                        if (!component.name.Equals(issue.Components[i])) {
+                            continue;
+                        }
+                        comps.Add(component);
+                        break;
+                    }
+                }
+                ri.components = comps.ToArray();
+            }
+
+            RemoteVersion[] versions = service.getVersions(token, issue.ProjectKey);
+            
+            if (issue.Versions != null && issue.Versions.Count > 0) {
+                List<RemoteVersion> vers = new List<RemoteVersion>();
+                for (int i = 0; i < issue.Versions.Count; ++i) {
+                    foreach (RemoteVersion version in versions) {
+                        // fixme: a bit problematic part. same as for components
+                        if (!version.name.Equals(issue.Versions[i])) {
+                            continue;
+                        }
+                        vers.Add(version);
+                        break;
+                    }
+                }
+                ri.affectsVersions = vers.ToArray();
+            }
+
+            if (issue.FixVersions != null && issue.FixVersions.Count > 0) {
+                List<RemoteVersion> vers = new List<RemoteVersion>();
+                for (int i = 0; i < issue.FixVersions.Count; ++i) {
+                    foreach (RemoteVersion version in versions) {
+                        // fixme: a bit problematic part. same as for components
+                        if (!version.name.Equals(issue.FixVersions[i])) {
+                            continue;
+                        }
+                        vers.Add(version);
+                        break;
+                    }
+                }
+                ri.fixVersions = vers.ToArray();
+            }
+
+            RemoteIssue createdIssue = service.createIssue(token, ri);
+            return createdIssue.key;
+        }
 
         public void addComment(JiraIssue issue, string comment) {
             service.addComment(token, issue.Key, new RemoteComment {body = comment});

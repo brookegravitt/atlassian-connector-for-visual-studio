@@ -119,6 +119,10 @@ namespace Atlassian.plvs.api {
             return wrapExceptions(server, () => getSoapSession(server).getVersions(project));
         }
 
+        public string createIssue(JiraServer server, JiraIssue issue) {
+            return wrapExceptions(server, () => getSoapSession(server).createIssue(issue));
+        }
+
         #endregion
 
         #region private parts

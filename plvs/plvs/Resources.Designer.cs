@@ -70,16 +70,23 @@ namespace Atlassian.plvs {
         /// <summary>
         ///   Looks up a localized string similar to &lt;div style=&quot;text-align:center;font-size:10px;font-family:Arial;&quot;&gt;
         ///
-        ///The Atlassian Connector for Microsoft Visual Studio is an Visual Studio Add-in that lets you work&lt;br&gt;
+        ///The Atlassian Connector for Microsoft Visual Studio is an Visual Studio package that lets you work&lt;br&gt;
         ///with the Atlassian products within your IDE. Now you don&apos;t have to switch between websites,&lt;br&gt;
         ///email messages and news feeds to see what&apos;s happening to your project and your code.&lt;br&gt;
         ///Instead, you can see the relevant &lt;a href=&quot;http://www.atlassian.com/software/jira/&quot;&gt;JIRA&lt;/a&gt; issues
         ///&lt;!--, 
-        ///&lt;a href=&quot;http://www.atlassian.com/software/c [rest of string was truncated]&quot;;.
+        ///&lt;a href=&quot;http://www.atlassian.com/software/ [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string about_html {
             get {
                 return ResourceManager.GetString("about_html", resourceCulture);
+            }
+        }
+        
+        internal static System.Drawing.Bitmap add_jira {
+            get {
+                object obj = ResourceManager.GetObject("add_jira", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

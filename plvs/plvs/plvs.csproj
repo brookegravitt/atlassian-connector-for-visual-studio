@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -88,6 +88,12 @@
     <Compile Include="dialogs\AutoUpdateDialog.Designer.cs">
       <DependentUpon>AutoUpdateDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="dialogs\CreateIssue.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\CreateIssue.Designer.cs">
+      <DependentUpon>CreateIssue.cs</DependentUpon>
+    </Compile>
     <Compile Include="dialogs\EditCustomFilter.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -138,10 +144,16 @@
     <Compile Include="eventsinks\TextLinesEventSink.cs" />
     <Compile Include="eventsinks\TextManagerEventSink.cs" />
     <Compile Include="eventsinks\TextMarkerClientEventSink.cs" />
+    <Compile Include="ui\ComboBoxWithImages.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ui\JiraFiltersTree.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ui\JiraIssueTree.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ui\JiraNamedEntityComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="util\Constants.cs" />
@@ -290,6 +302,9 @@
     <EmbeddedResource Include="dialogs\AutoUpdateDialog.resx">
       <DependentUpon>AutoUpdateDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\CreateIssue.resx">
+      <DependentUpon>CreateIssue.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\EditCustomFilter.resx">
       <DependentUpon>EditCustomFilter.cs</DependentUpon>
@@ -440,6 +455,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\icons\about.png" />
+    <Content Include="Resources\icons\add_jira.png" />
     <Content Include="Resources\icons\atlassian-538x235.png" />
     <Content Include="Resources\icons\atlassian-installer.bmp" />
     <Content Include="Resources\icons\Atlassian.png" />

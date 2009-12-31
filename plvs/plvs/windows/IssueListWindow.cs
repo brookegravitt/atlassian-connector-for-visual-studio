@@ -123,6 +123,7 @@ namespace Atlassian.plvs.windows {
             buttonOpen.Enabled = issueSelected;
             buttonRefresh.Enabled = filtersTree.FilterOrRecentlyViewedSelected;
             buttonSearch.Enabled = filtersTree.NodeWithServerSelected;
+            buttonCreate.Enabled = filtersTree.NodeWithServerSelected;
 
             bool groupingControlsEnabled = !(filtersTree.RecentlyViewedSelected);
             comboGroupBy.Enabled = groupingControlsEnabled;
@@ -476,6 +477,13 @@ namespace Atlassian.plvs.windows {
         private void buttonRefresh_Click(object sender, EventArgs e) {
             comboFind.Text = "";
             reloadIssues();
+        }
+
+        private void buttonCreate_Click(object sender, EventArgs e) {
+            JiraServer server = filtersTree.getCurrentlySelectedServer();
+            if (server == null) return;
+            CreateIssue dlg = new CreateIssue(server);
+            dlg.ShowDialog();
         }
 
         private void buttonSearch_Click(object sender, EventArgs e) {
