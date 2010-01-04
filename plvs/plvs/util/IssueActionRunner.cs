@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
@@ -11,17 +12,18 @@ namespace Atlassian.plvs.util {
         public static void runAction(Control owner, JiraNamedEntity action, JiraIssueListModel model, JiraIssue issue, StatusLabel status) {
             Thread runner = new Thread(new ThreadStart(delegate {
                                                            try {
-                                                               status.setInfo("Retrieveing fields for action \"" +
+                                                               status.setInfo("Retrieving fields for action \"" +
                                                                               action.Name + "\"...");
-                                                               var fields = JiraServerFacade.Instance.getFieldsForAction(issue, action.Id);
+                                                               List<JiraField> fields = JiraServerFacade.Instance.getFieldsForAction(issue, action.Id);
                                                                if (fields == null || fields.Count == 0) {
-                                                                   runActionLocally(owner, action, model, issue, status);
+                                                                   runActionWithoutFields(owner, action, model, issue, status);
                                                                } else {
-                                                                   status.setInfo("Action \"" + action.Name
-                                                                                  + "\" requires input fields, opening action screen in the browser...");
-                                                                   Process.Start(issue.Server.Url
-                                                                                 + "/secure/WorkflowUIDispatcher.jspa?id=" 
-                                                                                 + issue.Id + "&action=" + action.Id);
+                                                                   runActionWithFields(owner, action, model, issue, fields, status);
+//                                                                   status.setInfo("Action \"" + action.Name
+//                                                                                  + "\" requires input fields, opening action screen in the browser...");
+//                                                                   Process.Start(issue.Server.Url
+//                                                                                 + "/secure/WorkflowUIDispatcher.jspa?id=" 
+//                                                                                 + issue.Id + "&action=" + action.Id);
                                                                }
                                                            } catch (Exception e) {
                                                                status.setError("Failed to run action " + action.Name + " on issue " + issue.Key, e);
@@ -30,7 +32,13 @@ namespace Atlassian.plvs.util {
             runner.Start();
         }
 
-        private static void runActionLocally(Control owner, JiraNamedEntity action, JiraIssueListModel model, JiraIssue issue, StatusLabel status) {
+        private static void runActionWithFields(Control owner, JiraNamedEntity action, JiraIssueListModel model, JiraIssue issue, List<JiraField> fields, StatusLabel status) {
+            JiraIssue issueWithTime = JiraServerFacade.Instance.getIssue(issue.Server, issue.Key);
+            issueWithTime.SecurityLevel = JiraServerFacade.Instance.getSecurityLevel(issue);
+            issueWithTime.SoapIssueObject = JiraServerFacade.Instance.getIssueSoapObject(issue);
+        }
+
+        private static void runActionWithoutFields(Control owner, JiraNamedEntity action, JiraIssueListModel model, JiraIssue issue, StatusLabel status) {
             status.setInfo("Running action \"" + action.Name + "\" on issue " + issue.Key + "...");
             JiraServerFacade.Instance.runIssueActionWithoutParams(issue, action);
             status.setInfo("Action \"" + action.Name + "\" successfully run on issue " + issue.Key);
