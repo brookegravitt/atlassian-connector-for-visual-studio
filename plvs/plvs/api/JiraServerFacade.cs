@@ -123,6 +123,14 @@ namespace Atlassian.plvs.api {
             return wrapExceptions(server, () => getSoapSession(server).createIssue(issue));
         }
 
+        public object getIssueSoapObject(JiraIssue issue) {
+            return wrapExceptions(issue.Server, () => getSoapSession(issue.Server).getIssueSoapObject(issue.Key));
+        }
+
+        public JiraNamedEntity getSecurityLevel(JiraIssue issue) {
+            return wrapExceptions(issue.Server, () => getSoapSession(issue.Server).getSecurityLevel(issue.Key));
+        }
+
         #endregion
 
         #region private parts

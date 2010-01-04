@@ -218,6 +218,10 @@ namespace Atlassian.plvs.api {
             set { components = value; }
         }
 
+        public object SoapIssueObject { get; set; }
+
+        public JiraNamedEntity SecurityLevel { get; set; }
+
         private static string getAttributeSafely(XPathNavigator nav, string name, string defaultValue) {
             if (nav.HasAttributes && nav.MoveToFirstAttribute()) {
                 do {

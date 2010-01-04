@@ -116,6 +116,19 @@ namespace Atlassian.plvs.api.soap {
             public LoginException(Exception e) : base("Login failed", e) {}
         }
 
+        public object getIssueSoapObject(string key) {
+            return service.getIssue(token, key);
+        }
+
+        public JiraNamedEntity getSecurityLevel(string key) {
+            try {
+                RemoteSecurityLevel securityLevel = service.getSecurityLevel(token, key);
+                return new JiraNamedEntity(int.Parse(securityLevel.id), securityLevel.name, null);
+            } catch (Exception) {
+                return null;
+            }
+        }
+
         public List<JiraNamedEntity> getIssueTypes() {
             return createEntityListFromConstants(service.getIssueTypes(token));
         }

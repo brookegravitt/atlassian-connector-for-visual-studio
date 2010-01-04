@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -106,6 +106,12 @@
     <Compile Include="dialogs\GlobalSettings.Designer.cs">
       <DependentUpon>GlobalSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="dialogs\IssueWorkflowAction.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\IssueWorkflowAction.Designer.cs">
+      <DependentUpon>IssueWorkflowAction.cs</DependentUpon>
+    </Compile>
     <Compile Include="dialogs\NewIssueComment.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -144,6 +150,23 @@
     <Compile Include="eventsinks\TextLinesEventSink.cs" />
     <Compile Include="eventsinks\TextManagerEventSink.cs" />
     <Compile Include="eventsinks\TextMarkerClientEventSink.cs" />
+    <Compile Include="models\fields\AffectsVersionsFiller.cs" />
+    <Compile Include="models\fields\AssigneeFiller.cs" />
+    <Compile Include="models\fields\ComponentsFiller.cs" />
+    <Compile Include="models\fields\CustomFieldFiller.cs" />
+    <Compile Include="models\fields\DescriptionFiller.cs" />
+    <Compile Include="models\fields\DueDateFiller.cs" />
+    <Compile Include="models\fields\EnvironmentFiller.cs" />
+    <Compile Include="models\fields\FieldFiller.cs" />
+    <Compile Include="models\fields\FixVersionsFiller.cs" />
+    <Compile Include="models\fields\IssueTypeFiller.cs" />
+    <Compile Include="models\fields\PriorityFiller.cs" />
+    <Compile Include="models\fields\ReporterFiller.cs" />
+    <Compile Include="models\fields\ResolutionFiller.cs" />
+    <Compile Include="models\fields\SecurityFiller.cs" />
+    <Compile Include="models\fields\SummaryFiller.cs" />
+    <Compile Include="models\fields\TimeTrackingFiller.cs" />
+    <Compile Include="models\JiraActionFieldType.cs" />
     <Compile Include="ui\ComboBoxWithImages.cs">
       <SubType>Component</SubType>
     </Compile>
