@@ -87,6 +87,15 @@ namespace Atlassian.plvs {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to Atlassian JIRA Connector.
+        /// </summary>
+        public static string _113 {
+            get {
+                return ResourceManager.GetString("113", resourceCulture);
+            }
+        }
+        
         public static System.Drawing.Bitmap _301 {
             get {
                 object obj = ResourceManager.GetObject("301", resourceCulture);
