@@ -33,6 +33,7 @@ namespace Atlassian.plvs.dialogs {
         private const int MARGIN = 16;
 
         private const int INITIAL_WIDTH = 700;
+        private const int INITIAL_HEIGHT = 700;
 
         private List<JiraNamedEntity> issueTypes = new List<JiraNamedEntity>();
         private List<JiraNamedEntity> versions = new List<JiraNamedEntity>();
@@ -50,7 +51,8 @@ namespace Atlassian.plvs.dialogs {
 
             ClientSize = new Size(0, 0);
 
-            Visible = false;
+            ClientSize = new Size(INITIAL_WIDTH, INITIAL_HEIGHT + buttonOk.Height + 3 * MARGIN);
+
             buttonOk.Enabled = false;
 
             StartPosition = FormStartPosition.CenterParent;
@@ -88,12 +90,11 @@ namespace Atlassian.plvs.dialogs {
                                              }
 
                                              ClientSize = new Size(INITIAL_WIDTH,
-                                                                   verticalPosition + buttonOk.Height + 3*MARGIN);
+                                                                   Math.Min(verticalPosition, INITIAL_HEIGHT) + buttonOk.Height + 3*MARGIN);
 
                                              resizeStaticContent();
 
                                              buttonOk.Enabled = true;
-                                             Visible = true;
                                          }));
             } else {
                 status.setInfo("");
@@ -136,14 +137,18 @@ namespace Atlassian.plvs.dialogs {
                     case JiraActionFieldType.WidgetType.FIX_VERSIONS:
                         editor = new VersionFieldEditor(issue.FixVersions, versions);
                         break;
+                    case JiraActionFieldType.WidgetType.ASSIGNEE:
+                        editor = new UserFieldEditor(soapIssueObject != null ? soapIssueObject.assignee : null);
+                        break;
+                    case JiraActionFieldType.WidgetType.REPORTER:
+                        editor = new UserFieldEditor(soapIssueObject != null ? soapIssueObject.reporter : null);
+                        break;
                     case JiraActionFieldType.WidgetType.DUE_DATE:
                     case JiraActionFieldType.WidgetType.TIMETRACKING:
                     case JiraActionFieldType.WidgetType.RESOLUTION:
                     case JiraActionFieldType.WidgetType.PRIORITY:
                     case JiraActionFieldType.WidgetType.COMPONENTS:
                     case JiraActionFieldType.WidgetType.SECURITY:
-                    case JiraActionFieldType.WidgetType.ASSIGNEE:
-                    case JiraActionFieldType.WidgetType.REPORTER:
                     case JiraActionFieldType.WidgetType.UNSUPPORTED:
                     default:
                         unsupportedFields.Add(field);
@@ -195,9 +200,9 @@ namespace Atlassian.plvs.dialogs {
         private void addLabel(string text) {
             Label l = new Label
                       {
-                          AutoSize = true,
+                          AutoSize = false,
                           Location = new Point(LABEL_X_POS, verticalPosition + 3),
-                          Size = new Size(FIELD_X_POS - LABEL_X_POS - MARGIN, LABEL_HEIGHT),
+                          Size = new Size(FIELD_X_POS - LABEL_X_POS - MARGIN / 2, LABEL_HEIGHT),
                           TextAlign = ContentAlignment.TopRight,
                           Text = text
                       };
