@@ -170,6 +170,7 @@
     <Compile Include="ui\ComboBoxWithImages.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ui\fields\DateFieldEditor.cs" />
     <Compile Include="ui\fields\IssueTypeFieldEditor.cs" />
     <Compile Include="ui\fields\JiraFieldEditor.cs" />
     <Compile Include="ui\fields\TextAreaFieldEditor.cs" />

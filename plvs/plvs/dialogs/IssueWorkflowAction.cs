@@ -15,7 +15,7 @@ namespace Atlassian.plvs.dialogs {
     public sealed partial class IssueWorkflowAction : Form {
         private readonly JiraIssue issue;
         private readonly RemoteIssue soapIssueObject;
-        private readonly List<JiraField> fields;
+        private readonly ICollection<JiraField> fields;
         private readonly StatusLabel status;
 
         private int verticalPosition;
@@ -42,7 +42,8 @@ namespace Atlassian.plvs.dialogs {
                                    List<JiraField> fields, StatusLabel status) {
             this.issue = issue;
             this.soapIssueObject = soapIssueObject as RemoteIssue;
-            this.fields = fields;
+            this.fields = JiraActionFieldType.sortFieldList(fields);
+
             this.status = status;
 
             InitializeComponent();
@@ -84,7 +85,7 @@ namespace Atlassian.plvs.dialogs {
                                              addCommentField();
 
                                              if (textUnsupported != null) {
-                                                 textUnsupported.Location = new Point(FIELD_X_POS, verticalPosition);
+                                                 textUnsupported.Location = new Point(LABEL_X_POS, verticalPosition);
                                                  panelContent.Controls.Add(textUnsupported);
                                                  verticalPosition += textUnsupported.Height + MARGIN;
                                              }
@@ -107,7 +108,7 @@ namespace Atlassian.plvs.dialogs {
             panelContent.Location = new Point(MARGIN, MARGIN);
             panelContent.Size = new Size(ClientSize.Width - 2*MARGIN, ClientSize.Height - 3*MARGIN - buttonOk.Height);
 
-            buttonOk.Location = new Point(ClientSize.Width - 2*buttonOk.Width - 2*MARGIN,
+            buttonOk.Location = new Point(ClientSize.Width - 2*buttonOk.Width - 3*MARGIN/2,
                                           ClientSize.Height - MARGIN - buttonOk.Height);
             buttonCancel.Location = new Point(ClientSize.Width - buttonOk.Width - MARGIN,
                                               ClientSize.Height - MARGIN - buttonCancel.Height);
@@ -144,6 +145,8 @@ namespace Atlassian.plvs.dialogs {
                         editor = new UserFieldEditor(soapIssueObject != null ? soapIssueObject.reporter : null);
                         break;
                     case JiraActionFieldType.WidgetType.DUE_DATE:
+                        editor = new DateFieldEditor(soapIssueObject != null ? soapIssueObject.duedate : null);
+                        break;
                     case JiraActionFieldType.WidgetType.TIMETRACKING:
                     case JiraActionFieldType.WidgetType.RESOLUTION:
                     case JiraActionFieldType.WidgetType.PRIORITY:

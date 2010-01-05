@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
+using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.ui.fields {
     public class UserFieldEditor : JiraFieldEditor {
@@ -13,7 +14,7 @@ namespace Atlassian.plvs.ui.fields {
         private readonly Label infoLabel = new Label
                                   {
                                       AutoSize = true,
-                                      Text = "Warning! This field is not validated prior to sending to JIRA",
+                                      Text = Constants.USER_NOT_VALUDATED,
                                       Location = new Point(140, 3),
                                   };
 
