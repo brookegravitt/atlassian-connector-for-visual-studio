@@ -170,6 +170,11 @@
     <Compile Include="ui\ComboBoxWithImages.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ui\fields\IssueTypeFieldEditor.cs" />
+    <Compile Include="ui\fields\JiraFieldEditor.cs" />
+    <Compile Include="ui\fields\TextAreaFieldEditor.cs" />
+    <Compile Include="ui\fields\TextLineFieldEditor.cs" />
+    <Compile Include="ui\fields\VersionFieldEditor.cs" />
     <Compile Include="ui\JiraFiltersTree.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -335,6 +340,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\GlobalSettings.resx">
       <DependentUpon>GlobalSettings.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\IssueWorkflowAction.resx">
+      <DependentUpon>IssueWorkflowAction.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\NewIssueComment.resx">

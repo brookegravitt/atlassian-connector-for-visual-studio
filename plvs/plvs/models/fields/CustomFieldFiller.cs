@@ -6,8 +6,8 @@ using Atlassian.plvs.Atlassian.plvs.api.soap.service;
 
 namespace Atlassian.plvs.models.fields {
     public class CustomFieldFiller : FieldFiller {
-        public List<string> getFieldValues(String field, JiraIssue detailedIssue) {
-            RemoteIssue ri = detailedIssue.SoapIssueObject as RemoteIssue;
+        public List<string> getFieldValues(String field, JiraIssue issue, object soapIssueObject) {
+            RemoteIssue ri = soapIssueObject as RemoteIssue;
             if (ri == null) {
                 return null;
             }
