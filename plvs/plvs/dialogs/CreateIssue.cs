@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api;
 using Atlassian.plvs.models;
 using Atlassian.plvs.store;
 using Atlassian.plvs.ui;
+using Atlassian.plvs.util;
 using Atlassian.plvs.windows;
 
 namespace Atlassian.plvs.dialogs {
@@ -22,7 +24,7 @@ namespace Atlassian.plvs.dialogs {
         private const string FIXES_SIZE = "createIssueDialog_selectedFixVersionsSize_";
         private const string FIXES_SEL = "createIssueDialog_selectedFixVersion_";
 
-        private bool initialUpdate = false;
+        private bool initialUpdate;
 
         public CreateIssue(JiraServer server) {
             this.server = server;
@@ -63,6 +65,9 @@ namespace Atlassian.plvs.dialogs {
             }
 
             StartPosition = FormStartPosition.CenterParent;
+
+            labelWarning.Font = new Font(labelWarning.Font.FontFamily, labelWarning.Font.Size - 2);
+            labelWarning.Text = Constants.USER_NOT_VALUDATED;
         }
 
         private void buttonCancel_Click(object sender, EventArgs e) {

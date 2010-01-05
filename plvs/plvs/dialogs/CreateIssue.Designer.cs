@@ -37,7 +37,7 @@ namespace Atlassian.plvs.dialogs {
             this.textSummary = new System.Windows.Forms.TextBox();
             this.textDescription = new System.Windows.Forms.TextBox();
             this.textAssignee = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.labelWarning = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -154,14 +154,14 @@ namespace Atlassian.plvs.dialogs {
             this.textAssignee.Size = new System.Drawing.Size(136, 20);
             this.textAssignee.TabIndex = 8;
             // 
-            // label1
+            // labelWarning
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(246, 534);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(282, 13);
-            this.label1.TabIndex = 11;
-            this.label1.Text = "Warning! This field is not validated prior to sending to JIRA";
+            this.labelWarning.AutoSize = true;
+            this.labelWarning.Location = new System.Drawing.Point(246, 534);
+            this.labelWarning.Name = "labelWarning";
+            this.labelWarning.Size = new System.Drawing.Size(282, 13);
+            this.labelWarning.TabIndex = 11;
+            this.labelWarning.Text = "Warning";
             // 
             // label2
             // 
@@ -268,7 +268,7 @@ namespace Atlassian.plvs.dialogs {
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.labelWarning);
             this.Controls.Add(this.textAssignee);
             this.Controls.Add(this.textDescription);
             this.Controls.Add(this.textSummary);
@@ -301,7 +301,7 @@ namespace Atlassian.plvs.dialogs {
         private System.Windows.Forms.TextBox textSummary;
         private System.Windows.Forms.TextBox textDescription;
         private System.Windows.Forms.TextBox textAssignee;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label labelWarning;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
