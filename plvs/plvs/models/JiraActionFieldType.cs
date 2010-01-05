@@ -68,11 +68,15 @@ namespace Atlassian.plvs.models {
 	        return TypeMap.ContainsKey(fieldId) ? TypeMap[fieldId].WidgetType : WidgetType.UNSUPPORTED;
 	    }
 
-	    public static List<JiraField> fillFieldValues(JiraIssue issue, List<JiraField> fields) {
+        public static List<JiraField> fillFieldValues(JiraIssue issue, object soapIssueObject, List<JiraField> fields) {
 		    List<JiraField> result = new List<JiraField>();
 
+            if (fields == null) {
+                return result;
+            }
+
 		    foreach (JiraField field in fields) {
-			    JiraField filledField = fillField(issue, field);
+			    JiraField filledField = fillField(issue, soapIssueObject, field);
 			    if (filledField != null) {
 				    result.Add(filledField);
 			    }
@@ -84,34 +88,34 @@ namespace Atlassian.plvs.models {
 	    }
 
 	    private static void addTimeFields(JiraIssue issue, ICollection<JiraField> result) {
-		    string originalEstimate = issue.OriginalEstimateInSeconds.ToString();
-		    string remainingEstimate = issue.RemainingEstimateInSeconds.ToString();
-		    string timeSpent = issue.TimeSpentInSeconds.ToString();
+		    int originalEstimate = issue.OriginalEstimateInSeconds;
+		    int remainingEstimate = issue.RemainingEstimateInSeconds;
+		    int timeSpent = issue.TimeSpentInSeconds;
 
-		    if (originalEstimate != null) {
+		    if (originalEstimate != 0) {
 			    JiraField originalEstimateField = new JiraField("timeoriginalestimate", "Original Estimate");
-			    originalEstimateField.Values.Add(originalEstimate);
+			    originalEstimateField.Values.Add(originalEstimate.ToString());
 			    result.Add(originalEstimateField);
 		    }
-		    if (remainingEstimate != null) {
+		    if (remainingEstimate != 0) {
 			    JiraField remainingEstimateField = new JiraField("timeestimate", "Remaining Estimate");
-			    remainingEstimateField.Values.Add(remainingEstimate);
+			    remainingEstimateField.Values.Add(remainingEstimate.ToString());
 			    result.Add(remainingEstimateField);
 		    }
-		    if (timeSpent != null) {
+		    if (timeSpent != 0) {
 			    JiraField timeSpentField = new JiraField("timespent", "Time Spent");
-			    timeSpentField.Values.Add(timeSpent);
+			    timeSpentField.Values.Add(timeSpent.ToString());
 			    result.Add(timeSpentField);
 		    }
 	    }
 
-	    private static JiraField fillField(JiraIssue issue, JiraField field) {
+	    private static JiraField fillField(JiraIssue issue, object soapIssueObject, JiraField field) {
             JiraField result = new JiraField(field);
             if (TypeMap.ContainsKey(field.Id)) {
                 WidgetTypeAndFieldFiller widgetTypeAndFieldFiller = TypeMap[field.Id];
-                result.Values = widgetTypeAndFieldFiller.Filler.getFieldValues(field.Id, issue);
+                result.Values = widgetTypeAndFieldFiller.Filler.getFieldValues(field.Id, issue, soapIssueObject);
 		    } else {
-			    result.Values = CustomFieldFiller.getFieldValues(field.Id, issue);
+			    result.Values = CustomFieldFiller.getFieldValues(field.Id, issue, soapIssueObject);
 		    }
 		    return result;
 	    }

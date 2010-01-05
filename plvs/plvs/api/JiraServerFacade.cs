@@ -111,6 +111,10 @@ namespace Atlassian.plvs.api {
             wrapExceptionsVoid(issue.Server, () => getSoapSession(issue.Server).runIssueActionWithoutParams(issue, action.Id));
         }
 
+        public void runIssueActionWithParams(JiraIssue issue, JiraNamedEntity action, List<JiraField> fields, string comment) {
+            wrapExceptionsVoid(issue.Server, () => getSoapSession(issue.Server).runIssueActionWithParams(issue, action.Id, fields, comment));
+        }
+
         public List<JiraNamedEntity> getComponents(JiraServer server, JiraProject project) {
             return wrapExceptions(server, () => getSoapSession(server).getComponents(project));
         }

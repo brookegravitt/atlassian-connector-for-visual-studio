@@ -61,6 +61,8 @@ namespace Atlassian.plvs.dialogs {
                     comboProjects.SelectedIndex = idx;
                 }
             }
+
+            StartPosition = FormStartPosition.CenterParent;
         }
 
         private void buttonCancel_Click(object sender, EventArgs e) {

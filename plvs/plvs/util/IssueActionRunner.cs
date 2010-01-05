@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api;
+using Atlassian.plvs.dialogs;
 using Atlassian.plvs.models;
 using Atlassian.plvs.ui;
 
@@ -12,19 +12,9 @@ namespace Atlassian.plvs.util {
         public static void runAction(Control owner, JiraNamedEntity action, JiraIssueListModel model, JiraIssue issue, StatusLabel status) {
             Thread runner = new Thread(new ThreadStart(delegate {
                                                            try {
-                                                               status.setInfo("Retrieving fields for action \"" +
-                                                                              action.Name + "\"...");
+                                                               status.setInfo("Retrieving fields for action \"" + action.Name + "\"...");
                                                                List<JiraField> fields = JiraServerFacade.Instance.getFieldsForAction(issue, action.Id);
-                                                               if (fields == null || fields.Count == 0) {
-                                                                   runActionWithoutFields(owner, action, model, issue, status);
-                                                               } else {
-                                                                   runActionWithFields(owner, action, model, issue, fields, status);
-//                                                                   status.setInfo("Action \"" + action.Name
-//                                                                                  + "\" requires input fields, opening action screen in the browser...");
-//                                                                   Process.Start(issue.Server.Url
-//                                                                                 + "/secure/WorkflowUIDispatcher.jspa?id=" 
-//                                                                                 + issue.Id + "&action=" + action.Id);
-                                                               }
+                                                               runAction(owner, action, model, issue, fields, status);
                                                            } catch (Exception e) {
                                                                status.setError("Failed to run action " + action.Name + " on issue " + issue.Key, e);
                                                            }
@@ -32,10 +22,22 @@ namespace Atlassian.plvs.util {
             runner.Start();
         }
 
-        private static void runActionWithFields(Control owner, JiraNamedEntity action, JiraIssueListModel model, JiraIssue issue, List<JiraField> fields, StatusLabel status) {
+        private static void runAction(Control owner, JiraNamedEntity action, JiraIssueListModel model, 
+            JiraIssue issue, List<JiraField> fields, StatusLabel status) {
+
             JiraIssue issueWithTime = JiraServerFacade.Instance.getIssue(issue.Server, issue.Key);
             issueWithTime.SecurityLevel = JiraServerFacade.Instance.getSecurityLevel(issue);
-            issueWithTime.SoapIssueObject = JiraServerFacade.Instance.getIssueSoapObject(issue);
+            object soapIssueObject = JiraServerFacade.Instance.getIssueSoapObject(issue);
+            List<JiraField> values = JiraActionFieldType.fillFieldValues(issue, soapIssueObject, fields);
+            if (values == null || values.Count == 0) {
+                runActionWithoutFields(owner, action, model, issue, status);
+            } else {
+                owner.Invoke(new MethodInvoker(delegate {
+                                                   IssueWorkflowAction actionDlg = 
+                                                       new IssueWorkflowAction(issue, soapIssueObject, action, fields, status);
+                                                   actionDlg.initAndShowDialog();
+                                               }));
+            }
         }
 
         private static void runActionWithoutFields(Control owner, JiraNamedEntity action, JiraIssueListModel model, JiraIssue issue, StatusLabel status) {

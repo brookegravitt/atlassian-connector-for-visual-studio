@@ -183,6 +183,21 @@ namespace Atlassian.plvs.api.soap {
             service.progressWorkflowAction(token, issue.Key, id.ToString(), null);
         }
 
+        public void runIssueActionWithParams(JiraIssue issue, int id, List<JiraField> fields, string comment) {
+            if (fields == null || fields.Count == 0) {
+                throw new Exception("Field values must not be empty");
+            }
+            List<RemoteFieldValue> fieldValues = new List<RemoteFieldValue>();
+            foreach (JiraField field in fields) {
+                RemoteFieldValue fv = new RemoteFieldValue {id = field.Id, values = field.Values.ToArray()};
+                fieldValues.Add(fv);
+            }
+            service.progressWorkflowAction(token, issue.Key, id.ToString(), fieldValues.ToArray());
+            if (!string.IsNullOrEmpty(comment)) {
+                service.addComment(token, issue.Key, new RemoteComment { body = comment });
+            }
+        }
+
         #region private parts
 
         private static List<JiraNamedEntity> createEntityList(IEnumerable<AbstractNamedRemoteEntity> entities) {
