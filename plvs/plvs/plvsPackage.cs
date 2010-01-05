@@ -4,9 +4,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Atlassian.plvs.attributes;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.eventsinks;
 using Atlassian.plvs.markers;
+using Atlassian.plvs.scm;
 using Atlassian.plvs.store;
 using Atlassian.plvs.windows;
 using EnvDTE;
@@ -30,6 +32,7 @@ namespace Atlassian.plvs {
     [ProvideAutoLoad(UIContextGuids.SolutionExists)]
     [ProvideToolWindowVisibility(typeof (AtlassianToolWindow), UIContextGuids.SolutionExists)]
     [ProvideToolWindowVisibility(typeof (IssueDetailsToolWindow), UIContextGuids.SolutionExists)]
+    [ProvideIssueRepositoryConnector(typeof(AnkhSvnJiraConnector), AnkhSvnJiraConnector.ANKH_CONNECTOR_NAME, typeof(PlvsPackage), "#113")]
     [Guid(GuidList.guidplvsPkgString)]
     public sealed class PlvsPackage : Package, IVsPersistSolutionOpts, IVsInstalledProduct {
         public const string MINIMUM_VISUAL_STUDIO_EDITION = "Standard";
@@ -163,6 +166,21 @@ namespace Atlassian.plvs {
             ValidateFontAndColorCacheManagerIsUpToDate();
 
             Autoupdate.Instance.initialize();
+
+            ((IServiceContainer)this).AddService(typeof(AnkhSvnJiraConnector), new ServiceCreatorCallback(CreateAnkhSvnConnector), true);
+        }
+
+        private object CreateAnkhSvnConnector(IServiceContainer container, Type servicetype) {
+            if (container != this) {
+                return null;
+            }
+
+            if (typeof(AnkhSvnJiraConnector) == servicetype) {
+                AnkhSvnJiraConnector provider = new AnkhSvnJiraConnector();
+                return provider;
+            }
+
+            return null;
         }
 
         // 

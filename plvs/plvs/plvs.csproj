@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -33,6 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Aga.Controls, Version=1.7.0.0, Culture=neutral, PublicKeyToken=fcc90fbf924463a3, processorArchitecture=MSIL" />
+    <Reference Include="Ankh.ExtensionPoints, Version=2.1.7444.278, Culture=neutral, PublicKeyToken=068e4b3e6ce74d73, processorArchitecture=MSIL" />
     <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Program Files\Microsoft Visual Studio 9.0\Common7\IDE\PublicAssemblies\EnvDTE.dll</HintPath>
@@ -67,6 +68,7 @@
     <Compile Include="api\JiraServerFacade.cs" />
     <Compile Include="api\RssClient.cs" />
     <Compile Include="api\soap\SoapSession.cs" />
+    <Compile Include="attributes\ProvideIssueRepositoryConnector.cs" />
     <Compile Include="attributes\StringValueAttribute.cs" />
     <Compile Include="autoupdate\Autoupdate.cs">
     </Compile>
@@ -167,6 +169,20 @@
     <Compile Include="models\fields\SummaryFiller.cs" />
     <Compile Include="models\fields\TimeTrackingFiller.cs" />
     <Compile Include="models\JiraActionFieldType.cs" />
+    <Compile Include="scm\AnkhSvnJiraActiveIssueControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="scm\AnkhSvnJiraActiveIssueControl.Designer.cs">
+      <DependentUpon>AnkhSvnJiraActiveIssueControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="scm\AnkhSvnJiraConnector.cs">
+    </Compile>
+    <Compile Include="scm\AnkhSvnJiraConnectorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="scm\AnkhSvnJiraConnectorControl.Designer.cs">
+      <DependentUpon>AnkhSvnJiraConnectorControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="ui\ComboBoxWithImages.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -366,6 +382,12 @@
     <EmbeddedResource Include="dialogs\TestJiraConnection.resx">
       <DependentUpon>TestJiraConnection.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="scm\AnkhSvnJiraActiveIssueControl.resx">
+      <DependentUpon>AnkhSvnJiraActiveIssueControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="scm\AnkhSvnJiraConnectorControl.resx">
+      <DependentUpon>AnkhSvnJiraConnectorControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="windows\IssueDetailsPanel.resx">
       <DependentUpon>IssueDetailsPanel.cs</DependentUpon>
