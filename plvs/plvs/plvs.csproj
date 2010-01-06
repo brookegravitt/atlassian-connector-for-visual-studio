@@ -560,7 +560,9 @@
     <None Include="Resources\texts\comments_css.txt" />
     <None Include="Resources\texts\summary_and_description_css.txt" />
     <None Include="Resources\texts\toggler_javascript.txt" />
+    <None Include="third party\ankh\LICENSE.rtf" />
     <Content Include="Resources\texts\autoupdate_html.txt" />
+    <Content Include="third party\ankh\Ankh.ExtensionPoints.dll" />
     <Content Include="third party\treeviewadv\Aga.Controls.dll" />
     <Content Include="third party\treeviewadv\license.txt" />
   </ItemGroup>
