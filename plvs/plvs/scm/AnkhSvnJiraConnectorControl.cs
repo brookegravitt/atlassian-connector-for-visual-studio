@@ -19,6 +19,9 @@ namespace Atlassian.plvs.scm {
                 foreach (KeyValuePair<string, object> property in value.CustomProperties) {
                     settings.CustomProperties[property.Key] = property.Value;
                 }
+                checkIntegrate.Checked =
+                    settings.CustomProperties.ContainsKey(Constants.INTEGRATE_WITH_ANKH)
+                    && settings.CustomProperties[Constants.INTEGRATE_WITH_ANKH].Equals("1");
             }
         }
 

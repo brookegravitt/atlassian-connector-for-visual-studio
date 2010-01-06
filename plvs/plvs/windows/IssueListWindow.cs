@@ -180,6 +180,7 @@ namespace Atlassian.plvs.windows {
 
         private void issuesTree_SelectionChanged(object sender, EventArgs e) {
             Invoke(new MethodInvoker(updateIssueListButtons));
+            invokeSelectedIssueChanged();
         }
 
         private static void openSelectedIssue(JiraIssue issue) {
@@ -188,6 +189,27 @@ namespace Atlassian.plvs.windows {
 
         private void issuesTree_StructureChanged(object sender, TreePathEventArgs e) {
             expandIssuesTree();
+            invokeSelectedIssueChanged();
+        }
+
+        public event EventHandler<SelectedIssueEventArgs> SelectedIssueChanged;
+
+        private void invokeSelectedIssueChanged() {
+            EventHandler<SelectedIssueEventArgs> handler = SelectedIssueChanged;
+            if (handler == null) return;
+
+            handler(this, new SelectedIssueEventArgs(SelectedIssue));
+        }
+
+        public JiraIssue SelectedIssue {
+            get {
+                bool issueSelected = (issuesTree.SelectedNode != null && issuesTree.SelectedNode.Tag is IssueNode);
+                JiraIssue issue = null;
+                if (issueSelected) {
+                    issue = ((IssueNode)issuesTree.SelectedNode.Tag).Issue;
+                }
+                return issue;
+            }
         }
 
         private void reloadKnownJiraServers() {
@@ -623,6 +645,14 @@ namespace Atlassian.plvs.windows {
 
         public JiraServer getCurrentlySelectedServer() {
             return filtersTree.getCurrentlySelectedServer();
+        }
+
+        public class SelectedIssueEventArgs : EventArgs {
+            public SelectedIssueEventArgs(JiraIssue issue) {
+                Issue = issue;
+            }
+
+            public JiraIssue Issue { get; private set; }
         }
     }
 }

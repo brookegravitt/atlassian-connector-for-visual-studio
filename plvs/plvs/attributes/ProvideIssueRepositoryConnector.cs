@@ -28,21 +28,17 @@ namespace Atlassian.plvs.attributes {
     /// This attribute registers the package as Issue Repository Connector.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-#if ORIGINAL
-    [System.Runtime.InteropServices.Guid("072C0B48-7BCC-49ce-927C-1EC92279E8CC")]
-#else 
     [System.Runtime.InteropServices.Guid("9D9C054A-BF4F-4e25-A1A3-B55EE950660D")]
-#endif
     public sealed class ProvideIssueRepositoryConnector : RegistrationAttribute {
         private const string REG_KEY_CONNECTORS = "IssueRepositoryConnectors";
         private const string REG_KEY_NAME = "Name";
         private const string REG_VALUE_SERVICE = "Service";
         private const string REG_VALUE_PACKAGE = "Package";
 
-        private Type _connectorService = null;
-        private string _regName = null;
-        private string _uiName = null;
-        private Type _uiNamePkg = null;
+        private readonly Type connectorService;
+        private readonly string regName;
+        private readonly string uiName;
+        private readonly Type uiNamePkg;
 
         /// <summary>
         /// 
@@ -52,25 +48,24 @@ namespace Atlassian.plvs.attributes {
         /// <param name="uiNamePkg">Unique identifier (Guid) of the package that proffers connector service</param>
         /// <param name="uiName">String resource id that represents ui name of the connector</param>
         public ProvideIssueRepositoryConnector(Type connectorServiceType, string regName, Type uiNamePkg, string uiName) {
-            //System.Diagnostics.Debug.Assert(typeof(IIssueRepositoryConnector).IsAssignableFrom(connectorServiceType), "Issue Repository Connector must implement IIssueRepositoryConnector interface");
-            _connectorService = connectorServiceType;
-            _regName = regName;
-            _uiNamePkg = uiNamePkg;
-            _uiName = uiName;
+            connectorService = connectorServiceType;
+            this.regName = regName;
+            this.uiNamePkg = uiNamePkg;
+            this.uiName = uiName;
         }
 
         /// <summary>
         /// Gets Issue repository connector service's global identifier.
         /// </summary>
         public Guid IssueRepositoryConnectorService {
-            get { return _connectorService.GUID; }
+            get { return connectorService.GUID; }
         }
 
         /// <summary>
         /// Gets the name of the issue repository connector (used in registry)
         /// </summary>
         public string RegName {
-            get { return _regName; }
+            get { return regName; }
         }
 
         /// <summary>
@@ -83,15 +78,15 @@ namespace Atlassian.plvs.attributes {
         /// <summary>
         /// Gets the package identifier the proffers the connector service.
         /// </summary>
-        public Guid UINamePkg {
-            get { return _uiNamePkg.GUID; }
+        public Guid UiNamePkg {
+            get { return uiNamePkg.GUID; }
         }
 
         /// <summary>
         /// Gets the string resource identifier that represents the UI name of the issue tracker repository connector.
         /// </summary>
-        public string UIName {
-            get { return _uiName; }
+        public string UiName {
+            get { return uiName; }
         }
 
         public override void Register(RegistrationContext context) {
@@ -107,8 +102,8 @@ namespace Atlassian.plvs.attributes {
                                           IssueRepositoryConnectorService.ToString("B").ToUpperInvariant());
 
                     using (Key connectorNameKey = connectorKey.CreateSubkey(REG_KEY_NAME)) {
-                        connectorNameKey.SetValue("", UIName);
-                        connectorNameKey.SetValue(REG_VALUE_PACKAGE, UINamePkg.ToString("B").ToUpperInvariant());
+                        connectorNameKey.SetValue("", UiName);
+                        connectorNameKey.SetValue(REG_VALUE_PACKAGE, UiNamePkg.ToString("B").ToUpperInvariant());
 
                         connectorNameKey.Close();
                     }
