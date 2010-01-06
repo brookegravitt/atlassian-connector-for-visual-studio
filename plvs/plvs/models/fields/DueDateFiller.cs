@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Atlassian.plvs.api;
 using Atlassian.plvs.Atlassian.plvs.api.soap.service;
 
@@ -13,11 +14,11 @@ namespace Atlassian.plvs.models.fields {
 
             DateTime? dueDate = ri.duedate;
             if (dueDate == null) {
-                return null;
+                return new List<string>();
             }
 
             // hmm, is it right for all cases? This is the date format JIRA is sending us, will it accept it back?
-            List<string> result = new List<string> { String.Format("{0:dd/MM/yy}", dueDate) };
+            List<string> result = new List<string> {((DateTime) dueDate).ToString("dd/MM/yy", new CultureInfo("en-US")) };
             return result;
         }
     }

@@ -4,7 +4,7 @@ namespace Atlassian.plvs.ui.fields {
     public class TextLineFieldEditor : JiraFieldEditor {
         private readonly Control editor = new TextBox();
 
-        public TextLineFieldEditor(string value) {
+        public TextLineFieldEditor(string value, FieldValidListener validListener) : base(validListener) {
             if (value != null) {
                 editor.Text = value;
             }

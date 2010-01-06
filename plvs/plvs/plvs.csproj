@@ -191,6 +191,7 @@
     <Compile Include="ui\fields\JiraFieldEditor.cs" />
     <Compile Include="ui\fields\TextAreaFieldEditor.cs" />
     <Compile Include="ui\fields\TextLineFieldEditor.cs" />
+    <Compile Include="ui\fields\TimeTrackingEditor.cs" />
     <Compile Include="ui\fields\UserFieldEditor.cs" />
     <Compile Include="ui\fields\NamedEntityListFieldEditor.cs" />
     <Compile Include="ui\JiraFiltersTree.cs">

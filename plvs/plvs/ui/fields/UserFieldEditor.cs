@@ -18,7 +18,7 @@ namespace Atlassian.plvs.ui.fields {
                                       Location = new Point(140, 3),
                                   };
 
-        public UserFieldEditor(string userName) {
+        public UserFieldEditor(string userName, FieldValidListener validListener) : base(validListener) {
             userBox.Width = 120;
             if (userName != null) {
                 userBox.Text = userName;

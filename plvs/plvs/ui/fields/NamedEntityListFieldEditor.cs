@@ -10,7 +10,9 @@ namespace Atlassian.plvs.ui.fields {
                                    Height = MULTI_LINE_EDITOR_HEIGHT
                                };
 
-        public NamedEntityListFieldEditor(IEnumerable<string> selectedEntityNames, IEnumerable<JiraNamedEntity> entities) {
+        public NamedEntityListFieldEditor(IEnumerable<string> selectedEntityNames, IEnumerable<JiraNamedEntity> entities, FieldValidListener validListener)
+            : base(validListener) {
+
             List<JiraNamedEntity> selected = new List<JiraNamedEntity>();
 
             foreach (JiraNamedEntity entity in entities) {
