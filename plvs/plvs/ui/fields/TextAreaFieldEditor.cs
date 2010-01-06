@@ -5,14 +5,16 @@ namespace Atlassian.plvs.ui.fields {
         private readonly Control editor = new TextBox
                                           {
                                               Multiline = true,
-                                              WordWrap = true,
+                                              ScrollBars = ScrollBars.Both,
+                                              AcceptsReturn = true,
                                               Height = MULTI_LINE_EDITOR_HEIGHT
                                           };
 
         public TextAreaFieldEditor(string value) {
-            if (value != null) {
-                editor.Text = value;
-            }
+            if (value == null) return;
+
+            string fixedValue = value.Replace("\r\n", "\n").Replace("\n", "\r\n");
+            editor.Text = fixedValue;
         }
 
         public override Control Widget {

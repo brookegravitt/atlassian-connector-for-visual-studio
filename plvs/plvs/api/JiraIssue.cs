@@ -91,6 +91,7 @@ namespace Atlassian.plvs.api {
                         break;
                     case "resolution":
                         Resolution = nav.Value;
+                        ResolutionId = getAttributeSafely(nav, "id", UNKNOWN);
                         break;
                     case "timeestimate":
                         RemainingEstimate = nav.Value;
@@ -174,6 +175,8 @@ namespace Atlassian.plvs.api {
         public int PriorityId { get; set; }
 
         public string Resolution { get; private set; }
+
+        public int ResolutionId { get; private set; }
 
         public string Reporter { get; private set; }
 

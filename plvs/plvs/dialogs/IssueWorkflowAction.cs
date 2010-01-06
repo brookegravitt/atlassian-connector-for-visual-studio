@@ -33,10 +33,11 @@ namespace Atlassian.plvs.dialogs {
         private const int MARGIN = 16;
 
         private const int INITIAL_WIDTH = 700;
-        private const int INITIAL_HEIGHT = 700;
+        private const int INITIAL_HEIGHT = 500;
 
         private List<JiraNamedEntity> issueTypes = new List<JiraNamedEntity>();
         private List<JiraNamedEntity> versions = new List<JiraNamedEntity>();
+        private List<JiraNamedEntity> comps = new List<JiraNamedEntity>();
 
         public IssueWorkflowAction(JiraIssue issue, object soapIssueObject, JiraNamedEntity action,
                                    List<JiraField> fields, StatusLabel status) {
@@ -76,7 +77,11 @@ namespace Atlassian.plvs.dialogs {
                 JiraProject project = projects[issue.ProjectKey];
                 issueTypes = JiraServerFacade.Instance.getIssueTypes(issue.Server, project);
                 versions = JiraServerFacade.Instance.getVersions(issue.Server, project);
+                comps = JiraServerFacade.Instance.getComponents(issue.Server, project);
+
                 status.setInfo("");
+
+                if (!Visible) return;
 
                 Invoke(new MethodInvoker(delegate {
                                              verticalPosition = 0;
@@ -91,22 +96,26 @@ namespace Atlassian.plvs.dialogs {
                                              }
 
                                              ClientSize = new Size(INITIAL_WIDTH,
-                                                                   Math.Min(verticalPosition, INITIAL_HEIGHT) + buttonOk.Height + 3*MARGIN);
+                                                                   Math.Min(verticalPosition, INITIAL_HEIGHT) + buttonOk.Height + 4*MARGIN);
 
-                                             resizeStaticContent();
+                                             Size = new Size(Width + 1, Height + 1);
 
                                              buttonOk.Enabled = true;
                                          }));
             } else {
                 status.setInfo("");
-                Invoke(new MethodInvoker(() => MessageBox.Show("Unable to retrieve issue data", Constants.ERROR_CAPTION,
-                                                               MessageBoxButtons.OK, MessageBoxIcon.Error)));
+                if (Visible) {
+                    Invoke(new MethodInvoker(() => MessageBox.Show("Unable to retrieve issue data", Constants.ERROR_CAPTION,
+                                                                   MessageBoxButtons.OK, MessageBoxIcon.Error)));
+                }
             }
         }
 
         private void resizeStaticContent() {
             panelContent.Location = new Point(MARGIN, MARGIN);
+            panelContent.SuspendLayout();
             panelContent.Size = new Size(ClientSize.Width - 2*MARGIN, ClientSize.Height - 3*MARGIN - buttonOk.Height);
+            panelContent.ResumeLayout(true);
 
             buttonOk.Location = new Point(ClientSize.Width - 2*buttonOk.Width - 3*MARGIN/2,
                                           ClientSize.Height - MARGIN - buttonOk.Height);
@@ -130,13 +139,13 @@ namespace Atlassian.plvs.dialogs {
                         editor = new TextAreaFieldEditor(soapIssueObject != null ? soapIssueObject.environment : null);
                         break;
                     case JiraActionFieldType.WidgetType.ISSUE_TYPE:
-                        editor = new IssueTypeFieldEditor(issue, issueTypes);
+                        editor = new NamedEntityComboEditor(issue.IssueTypeId, issueTypes);
                         break;
                     case JiraActionFieldType.WidgetType.VERSIONS:
-                        editor = new VersionFieldEditor(issue.Versions, versions);
+                        editor = new NamedEntityListFieldEditor(issue.Versions, versions);
                         break;
                     case JiraActionFieldType.WidgetType.FIX_VERSIONS:
-                        editor = new VersionFieldEditor(issue.FixVersions, versions);
+                        editor = new NamedEntityListFieldEditor(issue.FixVersions, versions);
                         break;
                     case JiraActionFieldType.WidgetType.ASSIGNEE:
                         editor = new UserFieldEditor(soapIssueObject != null ? soapIssueObject.assignee : null);
@@ -147,10 +156,17 @@ namespace Atlassian.plvs.dialogs {
                     case JiraActionFieldType.WidgetType.DUE_DATE:
                         editor = new DateFieldEditor(soapIssueObject != null ? soapIssueObject.duedate : null);
                         break;
-                    case JiraActionFieldType.WidgetType.TIMETRACKING:
-                    case JiraActionFieldType.WidgetType.RESOLUTION:
-                    case JiraActionFieldType.WidgetType.PRIORITY:
                     case JiraActionFieldType.WidgetType.COMPONENTS:
+                        editor = new NamedEntityListFieldEditor(issue.Components, comps);
+                        break;
+                    case JiraActionFieldType.WidgetType.RESOLUTION:
+                        SortedDictionary<int, JiraNamedEntity> resolutions = JiraServerCache.Instance.getResolutions(issue.Server);
+                        editor = new NamedEntityComboEditor(issue.ResolutionId, resolutions != null ? resolutions.Values : null);
+                        break;
+                    case JiraActionFieldType.WidgetType.PRIORITY:
+                        editor = new NamedEntityComboEditor(issue.PriorityId, JiraServerCache.Instance.getPriorities(issue.Server));
+                        break;
+                    case JiraActionFieldType.WidgetType.TIMETRACKING:
                     case JiraActionFieldType.WidgetType.SECURITY:
                     case JiraActionFieldType.WidgetType.UNSUPPORTED:
                     default:
@@ -233,14 +249,14 @@ namespace Atlassian.plvs.dialogs {
                 editor.resizeToWidth(width);
             }
             if (textUnsupported != null) {
-                textUnsupported.Width = width;
+                textUnsupported.Width = ClientSize.Width - 4*MARGIN;
             }
 
             ResumeLayout(true);
         }
 
         private int calculatedFieldWidth() {
-            return ClientSize.Width - FIELD_X_POS - 2*MARGIN;
+            return ClientSize.Width - FIELD_X_POS - 4*MARGIN;
         }
     }
 }
