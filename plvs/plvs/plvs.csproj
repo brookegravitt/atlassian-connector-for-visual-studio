@@ -187,12 +187,12 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ui\fields\DateFieldEditor.cs" />
-    <Compile Include="ui\fields\IssueTypeFieldEditor.cs" />
+    <Compile Include="ui\fields\NamedEntityComboEditor.cs" />
     <Compile Include="ui\fields\JiraFieldEditor.cs" />
     <Compile Include="ui\fields\TextAreaFieldEditor.cs" />
     <Compile Include="ui\fields\TextLineFieldEditor.cs" />
     <Compile Include="ui\fields\UserFieldEditor.cs" />
-    <Compile Include="ui\fields\VersionFieldEditor.cs" />
+    <Compile Include="ui\fields\NamedEntityListFieldEditor.cs" />
     <Compile Include="ui\JiraFiltersTree.cs">
       <SubType>Component</SubType>
     </Compile>

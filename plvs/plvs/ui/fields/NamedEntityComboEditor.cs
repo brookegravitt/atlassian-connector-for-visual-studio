@@ -4,21 +4,23 @@ using Atlassian.plvs.api;
 using Atlassian.plvs.models;
 
 namespace Atlassian.plvs.ui.fields {
-    public class IssueTypeFieldEditor : JiraFieldEditor {
+    public class NamedEntityComboEditor : JiraFieldEditor {
         private readonly JiraNamedEntityComboBox combo = new JiraNamedEntityComboBox();
 
-        public IssueTypeFieldEditor(JiraIssue issue, IEnumerable<JiraNamedEntity> issueTypes) {
+        public NamedEntityComboEditor(int selectedEntityId, IEnumerable<JiraNamedEntity> entities) {
             ImageList imageList = new ImageList();
             int i = 0;
             int selectedIndex = -1;
-            foreach (var type in issueTypes) {
-                ComboBoxWithImagesItem<JiraNamedEntity> item = new ComboBoxWithImagesItem<JiraNamedEntity>(type, i);
-                imageList.Images.Add(ImageCache.Instance.getImage(type.IconUrl));
-                combo.Items.Add(item);
-                if (issue.IssueTypeId == type.Id) {
-                    selectedIndex = i;
+            if (entities != null) {
+                foreach (var entity in entities) {
+                    ComboBoxWithImagesItem<JiraNamedEntity> item = new ComboBoxWithImagesItem<JiraNamedEntity>(entity, i);
+                    imageList.Images.Add(ImageCache.Instance.getImage(entity.IconUrl));
+                    combo.Items.Add(item);
+                    if (selectedEntityId != JiraIssue.UNKNOWN && selectedEntityId == entity.Id) {
+                        selectedIndex = i;
+                    }
+                    ++i;
                 }
-                ++i;
             }
             
             combo.ImageList = imageList;

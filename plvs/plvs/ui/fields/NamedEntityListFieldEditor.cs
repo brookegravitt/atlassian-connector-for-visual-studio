@@ -3,23 +3,23 @@ using System.Windows.Forms;
 using Atlassian.plvs.api;
 
 namespace Atlassian.plvs.ui.fields {
-    public class VersionFieldEditor : JiraFieldEditor {
+    public class NamedEntityListFieldEditor : JiraFieldEditor {
         private readonly ListBox list = new ListBox
                                {
                                    SelectionMode = SelectionMode.MultiExtended,
                                    Height = MULTI_LINE_EDITOR_HEIGHT
                                };
 
-        public VersionFieldEditor(IEnumerable<string> selectedVersions, IEnumerable<JiraNamedEntity> versions) {
+        public NamedEntityListFieldEditor(IEnumerable<string> selectedEntityNames, IEnumerable<JiraNamedEntity> entities) {
             List<JiraNamedEntity> selected = new List<JiraNamedEntity>();
 
-            foreach (JiraNamedEntity version in versions) {
-                foreach (var selectedVersion in selectedVersions) {
-                    if (!version.Name.Equals(selectedVersion)) continue;
-                    selected.Add(version);
+            foreach (JiraNamedEntity entity in entities) {
+                foreach (var selectedEntityName in selectedEntityNames) {
+                    if (!entity.Name.Equals(selectedEntityName)) continue;
+                    selected.Add(entity);
                     break;
                 }
-                list.Items.Add(version);
+                list.Items.Add(entity);
             }
             foreach (JiraNamedEntity sel in selected) {
                 list.SelectedItems.Add(sel);
