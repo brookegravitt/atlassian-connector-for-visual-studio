@@ -64,5 +64,12 @@
     <Registry Name="Service" Value="{34D3D2C5-60CD-4d79-8BD8-7759EBB3C27A}" Type="string" />
   </Registry>
 
+  <Registry Root="HKLM" Key="Software\Microsoft\VisualStudio\9.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}" Value="Atlassian JIRA Connector" Type="string">
+    <Registry Name="Service" Value="{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}" Type="string" />
+  </Registry>
+  <Registry Root="HKLM" Key="Software\Microsoft\VisualStudio\9.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}\Name" Value="#113" Type="string">
+    <Registry Name="Package" Value="{36FA5F7F-2B5D-4CEC-8C06-10C483683A16}" Type="string" />
+  </Registry>
+
 </Include>
 
