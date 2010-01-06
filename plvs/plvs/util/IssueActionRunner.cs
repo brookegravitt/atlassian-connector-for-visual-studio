@@ -28,13 +28,12 @@ namespace Atlassian.plvs.util {
             JiraIssue issueWithTime = JiraServerFacade.Instance.getIssue(issue.Server, issue.Key);
             issueWithTime.SecurityLevel = JiraServerFacade.Instance.getSecurityLevel(issue);
             object soapIssueObject = JiraServerFacade.Instance.getIssueSoapObject(issue);
-            List<JiraField> values = JiraActionFieldType.fillFieldValues(issue, soapIssueObject, fields);
-            if (values == null || values.Count == 0) {
+            List<JiraField> fieldsWithValues = JiraActionFieldType.fillFieldValues(issue, soapIssueObject, fields);
+            if (fieldsWithValues == null || fieldsWithValues.Count == 0) {
                 runActionWithoutFields(owner, action, model, issue, status);
             } else {
                 owner.Invoke(new MethodInvoker(delegate {
-                                                   IssueWorkflowAction actionDlg = 
-                                                       new IssueWorkflowAction(issue, soapIssueObject, action, fields, status);
+                                                   IssueWorkflowAction actionDlg = new IssueWorkflowAction(issue, action, fieldsWithValues, status);
                                                    actionDlg.initAndShowDialog();
                                                }));
             }

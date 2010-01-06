@@ -8,7 +8,7 @@ namespace Atlassian.plvs.ui.fields {
                                                      ShowCheckBox = true
                                                  };
 
-        public DateFieldEditor(DateTime? date) {
+        public DateFieldEditor(DateTime? date, FieldValidListener validListener) : base(validListener) {
             if (date != null) {
                 picker.Value = (DateTime) date;
                 picker.Checked = true;

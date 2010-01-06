@@ -10,7 +10,7 @@ namespace Atlassian.plvs.ui.fields {
                                               Height = MULTI_LINE_EDITOR_HEIGHT
                                           };
 
-        public TextAreaFieldEditor(string value) {
+        public TextAreaFieldEditor(string value, FieldValidListener validListener) : base(validListener) {
             if (value == null) return;
 
             string fixedValue = value.Replace("\r\n", "\n").Replace("\n", "\r\n");
