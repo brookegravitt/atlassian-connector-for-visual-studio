@@ -47,8 +47,6 @@ namespace Atlassian.plvs.dialogs {
 
             Text = issue.Key + ": " + action.Name;
 
-            ClientSize = new Size(0, 0);
-
             ClientSize = new Size(INITIAL_WIDTH, INITIAL_HEIGHT + buttonOk.Height + 3 * MARGIN);
 
             buttonOk.Enabled = false;
@@ -94,7 +92,9 @@ namespace Atlassian.plvs.dialogs {
                                              ClientSize = new Size(INITIAL_WIDTH,
                                                                    Math.Min(verticalPosition, INITIAL_HEIGHT) + buttonOk.Height + 4*MARGIN);
 
+                                             // resize to perform layout
                                              Size = new Size(Width + 1, Height + 1);
+
                                              updateOkButton();
                                          }));
             } else {
