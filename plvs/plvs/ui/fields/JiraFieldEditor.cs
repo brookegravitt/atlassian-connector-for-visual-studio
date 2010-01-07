@@ -1,9 +1,11 @@
-﻿using System.Windows.Forms;
+﻿using System.Collections.Generic;
+using System.Windows.Forms;
 using Atlassian.plvs.api;
 
 namespace Atlassian.plvs.ui.fields {
     public abstract class JiraFieldEditor {
-        
+        public JiraField Field { get; private set; }
+
         private readonly FieldValidListener validListener;
         private bool fieldValid = true;
 
@@ -16,7 +18,8 @@ namespace Atlassian.plvs.ui.fields {
 
         public delegate void FieldValidListener(JiraFieldEditor sender, bool valid);
 
-        protected JiraFieldEditor(FieldValidListener validListener) {
+        protected JiraFieldEditor(JiraField field, FieldValidListener validListener) {
+            Field = field;
             this.validListener = validListener;
         }
 
@@ -33,5 +36,7 @@ namespace Atlassian.plvs.ui.fields {
         public virtual string getFieldLabel(JiraIssue issue, JiraField field) {
             return field.Name;
         }
+
+        public abstract List<string> getValues();
     }
 }

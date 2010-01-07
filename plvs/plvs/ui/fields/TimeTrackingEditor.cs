@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -20,7 +21,8 @@ namespace Atlassian.plvs.ui.fields {
             Location = new Point(140, 3),
         };
 
-        public TimeTrackingEditor(string value, FieldValidListener validListener) : base(validListener) {
+        public TimeTrackingEditor(JiraField field, string value, FieldValidListener validListener)
+            : base(field, validListener) {
             trackingBox.TextChanged += trackingBox_TextChanged;
             trackingBox.Width = 120;
             if (value != null) {
@@ -60,6 +62,10 @@ namespace Atlassian.plvs.ui.fields {
 
         public override string getFieldLabel(JiraIssue issue, JiraField field) {
             return issue.TimeSpent == null ? "Original Estimate" : "Remaining Estimate";
+        }
+
+        public override List<string> getValues() {
+            return FieldValid ? new List<string> { trackingBox.Text.Trim()} : new List<string>();
         }
     }
 }

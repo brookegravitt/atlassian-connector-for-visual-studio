@@ -33,7 +33,7 @@ namespace Atlassian.plvs.util {
                 runActionWithoutFields(owner, action, model, issue, status);
             } else {
                 owner.Invoke(new MethodInvoker(delegate {
-                                                   IssueWorkflowAction actionDlg = new IssueWorkflowAction(issue, action, fieldsWithValues, status);
+                                                   IssueWorkflowAction actionDlg = new IssueWorkflowAction(issue, action, model, fieldsWithValues, status);
                                                    actionDlg.initAndShowDialog();
                                                }));
             }

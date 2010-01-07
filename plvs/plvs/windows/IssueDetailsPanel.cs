@@ -357,12 +357,10 @@ namespace Atlassian.plvs.windows {
                 if (files.Count == 0) {
                     MessageBox.Show("No matching files found for " + file, "Error");
                     Debug.WriteLine("No matching files found for " + file);
-                }
-                else if (files.Count > 1) {
+                } else if (files.Count > 1) {
                     MessageBox.Show("Multiple matching files found for " + file, "Error");
                     Debug.WriteLine("Multiple matching files found for " + file);
-                }
-                else {
+                } else {
                     string lineNoStr = line.Substring(line.LastIndexOf(STACKLINE_LINE_NUMBER_SEPARATOR) + 1);
                     try {
                         int lineNo = int.Parse(lineNoStr);
@@ -379,25 +377,24 @@ namespace Atlassian.plvs.windows {
                             sel.SelectAll();
                             sel.MoveToLineAndOffset(lineNo, 1, false);
                             sel.SelectLine();
-                        }
-                        else {
+                        } else {
                             throw new Exception("Cannot get text selection for the document");
                         }
-                    }
-                    catch (Exception ex) {
+                    } catch (Exception ex) {
                         MessageBox.Show("Unable to open the specified file: " + ex.Message, "Error");
                         Debug.WriteLine(ex);
                     }
                 }
 
                 e.Cancel = true;
-
                 return true;
             }
             return false;
         }
 
         private static void matchProjectItemChildren(string file, ICollection<ProjectItem> files, ProjectItems items) {
+            if (items == null) return;
+
             foreach (ProjectItem item in items) {
 //                Debug.WriteLine(item.Name);
                 if (file.EndsWith(item.Name)) {

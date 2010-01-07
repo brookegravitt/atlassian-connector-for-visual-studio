@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Atlassian.plvs.api;
 using Atlassian.plvs.models.fields;
 
@@ -56,9 +57,13 @@ namespace Atlassian.plvs.models {
 		    { "security", new WidgetTypeAndFieldFiller(WidgetType.SECURITY, new SecurityFiller()) }
         };
 
-	    private static readonly CustomFieldFiller CustomFieldFiller = new CustomFieldFiller(); 
+	    private static readonly CustomFieldFiller CustomFieldFiller = new CustomFieldFiller();
+        
+        private const string TIMEORIGINALESTIMATE = "timeoriginalestimate";
+        private const string TIMEESTIMATE = "timeestimate";
+        private const string TIMESPENT = "timespent";
 
-       	private JiraActionFieldType() {}
+        private JiraActionFieldType() {}
 
 	    public static WidgetType getFieldTypeForFieldId(JiraField field) {
 		    return getFieldTypeForFieldId(field.Id);
@@ -93,21 +98,25 @@ namespace Atlassian.plvs.models {
 		    int timeSpent = issue.TimeSpentInSeconds;
 
 		    if (originalEstimate != 0) {
-			    JiraField originalEstimateField = new JiraField("timeoriginalestimate", "Original Estimate");
+		        JiraField originalEstimateField = new JiraField(TIMEORIGINALESTIMATE, "Original Estimate");
 			    originalEstimateField.Values.Add(originalEstimate.ToString());
 			    result.Add(originalEstimateField);
 		    }
 		    if (remainingEstimate != 0) {
-			    JiraField remainingEstimateField = new JiraField("timeestimate", "Remaining Estimate");
+		        JiraField remainingEstimateField = new JiraField(TIMEESTIMATE, "Remaining Estimate");
 			    remainingEstimateField.Values.Add(remainingEstimate.ToString());
 			    result.Add(remainingEstimateField);
 		    }
 		    if (timeSpent != 0) {
-			    JiraField timeSpentField = new JiraField("timespent", "Time Spent");
+		        JiraField timeSpentField = new JiraField(TIMESPENT, "Time Spent");
 			    timeSpentField.Values.Add(timeSpent.ToString());
 			    result.Add(timeSpentField);
 		    }
 	    }
+
+        public static bool isTimeField(JiraField field) {
+            return field.Id.Equals(TIMEESTIMATE) || field.Id.Equals(TIMEORIGINALESTIMATE) || field.Id.Equals(TIMESPENT);
+        }
 
 	    private static JiraField fillField(JiraIssue issue, object soapIssueObject, JiraField field) {
             JiraField result = new JiraField(field);
@@ -132,6 +141,6 @@ namespace Atlassian.plvs.models {
 		    }
 
 		    return sorted.Values;
-	    } 
+	    }
     }
 }

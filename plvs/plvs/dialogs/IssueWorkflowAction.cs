@@ -13,6 +13,8 @@ using Atlassian.plvs.util;
 namespace Atlassian.plvs.dialogs {
     public sealed partial class IssueWorkflowAction : Form {
         private readonly JiraIssue issue;
+        private readonly JiraNamedEntity action;
+        private readonly JiraIssueListModel model;
         private readonly ICollection<JiraField> fields;
         private readonly StatusLabel status;
 
@@ -37,8 +39,12 @@ namespace Atlassian.plvs.dialogs {
         private List<JiraNamedEntity> versions = new List<JiraNamedEntity>();
         private List<JiraNamedEntity> comps = new List<JiraNamedEntity>();
 
-        public IssueWorkflowAction(JiraIssue issue, JiraNamedEntity action, List<JiraField> fields, StatusLabel status) {
+        public IssueWorkflowAction(
+            JiraIssue issue, JiraNamedEntity action, JiraIssueListModel model, List<JiraField> fields, StatusLabel status) {
+
             this.issue = issue;
+            this.action = action;
+            this.model = model;
             this.fields = JiraActionFieldType.sortFieldList(fields);
 
             this.status = status;
@@ -52,6 +58,9 @@ namespace Atlassian.plvs.dialogs {
             buttonOk.Enabled = false;
 
             StartPosition = FormStartPosition.CenterParent;
+
+            panelThrobber.Visible = true;
+            panelContent.Visible = false;
         }
 
         public void initAndShowDialog() {
@@ -78,6 +87,9 @@ namespace Atlassian.plvs.dialogs {
                 if (!Visible) return;
 
                 Invoke(new MethodInvoker(delegate {
+                                             panelContent.Visible = true;
+                                             panelThrobber.Visible = false;
+
                                              verticalPosition = 0;
 
                                              fillFields();
@@ -96,6 +108,7 @@ namespace Atlassian.plvs.dialogs {
                                              Size = new Size(Width + 1, Height + 1);
 
                                              updateOkButton();
+
                                          }));
             } else {
                 status.setInfo("");
@@ -139,53 +152,55 @@ namespace Atlassian.plvs.dialogs {
                 JiraFieldEditor editor = null;
                 switch (JiraActionFieldType.getFieldTypeForFieldId(field)) {
                     case JiraActionFieldType.WidgetType.SUMMARY:
-                        editor = new TextLineFieldEditor(field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
+                        editor = new TextLineFieldEditor(field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.DESCRIPTION:
-                        editor = new TextAreaFieldEditor(field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
+                        editor = new TextAreaFieldEditor(field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.ENVIRONMENT:
-                        editor = new TextAreaFieldEditor(field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
+                        editor = new TextAreaFieldEditor(field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.ISSUE_TYPE:
-                        editor = new NamedEntityComboEditor(issue.IssueTypeId, issueTypes, fieldValid);
+                        editor = new NamedEntityComboEditor(field, issue.IssueTypeId, issueTypes, fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.VERSIONS:
-                        editor = new NamedEntityListFieldEditor(issue.Versions, versions, fieldValid);
+                        editor = new NamedEntityListFieldEditor(field, issue.Versions, versions, fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.FIX_VERSIONS:
-                        editor = new NamedEntityListFieldEditor(issue.FixVersions, versions, fieldValid);
+                        editor = new NamedEntityListFieldEditor(field, issue.FixVersions, versions, fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.ASSIGNEE:
-                        editor = new UserFieldEditor(field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
+                        editor = new UserFieldEditor(field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.REPORTER:
-                        editor = new UserFieldEditor(field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
+                        editor = new UserFieldEditor(field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.DUE_DATE:
-                        editor = new DateFieldEditor(field.Values.Count > 0 
+                        editor = new DateFieldEditor(field, field.Values.Count > 0 
                             ? JiraIssueUtils.getDateTimeFromShortString(field.Values[0]) 
                             : (DateTime?) null, fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.COMPONENTS:
-                        editor = new NamedEntityListFieldEditor(issue.Components, comps, fieldValid);
+                        editor = new NamedEntityListFieldEditor(field, issue.Components, comps, fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.RESOLUTION:
                         SortedDictionary<int, JiraNamedEntity> resolutions = JiraServerCache.Instance.getResolutions(issue.Server);
-                        editor = new NamedEntityComboEditor(issue.ResolutionId, resolutions != null ? resolutions.Values : null, fieldValid, false);
+                        editor = new NamedEntityComboEditor(field, issue.ResolutionId, resolutions != null ? resolutions.Values : null, fieldValid, false);
                         break;
                     case JiraActionFieldType.WidgetType.PRIORITY:
-                        editor = new NamedEntityComboEditor(issue.PriorityId, JiraServerCache.Instance.getPriorities(issue.Server), fieldValid);
+                        editor = new NamedEntityComboEditor(field, issue.PriorityId, JiraServerCache.Instance.getPriorities(issue.Server), fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.TIMETRACKING:
-                        editor = new TimeTrackingEditor(field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
+                        editor = new TimeTrackingEditor(field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
                         break;
 // ReSharper disable RedundantCaseLabel
                     case JiraActionFieldType.WidgetType.SECURITY:
                     case JiraActionFieldType.WidgetType.UNSUPPORTED:
 // ReSharper restore RedundantCaseLabel
                     default:
-                        unsupportedFields.Add(field);
+                        if (!JiraActionFieldType.isTimeField(field)) {
+                            unsupportedFields.Add(field);
+                        }
                         break;
                 }
 
@@ -245,7 +260,72 @@ namespace Atlassian.plvs.dialogs {
         }
 
         private void buttonOk_Click(object sender, EventArgs e) {
-//            Invoke(new MethodInvoker(() => model.updateIssue(newIssue)));
+            setAllEnabled(false);
+            setThrobberVisible(true);
+
+            ICollection<JiraField> updatedFields = mergeFieldsFromEditors();
+            Thread t = new Thread(new ThreadStart(delegate {
+                                                      try {
+                                                          JiraServerFacade.Instance.runIssueActionWithParams(
+                                                              issue, action, updatedFields, textComment.Text.Length > 0 ? textComment.Text : null);
+                                                          var newIssue = JiraServerFacade.Instance.getIssue(issue.Server, issue.Key);
+                                                          status.setInfo("Action \"" + action.Name + "\" successfully run on issue " + issue.Key);
+                                                          Invoke(new MethodInvoker(delegate {
+                                                                                       Close();
+                                                                                       model.updateIssue(newIssue);
+                                                                                   }));
+                                                      }
+                                                      catch (Exception ex) {
+                                                          Invoke(new MethodInvoker(() => showErrorAndResumeEditing(ex)));
+                                                      }
+                                                  }));
+            t.Start();
+        }
+
+        private void showErrorAndResumeEditing(Exception ex) {
+            MessageBox.Show("Failed to run action " + action.Name + " on issue " + issue.Key + "\n" + ex.Message, 
+                Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            setThrobberVisible(false);
+            setAllEnabled(true);
+        }
+
+        private void setThrobberVisible(bool visible) {
+            SuspendLayout();
+            panelContent.SuspendLayout();
+            panelThrobber.Visible = visible;
+            panelContent.Visible = !visible;
+            foreach (JiraFieldEditor editor in editors) {
+                editor.Widget.Visible = !visible;
+            }
+            textComment.Visible = !visible;
+            textUnsupported.Visible = !visible;
+            panelContent.ResumeLayout(true);
+            ResumeLayout(true);
+        }
+
+        private void setAllEnabled(bool enabled) {
+            buttonCancel.Enabled = enabled;
+            foreach (JiraFieldEditor editor in editors) {
+                editor.Widget.Enabled = enabled;
+            }
+            textComment.Enabled = enabled;
+            if (enabled) {
+                updateOkButton();
+            } else {
+                buttonOk.Enabled = false;
+            }
+        }
+
+        private ICollection<JiraField> mergeFieldsFromEditors() {
+            Dictionary<string, JiraField> map = new Dictionary<string, JiraField>();
+            foreach (var field in fields) {
+                map[field.Id] = field;
+            }
+            foreach (JiraFieldEditor editor in editors) {
+                editor.Field.Values = editor.getValues();
+                map[editor.Field.Id] = editor.Field;
+            }
+            return map.Values;
         }
 
         private void buttonCancel_Click(object sender, EventArgs e) {
