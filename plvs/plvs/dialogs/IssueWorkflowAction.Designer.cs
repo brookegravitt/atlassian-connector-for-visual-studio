@@ -26,6 +26,10 @@
             this.buttonOk = new System.Windows.Forms.Button();
             this.panelContent = new System.Windows.Forms.Panel();
             this.buttonCancel = new System.Windows.Forms.Button();
+            this.progressWait = new System.Windows.Forms.ProgressBar();
+            this.panelThrobber = new System.Windows.Forms.Panel();
+            this.labelWait = new System.Windows.Forms.Label();
+            this.panelThrobber.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonOk
@@ -61,15 +65,48 @@
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
+            // progressWait
+            // 
+            this.progressWait.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressWait.Location = new System.Drawing.Point(190, 125);
+            this.progressWait.Name = "progressWait";
+            this.progressWait.Size = new System.Drawing.Size(304, 23);
+            this.progressWait.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+            this.progressWait.TabIndex = 0;
+            // 
+            // panelThrobber
+            // 
+            this.panelThrobber.BackColor = System.Drawing.SystemColors.Control;
+            this.panelThrobber.Controls.Add(this.labelWait);
+            this.panelThrobber.Controls.Add(this.progressWait);
+            this.panelThrobber.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelThrobber.Location = new System.Drawing.Point(0, 0);
+            this.panelThrobber.Name = "panelThrobber";
+            this.panelThrobber.Size = new System.Drawing.Size(684, 662);
+            this.panelThrobber.TabIndex = 1;
+            // 
+            // labelWait
+            // 
+            this.labelWait.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelWait.Location = new System.Drawing.Point(12, 194);
+            this.labelWait.Name = "labelWait";
+            this.labelWait.Size = new System.Drawing.Size(660, 13);
+            this.labelWait.TabIndex = 1;
+            this.labelWait.Text = "Please Wait...";
+            this.labelWait.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
             // IssueWorkflowAction
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(684, 662);
             this.ControlBox = false;
-            this.Controls.Add(this.buttonCancel);
-            this.Controls.Add(this.panelContent);
             this.Controls.Add(this.buttonOk);
+            this.Controls.Add(this.buttonCancel);
+            this.Controls.Add(this.panelThrobber);
+            this.Controls.Add(this.panelContent);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(400, 200);
@@ -77,6 +114,7 @@
             this.ShowIcon = false;
             this.Text = "IssueWorkflowAction";
             this.Resize += new System.EventHandler(this.IssueWorkflowAction_Resize);
+            this.panelThrobber.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -86,5 +124,8 @@
         private System.Windows.Forms.Button buttonOk;
         private System.Windows.Forms.Panel panelContent;
         private System.Windows.Forms.Button buttonCancel;
+        private System.Windows.Forms.Panel panelThrobber;
+        private System.Windows.Forms.Label labelWait;
+        private System.Windows.Forms.ProgressBar progressWait;
     }
 }

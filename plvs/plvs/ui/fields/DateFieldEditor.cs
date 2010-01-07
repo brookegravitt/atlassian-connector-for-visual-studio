@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
+using Atlassian.plvs.api;
+using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.ui.fields {
     internal class DateFieldEditor : JiraFieldEditor {
@@ -8,7 +11,8 @@ namespace Atlassian.plvs.ui.fields {
                                                      ShowCheckBox = true
                                                  };
 
-        public DateFieldEditor(DateTime? date, FieldValidListener validListener) : base(validListener) {
+        public DateFieldEditor(JiraField field, DateTime? date, FieldValidListener validListener)
+            : base(field, validListener) {
             if (date != null) {
                 picker.Value = (DateTime) date;
                 picker.Checked = true;
@@ -26,5 +30,9 @@ namespace Atlassian.plvs.ui.fields {
         }
 
         public override void resizeToWidth(int width) {}
+
+        public override List<string> getValues() {
+            return picker.Checked ? new List<string> { JiraIssueUtils.getShortDateStringFromDateTime(picker.Value)} : new List<string>();
+        }
     }
 }

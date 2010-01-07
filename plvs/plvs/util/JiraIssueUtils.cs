@@ -8,7 +8,8 @@ namespace Atlassian.plvs.util {
         public static readonly Regex ISSUE_REGEX = new Regex(@"([A-Z]+-\d+)");
 
         private const string JiraFormat = "ddd, d MMM yyyy HH:mm:ss zzz";
-        private const string ShortFormat = "dd/MM/yy";
+        private const string ShortFormatFromJira = "dd/MM/yy";
+        private const string ShortFormatToJira = "dd/MMM/yy";
 
         public static DateTime getDateTimeFromJiraTimeString(string value) {
             int bracket = value.LastIndexOf("(");
@@ -25,10 +26,15 @@ namespace Atlassian.plvs.util {
         }
 
         public static DateTime getDateTimeFromShortString(string value) {
+            // let's try both formats
             try {
-                return DateTime.ParseExact(value.Trim(), ShortFormat, new CultureInfo("en-US"), DateTimeStyles.None);
+                return DateTime.ParseExact(value.Trim(), ShortFormatFromJira, new CultureInfo("en-US"), DateTimeStyles.None);
             } catch (FormatException) {
-                return DateTime.MinValue;
+                try {
+                    return DateTime.ParseExact(value.Trim(), ShortFormatToJira, new CultureInfo("en-US"), DateTimeStyles.None);
+                } catch (FormatException) {
+                    return DateTime.MinValue;
+                }
             }
         }
 
@@ -37,6 +43,10 @@ namespace Atlassian.plvs.util {
                 return "Unknown";
             }
             return time.ToShortDateString() + " " + time.ToShortTimeString();
+        }
+
+        public static string getShortDateStringFromDateTime(DateTime time) {
+            return time.ToString(ShortFormatToJira, new CultureInfo("en-US"));
         }
     }
 }

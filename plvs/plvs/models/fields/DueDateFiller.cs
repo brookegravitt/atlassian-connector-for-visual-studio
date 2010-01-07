@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using Atlassian.plvs.api;
 using Atlassian.plvs.Atlassian.plvs.api.soap.service;
+using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.models.fields {
     public class DueDateFiller : FieldFiller {
@@ -17,8 +17,8 @@ namespace Atlassian.plvs.models.fields {
                 return new List<string>();
             }
 
-            // hmm, is it right for all cases? This is the date format JIRA is sending us, will it accept it back?
-            List<string> result = new List<string> {((DateTime) dueDate).ToString("dd/MM/yy", new CultureInfo("en-US")) };
+            string dateString = JiraIssueUtils.getShortDateStringFromDateTime((DateTime) dueDate);
+            List<string> result = new List<string> {dateString};
             return result;
         }
     }

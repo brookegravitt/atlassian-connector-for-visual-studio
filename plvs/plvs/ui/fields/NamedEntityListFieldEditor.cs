@@ -10,8 +10,9 @@ namespace Atlassian.plvs.ui.fields {
                                    Height = MULTI_LINE_EDITOR_HEIGHT
                                };
 
-        public NamedEntityListFieldEditor(IEnumerable<string> selectedEntityNames, IEnumerable<JiraNamedEntity> entities, FieldValidListener validListener)
-            : base(validListener) {
+        public NamedEntityListFieldEditor(
+            JiraField field, IEnumerable<string> selectedEntityNames, IEnumerable<JiraNamedEntity> entities, FieldValidListener validListener)
+            : base(field, validListener) {
 
             List<JiraNamedEntity> selected = new List<JiraNamedEntity>();
 
@@ -38,6 +39,14 @@ namespace Atlassian.plvs.ui.fields {
 
         public override void resizeToWidth(int width) {
             list.Width = width;
+        }
+
+        public override List<string> getValues() {
+            List<string> sel = new List<string>();
+            foreach (var item in list.SelectedItems) {
+                sel.Add(((JiraNamedEntity) item).Id.ToString());
+            }
+            return sel;
         }
     }
 }

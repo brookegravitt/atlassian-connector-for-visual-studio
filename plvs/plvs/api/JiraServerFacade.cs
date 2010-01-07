@@ -111,7 +111,7 @@ namespace Atlassian.plvs.api {
             wrapExceptionsVoid(issue.Server, () => getSoapSession(issue.Server).runIssueActionWithoutParams(issue, action.Id));
         }
 
-        public void runIssueActionWithParams(JiraIssue issue, JiraNamedEntity action, List<JiraField> fields, string comment) {
+        public void runIssueActionWithParams(JiraIssue issue, JiraNamedEntity action, ICollection<JiraField> fields, string comment) {
             wrapExceptionsVoid(issue.Server, () => getSoapSession(issue.Server).runIssueActionWithParams(issue, action.Id, fields, comment));
         }
 

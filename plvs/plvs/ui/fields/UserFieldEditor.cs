@@ -1,5 +1,8 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
+using Atlassian.plvs.api;
 using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.ui.fields {
@@ -18,7 +21,7 @@ namespace Atlassian.plvs.ui.fields {
                                       Location = new Point(140, 3),
                                   };
 
-        public UserFieldEditor(string userName, FieldValidListener validListener) : base(validListener) {
+        public UserFieldEditor(JiraField field, string userName, FieldValidListener validListener) : base(field, validListener) {
             userBox.Width = 120;
             if (userName != null) {
                 userBox.Text = userName;
@@ -42,6 +45,10 @@ namespace Atlassian.plvs.ui.fields {
 
         public override void resizeToWidth(int width) {
             panel.Width = width;
+        }
+
+        public override List<string> getValues() {
+            return String.IsNullOrEmpty(userBox.Text) ? new List<string>() : new List<string> { userBox.Text };
         }
     }
 }
