@@ -203,6 +203,9 @@
     <Compile Include="ui\JiraNamedEntityComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ui\ToolWindowFrame.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="util\Constants.cs" />
     <Compile Include="util\ExceptionBuilder.cs" />
     <Compile Include="util\IssueActionRunner.cs" />

@@ -77,6 +77,7 @@ namespace Atlassian.plvs.eventsinks {
                 JiraEditorLinkManager.OnSolutionClosed();
                 if (ToolWindowManager.Instance.AtlassianWindow == null) return VSConstants.S_OK;
                 JiraServerModel.Instance.clear();
+                IssueListWindow.Instance.FrameVisible = false;
                 ParameterStoreManager.Instance.clear();
                 JiraIssueListModelImpl.Instance.removeAllListeners();
                 IssueDetailsWindow.Instance.clearAllIssues();

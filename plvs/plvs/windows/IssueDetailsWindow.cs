@@ -1,31 +1,12 @@
 ﻿using System.Windows.Forms;
 using Atlassian.plvs.api;
 using Atlassian.plvs.models;
+using Atlassian.plvs.ui;
 using EnvDTE;
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
 
 namespace Atlassian.plvs.windows {
-    public partial class IssueDetailsWindow : UserControl {
+    public partial class IssueDetailsWindow : ToolWindowFrame {
         public static IssueDetailsWindow Instance { get; private set; }
-
-        public ToolWindowPane DetailsFrame { get; set; }
-
-        public bool FrameVisible {
-            get { return DetailsFrame != null && ((IVsWindowFrame) DetailsFrame.Frame).IsVisible() == VSConstants.S_OK; }
-            set {
-                if (DetailsFrame == null) {
-                    return;
-                }
-                if (value) {
-                    ((IVsWindowFrame)DetailsFrame.Frame).Show();
-                }
-                else {
-                    ((IVsWindowFrame)DetailsFrame.Frame).Hide();
-                }
-            }
-        }
 
         private readonly JiraIssueListModel model = JiraIssueListModelImpl.Instance;
 
