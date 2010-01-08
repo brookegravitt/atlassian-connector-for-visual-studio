@@ -53,6 +53,7 @@ namespace Atlassian.plvs {
                 throw new NotSupportedException(Resources.CanNotCreateWindow);
             }
             IVsWindowFrame windowFrame = (IVsWindowFrame) window.Frame;
+            IssueListWindow.Instance.WindowFrame = window;
             ErrorHandler.ThrowOnFailure(windowFrame.Show());
             return window;
         }
@@ -63,7 +64,7 @@ namespace Atlassian.plvs {
                 throw new NotSupportedException(Resources.CanNotCreateWindow);
             }
             IVsWindowFrame windowFrame = (IVsWindowFrame) window.Frame;
-            IssueDetailsWindow.Instance.DetailsFrame = window;
+            IssueDetailsWindow.Instance.WindowFrame = window;
             ErrorHandler.ThrowOnFailure(windowFrame.Hide());
             return window;
         }

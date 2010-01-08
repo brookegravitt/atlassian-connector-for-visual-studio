@@ -14,7 +14,7 @@ using Aga.Controls.Tree;
 using Atlassian.plvs.ui.issues.treemodels;
 
 namespace Atlassian.plvs.windows {
-    public partial class IssueListWindow : UserControl {
+    public partial class IssueListWindow : ToolWindowFrame {
         private readonly JiraServerFacade facade = JiraServerFacade.Instance;
 
         private JiraIssueTree issuesTree;
