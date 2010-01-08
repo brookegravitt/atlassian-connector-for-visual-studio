@@ -16,6 +16,8 @@ namespace Atlassian.plvs.ui.issues.menus {
         private readonly ToolStripMenuItem[] items;
         private JiraIssue issue;
 
+        private int menuOpenGeneration;
+
         public IssueContextMenu(JiraIssueListModel model, StatusLabel status, TreeViewAdv tree,
                                 ToolStripMenuItem[] items) {
             this.model = model;
@@ -40,14 +42,13 @@ namespace Atlassian.plvs.ui.issues.menus {
 
         private void issueContextMenuOpened(object sender, EventArgs e) {
             Items.Clear();
-
             Items.AddRange(items);
 
-            Thread loaderThread = new Thread(addIssueActionItems);
+            Thread loaderThread = new Thread(() => addIssueActionItems(++menuOpenGeneration));
             loaderThread.Start();
         }
 
-        private void addIssueActionItems() {
+        private void addIssueActionItems(int generation) {
             List<JiraNamedEntity> actions = null;
             try {
                 actions = JiraServerFacade.Instance.getActionsForIssue(issue);
@@ -58,14 +59,20 @@ namespace Atlassian.plvs.ui.issues.menus {
             if (actions == null || actions.Count == 0) return;
 
             Invoke(new MethodInvoker(delegate {
+                                         // PLVS-39 - only update current menu, skip results of previous getActionsForIssue()
+                                         // in case the user quickly opens context menu more than once
+                                         if (generation != menuOpenGeneration) return;
+
                                          Items.Add(new ToolStripSeparator());
                                          foreach (var action in actions) {
                                              var actionCopy = action;
                                              ToolStripMenuItem item = new ToolStripMenuItem(
                                                  action.Name, null,
-                                                 new EventHandler(delegate {
-                                                                      IssueActionRunner.runAction(this, actionCopy, model, issue, status);
-                                                                  }));
+                                                 new EventHandler(
+                                                     delegate {
+                                                         IssueActionRunner.runAction(this, actionCopy, model, issue,
+                                                                                     status);
+                                                     }));
                                              Items.Add(item);
                                          }
                                      }));
