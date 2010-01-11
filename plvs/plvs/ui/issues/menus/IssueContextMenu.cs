@@ -48,6 +48,7 @@ namespace Atlassian.plvs.ui.issues.menus {
             loaderThread.Start();
         }
 
+
         private void addIssueActionItems(int generation) {
             List<JiraNamedEntity> actions = null;
             try {
