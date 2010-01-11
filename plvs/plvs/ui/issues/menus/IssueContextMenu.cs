@@ -58,6 +58,7 @@ namespace Atlassian.plvs.ui.issues.menus {
             }
             if (actions == null || actions.Count == 0) return;
 
+
             Invoke(new MethodInvoker(delegate {
                                          // PLVS-39 - only update current menu, skip results of previous getActionsForIssue()
                                          // in case the user quickly opens context menu more than once
