@@ -1,6 +1,13 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="2F0AD391-A3BB-4646-8BF4-6C46EF0DBAF9" Name="$(loc.ProductName)" Language="1033" Version="1.0.0.0" Manufacturer="$(loc.Manufacturer)" UpgradeCode="F849BFAF-EE21-43F8-8A9A-271DD07B4DA8">
+  <?include version.wxi ?>
+
+  <Product Id="2F0AD391-A3BB-4646-8BF4-6C46EF0DBAF9" 
+           Name="$(loc.ProductName)" 
+           Language="1033" 
+           Version="$(var.ProgramVersion)" 
+           Manufacturer="$(loc.Manufacturer)" 
+           UpgradeCode="F849BFAF-EE21-43F8-8A9A-271DD07B4DA8">
     <Package Id="3C437EA0-D081-4311-8CBD-3493464DE70D" Platforms="Intel" Description="$(loc.Description)" Comments="$(loc.Comments)" Manufacturer="$(loc.Manufacturer)" InstallerVersion="200" Compressed="yes" Languages="1033" />
 
     <Media Id="1" Cabinet="Package.cab" EmbedCab="yes" />
@@ -25,6 +32,13 @@
     <Property Id="ARPURLINFOABOUT"><![CDATA[http://www.atlassian.com]]></Property>
 
     <Property Id="ALLUSERS">2</Property>
+
+    <Upgrade Id="F849BFAF-EE21-43F8-8A9A-271DD07B4DA8">
+      <UpgradeVersion Minimum="0.1.0"
+                      IncludeMinimum="yes"
+                      Maximum="$(var.ProgramVersion)"
+                      Property="OLDERVERSIONBEINGUPGRADED" />
+    </Upgrade>
 
     <!--LaunchConditions-->
     <Condition Message="$(loc.BeAdministrator)">Privileged</Condition>
@@ -53,6 +67,7 @@
 
     <!--Install Sequence-->
     <InstallExecuteSequence>
+      <RemoveExistingProducts After="InstallInitialize"/>
       <LaunchConditions After="AppSearch" />
       <Custom Action="Set_DEVENV" After="ValidateProductID">DEVENV=""</Custom>
       <Custom Action="SetDefault_TARGETDIR" After="Set_DEVENV">TARGETDIR=""</Custom>
@@ -74,10 +89,10 @@
     </Feature>
 
     <!--Refs-->
-    <FragmentRef Id="UIFragment"/>
-    <FragmentRef Id="FilesFragment"/>
-    <FragmentRef Id="PackageRegistryEntriesFragment"/>
-    <FragmentRef Id="OtherRegistryEntriesFragment"/>
+<!--    <FragmentRef Id="UIFragment"/>-->
+<!--    <FragmentRef Id="FilesFragment"/>-->
+<!--    <FragmentRef Id="PackageRegistryEntriesFragment"/>-->
+<!--    <FragmentRef Id="OtherRegistryEntriesFragment"/>-->
 
     <!--Product Icon-->
     <Icon Id="ProductIcon" SourceFile="Resources\Product.ico"/>
