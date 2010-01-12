@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="110" xml:space="preserve">
-    <value>Atlassian Connector</value>
+    <value>Atlassian Connector for Visual Studio</value>
   </data>
   <data name="112" xml:space="preserve">
-    <value>Does a lot of cool stuff to VS</value>
+    <value>Provides integration of Atlassian products with Visual Studio</value>
   </data>
   <data name="1" xml:space="preserve">
     <value>HZH0JDQHQMMEP3ARZ3DIAAHRQJCMJJKZZKHQZKC1K2CKI9MRH0MZRCDPJIACEPEJCID2PDQHDTZEH9P3QCZCKIR9JID9P9CRJ8Q3DKRPERI1PIP1IHZICPD2PIE9R1E1</value>

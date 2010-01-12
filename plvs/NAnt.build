@@ -16,6 +16,7 @@
   <property name="scp.key" value="c:/Users/kalamon/putty.keys/dac.private.ppk" overwrite="false" />
   <property name="scp.opts" value="-i ${scp.key} -noagent -q -batch" overwrite="false" />
   <property name="scp.login" value="jgorycki" overwrite="false" />
+  <property name="nsis" value="c:/progra~1/nsis/makensis.exe" />
   
   <!--  read-only properties-->
   <property name="main.project" value="plvs" />
@@ -25,6 +26,7 @@
   <target name="version.update">
     <loadfile file="version.info" property="version"/>
     <tstamp property="build.stamp" pattern="yyyyMMdd-HHmm" verbose="true" />
+    
     <echo file="plvs/PlvsVersionInfo.cs">
       namespace Atlassian.plvs {
           public class PlvsVersionInfo {
@@ -33,11 +35,6 @@
               public static string Stamp { get { return "${build.stamp}"; } }
           }
       }
-    </echo>
-    <echo file="plvs_Setup/version.wxi">
-      <Include>
-        <?define ProgramVersion  = "${version}"?>
-      </Include>    
     </echo>
   </target>
 
@@ -48,14 +45,18 @@
 
   <target name="build.setup" depends="clean,version.update" >
     <loadtasks assembly="${nantcontrib-home}/bin/NAnt.Contrib.Tasks.dll" />
-    <msbuild project="${setup.project}/${setup.project}.csproj">
+    <msbuild project="${main.project}/${main.project}.csproj">
       <property name="Configuration" value="${configuration}" />
     </msbuild>
+    <exec program="${nsis}">
+      <arg value="/DVERSION=${version}-${build.stamp}" />
+      <arg value="setup.nsi" />
+    </exec>
   </target>
 
   <target name="make.setup.file" depends="build.setup"  >
-    <copy file="${setup.project}/bin/${configuration}/${setup.project}.msi"
-          tofile="${setup.project}/bin/${configuration}/${setup.base.file.name}-${version}-${build.type}-${build.stamp}.msi" />
+    <copy file="${main.project}/bin/${configuration}/plvs-setup.exe"
+          tofile="${main.project}/bin/${configuration}/${setup.base.file.name}-${version}-${build.type}-${build.stamp}.exe" />
   </target>
 
   <target name="snapshot.xml.update" depends="make.setup.file">
@@ -66,14 +67,14 @@
     <xmlpoke
        file="${snapshot.xml.file}" 
        xpath="/response/version/downloadUrl"
-       value="${download.url}/${setup.base.file.name}-${version}-${build.type}-${build.stamp}.msi" />
+       value="${download.url}/${setup.base.file.name}-${version}-${build.type}-${build.stamp}.exe" />
   </target>
 
   <target name="upload.snapshot" depends="snapshot.xml.update">
     <exec program="${scp.exe}">
       <arg line="${scp.opts}" />
-      <arg value="${setup.project}/bin/${configuration}/${setup.base.file.name}-${version}-${build.type}-${build.stamp}.msi" />
-      <arg value="${scp.login}@${upload.host}:${upload.dir}/Downloads/${setup.base.file.name}-${version}-${build.type}-${build.stamp}.msi" />
+      <arg value="${main.project}/bin/${configuration}/${setup.base.file.name}-${version}-${build.type}-${build.stamp}.exe" />
+      <arg value="${scp.login}@${upload.host}:${upload.dir}/Downloads/${setup.base.file.name}-${version}-${build.type}-${build.stamp}.exe" />
     </exec>
     <exec program="${scp.exe}">
       <arg line="${scp.opts}" />
