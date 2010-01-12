@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <WixLocalization Culture="en-us" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+
   <!--Product-->
   <String Id="Manufacturer">Atlassian</String>
   <String Id="ProductName">Atlassian Connector for Visual Studio</String>
-  <String Id="Description">blah</String>
-  <String Id="Comments">blahblah</String>
+  <String Id="Description">Atlassian Connector for Visual Studio</String>
+  <String Id="Comments">Provides integration of Atlassian products with Visual Studio</String>
   
   <!--LaunchConditions-->
   <String Id="NetFramework20Required">This setup requires the Microsoft .NET Framework 2.0.  Please install the .NET Framework and run this setup again.</String>
@@ -34,10 +35,10 @@
   <String Id="InterruptedRemoveBodyText">{\VSI_MS_Sans_Serif13.0_0_0}The installer was interrupted before [ProductName] could be removed. You need to restart the installer to try again.</String>
   <String Id="InterruptedInstallBodyText">{\VSI_MS_Sans_Serif13.0_0_0}The installation was interrupted before [ProductName] could be installed. You need to restart the installer to try again.</String>
   <String Id="IncompleteBannerText">{\VSI_MS_Sans_Serif16.0_1_0}Installation Incomplete</String>
-  <String Id="RepairProduct">{\VSI_MS_Sans_Serif13.0_0_0}&amp;Repair [ProductName]</String>
+  <String Id="RepairProduct">{\VSI_MS_Sans_Serif13.0_0_0}&amp;Upgrade [ProductName]</String>
   <String Id="RemoveProduct">{\VSI_MS_Sans_Serif13.0_0_0}Re&amp;move [ProductName]</String>
   <String Id="WelcomeBanner">{\VSI_MS_Sans_Serif16.0_1_0}Welcome to the [ProductName] Setup Wizard</String>
-  <String Id="RepairRemoveBodyText">{\VSI_MS_Sans_Serif13.0_0_0}Select whether you want to repair or remove [ProductName].</String>
+  <String Id="RepairRemoveBodyText">{\VSI_MS_Sans_Serif13.0_0_0}Select whether you want to upgrade or remove [ProductName].</String>
   <String Id="ResumeBodyText">{\VSI_MS_Sans_Serif13.0_0_0}
     The installer will resume the installation of [ProductName] on your computer.
 
