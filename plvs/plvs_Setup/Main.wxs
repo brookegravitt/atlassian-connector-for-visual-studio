@@ -33,12 +33,32 @@
 
     <Property Id="ALLUSERS">2</Property>
 
+    <Property Id="PREVIOUSVERSIONSINSTALLED" Secure="yes" />
+
     <Upgrade Id="F849BFAF-EE21-43F8-8A9A-271DD07B4DA8">
-      <UpgradeVersion Minimum="0.1.0"
-                      IncludeMinimum="yes"
-                      Maximum="$(var.ProgramVersion)"
-                      Property="OLDERVERSIONBEINGUPGRADED" />
+      <UpgradeVersion OnlyDetect='no' Property='PROJECT_UPGRADE' Maximum='$(var.ProgramVersion)' IncludeMaximum='no' RemoveFeatures='all'/>
+      <Property Id='PROJECT_UPGRADE' Secure='yes'/>
+
+      <UpgradeVersion OnlyDetect='yes' Property='PROJECT_DOWNGRADE' Minimum='$(var.ProgramVersion)' IncludeMinimum='no'/>
+      <Property Id='PROJECT_DOWNGRADE' Secure='yes'/>
+
     </Upgrade>
+
+    <CustomAction Id='NoDownGrade' Error='A later version of [loc.ProductName] is already installed.' />
+
+    <!--    <Upgrade Id="F849BFAF-EE21-43F8-8A9A-271DD07B4DA8">-->
+<!--      <UpgradeVersion-->
+<!--         Minimum="0.0.1.0" Maximum="99.0.0.0"-->
+<!--         Property="PREVIOUSVERSIONSINSTALLED"-->
+<!--         IncludeMinimum="yes" IncludeMaximum="no" />-->
+<!--    </Upgrade>-->
+
+<!--    <Upgrade Id="F849BFAF-EE21-43F8-8A9A-271DD07B4DA8">-->
+<!--      <UpgradeVersion Minimum="0.1.0"-->
+<!--                      IncludeMinimum="yes"-->
+<!--                      Maximum="$(var.ProgramVersion)"-->
+<!--                      Property="OLDERVERSIONBEINGUPGRADED" />-->
+<!--    </Upgrade>-->
 
     <!--LaunchConditions-->
     <Condition Message="$(loc.BeAdministrator)">Privileged</Condition>
@@ -67,8 +87,14 @@
 
     <!--Install Sequence-->
     <InstallExecuteSequence>
-      <RemoveExistingProducts After="InstallInitialize"/>
       <LaunchConditions After="AppSearch" />
+
+      <Custom Action='NoDownGrade' After='FindRelatedProducts'>
+        <![CDATA[PROJECT_DOWNGRADE]]>
+      </Custom>
+
+      <RemoveExistingProducts After='InstallFinalize'/>
+
       <Custom Action="Set_DEVENV" After="ValidateProductID">DEVENV=""</Custom>
       <Custom Action="SetDefault_TARGETDIR" After="Set_DEVENV">TARGETDIR=""</Custom>
       <Custom Action="ExecuteDevenvSetup" After="MsiPublishAssemblies" />
