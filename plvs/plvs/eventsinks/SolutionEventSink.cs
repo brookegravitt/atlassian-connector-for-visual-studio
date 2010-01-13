@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.markers;
 using Atlassian.plvs.models;
@@ -12,15 +13,14 @@ using Microsoft.VisualStudio.Shell.Interop;
 
 namespace Atlassian.plvs.eventsinks {
     public sealed class SolutionEventSink : IVsSolutionEvents {
-        public DTE dte { get; set; }
-
         public delegate ToolWindowPane CreateToolWindow();
 
+        private readonly PlvsPackage package;
         private readonly CreateToolWindow createJiraWindow;
         private readonly CreateToolWindow createIssueDetailsWindow;
 
-        public SolutionEventSink(DTE dte, CreateToolWindow createJiraWindow, CreateToolWindow createIssueDetailsWindow) {
-            this.dte = dte;
+        public SolutionEventSink(PlvsPackage package, CreateToolWindow createJiraWindow, CreateToolWindow createIssueDetailsWindow) {
+            this.package = package;
             this.createJiraWindow = createJiraWindow;
             this.createIssueDetailsWindow = createIssueDetailsWindow;
         }
@@ -60,9 +60,13 @@ namespace Atlassian.plvs.eventsinks {
                 ToolWindowManager.Instance.AtlassianWindow = createJiraWindow();
                 IssueListWindow.Instance.reinitialize();
                 ToolWindowManager.Instance.IssueDetailsWindow = createIssueDetailsWindow();
+
+                DTE dte = (DTE) package.GetService(typeof(DTE));
+
                 IssueDetailsWindow.Instance.Solution = dte.Solution;
 
                 JiraEditorLinkManager.OnSolutionOpened();
+                Autoupdate.Instance.initialize();
             }
             catch (Exception e) {
                 Debug.WriteLine(e);
@@ -86,6 +90,7 @@ namespace Atlassian.plvs.eventsinks {
                 IssueDetailsWindow.Instance.clearAllIssues();
                 IssueDetailsWindow.Instance.FrameVisible = false;
                 ToolWindowManager.Instance.AtlassianWindow = null;
+                Autoupdate.Instance.shutdown();
             }
             catch (Exception e) {
                 Debug.WriteLine(e);

@@ -79,7 +79,7 @@ namespace Atlassian.plvs.dialogs {
                 "We would greatly appreciate it if you would allow us to collect anonymous" 
                 + " usage statistics to help us provide a better quality product. Is this OK?", 
                 Constants.QUESTION_CAPTION, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            ReportUsage = result == DialogResult.OK;
+            ReportUsage = result == DialogResult.Yes;
             saveValues();
         }
 

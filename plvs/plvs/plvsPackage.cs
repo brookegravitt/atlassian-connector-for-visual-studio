@@ -140,9 +140,7 @@ namespace Atlassian.plvs {
             // able to create marker instances.
             JiraLinkMarkerTypeProvider.InitializeMarkerIds(this);
 
-            DTE dte = (DTE) GetService(typeof (DTE));
-
-            SolutionEventSink solutionEventSink = new SolutionEventSink(dte, createJiraWindow, createIssueDetailsWindow);
+            SolutionEventSink solutionEventSink = new SolutionEventSink(this, createJiraWindow, createIssueDetailsWindow);
             TextManagerEventSink textManagerEventSink = new TextManagerEventSink();
             RunningDocTableEventSink runningDocTableEventSink = new RunningDocTableEventSink();
 
@@ -165,8 +163,6 @@ namespace Atlassian.plvs {
             // Since we register custom text markers we have to ensure the font and color
             // cache is up-to-date.
             ValidateFontAndColorCacheManagerIsUpToDate();
-
-            Autoupdate.Instance.initialize();
 
             ((IServiceContainer)this).AddService(typeof(AnkhSvnJiraConnector), new ServiceCreatorCallback(CreateAnkhSvnConnector), true);
         }
