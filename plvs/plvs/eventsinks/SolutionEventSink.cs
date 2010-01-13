@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Atlassian.plvs.dialogs;
 using Atlassian.plvs.markers;
 using Atlassian.plvs.models;
 using Atlassian.plvs.store;
@@ -50,6 +51,8 @@ namespace Atlassian.plvs.eventsinks {
 
         public int OnAfterOpenSolution(object pUnkReserved, int fNewSolution) {
             try {
+                GlobalSettings.checkFirstRun();
+
                 JiraServerModel.Instance.clear();
                 JiraServerModel.Instance.load();
                 RecentlyViewedIssuesModel.Instance.load();
