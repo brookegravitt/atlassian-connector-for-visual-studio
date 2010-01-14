@@ -1,5 +1,5 @@
 ﻿namespace Atlassian.plvs.dialogs {
-    partial class AutoUpdateDialog
+    sealed partial class AutoUpdateDialog
     {
         /// <summary>
         /// Required designer variable.

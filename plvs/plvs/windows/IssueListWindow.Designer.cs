@@ -95,7 +95,7 @@ namespace Atlassian.plvs.windows {
             // mainContainer.ContentPanel
             // 
             this.mainContainer.ContentPanel.Controls.Add(this.productTabs);
-            this.mainContainer.ContentPanel.Size = new System.Drawing.Size(828, 311);
+            this.mainContainer.ContentPanel.Size = new System.Drawing.Size(820, 311);
             this.mainContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             // 
             // mainContainer.LeftToolStripPanel
@@ -114,7 +114,7 @@ namespace Atlassian.plvs.windows {
             this.productTabs.Location = new System.Drawing.Point(0, 0);
             this.productTabs.Name = "productTabs";
             this.productTabs.SelectedIndex = 0;
-            this.productTabs.Size = new System.Drawing.Size(828, 311);
+            this.productTabs.Size = new System.Drawing.Size(820, 311);
             this.productTabs.TabIndex = 0;
             // 
             // tabJira
@@ -123,7 +123,7 @@ namespace Atlassian.plvs.windows {
             this.tabJira.Location = new System.Drawing.Point(4, 22);
             this.tabJira.Name = "tabJira";
             this.tabJira.Padding = new System.Windows.Forms.Padding(3);
-            this.tabJira.Size = new System.Drawing.Size(820, 285);
+            this.tabJira.Size = new System.Drawing.Size(812, 285);
             this.tabJira.TabIndex = 0;
             this.tabJira.Text = "Issues - JIRA";
             this.tabJira.UseVisualStyleBackColor = true;
@@ -138,11 +138,11 @@ namespace Atlassian.plvs.windows {
             // jiraContainer.ContentPanel
             // 
             this.jiraContainer.ContentPanel.Controls.Add(this.jiraSplitter);
-            this.jiraContainer.ContentPanel.Size = new System.Drawing.Size(814, 232);
+            this.jiraContainer.ContentPanel.Size = new System.Drawing.Size(806, 232);
             this.jiraContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.jiraContainer.Location = new System.Drawing.Point(3, 3);
             this.jiraContainer.Name = "jiraContainer";
-            this.jiraContainer.Size = new System.Drawing.Size(814, 279);
+            this.jiraContainer.Size = new System.Drawing.Size(806, 279);
             this.jiraContainer.TabIndex = 0;
             this.jiraContainer.Text = "toolStripContainer1";
             // 
@@ -154,20 +154,20 @@ namespace Atlassian.plvs.windows {
             this.getMoreIssues});
             this.statusStrip.Location = new System.Drawing.Point(0, 0);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(814, 22);
+            this.statusStrip.Size = new System.Drawing.Size(806, 22);
             this.statusStrip.TabIndex = 0;
             // 
             // jiraStatus
             // 
             this.jiraStatus.Name = "jiraStatus";
-            this.jiraStatus.Size = new System.Drawing.Size(38, 17);
+            this.jiraStatus.Size = new System.Drawing.Size(39, 17);
             this.jiraStatus.Text = "Ready";
             // 
             // getMoreIssues
             // 
             this.getMoreIssues.IsLink = true;
             this.getMoreIssues.Name = "getMoreIssues";
-            this.getMoreIssues.Size = new System.Drawing.Size(97, 17);
+            this.getMoreIssues.Size = new System.Drawing.Size(99, 17);
             this.getMoreIssues.Text = "Get More Issues...";
             this.getMoreIssues.Visible = false;
             this.getMoreIssues.Click += new System.EventHandler(this.getMoreIssues_Click);
@@ -185,8 +185,8 @@ namespace Atlassian.plvs.windows {
             // jiraSplitter.Panel2
             // 
             this.jiraSplitter.Panel2.Controls.Add(this.issueTreeContainer);
-            this.jiraSplitter.Size = new System.Drawing.Size(814, 232);
-            this.jiraSplitter.SplitterDistance = 215;
+            this.jiraSplitter.Size = new System.Drawing.Size(806, 232);
+            this.jiraSplitter.SplitterDistance = 212;
             this.jiraSplitter.TabIndex = 0;
             // 
             // filterTreeContainer
@@ -195,11 +195,11 @@ namespace Atlassian.plvs.windows {
             // filterTreeContainer.ContentPanel
             // 
             this.filterTreeContainer.ContentPanel.Controls.Add(this.filtersTree);
-            this.filterTreeContainer.ContentPanel.Size = new System.Drawing.Size(215, 207);
+            this.filterTreeContainer.ContentPanel.Size = new System.Drawing.Size(212, 207);
             this.filterTreeContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.filterTreeContainer.Location = new System.Drawing.Point(0, 0);
             this.filterTreeContainer.Name = "filterTreeContainer";
-            this.filterTreeContainer.Size = new System.Drawing.Size(215, 232);
+            this.filterTreeContainer.Size = new System.Drawing.Size(212, 232);
             this.filterTreeContainer.TabIndex = 0;
             this.filterTreeContainer.Text = "toolStripContainer2";
             // 
@@ -215,7 +215,7 @@ namespace Atlassian.plvs.windows {
             this.filtersTree.Location = new System.Drawing.Point(0, 0);
             this.filtersTree.Name = "filtersTree";
             this.filtersTree.SelectedImageIndex = 0;
-            this.filtersTree.Size = new System.Drawing.Size(215, 207);
+            this.filtersTree.Size = new System.Drawing.Size(212, 207);
             this.filtersTree.TabIndex = 0;
             this.filtersTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.filtersTree_AfterSelect);
             // 
@@ -229,7 +229,7 @@ namespace Atlassian.plvs.windows {
             this.buttonEditFilter});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(102, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(104, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonRefreshAll
@@ -277,11 +277,11 @@ namespace Atlassian.plvs.windows {
             // 
             // issueTreeContainer.ContentPanel
             // 
-            this.issueTreeContainer.ContentPanel.Size = new System.Drawing.Size(595, 207);
+            this.issueTreeContainer.ContentPanel.Size = new System.Drawing.Size(590, 207);
             this.issueTreeContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.issueTreeContainer.Location = new System.Drawing.Point(0, 0);
             this.issueTreeContainer.Name = "issueTreeContainer";
-            this.issueTreeContainer.Size = new System.Drawing.Size(595, 232);
+            this.issueTreeContainer.Size = new System.Drawing.Size(590, 232);
             this.issueTreeContainer.TabIndex = 0;
             this.issueTreeContainer.Text = "toolStripContainer2";
             // 
@@ -307,13 +307,13 @@ namespace Atlassian.plvs.windows {
             this.buttonRefresh});
             this.toolStrip2.Location = new System.Drawing.Point(3, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(547, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(557, 25);
             this.toolStrip2.TabIndex = 0;
             // 
             // labelNarrow
             // 
             this.labelNarrow.Name = "labelNarrow";
-            this.labelNarrow.Size = new System.Drawing.Size(27, 22);
+            this.labelNarrow.Size = new System.Drawing.Size(30, 22);
             this.labelNarrow.Text = "Find";
             // 
             // comboFind
@@ -327,7 +327,7 @@ namespace Atlassian.plvs.windows {
             // labelGroupBy
             // 
             this.labelGroupBy.Name = "labelGroupBy";
-            this.labelGroupBy.Size = new System.Drawing.Size(51, 22);
+            this.labelGroupBy.Size = new System.Drawing.Size(56, 22);
             this.labelGroupBy.Text = "Group By";
             // 
             // comboGroupBy
@@ -426,7 +426,7 @@ namespace Atlassian.plvs.windows {
             this.buttonUpdate});
             this.globalToolBar.Location = new System.Drawing.Point(0, 3);
             this.globalToolBar.Name = "globalToolBar";
-            this.globalToolBar.Size = new System.Drawing.Size(24, 101);
+            this.globalToolBar.Size = new System.Drawing.Size(32, 122);
             this.globalToolBar.TabIndex = 0;
             // 
             // buttonProjectProperties
@@ -435,7 +435,7 @@ namespace Atlassian.plvs.windows {
             this.buttonProjectProperties.Image = global::Atlassian.plvs.Resources.projectsettings;
             this.buttonProjectProperties.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonProjectProperties.Name = "buttonProjectProperties";
-            this.buttonProjectProperties.Size = new System.Drawing.Size(22, 20);
+            this.buttonProjectProperties.Size = new System.Drawing.Size(30, 20);
             this.buttonProjectProperties.Text = "Project Configuration";
             this.buttonProjectProperties.Click += new System.EventHandler(this.buttonProjectProperties_Click);
             // 
@@ -445,7 +445,7 @@ namespace Atlassian.plvs.windows {
             this.buttonGlobalProperties.Image = global::Atlassian.plvs.Resources.global_properties;
             this.buttonGlobalProperties.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonGlobalProperties.Name = "buttonGlobalProperties";
-            this.buttonGlobalProperties.Size = new System.Drawing.Size(22, 20);
+            this.buttonGlobalProperties.Size = new System.Drawing.Size(30, 20);
             this.buttonGlobalProperties.Text = "Global Configuration";
             this.buttonGlobalProperties.Click += new System.EventHandler(this.buttonGlobalProperties_Click);
             // 
@@ -455,7 +455,7 @@ namespace Atlassian.plvs.windows {
             this.buttonAbout.Image = global::Atlassian.plvs.Resources.about;
             this.buttonAbout.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonAbout.Name = "buttonAbout";
-            this.buttonAbout.Size = new System.Drawing.Size(22, 20);
+            this.buttonAbout.Size = new System.Drawing.Size(30, 20);
             this.buttonAbout.Text = "About";
             this.buttonAbout.Click += new System.EventHandler(this.buttonAbout_Click);
             // 
@@ -466,7 +466,7 @@ namespace Atlassian.plvs.windows {
             this.buttonUpdate.Image = global::Atlassian.plvs.Resources.status_plugin;
             this.buttonUpdate.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonUpdate.Name = "buttonUpdate";
-            this.buttonUpdate.Size = new System.Drawing.Size(22, 20);
+            this.buttonUpdate.Size = new System.Drawing.Size(30, 20);
             this.buttonUpdate.Text = "New Version Available";
             // 
             // toolStripContainer1
