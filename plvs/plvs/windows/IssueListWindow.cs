@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Threading;
+using Atlassian.plvs.api.bamboo;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs;
@@ -11,7 +12,6 @@ using Atlassian.plvs.models.bamboo;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
 using Aga.Controls.Tree;
-using Atlassian.plvs.ui.bamboo;
 using Atlassian.plvs.ui.jira;
 using Atlassian.plvs.ui.jira.issuefilternodes;
 using Atlassian.plvs.ui.jira.issues;
@@ -20,7 +20,8 @@ using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.windows {
     public partial class IssueListWindow : ToolWindowFrame {
-        private readonly JiraServerFacade facade = JiraServerFacade.Instance;
+        private readonly JiraServerFacade jiraFacade = JiraServerFacade.Instance;
+        private readonly BambooServerFacade bambooFacade = BambooServerFacade.Instance;
 
         private JiraIssueTree issuesTree;
 
@@ -41,7 +42,7 @@ namespace Atlassian.plvs.windows {
             status = new StatusLabel(statusStrip, jiraStatus);
 
             registerIssueModelListener();
-            builder = new JiraIssueListModelBuilder(facade);
+            builder = new JiraIssueListModelBuilder(jiraFacade);
 
             filtersTree.setReloadIssuesCallback(reloadIssues);
             filtersTree.addToolTip(filtersTreeToolTip);
@@ -246,45 +247,45 @@ namespace Atlassian.plvs.windows {
 
                 foreach (JiraServer server in servers) {
                     status.setInfo("[" + server.Name + "] Loading project definitions...");
-                    List<JiraProject> projects = facade.getProjects(server);
+                    List<JiraProject> projects = jiraFacade.getProjects(server);
                     foreach (JiraProject proj in projects) {
                         JiraServerCache.Instance.addProject(server, proj);
                     }
 
                     status.setInfo("[" + server.Name + "] Loading issue types...");
-                    List<JiraNamedEntity> issueTypes = facade.getIssueTypes(server);
+                    List<JiraNamedEntity> issueTypes = jiraFacade.getIssueTypes(server);
                     foreach (JiraNamedEntity type in issueTypes) {
                         JiraServerCache.Instance.addIssueType(server, type);
                         ImageCache.Instance.getImage(type.IconUrl);
                     }
-                    List<JiraNamedEntity> subtaskIssueTypes = facade.getSubtaskIssueTypes(server);
+                    List<JiraNamedEntity> subtaskIssueTypes = jiraFacade.getSubtaskIssueTypes(server);
                     foreach (JiraNamedEntity type in subtaskIssueTypes) {
                         JiraServerCache.Instance.addIssueType(server, type);
                         ImageCache.Instance.getImage(type.IconUrl);
                     }
 
                     status.setInfo("[" + server.Name + "] Loading issue priorities...");
-                    List<JiraNamedEntity> priorities = facade.getPriorities(server);
+                    List<JiraNamedEntity> priorities = jiraFacade.getPriorities(server);
                     foreach (JiraNamedEntity prio in priorities) {
                         JiraServerCache.Instance.addPriority(server, prio);
                         ImageCache.Instance.getImage(prio.IconUrl);
                     }
 
                     status.setInfo("[" + server.Name + "] Loading issue resolutions...");
-                    List<JiraNamedEntity> resolutions = facade.getResolutions(server);
+                    List<JiraNamedEntity> resolutions = jiraFacade.getResolutions(server);
                     foreach (JiraNamedEntity res in resolutions) {
                         JiraServerCache.Instance.addResolution(server, res);
                     }
 
                     status.setInfo("[" + server.Name + "] Loading issue statuses...");
-                    List<JiraNamedEntity> statuses = facade.getStatuses(server);
+                    List<JiraNamedEntity> statuses = jiraFacade.getStatuses(server);
                     foreach (JiraNamedEntity s in statuses) {
                         JiraServerCache.Instance.addStatus(server, s);
                         ImageCache.Instance.getImage(s.IconUrl);
                     }
 
                     status.setInfo("[" + server.Name + "] Loading saved filters...");
-                    List<JiraSavedFilter> filters = facade.getSavedFilters(server);
+                    List<JiraSavedFilter> filters = jiraFacade.getSavedFilters(server);
                     JiraServer jiraServer = server;
                     Invoke(new MethodInvoker(delegate {
                                                  filtersTree.addFilterGroupNodes(jiraServer);
@@ -320,7 +321,7 @@ namespace Atlassian.plvs.windows {
         }
 
         private void buttonProjectProperties_Click(object sender, EventArgs e) {
-            ProjectConfiguration dialog = new ProjectConfiguration(JiraServerModel.Instance, BambooServerModel.Instance, facade);
+            ProjectConfiguration dialog = new ProjectConfiguration(JiraServerModel.Instance, BambooServerModel.Instance, jiraFacade, bambooFacade);
             dialog.ShowDialog(this);
             if (dialog.SomethingChanged) {
                 // todo: only do this for changed servers - add server model listeners
@@ -570,28 +571,42 @@ namespace Atlassian.plvs.windows {
             }
         }
 
+
+        private Autoupdate.UpdateAction updateAction;
+        private Exception updateException;
+
+        private void buttonUpdate_Click(object sender, EventArgs e) {
+            if (updateAction != null) {
+                updateAction();
+            } else if (updateException != null) {
+                MessageBox.Show(
+                    "Unable to retrieve autoupdate information:\n\n" + updateException.Message,
+                    Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         public void setAutoupdateAvailable(Autoupdate.UpdateAction action) {
-            buttonUpdate.Click += delegate { action(); };
-            Invoke(new MethodInvoker(delegate {
-                                         buttonUpdate.Enabled = true;
-                                         buttonUpdate.Image = Resources.status_plugin;
-                                         buttonUpdate.Visible = true;
-                                         buttonUpdate.Text = "New version of the connector is available";
-                                     }));
+            Invoke(new MethodInvoker(delegate
+                                         {
+                                             updateAction = action;
+                                             updateException = null;
+                                             buttonUpdate.Enabled = true;
+                                             buttonUpdate.Image = Resources.status_plugin;
+                                             buttonUpdate.Visible = true;
+                                             buttonUpdate.Text = "New version of the connector is available";
+                                         }));
         }
 
         public void setAutoupdateUnavailable(Exception exception) {
-            buttonUpdate.Click += delegate {
-                                      MessageBox.Show(
-                                          "Unable to retrieve autoupdate information:\n\n" + exception.Message, 
-                                          Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                  };
-            Invoke(new MethodInvoker(delegate {
-                                         buttonUpdate.Enabled = true;
-                                         buttonUpdate.Image = Resources.update_unavailable;
-                                         buttonUpdate.Visible = true;
-                                         buttonUpdate.Text = "Unable to retrieve connector update information";
-            }));
+            Invoke(new MethodInvoker(delegate
+                                         {
+                                             updateAction = null;
+                                             updateException = exception;
+                                             buttonUpdate.Enabled = true;
+                                             buttonUpdate.Image = Resources.update_unavailable;
+                                             buttonUpdate.Visible = true;
+                                             buttonUpdate.Text = "Unable to retrieve connector update information";
+                                         }));
         }
 
         private void buttonExpandAll_Click(object sender, EventArgs e) {

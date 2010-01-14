@@ -1,8 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+using Atlassian.plvs.api.bamboo;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.dialogs.bamboo;
+using Atlassian.plvs.dialogs.jira;
 using Atlassian.plvs.models.bamboo;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui.bamboo.bamboonodes;
@@ -17,30 +19,34 @@ namespace Atlassian.plvs.dialogs {
 
         private readonly JiraServerModel jiraServerModel;
         private readonly BambooServerModel bambooServerModel;
-        private readonly JiraServerFacade facade;
+        private readonly JiraServerFacade jiraFacade;
+        private readonly BambooServerFacade bambooFacade;
 
         public bool SomethingChanged { get; private set; }
 
-        public ProjectConfiguration(JiraServerModel jiraServerModel, BambooServerModel bambooServerModel, JiraServerFacade facade) {
+        public ProjectConfiguration(JiraServerModel jiraServerModel, BambooServerModel bambooServerModel, 
+            JiraServerFacade jiraFacade, BambooServerFacade bambooFacade) {
+
             InitializeComponent();
 
             this.jiraServerModel = jiraServerModel;
             this.bambooServerModel = bambooServerModel;
-            this.facade = facade;
+            this.jiraFacade = jiraFacade;
+            this.bambooFacade = bambooFacade;
 
-            ICollection<JiraServer> jiraServers = jiraServerModel.getAllServers();
-            ICollection<BambooServer> bambooServers = bambooServerModel.getAllServers();
+            var jiraServers = jiraServerModel.getAllServers();
+            var bambooServers = bambooServerModel.getAllServers();
 
             serverTree.Nodes.Add(jiraRoot);
             serverTree.Nodes.Add(bambooRoot);
 //            serverTree.Nodes.Add(crucibleRoot);
 //            serverTree.Nodes.Add(fisheyeRoot);
 
-            foreach (JiraServer server in jiraServers) {
+            foreach (var server in jiraServers) {
                 jiraRoot.Nodes.Add(new JiraServerTreeNode(server, 0));
             }
 
-            foreach (BambooServer server in bambooServers) {
+            foreach (var server in bambooServers) {
                 bambooRoot.Nodes.Add(new BambooServerTreeNode(server, 0));
             }
 
@@ -63,28 +69,15 @@ namespace Atlassian.plvs.dialogs {
             buttonDelete.Enabled = jiraServerSelected || bambooServerSelected;
             buttonTest.Enabled = jiraServerSelected || bambooServerSelected;
 
-            serverDetails.Text = jiraServerSelected || bambooServerSelected ? createServerSummaryText(serverTree.SelectedNode) : "";
+            serverDetails.Text = createServerSummaryText(serverTree.SelectedNode);
         }
 
         private static string createServerSummaryText(TreeNode node) {
-            JiraServerTreeNode jNode = node as JiraServerTreeNode;
-            BambooServerTreeNode bNode = node as BambooServerTreeNode;
-            if (jNode != null) {
-                StringBuilder sb = new StringBuilder();
-                sb.Append("Name: ").Append(jNode.Server.Name).Append("\r\n");
-                sb.Append("URL: ").Append(jNode.Server.Url).Append("\r\n");
-                sb.Append("User Name: ").Append(jNode.Server.UserName);
-                return sb.ToString();
-            }
-            if (bNode != null) {
-                StringBuilder sb = new StringBuilder();
-                sb.Append("Name: ").Append(bNode.Server.Name).Append("\r\n");
-                sb.Append("URL: ").Append(bNode.Server.Url).Append("\r\n");
-                sb.Append("User Name: ").Append(bNode.Server.UserName).Append("\r\n");
-                sb.Append("Use Favourite Builds: ").Append(bNode.Server.UseFavourites ? "Yes" : "No");
-                return sb.ToString();
-            }
-            return "";
+            var jiraServerNode = node as TreeNodeWithJiraServer;
+            var bambooServerNode = node as TreeNodeWithBambooServer;
+            if (jiraServerNode != null) return jiraServerNode.Server.displayDetails();
+            if (bambooServerNode != null) return bambooServerNode.Server.displayDetails();
+            return "No server selected";
         }
 
         private void buttonAdd_Click(object sender, EventArgs e) {
@@ -96,11 +89,11 @@ namespace Atlassian.plvs.dialogs {
         }
 
         private void addNewBambooServer() {
-            AddOrEditBambooServer dialog = new AddOrEditBambooServer(null);
-            DialogResult result = dialog.ShowDialog();
+            var dialog = new AddOrEditBambooServer(null);
+            var result = dialog.ShowDialog();
             if (result != DialogResult.OK) return;
             bambooServerModel.addServer(dialog.Server);
-            BambooServerTreeNode newNode = new BambooServerTreeNode(dialog.Server, 0);
+            var newNode = new BambooServerTreeNode(dialog.Server, 0);
             bambooRoot.Nodes.Add(newNode);
             serverTree.ExpandAll();
             serverTree.SelectedNode = newNode;
@@ -108,11 +101,11 @@ namespace Atlassian.plvs.dialogs {
         }
 
         private void addNewJiraServer() {
-            AddOrEditJiraServer dialog = new AddOrEditJiraServer(null);
-            DialogResult result = dialog.ShowDialog();
+            var dialog = new AddOrEditJiraServer(null);
+            var result = dialog.ShowDialog();
             if (result != DialogResult.OK) return;
             jiraServerModel.addServer(dialog.Server);
-            JiraServerTreeNode newNode = new JiraServerTreeNode(dialog.Server, 0);
+            var newNode = new JiraServerTreeNode(dialog.Server, 0);
             jiraRoot.Nodes.Add(newNode);
             serverTree.ExpandAll();
             serverTree.SelectedNode = newNode;
@@ -121,9 +114,9 @@ namespace Atlassian.plvs.dialogs {
 
         private void buttonEdit_Click(object sender, EventArgs e) {
             if (serverTree.SelectedNode is JiraServerTreeNode) {
-                JiraServerTreeNode selectedNode = (JiraServerTreeNode)serverTree.SelectedNode;
-                AddOrEditJiraServer dialog = new AddOrEditJiraServer(selectedNode.Server);
-                DialogResult result = dialog.ShowDialog();
+                var selectedNode = (JiraServerTreeNode)serverTree.SelectedNode;
+                var dialog = new AddOrEditJiraServer(selectedNode.Server);
+                var result = dialog.ShowDialog();
                 if (result != DialogResult.OK) return;
                 jiraServerModel.removeServer(selectedNode.Server.GUID);
                 jiraServerModel.addServer(dialog.Server);
@@ -133,9 +126,9 @@ namespace Atlassian.plvs.dialogs {
                 serverTree.SelectedNode = selectedNode;
                 SomethingChanged = true;
             } else if (serverTree.SelectedNode is BambooServerTreeNode) {
-                BambooServerTreeNode selectedNode = (BambooServerTreeNode)serverTree.SelectedNode;
-                AddOrEditBambooServer dialog = new AddOrEditBambooServer(selectedNode.Server);
-                DialogResult result = dialog.ShowDialog();
+                var selectedNode = (BambooServerTreeNode)serverTree.SelectedNode;
+                var dialog = new AddOrEditBambooServer(selectedNode.Server);
+                var result = dialog.ShowDialog();
                 if (result != DialogResult.OK) return;
                 bambooServerModel.removeServer(selectedNode.Server.GUID);
                 bambooServerModel.addServer(dialog.Server);
@@ -149,14 +142,14 @@ namespace Atlassian.plvs.dialogs {
 
         private void buttonDelete_Click(object sender, EventArgs e) {
             if (serverTree.SelectedNode is JiraServerTreeNode) {
-                JiraServerTreeNode selectedNode = (JiraServerTreeNode)serverTree.SelectedNode;
+                var selectedNode = (JiraServerTreeNode)serverTree.SelectedNode;
                 jiraServerModel.removeServer(selectedNode.Server.GUID);
                 selectedNode.Remove();
                 serverTree.ExpandAll();
                 serverDetails.Text = "";
                 SomethingChanged = true;
             } else if (serverTree.SelectedNode is BambooServerTreeNode) {
-                BambooServerTreeNode selectedNode = (BambooServerTreeNode)serverTree.SelectedNode;
+                var selectedNode = (BambooServerTreeNode)serverTree.SelectedNode;
                 bambooServerModel.removeServer(selectedNode.Server.GUID);
                 selectedNode.Remove();
                 serverTree.ExpandAll();
@@ -167,11 +160,11 @@ namespace Atlassian.plvs.dialogs {
 
         private void buttonTest_Click(object sender, EventArgs e) {
             if (serverTree.SelectedNode is JiraServerTreeNode) {
-                JiraServerTreeNode selectedNode = (JiraServerTreeNode) serverTree.SelectedNode;
-                new TestJiraConnection(facade, selectedNode.Server).ShowDialog();
+                var selectedNode = (JiraServerTreeNode) serverTree.SelectedNode;
+                new TestJiraConnection(jiraFacade, selectedNode.Server).ShowDialog();
             } else if (serverTree.SelectedNode is BambooServerTreeNode) {
-                BambooServerTreeNode selectedNode = (BambooServerTreeNode)serverTree.SelectedNode;
-//                new TestBambooConnection(facade, selectedNode.Server).ShowDialog();
+                var selectedNode = (BambooServerTreeNode)serverTree.SelectedNode;
+                new TestBambooConnection(bambooFacade, selectedNode.Server).ShowDialog();
             }
         }
 

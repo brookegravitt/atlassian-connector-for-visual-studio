@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Atlassian.plvs.api.bamboo.rest;
-using Atlassian.plvs.models.bamboo;
 
 namespace Atlassian.plvs.api.bamboo {
     public class BambooServerFacade {
@@ -15,25 +14,27 @@ namespace Atlassian.plvs.api.bamboo {
 
         private BambooServerFacade() { }
 
-        private RestSession getSession(BambooServer server) {
+        private RestSession getSession(Server server) {
             RestSession s;
             if (!sessionMap.TryGetValue(server.Url + server.UserName, out s)) {
                 s = new RestSession(server.Url);
+                s.login(server.UserName, server.Password);
                 sessionMap.Add(getSessionKey(server), s);
             }
             return s;
         }
 
-        private static string getSessionKey(BambooServer server) {
+        private static string getSessionKey(Server server) {
             return server.Url + server.UserName;
         }
 
-        private void removeSession(BambooServer server) {
+        private void removeSession(Server server) {
+            getSession(server).logout();
             sessionMap.Remove(getSessionKey(server));
         }
 
         private delegate T Wrapped<T>();
-        private T wrapExceptions<T>(BambooServer server, Wrapped<T> wrapped) {
+        private T wrapExceptions<T>(Server server, Wrapped<T> wrapped) {
             try {
                 return wrapped();
             } catch (Exception) {
@@ -42,8 +43,8 @@ namespace Atlassian.plvs.api.bamboo {
             }
         }
 
-        public void login(BambooServer server, string userName, string password) {
-            getSession(server).login(userName, password);
+        public void login(BambooServer server) {
+            new RestSession(server.Url).login(server.UserName, server.Password);
         }
 
         public void logout(BambooServer server) {
@@ -51,11 +52,11 @@ namespace Atlassian.plvs.api.bamboo {
         }
 
         public ICollection<BambooPlan> getPlanList(BambooServer server) {
-            return wrapExceptions(server, () => getSession(server).login(server.UserName, server.Password).getPlanList(true));
+            return wrapExceptions(server, () => getSession(server).getPlanList());
         }
 
         public ICollection<BambooBuild> getLatestBuildsForFavouritePlans(BambooServer server) {
-            return wrapExceptions(server, () => getSession(server).login(server.UserName, server.Password).getLatestBuildsForFavouritePlans(true));
+            return wrapExceptions(server, () => getSession(server).getLatestBuildsForFavouritePlans());
         }
     }
 }

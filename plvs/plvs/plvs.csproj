@@ -107,6 +107,9 @@
     <Compile Include="dialogs\AddOrEditBambooServer.Designer.cs">
       <DependentUpon>AddOrEditBambooServer.cs</DependentUpon>
     </Compile>
+    <Compile Include="dialogs\bamboo\TestBambooConnection.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="dialogs\CreateIssue.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -130,6 +133,9 @@
     </Compile>
     <Compile Include="dialogs\IssueWorkflowAction.Designer.cs">
       <DependentUpon>IssueWorkflowAction.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\jira\TestJiraConnection.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="dialogs\NewIssueComment.cs">
       <SubType>Form</SubType>
@@ -155,11 +161,11 @@
     <Compile Include="dialogs\SelectJiraProject.Designer.cs">
       <DependentUpon>SelectJiraProject.cs</DependentUpon>
     </Compile>
-    <Compile Include="dialogs\TestJiraConnection.cs">
+    <Compile Include="dialogs\AbstractTestConnection.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="dialogs\TestJiraConnection.Designer.cs">
-      <DependentUpon>TestJiraConnection.cs</DependentUpon>
+    <Compile Include="dialogs\AbstractTestConnection.Designer.cs">
+      <DependentUpon>AbstractTestConnection.cs</DependentUpon>
     </Compile>
     <Compile Include="eventsinks\AbstractMarkerClientEventSink.cs" />
     <Compile Include="eventsinks\MarginMarkerClientEventSink.cs" />
@@ -170,7 +176,7 @@
     <Compile Include="eventsinks\TextManagerEventSink.cs" />
     <Compile Include="eventsinks\TextMarkerClientEventSink.cs" />
     <Compile Include="models\AbstractServerModel.cs" />
-    <Compile Include="models\bamboo\BambooServer.cs" />
+    <Compile Include="api\bamboo\BambooServer.cs" />
     <Compile Include="models\bamboo\BambooServerModel.cs" />
     <Compile Include="models\jira\fields\AffectsVersionsFiller.cs" />
     <Compile Include="models\jira\fields\AssigneeFiller.cs" />
@@ -422,8 +428,8 @@
       <DependentUpon>SelectJiraProject.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="dialogs\TestJiraConnection.resx">
-      <DependentUpon>TestJiraConnection.cs</DependentUpon>
+    <EmbeddedResource Include="dialogs\AbstractTestConnection.resx">
+      <DependentUpon>AbstractTestConnection.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="scm\AnkhSvnJiraActiveIssueControl.resx">

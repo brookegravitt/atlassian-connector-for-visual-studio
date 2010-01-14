@@ -1,5 +1,5 @@
 ﻿namespace Atlassian.plvs.dialogs {
-    partial class TestJiraConnection
+    partial class AbstractTestConnection
     {
         /// <summary>
         /// Required designer variable.
@@ -63,7 +63,7 @@
             this.buttonClose.UseVisualStyleBackColor = true;
             this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
             // 
-            // TestJiraConnection
+            // AbstractTestConnection
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -76,7 +76,7 @@
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "TestJiraConnection";
+            this.Name = "AbstractTestConnection";
             this.Text = "Test Connection to JIRA Server";
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TestJiraConnection_KeyPress);
             this.ResumeLayout(false);
