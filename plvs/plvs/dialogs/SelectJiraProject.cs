@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
-using Atlassian.plvs.api;
+using Atlassian.plvs.api.jira;
 
 namespace Atlassian.plvs.dialogs {
     public partial class SelectJiraProject : Form {

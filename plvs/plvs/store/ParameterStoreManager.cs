@@ -9,14 +9,16 @@ using Microsoft.VisualStudio.Shell.Interop;
 namespace Atlassian.plvs.store {
     public class ParameterStoreManager : IVsPersistSolutionOpts {
         public enum StoreType {
-            SERVERS = 1,
-            SETTINGS = 2
+            JIRA_SERVERS = 1,
+            SETTINGS = 2,
+            BAMBOO_SERVERS = 3
         }
 
         private readonly Dictionary<StoreType, ParameterStore> stores = new Dictionary<StoreType, ParameterStore>();
 
         private ParameterStoreManager() {
-            stores[StoreType.SERVERS] = new ParameterStore();
+            stores[StoreType.JIRA_SERVERS] = new ParameterStore();
+            stores[StoreType.BAMBOO_SERVERS] = new ParameterStore();
             stores[StoreType.SETTINGS] = new ParameterStore();
         }
 

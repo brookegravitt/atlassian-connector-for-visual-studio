@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Threading;
-using Atlassian.plvs.api;
-using Atlassian.plvs.api.soap;
+using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.soap;
 
 namespace Atlassian.plvs.dialogs {
     public partial class TestJiraConnection : Form {

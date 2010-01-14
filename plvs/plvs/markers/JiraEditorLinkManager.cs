@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using Atlassian.plvs.eventsinks;
-using Atlassian.plvs.util;
+using Atlassian.plvs.util.jira;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.TextManager.Interop;
 

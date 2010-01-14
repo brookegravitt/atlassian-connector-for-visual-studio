@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Ankh.ExtensionPoints.IssueTracker;
-using Atlassian.plvs.api;
+using Atlassian.plvs.api.jira;
 using Atlassian.plvs.util;
 using Atlassian.plvs.windows;
 

@@ -39,13 +39,18 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.numericJiraBatchSize = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
+            this.numericJiraBatchSize = new System.Windows.Forms.NumericUpDown();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.label2 = new System.Windows.Forms.Label();
+            this.numericBambooPollingInterval = new System.Windows.Forms.NumericUpDown();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericJiraBatchSize)).BeginInit();
+            this.tabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericBambooPollingInterval)).BeginInit();
             this.SuspendLayout();
             // 
             // checkAutoupdate
@@ -150,6 +155,7 @@
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Location = new System.Drawing.Point(13, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -179,6 +185,15 @@
             this.tabPage2.Text = "JIRA";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 16);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(91, 13);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Issues Batch Size";
+            // 
             // numericJiraBatchSize
             // 
             this.numericJiraBatchSize.Location = new System.Drawing.Point(114, 14);
@@ -201,14 +216,48 @@
             0,
             0});
             // 
-            // label1
+            // tabPage3
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 16);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(91, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Issues Batch Size";
+            this.tabPage3.Controls.Add(this.numericBambooPollingInterval);
+            this.tabPage3.Controls.Add(this.label2);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(538, 248);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Bamboo";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 16);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(125, 13);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "Polling Interval [seconds]";
+            // 
+            // numericBambooPollingInterval
+            // 
+            this.numericBambooPollingInterval.Location = new System.Drawing.Point(130, 14);
+            this.numericBambooPollingInterval.Maximum = new decimal(new int[] {
+            3600,
+            0,
+            0,
+            0});
+            this.numericBambooPollingInterval.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numericBambooPollingInterval.Name = "numericBambooPollingInterval";
+            this.numericBambooPollingInterval.Size = new System.Drawing.Size(60, 20);
+            this.numericBambooPollingInterval.TabIndex = 1;
+            this.numericBambooPollingInterval.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
             // 
             // GlobalSettings
             // 
@@ -233,6 +282,9 @@
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericJiraBatchSize)).EndInit();
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericBambooPollingInterval)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -253,6 +305,9 @@
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.NumericUpDown numericJiraBatchSize;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.NumericUpDown numericBambooPollingInterval;
+        private System.Windows.Forms.Label label2;
 
     }
 }

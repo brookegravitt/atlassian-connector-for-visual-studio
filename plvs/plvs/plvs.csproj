@@ -59,15 +59,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="api\JiraField.cs" />
-    <Compile Include="api\JiraIssue.cs" />
-    <Compile Include="api\JiraNamedEntity.cs" />
-    <Compile Include="api\JiraProject.cs" />
-    <Compile Include="api\JiraSavedFilter.cs" />
-    <Compile Include="api\JiraServer.cs" />
-    <Compile Include="api\JiraServerFacade.cs" />
-    <Compile Include="api\RssClient.cs" />
-    <Compile Include="api\soap\SoapSession.cs" />
+    <Compile Include="api\bamboo\BambooBuild.cs" />
+    <Compile Include="api\bamboo\BambooPlan.cs" />
+    <Compile Include="api\bamboo\BambooServerFacade.cs" />
+    <Compile Include="api\bamboo\rest\RestSession.cs" />
+    <Compile Include="api\jira\JiraField.cs" />
+    <Compile Include="api\jira\JiraIssue.cs" />
+    <Compile Include="api\jira\JiraNamedEntity.cs" />
+    <Compile Include="api\jira\JiraProject.cs" />
+    <Compile Include="api\jira\JiraSavedFilter.cs" />
+    <Compile Include="api\jira\JiraServer.cs" />
+    <Compile Include="api\jira\JiraServerFacade.cs" />
+    <Compile Include="api\jira\RssClient.cs" />
+    <Compile Include="api\Server.cs" />
+    <Compile Include="api\jira\soap\SoapSession.cs" />
     <Compile Include="attributes\ProvideIssueRepositoryConnector.cs" />
     <Compile Include="attributes\StringValueAttribute.cs" />
     <Compile Include="autoupdate\Autoupdate.cs">
@@ -95,6 +100,12 @@
     </Compile>
     <Compile Include="dialogs\AutoUpdateDialog.Designer.cs">
       <DependentUpon>AutoUpdateDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\AddOrEditBambooServer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\AddOrEditBambooServer.Designer.cs">
+      <DependentUpon>AddOrEditBambooServer.cs</DependentUpon>
     </Compile>
     <Compile Include="dialogs\CreateIssue.cs">
       <SubType>Form</SubType>
@@ -158,23 +169,26 @@
     <Compile Include="eventsinks\TextLinesEventSink.cs" />
     <Compile Include="eventsinks\TextManagerEventSink.cs" />
     <Compile Include="eventsinks\TextMarkerClientEventSink.cs" />
-    <Compile Include="models\fields\AffectsVersionsFiller.cs" />
-    <Compile Include="models\fields\AssigneeFiller.cs" />
-    <Compile Include="models\fields\ComponentsFiller.cs" />
-    <Compile Include="models\fields\CustomFieldFiller.cs" />
-    <Compile Include="models\fields\DescriptionFiller.cs" />
-    <Compile Include="models\fields\DueDateFiller.cs" />
-    <Compile Include="models\fields\EnvironmentFiller.cs" />
-    <Compile Include="models\fields\FieldFiller.cs" />
-    <Compile Include="models\fields\FixVersionsFiller.cs" />
-    <Compile Include="models\fields\IssueTypeFiller.cs" />
-    <Compile Include="models\fields\PriorityFiller.cs" />
-    <Compile Include="models\fields\ReporterFiller.cs" />
-    <Compile Include="models\fields\ResolutionFiller.cs" />
-    <Compile Include="models\fields\SecurityFiller.cs" />
-    <Compile Include="models\fields\SummaryFiller.cs" />
-    <Compile Include="models\fields\TimeTrackingFiller.cs" />
-    <Compile Include="models\JiraActionFieldType.cs" />
+    <Compile Include="models\AbstractServerModel.cs" />
+    <Compile Include="models\bamboo\BambooServer.cs" />
+    <Compile Include="models\bamboo\BambooServerModel.cs" />
+    <Compile Include="models\jira\fields\AffectsVersionsFiller.cs" />
+    <Compile Include="models\jira\fields\AssigneeFiller.cs" />
+    <Compile Include="models\jira\fields\ComponentsFiller.cs" />
+    <Compile Include="models\jira\fields\CustomFieldFiller.cs" />
+    <Compile Include="models\jira\fields\DescriptionFiller.cs" />
+    <Compile Include="models\jira\fields\DueDateFiller.cs" />
+    <Compile Include="models\jira\fields\EnvironmentFiller.cs" />
+    <Compile Include="models\jira\fields\FieldFiller.cs" />
+    <Compile Include="models\jira\fields\FixVersionsFiller.cs" />
+    <Compile Include="models\jira\fields\IssueTypeFiller.cs" />
+    <Compile Include="models\jira\fields\PriorityFiller.cs" />
+    <Compile Include="models\jira\fields\ReporterFiller.cs" />
+    <Compile Include="models\jira\fields\ResolutionFiller.cs" />
+    <Compile Include="models\jira\fields\SecurityFiller.cs" />
+    <Compile Include="models\jira\fields\SummaryFiller.cs" />
+    <Compile Include="models\jira\fields\TimeTrackingFiller.cs" />
+    <Compile Include="models\jira\JiraActionFieldType.cs" />
     <Compile Include="scm\AnkhSvnJiraActiveIssueControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -189,24 +203,32 @@
     <Compile Include="scm\AnkhSvnJiraConnectorControl.Designer.cs">
       <DependentUpon>AnkhSvnJiraConnectorControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="ui\bamboo\bamboonodes\BambooServerTreeNode.cs" />
+    <Compile Include="ui\bamboo\bamboonodes\TreeNodeWithBambooServer.cs" />
+    <Compile Include="ui\bamboo\TabBamboo.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\bamboo\TabBamboo.Designer.cs">
+      <DependentUpon>TabBamboo.cs</DependentUpon>
+    </Compile>
     <Compile Include="ui\ComboBoxWithImages.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ui\fields\DateFieldEditor.cs" />
-    <Compile Include="ui\fields\NamedEntityComboEditor.cs" />
-    <Compile Include="ui\fields\JiraFieldEditor.cs" />
-    <Compile Include="ui\fields\TextAreaFieldEditor.cs" />
-    <Compile Include="ui\fields\TextLineFieldEditor.cs" />
-    <Compile Include="ui\fields\TimeTrackingEditor.cs" />
-    <Compile Include="ui\fields\UserFieldEditor.cs" />
-    <Compile Include="ui\fields\NamedEntityListFieldEditor.cs" />
-    <Compile Include="ui\JiraFiltersTree.cs">
+    <Compile Include="ui\jira\fields\DateFieldEditor.cs" />
+    <Compile Include="ui\jira\fields\NamedEntityComboEditor.cs" />
+    <Compile Include="ui\jira\fields\JiraFieldEditor.cs" />
+    <Compile Include="ui\jira\fields\TextAreaFieldEditor.cs" />
+    <Compile Include="ui\jira\fields\TextLineFieldEditor.cs" />
+    <Compile Include="ui\jira\fields\TimeTrackingEditor.cs" />
+    <Compile Include="ui\jira\fields\UserFieldEditor.cs" />
+    <Compile Include="ui\jira\fields\NamedEntityListFieldEditor.cs" />
+    <Compile Include="ui\jira\JiraFiltersTree.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ui\JiraIssueTree.cs">
+    <Compile Include="ui\jira\JiraIssueTree.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ui\JiraNamedEntityComboBox.cs">
+    <Compile Include="ui\jira\JiraNamedEntityComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ui\ToolWindowFrame.cs">
@@ -214,7 +236,8 @@
     </Compile>
     <Compile Include="util\Constants.cs" />
     <Compile Include="util\ExceptionBuilder.cs" />
-    <Compile Include="util\IssueActionRunner.cs" />
+    <Compile Include="util\jira\IssueActionRunner.cs" />
+    <Compile Include="util\XPathUtils.cs" />
     <Compile Include="windows\IssueDetailsPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -232,26 +255,26 @@
     <Compile Include="markers\JiraLinkMarginMarkerType.cs" />
     <Compile Include="markers\JiraLinkTextMarkerType.cs" />
     <Compile Include="markers\JiraLinkMarkerTypeProvider.cs" />
-    <Compile Include="models\JiraIssueListModelImpl.cs" />
-    <Compile Include="models\JiraIssueListSearchingModel.cs" />
-    <Compile Include="models\JiraPresetFilter.cs" />
-    <Compile Include="models\presetFilters\JiraPresetFilterAssignedToMe.cs" />
-    <Compile Include="models\presetFilters\JiraPresetFilterMostImportant.cs" />
-    <Compile Include="models\presetFilters\JiraPresetFilterOutstanding.cs" />
-    <Compile Include="models\presetFilters\JiraPresetFilterRecentlyAdded.cs" />
-    <Compile Include="models\presetFilters\JiraPresetFilterRecentlyResolved.cs" />
-    <Compile Include="models\presetFilters\JiraPresetFilterRecentlyUpdated.cs" />
-    <Compile Include="models\presetFilters\JiraPresetFilterReportedByMe.cs" />
-    <Compile Include="models\presetFilters\JiraPresetFilterUnscheduled.cs" />
+    <Compile Include="models\jira\JiraIssueListModelImpl.cs" />
+    <Compile Include="models\jira\JiraIssueListSearchingModel.cs" />
+    <Compile Include="models\jira\JiraPresetFilter.cs" />
+    <Compile Include="models\jira\presetFilters\JiraPresetFilterAssignedToMe.cs" />
+    <Compile Include="models\jira\presetFilters\JiraPresetFilterMostImportant.cs" />
+    <Compile Include="models\jira\presetFilters\JiraPresetFilterOutstanding.cs" />
+    <Compile Include="models\jira\presetFilters\JiraPresetFilterRecentlyAdded.cs" />
+    <Compile Include="models\jira\presetFilters\JiraPresetFilterRecentlyResolved.cs" />
+    <Compile Include="models\jira\presetFilters\JiraPresetFilterRecentlyUpdated.cs" />
+    <Compile Include="models\jira\presetFilters\JiraPresetFilterReportedByMe.cs" />
+    <Compile Include="models\jira\presetFilters\JiraPresetFilterUnscheduled.cs" />
     <Compile Include="store\CredentialsVault.cs" />
     <Compile Include="models\ImageCache.cs" />
-    <Compile Include="models\JiraCustomFilter.cs" />
-    <Compile Include="models\JiraIssueListModel.cs" />
-    <Compile Include="models\JiraIssueListModelBuilder.cs" />
-    <Compile Include="models\JiraServerCache.cs" />
-    <Compile Include="models\JiraServerModel.cs" />
-    <Compile Include="models\RecentlyViewedIssue.cs" />
-    <Compile Include="models\RecentlyViewedIssuesModel.cs" />
+    <Compile Include="models\jira\JiraCustomFilter.cs" />
+    <Compile Include="models\jira\JiraIssueListModel.cs" />
+    <Compile Include="models\jira\JiraIssueListModelBuilder.cs" />
+    <Compile Include="models\jira\JiraServerCache.cs" />
+    <Compile Include="models\jira\JiraServerModel.cs" />
+    <Compile Include="models\jira\RecentlyViewedIssue.cs" />
+    <Compile Include="models\jira\RecentlyViewedIssuesModel.cs" />
     <Compile Include="windows\AtlassianToolWindow.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="windows\IssueListWindow.cs">
@@ -277,62 +300,62 @@
     <Compile Include="store\DPApi.cs" />
     <Compile Include="store\ParameterStore.cs" />
     <Compile Include="windows\ToolWindowManager.cs" />
-    <Compile Include="ui\issues\AbstractIssueTreeNode.cs" />
-    <Compile Include="ui\issues\menus\PresetFilterGroupContextMenu.cs">
+    <Compile Include="ui\jira\issues\AbstractIssueTreeNode.cs" />
+    <Compile Include="ui\jira\issues\menus\PresetFilterGroupContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ui\issues\menus\CustomFilterGroupContextMenu.cs">
+    <Compile Include="ui\jira\issues\menus\CustomFilterGroupContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ui\issues\issuegroupnodes\AbstractIssueGroupNode.cs" />
-    <Compile Include="ui\issues\issuegroupnodes\ByPriorityIssueGroupNode.cs" />
-    <Compile Include="ui\issues\issuegroupnodes\ByProjectIssueGroupNode.cs" />
-    <Compile Include="ui\issues\issuegroupnodes\ByTypeIssueGroupNode.cs" />
-    <Compile Include="ui\issues\issuegroupnodes\ByStatusIssueGroupNode.cs" />
-    <Compile Include="ui\issues\issuegroupnodes\AbstractByNamedEntityIssueGroupNode.cs" />
-    <Compile Include="ui\issues\issuegroupnodes\ByLastUpdatedIssueGroupNode.cs" />
-    <Compile Include="ui\issues\menus\PresetFilterContextMenu.cs">
+    <Compile Include="ui\jira\issues\issuegroupnodes\AbstractIssueGroupNode.cs" />
+    <Compile Include="ui\jira\issues\issuegroupnodes\ByPriorityIssueGroupNode.cs" />
+    <Compile Include="ui\jira\issues\issuegroupnodes\ByProjectIssueGroupNode.cs" />
+    <Compile Include="ui\jira\issues\issuegroupnodes\ByTypeIssueGroupNode.cs" />
+    <Compile Include="ui\jira\issues\issuegroupnodes\ByStatusIssueGroupNode.cs" />
+    <Compile Include="ui\jira\issues\issuegroupnodes\AbstractByNamedEntityIssueGroupNode.cs" />
+    <Compile Include="ui\jira\issues\issuegroupnodes\ByLastUpdatedIssueGroupNode.cs" />
+    <Compile Include="ui\jira\issues\menus\PresetFilterContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ui\issues\treemodels\AbstractGroupingIssueTreeModel.cs" />
-    <Compile Include="ui\issues\treemodels\AbstractIssueTreeModel.cs" />
-    <Compile Include="ui\issues\treemodels\GroupedByLastUpdatedIssueTreeModel.cs" />
-    <Compile Include="ui\issues\treemodels\GroupedByStatusIssueTreeModel.cs" />
-    <Compile Include="ui\issues\treemodels\GroupedByTypeIssueTreeModel.cs" />
-    <Compile Include="ui\issues\treemodels\GroupedByPriorityIssueTreeModel.cs" />
-    <Compile Include="ui\issues\treemodels\GroupedByProjectIssueTreeModel.cs" />
-    <Compile Include="ui\issuefilternodes\JiraCustomFilterTreeNode.cs" />
-    <Compile Include="ui\issues\menus\CustomFilterContextMenu.cs">
+    <Compile Include="ui\jira\issues\treemodels\AbstractGroupingIssueTreeModel.cs" />
+    <Compile Include="ui\jira\issues\treemodels\AbstractIssueTreeModel.cs" />
+    <Compile Include="ui\jira\issues\treemodels\GroupedByLastUpdatedIssueTreeModel.cs" />
+    <Compile Include="ui\jira\issues\treemodels\GroupedByStatusIssueTreeModel.cs" />
+    <Compile Include="ui\jira\issues\treemodels\GroupedByTypeIssueTreeModel.cs" />
+    <Compile Include="ui\jira\issues\treemodels\GroupedByPriorityIssueTreeModel.cs" />
+    <Compile Include="ui\jira\issues\treemodels\GroupedByProjectIssueTreeModel.cs" />
+    <Compile Include="ui\jira\issuefilternodes\JiraCustomFilterTreeNode.cs" />
+    <Compile Include="ui\jira\issues\menus\CustomFilterContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ui\issues\treemodels\FlatIssueTreeModel.cs" />
-    <Compile Include="ui\issues\menus\IssueContextMenu.cs">
+    <Compile Include="ui\jira\issues\treemodels\FlatIssueTreeModel.cs" />
+    <Compile Include="ui\jira\issues\menus\IssueContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ui\issues\IssueNode.cs" />
-    <Compile Include="ui\issuefilternodes\JiraCustomFiltersGroupTreeNode.cs" />
-    <Compile Include="ui\issuefilternodes\JiraFilterGroupTreeNode.cs" />
-    <Compile Include="ui\JiraIssueGroupByCombo.cs">
+    <Compile Include="ui\jira\issues\IssueNode.cs" />
+    <Compile Include="ui\jira\issuefilternodes\JiraCustomFiltersGroupTreeNode.cs" />
+    <Compile Include="ui\jira\issuefilternodes\JiraFilterGroupTreeNode.cs" />
+    <Compile Include="ui\jira\JiraIssueGroupByCombo.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ui\JiraIssueGroupByCombo.Designer.cs">
+    <Compile Include="ui\jira\JiraIssueGroupByCombo.Designer.cs">
       <DependentUpon>JiraIssueGroupByCombo.cs</DependentUpon>
     </Compile>
-    <Compile Include="ui\JiraIssueGroupByComboItem.cs">
+    <Compile Include="ui\jira\JiraIssueGroupByComboItem.cs">
     </Compile>
-    <Compile Include="ui\JiraNamedEntityListViewItem.cs" />
-    <Compile Include="ui\issuefilternodes\JiraPresetFiltersGroupTreeNode.cs" />
-    <Compile Include="ui\issuefilternodes\JiraPresetFilterTreeNode.cs" />
-    <Compile Include="ui\issuefilternodes\JiraSavedFiltersGroupTreeNode.cs" />
-    <Compile Include="ui\issuefilternodes\JiraSavedFilterTreeNode.cs" />
-    <Compile Include="ui\issuefilternodes\JiraServerTreeNode.cs" />
-    <Compile Include="ui\issuefilternodes\RecentlyOpenIssuesTreeNode.cs" />
+    <Compile Include="ui\jira\JiraNamedEntityListViewItem.cs" />
+    <Compile Include="ui\jira\issuefilternodes\JiraPresetFiltersGroupTreeNode.cs" />
+    <Compile Include="ui\jira\issuefilternodes\JiraPresetFilterTreeNode.cs" />
+    <Compile Include="ui\jira\issuefilternodes\JiraSavedFiltersGroupTreeNode.cs" />
+    <Compile Include="ui\jira\issuefilternodes\JiraSavedFilterTreeNode.cs" />
+    <Compile Include="ui\jira\issuefilternodes\JiraServerTreeNode.cs" />
+    <Compile Include="ui\jira\issuefilternodes\RecentlyOpenIssuesTreeNode.cs" />
     <Compile Include="ui\StatusLabel.cs" />
-    <Compile Include="ui\issuefilternodes\TreeNodeWithServer.cs" />
+    <Compile Include="ui\jira\issuefilternodes\TreeNodeWithJiraServer.cs" />
     <Compile Include="store\ParameterStoreManager.cs" />
-    <Compile Include="ui\UserTypeComboBoxItem.cs" />
+    <Compile Include="ui\jira\UserTypeComboBoxItem.cs" />
     <Compile Include="util\PlvsUtils.cs" />
-    <Compile Include="util\JiraIssueUtils.cs" />
+    <Compile Include="util\jira\JiraIssueUtils.cs" />
     <Compile Include="util\StreamEater.cs" />
     <Compile Include="PlvsVersionInfo.cs" />
     <Compile Include="VSPackage.Designer.cs">
@@ -361,6 +384,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\AutoUpdateDialog.resx">
       <DependentUpon>AutoUpdateDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\AddOrEditBambooServer.resx">
+      <DependentUpon>AddOrEditBambooServer.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\CreateIssue.resx">
@@ -405,6 +432,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="scm\AnkhSvnJiraConnectorControl.resx">
       <DependentUpon>AnkhSvnJiraConnectorControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\bamboo\TabBamboo.resx">
+      <DependentUpon>TabBamboo.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="windows\IssueDetailsPanel.resx">
@@ -569,7 +600,6 @@
     <Content Include="Resources\icons\unknown.png" />
     <Content Include="Resources\icons\update_unavailable.png" />
     <Content Include="Resources\icons\view_in_browser.png" />
-    <None Include="LICENSE" />
     <None Include="Resources\texts\about_html.txt" />
     <None Include="Resources\texts\comments_css.txt" />
     <None Include="Resources\texts\summary_and_description_css.txt" />

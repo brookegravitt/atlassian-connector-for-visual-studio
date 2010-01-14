@@ -1,5 +1,5 @@
 ﻿using System.Windows.Forms;
-using Atlassian.plvs.api;
+using Atlassian.plvs.api.jira;
 using Atlassian.plvs.windows;
 
 namespace Atlassian.plvs.scm {

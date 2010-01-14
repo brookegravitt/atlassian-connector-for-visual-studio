@@ -4,11 +4,12 @@ using System.Drawing;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using Atlassian.plvs.api;
-using Atlassian.plvs.models;
+using Atlassian.plvs.api.jira;
+using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
-using Atlassian.plvs.ui.fields;
+using Atlassian.plvs.ui.jira.fields;
 using Atlassian.plvs.util;
+using Atlassian.plvs.util.jira;
 
 namespace Atlassian.plvs.dialogs {
     public sealed partial class IssueWorkflowAction : Form {

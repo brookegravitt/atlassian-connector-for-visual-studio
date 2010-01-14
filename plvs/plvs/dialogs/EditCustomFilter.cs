@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
-using Atlassian.plvs.api;
+using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models;
-using Atlassian.plvs.ui;
+using Atlassian.plvs.models.jira;
+using Atlassian.plvs.ui.jira;
 
 namespace Atlassian.plvs.dialogs {
     public partial class EditCustomFilter : Form {
