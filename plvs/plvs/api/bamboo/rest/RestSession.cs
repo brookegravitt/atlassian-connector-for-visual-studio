@@ -12,7 +12,8 @@ namespace Atlassian.plvs.api.bamboo.rest {
     public class RestSession {
         private readonly string url;
         private string authToken;
-        private string connection;
+        private Dictionary<string, string> cookieMap;
+        private WebHeaderCollection headerCollection = new WebHeaderCollection();
 
         private const string LIST_PLAN_ACTION = "/api/rest/listBuildNames.action";
         private const string LATEST_USER_BUILDS_ACTION = "/api/rest/getLatestUserBuilds.action";
@@ -105,8 +106,8 @@ namespace Atlassian.plvs.api.bamboo.rest {
             return plans;
         }
 
-        private List<string> getFavouriteUserPlans() {
-            String endpoint = url + LATEST_USER_BUILDS_ACTION + "?auth=" + HttpUtility.UrlEncode(authToken, Encoding.UTF8);
+        private List<string> getFavouriteUserPlans(string userName) {
+            String endpoint = url + LATEST_USER_BUILDS_ACTION + "?auth=" + HttpUtility.UrlEncode(authToken, Encoding.UTF8) + "&username" + HttpUtility.UrlEncode(userName, Encoding.UTF8);
             Stream stream = getQueryResultStream(endpoint);
             XPathDocument doc = XPathUtils.getDocument(stream);
             XPathNavigator nav = doc.CreateNavigator();
@@ -125,9 +126,9 @@ namespace Atlassian.plvs.api.bamboo.rest {
             return result;
         }
 
-        public ICollection<BambooBuild> getLatestBuildsForFavouritePlans() {
+        public ICollection<BambooBuild> getLatestBuildsForFavouritePlans(string userName) {
             List<BambooBuild> builds = new List<BambooBuild>();
-            foreach (string plan in getFavouriteUserPlans()) {
+            foreach (string plan in getFavouriteUserPlans(userName)) {
                 
             }
             foreach (BambooPlan plan in getPlanList()) {
@@ -149,17 +150,64 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
         private Stream getQueryResultStream(string url) {
             var req = (HttpWebRequest)WebRequest.Create(url);
-            if (connection != null) {
-                req.Connection = connection;
-            }
-            req.KeepAlive = true;
+//            req.KeepAlive = true;
             req.Timeout = 10000;
             req.ReadWriteTimeout = 20000;
+            restoreSessionContext(req);
             var resp = (HttpWebResponse)req.GetResponse();
-            if (connection == null) {
-                connection = req.Connection;
-            }
+            saveSessionContext(resp);
             return resp.GetResponseStream();
+        }
+
+        private void saveSessionContext(HttpWebResponse resp) {
+            if (cookieMap != null) {
+                return;
+            }
+
+            if (resp.Headers["Set-Cookie"] == null) {
+                return;
+            }
+
+            string cookie = resp.Headers["Set-Cookie"];
+            string[] strings = cookie.Split(new[] {';'});
+            cookieMap = new Dictionary<string, string>();
+            foreach (var pair in strings) {
+                string[] split = pair.Split(new[] {'='});
+                cookieMap[split[0].Trim()] = split[1].Trim();
+            }
+//                cookies.Add(new Cookie());
+//            for (int i = 0; i < resp.Headers.Count; i++) {
+//                headerCollection.Add(resp.Headers.AllKeys[i], resp.Headers.Get(i));
+//            }
+
+//            cookies = new CookieContainer();
+//            foreach (Cookie cookie in resp.Cookies) {
+//                cookies.Add(cookie);
+//            }
+        }
+
+        private void restoreSessionContext(HttpWebRequest req) {
+            if (cookieMap != null) {
+                StringBuilder sb = new StringBuilder();
+                foreach (var key in cookieMap.Keys) {
+                    sb.Append(key).Append('=').Append(cookieMap[key]).Append(' ');
+                }
+                req.Headers["Cookie"] = sb.ToString().TrimEnd();
+            }
+//            if (cookies == null) {
+//                return;
+//            }
+//            for (int i = 0; i < headerCollection.Count; i++) {
+//                string key = headerCollection.GetKey(i);
+//                if (key == "Set-Cookie") {
+//                    key = "Cookie";
+//                } else {
+//                    continue;
+//                }
+//                string value = headerCollection.Get(i);
+//                req.Headers.Add(key, value);
+//            }
+//            req.CookieContainer = cookies;
         }
     }
 }
