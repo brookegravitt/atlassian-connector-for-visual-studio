@@ -56,7 +56,7 @@ namespace Atlassian.plvs.api.bamboo {
         }
 
         public ICollection<BambooBuild> getLatestBuildsForFavouritePlans(BambooServer server) {
-            return wrapExceptions(server, () => getSession(server).getLatestBuildsForFavouritePlans());
+            return wrapExceptions(server, () => getSession(server).getLatestBuildsForFavouritePlans(server.UserName));
         }
     }
 }
