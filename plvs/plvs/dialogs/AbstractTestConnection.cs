@@ -1,35 +1,26 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Threading;
-using Atlassian.plvs.api.jira;
-using Atlassian.plvs.api.jira.soap;
+using Atlassian.plvs.api;
 
 namespace Atlassian.plvs.dialogs {
-    public partial class TestJiraConnection : Form {
-
+    public abstract partial class AbstractTestConnection : Form {
         private bool testInProgress = true;
         private readonly Thread worker;
 
-        public TestJiraConnection(JiraServerFacade facade, JiraServer server) {
+        public abstract void testConnection();
+
+        protected AbstractTestConnection(Server server) {
             InitializeComponent();
 
             status.Text = "Testing connection to server " + server.Name + ", please wait...";
             buttonClose.Text = "Cancel";
 
-            worker = new Thread(new ThreadStart(delegate {
-                                                    string result = "Success!!!";
-                                                    try {
-                                                        facade.login(server);
-                                                    }
-                                                    catch (SoapSession.LoginException e) {
-                                                        result = e.InnerException.Message;
-                                                    }
-                                                    Invoke(new MethodInvoker(() => stopTest(result)));
-                                                }));
+            worker = new Thread(testConnection);
 
             worker.Start();
         }
-
+                         
         private void buttonClose_Click(object sender, EventArgs e) {
             stopOrClose();
         }
@@ -37,15 +28,14 @@ namespace Atlassian.plvs.dialogs {
         private void stopOrClose() {
             if (!testInProgress) {
                 Close();
-            }
-            else {
+            } else {
                 // too brutal?
                 worker.Abort();
                 stopTest("Test aborted");
             }
         }
 
-        private void stopTest(string text) {
+        protected void stopTest(string text) {
             testInProgress = false;
             status.Text = text;
             progress.Visible = false;

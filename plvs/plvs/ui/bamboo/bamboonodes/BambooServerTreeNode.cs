@@ -1,4 +1,4 @@
-﻿using Atlassian.plvs.models.bamboo;
+﻿using Atlassian.plvs.api.bamboo;
 
 namespace Atlassian.plvs.ui.bamboo.bamboonodes {
     public class BambooServerTreeNode : TreeNodeWithBambooServer {

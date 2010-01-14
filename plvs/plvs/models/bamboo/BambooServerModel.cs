@@ -1,4 +1,5 @@
 ﻿using System;
+using Atlassian.plvs.api.bamboo;
 using Atlassian.plvs.store;
 
 namespace Atlassian.plvs.models.bamboo {

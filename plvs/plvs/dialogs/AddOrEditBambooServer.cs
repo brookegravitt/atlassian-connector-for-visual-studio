@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-using Atlassian.plvs.models.bamboo;
+using Atlassian.plvs.api.bamboo;
 
 namespace Atlassian.plvs.dialogs {
     public partial class AddOrEditBambooServer : Form {

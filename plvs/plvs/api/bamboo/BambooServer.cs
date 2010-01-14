@@ -1,7 +1,7 @@
 ﻿using System;
-using Atlassian.plvs.api;
+using System.Text;
 
-namespace Atlassian.plvs.models.bamboo {
+namespace Atlassian.plvs.api.bamboo {
     public class BambooServer : Server {
 
         public bool UseFavourites { get; set; }
@@ -14,5 +14,14 @@ namespace Atlassian.plvs.models.bamboo {
         }
 
         public override Guid Type { get { return new Guid("1C7A224E-52C4-4575-9212-7D731C13CFE9"); } }
+
+        public override string displayDetails() {
+            var sb = new StringBuilder();
+            sb.Append("Name: ").Append(Name).Append("\r\n");
+            sb.Append("URL: ").Append(Url).Append("\r\n");
+            sb.Append("User Name: ").Append(UserName).Append("\r\n");
+            sb.Append("Use Favourite Builds: ").Append(UseFavourites ? "Yes" : "No");
+            return sb.ToString();
+        }
     }
 }

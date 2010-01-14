@@ -1,5 +1,5 @@
 ﻿using System.Windows.Forms;
-using Atlassian.plvs.models.bamboo;
+using Atlassian.plvs.api.bamboo;
 
 namespace Atlassian.plvs.ui.bamboo.bamboonodes {
     public abstract class TreeNodeWithBambooServer : TreeNode {

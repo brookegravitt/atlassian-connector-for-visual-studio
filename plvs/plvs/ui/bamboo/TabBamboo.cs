@@ -30,17 +30,19 @@ namespace Atlassian.plvs.ui.bamboo {
 
         public void init() {
             pollTimer.Interval = 1000 * GlobalSettings.BambooPollingInterval;
-            pollTimer.AutoReset = true;
-            pollTimer.Enabled = true;
-            pollTimer.Start();
+            pollTimer.AutoReset = false;
+
+            // todo: enable timer when bugs fixed
+            pollTimer.Enabled = false;
+//            pollTimer.Start();
         }
 
         void pollTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
-            Thread t = new Thread(pollRunner);
+            Thread t = new Thread(() => pollRunner(true));
             t.Start();
         }
 
-        private void pollRunner() {
+        private void pollRunner(bool rescheduleTimer) {
             List<BambooBuild> allBuilds = new List<BambooBuild>();
             List<Exception> allExceptions = new List<Exception>();
             foreach (BambooServer server in BambooServerModel.Instance.getAllServers()) {
@@ -51,7 +53,13 @@ namespace Atlassian.plvs.ui.bamboo {
                     allExceptions.Add(e);
                 }
             }
-            Invoke(new MethodInvoker(() => showPollResults(allBuilds, allExceptions)));
+            Invoke(new MethodInvoker(delegate
+                                         {
+                                             showPollResults(allBuilds, allExceptions);
+                                             if (rescheduleTimer) {
+                                                 pollTimer.Start();
+                                             }
+                                         }));
         }
 
         private void showPollResults(ICollection builds, ICollection<Exception> exceptions) {
@@ -70,6 +78,11 @@ namespace Atlassian.plvs.ui.bamboo {
             pollTimer.Stop();
             pollTimer.Enabled = false;
             showPollResults(null, null);
+        }
+
+        private void buttonPoll_Click(object sender, EventArgs e) {
+            Thread t = new Thread(() => pollRunner(false));
+            t.Start();
         }
     }
 }

@@ -12,6 +12,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
     public class RestSession {
         private readonly string url;
         private string authToken;
+        private string connection;
 
         private const string LIST_PLAN_ACTION = "/api/rest/listBuildNames.action";
         private const string LATEST_USER_BUILDS_ACTION = "/api/rest/getLatestUserBuilds.action";
@@ -64,7 +65,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
             LoggedIn = false;
         }
 
-        public ICollection<BambooPlan> getPlanList(bool doLogout) {
+        public ICollection<BambooPlan> getPlanList() {
 
             String endpoint = url + LIST_PLAN_ACTION + "?auth=" + HttpUtility.UrlEncode(authToken, Encoding.UTF8);
 
@@ -88,27 +89,23 @@ namespace Atlassian.plvs.api.bamboo.rest {
                 string key = null;
                 string name = null;
                 do {
-                    switch (nav.Name) {
+                    switch (it.Current.Name) {
                         case "key":
-                            key = nav.Value;
+                            key = it.Current.Value;
                             break;
                         case "name":
-                            name = nav.Value;
+                            name = it.Current.Value;
                             break;
                     }
                     if (key == null || name == null) continue;
-                    BambooPlan plan = new BambooPlan(key, name, enabled, true);
+                    BambooPlan plan = new BambooPlan(key, name, enabled);
                     plans.Add(plan);
                 } while (it.Current.MoveToNext());
-            }
-
-            if (doLogout) {
-                logout();
             }
             return plans;
         }
 
-        private List<string> getFavouriteUserPlans(bool doLogout) {
+        private List<string> getFavouriteUserPlans() {
             String endpoint = url + LATEST_USER_BUILDS_ACTION + "?auth=" + HttpUtility.UrlEncode(authToken, Encoding.UTF8);
             Stream stream = getQueryResultStream(endpoint);
             XPathDocument doc = XPathUtils.getDocument(stream);
@@ -125,19 +122,16 @@ namespace Atlassian.plvs.api.bamboo.rest {
                     }
                 } while (it.Current.MoveToNext());
             }
-            if (doLogout) {
-                logout();
-            }
             return result;
         }
 
-        public ICollection<BambooBuild> getLatestBuildsForFavouritePlans(bool doLogout) {
+        public ICollection<BambooBuild> getLatestBuildsForFavouritePlans() {
             List<BambooBuild> builds = new List<BambooBuild>();
-            foreach (string plan in getFavouriteUserPlans(false)) {
+            foreach (string plan in getFavouriteUserPlans()) {
                 
             }
-            foreach (BambooPlan plan in getPlanList(false)) {
-                if (!plan.Favourite) continue;
+            foreach (BambooPlan plan in getPlanList()) {
+                if (plan.Favourite == null || !plan.Favourite.Value) continue;
 
                 String endpoint = url + LATEST_BUILD_FOR_PLAN_ACTION + "?auth=" 
                     + HttpUtility.UrlEncode(authToken, Encoding.UTF8) + "&buildKey=" + HttpUtility.UrlEncode(plan.Key);
@@ -150,18 +144,21 @@ namespace Atlassian.plvs.api.bamboo.rest {
                 XPathExpression expr = nav.Compile("/response");
                 XPathNodeIterator it = nav.Select(expr);
             }
-
-            if (doLogout) {
-                logout();
-            }
             return builds;
         }
 
-        private static Stream getQueryResultStream(string url) {
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+        private Stream getQueryResultStream(string url) {
+            var req = (HttpWebRequest)WebRequest.Create(url);
+            if (connection != null) {
+                req.Connection = connection;
+            }
+            req.KeepAlive = true;
             req.Timeout = 10000;
             req.ReadWriteTimeout = 20000;
-            HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+            var resp = (HttpWebResponse)req.GetResponse();
+            if (connection == null) {
+                connection = req.Connection;
+            }
             return resp.GetResponseStream();
         }
     }

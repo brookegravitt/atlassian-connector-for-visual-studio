@@ -61,5 +61,7 @@ namespace Atlassian.plvs.api {
             get { return guid; }
             set { guid = value; }
         }
+
+        public abstract string displayDetails();
     }
 }
