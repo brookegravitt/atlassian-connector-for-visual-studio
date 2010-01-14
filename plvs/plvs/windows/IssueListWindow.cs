@@ -12,6 +12,7 @@ using Atlassian.plvs.ui.issuefilternodes;
 using Atlassian.plvs.ui.issues;
 using Aga.Controls.Tree;
 using Atlassian.plvs.ui.issues.treemodels;
+using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.windows {
     public partial class IssueListWindow : ToolWindowFrame {
@@ -567,17 +568,24 @@ namespace Atlassian.plvs.windows {
             buttonUpdate.Click += delegate { action(); };
             Invoke(new MethodInvoker(delegate {
                                          buttonUpdate.Enabled = true;
+                                         buttonUpdate.Image = Resources.status_plugin;
                                          buttonUpdate.Visible = true;
+                                         buttonUpdate.Text = "New version of the connector is available";
                                      }));
         }
 
         public void setAutoupdateUnavailable(Exception exception) {
-            buttonUpdate.Click += delegate { MessageBox.Show("Unable to retrieve autoupdate information:\n\n" + exception.Message); };
+            buttonUpdate.Click += delegate {
+                                      MessageBox.Show(
+                                          "Unable to retrieve autoupdate information:\n\n" + exception.Message, 
+                                          Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                  };
             Invoke(new MethodInvoker(delegate {
                                          buttonUpdate.Enabled = true;
                                          buttonUpdate.Image = Resources.update_unavailable;
                                          buttonUpdate.Visible = true;
-                                     }));
+                                         buttonUpdate.Text = "Unable to retrieve connector update information";
+            }));
         }
 
         private void buttonExpandAll_Click(object sender, EventArgs e) {

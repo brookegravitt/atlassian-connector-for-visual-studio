@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Atlassian.plvs.dialogs {
-    public partial class AutoUpdateDialog : Form {
+    public sealed partial class AutoUpdateDialog : Form {
         private readonly string updateUrl;
         private bool pageLoaded;
 
@@ -12,7 +13,11 @@ namespace Atlassian.plvs.dialogs {
 
             InitializeComponent();
 
-            browser.DocumentText = string.Format(Resources.autoupdate_html, stamp, blurbText, releaseNotesUrl);
+//            browser.IsWebBrowserContextMenuEnabled = false;
+            browser.DocumentText = string.Format(
+                Resources.autoupdate_html, Font.FontFamily.Name, 
+                ColorTranslator.ToHtml(SystemColors.Control), 
+                stamp, blurbText, releaseNotesUrl);
             browser.ScrollBarsEnabled = true;
 
             StartPosition = FormStartPosition.CenterParent;

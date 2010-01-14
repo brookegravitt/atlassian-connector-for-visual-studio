@@ -1,20 +1,21 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Timers;
+using System.Windows.Forms;
 using System.Xml.XPath;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.windows;
+using Timer=System.Timers.Timer;
 
 namespace Atlassian.plvs.autoupdate {
     public class Autoupdate {
         private static readonly Autoupdate INSTANCE = new Autoupdate();
         private bool initialized;
-        private volatile bool shouldStop;
 
-        private const int ONE_HOUR = 60 * 60;
+        private const int ONE_HOUR = 1000 * 60 * 60;
 
         public delegate void UpdateAction();
 
@@ -30,18 +31,40 @@ namespace Atlassian.plvs.autoupdate {
         public string BlurbText { get; private set; }
         public string ReleaseNotesUrl { get; private set; }
 
-        private Thread thread;
+        private Timer timer;
 
         private Autoupdate() {}
 
         public void initialize() {
             if (initialized) return;
 
-            shouldStop = false;
-
             initialized = true;
-            thread = new Thread(updateWorker);
-            thread.Start();
+
+            timer = new Timer { AutoReset = false, Interval = 20000 };
+            timer.Elapsed += initialTimer;
+            timer.Start();
+        }
+
+        private void initialTimer(object sender, ElapsedEventArgs e) {
+            runUpdateWorkerThread(null, null);
+            timer.AutoReset = true;
+            timer.Elapsed -= initialTimer;
+            timer.Elapsed += runUpdateWorkerThread;
+            timer.Interval = ONE_HOUR;
+            timer.Start();
+        }
+
+        private void runUpdateWorkerThread(object sender, ElapsedEventArgs e) {
+            if (!GlobalSettings.AutoupdateEnabled) {
+                return;
+            }
+            string url = GlobalSettings.AutoupdateSnapshots ? SNAPSHOT_URL : STABLE_URL;
+            if (GlobalSettings.ReportUsage) {
+                url = getUsageReportingUrl(url);
+            }
+
+            Thread t = new Thread(() => runSingleUpdateQuery(url, true));
+            t.Start();
         }
 
         public void shutdown() {
@@ -49,11 +72,27 @@ namespace Atlassian.plvs.autoupdate {
                 return;
             }
             initialized = false;
-            if (thread == null) return;
+            timer.Stop();
+            timer.Dispose();
+        }
 
-            shouldStop = true;
-            thread.Join(4000);
-            thread = null;
+        public void reschedule() {
+            shutdown();
+            initialize();
+        }
+
+        public void runManualUpdate(bool stableOnly) {
+            string url = stableOnly ? STABLE_URL : SNAPSHOT_URL;
+            if (GlobalSettings.ReportUsage) {
+                url = getUsageReportingUrl(url);
+            }
+//            Thread t = new Thread(new ThreadStart(delegate { 
+//                if (runSingleUpdateQuery(url, false)) {
+//                    Invoke(new MethodInvoker(delegate {
+
+//                                             }));
+//                } 
+//            }));
         }
 
         private void showUpdateDialog() {
@@ -61,38 +100,9 @@ namespace Atlassian.plvs.autoupdate {
             dialog.ShowDialog();
         }
 
-        private void updateWorker() {
-            Debug.WriteLine("Plvs - Autoupdate: Starting autoupdate thread");
-            if (sleepOrExit(20)) {
-                return;
-            }
-            do {
-                runSingleUpdateQuery();
-            } while (!sleepOrExit(ONE_HOUR));
-        }
-
-        private bool sleepOrExit(int seconds) {
-            for (int i = 0; i < seconds; ++i) {
-                Thread.Sleep(1000);
-                if (!shouldStop) continue;
-                Debug.WriteLine("Plvs - Autoupdate: Finishing autoupdate thread");
-                return true;
-            }
-            return false;
-        }
-
-        private void runSingleUpdateQuery() {
+        private bool runSingleUpdateQuery(string url, bool updateToolWindowButton) {
             IssueListWindow issueListWindow = IssueListWindow.Instance;
             try {
-                // heh - I certainly do hope boolean properties are atomic and multithreading-safe. 
-                // I sure would not like to have to synchronize them
-                if (!GlobalSettings.AutoupdateEnabled) {
-                    return;
-                }
-                string url = GlobalSettings.AutoupdateSnapshots ? SNAPSHOT_URL : STABLE_URL;
-                if (GlobalSettings.ReportUsage) {
-                    url = getUsageReportingUrl(url);
-                }
                 HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
 
                 req.Timeout = 5000;
@@ -109,11 +119,10 @@ namespace Atlassian.plvs.autoupdate {
 
                 Regex versionPattern = new Regex(@"(\d+\.\d+\.\d+)-(.+)-(\d+-\d+)");
                 if (!versionPattern.IsMatch(NewVersionNumber)) {
-                    return;
+                    return false;
                 }
                 string stamp = versionPattern.Match(NewVersionNumber).Groups[3].Value;
-                if (NewVersionNumber == null) return;
-
+                if (NewVersionNumber == null) return false;
 
                 expr = nav.Compile("/response/version/downloadUrl");
                 it = nav.Select(expr);
@@ -129,15 +138,17 @@ namespace Atlassian.plvs.autoupdate {
                 ReleaseNotesUrl = it.Current.Value.Trim();
 
                 if (PlvsVersionInfo.Stamp.CompareTo(stamp) < 0) {
-                    if (issueListWindow != null) {
+                    if (issueListWindow != null && updateToolWindowButton) {
                         issueListWindow.setAutoupdateAvailable(showUpdateDialog);
                     }
+                    return true;
                 }
-            } catch (Exception e) {
-                if (issueListWindow != null) {
-                    issueListWindow.setAutoupdateUnavailable(e);
+            } catch (Exception ex) {
+                if (issueListWindow != null && updateToolWindowButton) {
+                    issueListWindow.setAutoupdateUnavailable(ex);
                 }
             }
+            return false;
         }
 
         private string getUsageReportingUrl(string url) {

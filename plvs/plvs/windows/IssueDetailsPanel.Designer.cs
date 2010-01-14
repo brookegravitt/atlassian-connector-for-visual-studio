@@ -95,7 +95,7 @@ namespace Atlassian.plvs.windows {
             // 
             this.statusStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                                                                                         this.jiraStatus});
+            this.jiraStatus});
             this.statusStrip.Location = new System.Drawing.Point(0, 0);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(785, 22);
@@ -104,7 +104,7 @@ namespace Atlassian.plvs.windows {
             // jiraStatus
             // 
             this.jiraStatus.Name = "jiraStatus";
-            this.jiraStatus.Size = new System.Drawing.Size(37, 17);
+            this.jiraStatus.Size = new System.Drawing.Size(38, 17);
             this.jiraStatus.Text = "status";
             // 
             // issueTabs
@@ -132,6 +132,7 @@ namespace Atlassian.plvs.windows {
             // issueSummary
             // 
             this.issueSummary.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.issueSummary.IsWebBrowserContextMenuEnabled = false;
             this.issueSummary.Location = new System.Drawing.Point(3, 3);
             this.issueSummary.MinimumSize = new System.Drawing.Size(20, 20);
             this.issueSummary.Name = "issueSummary";
@@ -173,6 +174,7 @@ namespace Atlassian.plvs.windows {
             // issueDescription
             // 
             this.issueDescription.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.issueDescription.IsWebBrowserContextMenuEnabled = false;
             this.issueDescription.Location = new System.Drawing.Point(0, 13);
             this.issueDescription.MinimumSize = new System.Drawing.Size(20, 20);
             this.issueDescription.Name = "issueDescription";
@@ -212,6 +214,7 @@ namespace Atlassian.plvs.windows {
             // issueComments
             // 
             this.issueComments.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.issueComments.IsWebBrowserContextMenuEnabled = false;
             this.issueComments.Location = new System.Drawing.Point(0, 0);
             this.issueComments.MinimumSize = new System.Drawing.Size(20, 20);
             this.issueComments.Name = "issueComments";
@@ -224,12 +227,12 @@ namespace Atlassian.plvs.windows {
             // 
             this.toolStrip2.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                                                                                        this.buttonAddComment,
-                                                                                        this.buttonExpandAll,
-                                                                                        this.buttonCollapseAll});
+            this.buttonAddComment,
+            this.buttonExpandAll,
+            this.buttonCollapseAll});
             this.toolStrip2.Location = new System.Drawing.Point(3, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(79, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(81, 25);
             this.toolStrip2.TabIndex = 0;
             // 
             // buttonAddComment
@@ -276,13 +279,13 @@ namespace Atlassian.plvs.windows {
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                                                                                        this.buttonViewInBrowser,
-                                                                                        this.buttonRefresh,
-                                                                                        this.buttonClose,
-                                                                                        this.dropDownIssueActions});
+            this.buttonViewInBrowser,
+            this.buttonRefresh,
+            this.buttonClose,
+            this.dropDownIssueActions});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(139, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(110, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonViewInBrowser

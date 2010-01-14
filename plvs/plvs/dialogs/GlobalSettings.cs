@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.util;
 using Microsoft.Win32;
 
@@ -106,6 +107,8 @@ namespace Atlassian.plvs.dialogs {
             ReportUsage = checkStats.Checked;
             CheckStableOnlyNow = radioStable.Checked;
             saveValues();
+
+            Autoupdate.Instance.reschedule();
 
             Close();
         }
