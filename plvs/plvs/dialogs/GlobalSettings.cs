@@ -7,13 +7,15 @@ using Microsoft.Win32;
 namespace Atlassian.plvs.dialogs {
     public partial class GlobalSettings : Form {
         private const string REG_FIRST_RUN = "FirstRun";
-        private const string REG_BATCH_SIZE = "JiraIssueBatchSize";
+        private const string REG_ISSUE_BATCH_SIZE = "JiraIssueBatchSize";
+        private const string REG_BAMBOO_POLLING_INTERVAL = "BambooPollingInterval";
         private const string REG_AUTOUPDATE = "AutoupdateEnabled";
         private const string REG_CHECK_SNAPSHOTS = "AutoupdateCheckSnapshots";
         private const string REG_REPORT_USAGE = "AutoupdateReportUsage";
         private const string REG_MANUAL_UPDATE_STABLE_ONLY = "ManualUpdateCheckStableOnly";
 
         private const int DEFAULT_ISSUE_BATCH_SIZE = 25;
+        private const int DEFAULT_BAMBOO_POLLING_INTERVAL = 60;
 
         static GlobalSettings() {
 
@@ -22,11 +24,12 @@ namespace Atlassian.plvs.dialogs {
                 if (root == null) {
                     throw new Exception();
                 }
-                JiraIssuesBatch = (int)root.GetValue(REG_BATCH_SIZE, DEFAULT_ISSUE_BATCH_SIZE);
+                JiraIssuesBatch = (int)root.GetValue(REG_ISSUE_BATCH_SIZE, DEFAULT_ISSUE_BATCH_SIZE);
                 AutoupdateEnabled = (int)root.GetValue(REG_AUTOUPDATE, 1) > 0;
                 AutoupdateSnapshots = (int)root.GetValue(REG_CHECK_SNAPSHOTS, 0) > 0;
                 ReportUsage = (int)root.GetValue(REG_REPORT_USAGE, 1) > 0;
                 CheckStableOnlyNow = (int)root.GetValue(REG_MANUAL_UPDATE_STABLE_ONLY, 1) > 0;
+                BambooPollingInterval = (int) root.GetValue(REG_BAMBOO_POLLING_INTERVAL, DEFAULT_BAMBOO_POLLING_INTERVAL);
             }
             catch (Exception) {
                 JiraIssuesBatch = DEFAULT_ISSUE_BATCH_SIZE;
@@ -34,6 +37,7 @@ namespace Atlassian.plvs.dialogs {
                 AutoupdateSnapshots = false;
                 ReportUsage = true;
                 CheckStableOnlyNow = true;
+                BambooPollingInterval = DEFAULT_BAMBOO_POLLING_INTERVAL;
             }
         }
 
@@ -47,6 +51,7 @@ namespace Atlassian.plvs.dialogs {
 
         private void initializeWidgets() {
             numericJiraBatchSize.Value = Math.Min(Math.Max(JiraIssuesBatch, 10), 1000);
+            numericBambooPollingInterval.Value = Math.Min(Math.Max(BambooPollingInterval, 10), 3600);
             checkAutoupdate.Checked = AutoupdateEnabled;
             checkUnstable.Checked = AutoupdateSnapshots;
             checkStats.Checked = ReportUsage;
@@ -87,6 +92,7 @@ namespace Atlassian.plvs.dialogs {
         public static bool AutoupdateSnapshots { get; private set; }
         public static bool ReportUsage { get; private set; }
         public static bool CheckStableOnlyNow { get; private set; }
+        public static int BambooPollingInterval { get; private set; }
 
         private void GlobalSettings_KeyPress(object sender, KeyPressEventArgs e) {
             if (e.KeyChar == (char) Keys.Escape) {
@@ -104,12 +110,18 @@ namespace Atlassian.plvs.dialogs {
             AutoupdateSnapshots = checkUnstable.Checked;
             ReportUsage = checkStats.Checked;
             CheckStableOnlyNow = radioStable.Checked;
+            BambooPollingInterval = (int) numericBambooPollingInterval.Value;
+
             saveValues();
 
-            Autoupdate.Instance.reschedule();
+            if (SettingsChanged != null) {
+                SettingsChanged(this, null);
+            }
 
             Close();
         }
+
+        static public event EventHandler<EventArgs> SettingsChanged;
 
         private static void saveValues() {
             try {
@@ -117,11 +129,12 @@ namespace Atlassian.plvs.dialogs {
                 if (root == null) {
                     throw new Exception();
                 }
-                root.SetValue(REG_BATCH_SIZE, JiraIssuesBatch);
+                root.SetValue(REG_ISSUE_BATCH_SIZE, JiraIssuesBatch);
                 root.SetValue(REG_AUTOUPDATE, AutoupdateEnabled ? 1 : 0);
                 root.SetValue(REG_CHECK_SNAPSHOTS, AutoupdateSnapshots ? 1 : 0);
                 root.SetValue(REG_REPORT_USAGE, ReportUsage ? 1 : 0);
                 root.SetValue(REG_MANUAL_UPDATE_STABLE_ONLY, CheckStableOnlyNow ? 1 : 0);
+                root.SetValue(REG_BAMBOO_POLLING_INTERVAL, BambooPollingInterval);
             } catch (Exception e) {
                 MessageBox.Show("Unable to save values to registry: " + e.Message, Constants.ERROR_CAPTION,
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);

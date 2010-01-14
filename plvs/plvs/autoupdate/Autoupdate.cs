@@ -4,7 +4,6 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Timers;
-using System.Windows.Forms;
 using System.Xml.XPath;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.windows;
@@ -33,7 +32,14 @@ namespace Atlassian.plvs.autoupdate {
 
         private Timer timer;
 
-        private Autoupdate() {}
+        private Autoupdate() {
+            GlobalSettings.SettingsChanged += globalSettingsChanged;
+        }
+
+        private void globalSettingsChanged(object sender, EventArgs e) {
+            shutdown();
+            initialize();
+        }
 
         public void initialize() {
             if (initialized) return;
@@ -74,11 +80,6 @@ namespace Atlassian.plvs.autoupdate {
             initialized = false;
             timer.Stop();
             timer.Dispose();
-        }
-
-        public void reschedule() {
-            shutdown();
-            initialize();
         }
 
         public void runManualUpdate(bool stableOnly) {

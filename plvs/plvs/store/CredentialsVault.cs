@@ -18,7 +18,7 @@ namespace Atlassian.plvs.store {
 
         private CredentialsVault() {}
 
-        public string getUserName(JiraServer server) {
+        public string getUserName(Server server) {
             try {
                 RegistryKey key = Registry.CurrentUser.OpenSubKey(Constants.PAZU_REG_KEY + "\\" + PAZU_KEY);
                 if (key != null) return (string) key.GetValue(USER_NAME + server.GUID, "");
@@ -29,7 +29,7 @@ namespace Atlassian.plvs.store {
             return "";
         }
 
-        public string getPassword(JiraServer server) {
+        public string getPassword(Server server) {
             try {
                 RegistryKey key = Registry.CurrentUser.OpenSubKey(Constants.PAZU_REG_KEY + "\\" + PAZU_KEY);
                 if (key != null) {
@@ -43,7 +43,7 @@ namespace Atlassian.plvs.store {
             return "";
         }
 
-        public void saveCredentials(JiraServer server) {
+        public void saveCredentials(Server server) {
             RegistryKey atlKey = Registry.CurrentUser.CreateSubKey(Constants.PAZU_REG_KEY);
             if (atlKey == null) return;
             RegistryKey key = atlKey.CreateSubKey(PAZU_KEY);
@@ -52,7 +52,7 @@ namespace Atlassian.plvs.store {
             key.SetValue(USER_PASSWORD + server.GUID, DPApi.encrypt(server.Password, server.GUID.ToString()));
         }
 
-        public void deleteCredentials(JiraServer server) {
+        public void deleteCredentials(Server server) {
             RegistryKey atlKey = Registry.CurrentUser.CreateSubKey(Constants.PAZU_REG_KEY);
             if (atlKey == null) return;
             RegistryKey key = atlKey.CreateSubKey(PAZU_KEY);

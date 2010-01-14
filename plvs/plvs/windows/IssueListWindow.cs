@@ -3,15 +3,19 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Threading;
-using Atlassian.plvs.api;
+using Atlassian.plvs.api.jira;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.models;
+using Atlassian.plvs.models.bamboo;
+using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
-using Atlassian.plvs.ui.issuefilternodes;
-using Atlassian.plvs.ui.issues;
 using Aga.Controls.Tree;
-using Atlassian.plvs.ui.issues.treemodels;
+using Atlassian.plvs.ui.bamboo;
+using Atlassian.plvs.ui.jira;
+using Atlassian.plvs.ui.jira.issuefilternodes;
+using Atlassian.plvs.ui.jira.issues;
+using Atlassian.plvs.ui.jira.issues.treemodels;
 using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.windows {
@@ -316,7 +320,7 @@ namespace Atlassian.plvs.windows {
         }
 
         private void buttonProjectProperties_Click(object sender, EventArgs e) {
-            ProjectConfiguration dialog = new ProjectConfiguration(JiraServerModel.Instance, facade);
+            ProjectConfiguration dialog = new ProjectConfiguration(JiraServerModel.Instance, BambooServerModel.Instance, facade);
             dialog.ShowDialog(this);
             if (dialog.SomethingChanged) {
                 // todo: only do this for changed servers - add server model listeners
@@ -339,6 +343,8 @@ namespace Atlassian.plvs.windows {
             Invoke(new MethodInvoker(initIssuesTree));
             reloadKnownJiraServers();
             comboGroupBy.restoreSelectedIndex();
+            tabBamboo.shutdown();
+            tabBamboo.init();
         }
 
         private void filtersTree_AfterSelect(object sender, TreeViewEventArgs e) {
@@ -510,7 +516,7 @@ namespace Atlassian.plvs.windows {
         }
 
         private void buttonSearch_Click(object sender, EventArgs e) {
-            TreeNodeWithServer node = filtersTree.SelectedNode as TreeNodeWithServer;
+            TreeNodeWithJiraServer node = filtersTree.SelectedNode as TreeNodeWithJiraServer;
             if (node == null) return;
             SearchIssue dlg = new SearchIssue(node.Server, MODEL, status);
             dlg.ShowDialog(this);
@@ -661,6 +667,10 @@ namespace Atlassian.plvs.windows {
             }
 
             public JiraIssue Issue { get; private set; }
+        }
+
+        public void shutdown() {
+            tabBamboo.shutdown();
         }
     }
 }

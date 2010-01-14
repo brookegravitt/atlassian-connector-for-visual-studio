@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Windows.Forms;
-using Atlassian.plvs.api;
-using Atlassian.plvs.models;
+using Atlassian.plvs.api.jira;
+using Atlassian.plvs.models.jira;
 using Atlassian.plvs.windows;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;

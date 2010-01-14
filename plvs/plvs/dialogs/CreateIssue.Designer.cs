@@ -1,5 +1,5 @@
 ﻿using Atlassian.plvs.api;
-using Atlassian.plvs.ui;
+using Atlassian.plvs.ui.jira;
 
 namespace Atlassian.plvs.dialogs {
     partial class CreateIssue {
