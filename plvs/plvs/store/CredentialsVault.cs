@@ -1,5 +1,6 @@
 ﻿using System;
 using Atlassian.plvs.api;
+using Atlassian.plvs.util;
 using Microsoft.Win32;
 using System.Diagnostics;
 
@@ -11,8 +12,7 @@ namespace Atlassian.plvs.store {
             get { return INSTANCE; }
         }
 
-        private const string ATL_KEY = "Software\\Atlassian";
-        private const string PAZU_KEY = "PaZu";
+        private const string PAZU_KEY = "Credentials";
         private const string USER_NAME = "UserName_";
         private const string USER_PASSWORD = "UserPassword_";
 
@@ -20,7 +20,7 @@ namespace Atlassian.plvs.store {
 
         public string getUserName(JiraServer server) {
             try {
-                RegistryKey key = Registry.CurrentUser.OpenSubKey(ATL_KEY + "\\" + PAZU_KEY);
+                RegistryKey key = Registry.CurrentUser.OpenSubKey(Constants.PAZU_REG_KEY + "\\" + PAZU_KEY);
                 if (key != null) return (string) key.GetValue(USER_NAME + server.GUID, "");
             }
             catch (Exception e) {
@@ -31,7 +31,7 @@ namespace Atlassian.plvs.store {
 
         public string getPassword(JiraServer server) {
             try {
-                RegistryKey key = Registry.CurrentUser.OpenSubKey(ATL_KEY + "\\" + PAZU_KEY);
+                RegistryKey key = Registry.CurrentUser.OpenSubKey(Constants.PAZU_REG_KEY + "\\" + PAZU_KEY);
                 if (key != null) {
                     string password = DPApi.decrypt((string) key.GetValue(USER_PASSWORD + server.GUID, ""), server.GUID.ToString());
                     return password;
@@ -44,7 +44,7 @@ namespace Atlassian.plvs.store {
         }
 
         public void saveCredentials(JiraServer server) {
-            RegistryKey atlKey = Registry.CurrentUser.CreateSubKey(ATL_KEY);
+            RegistryKey atlKey = Registry.CurrentUser.CreateSubKey(Constants.PAZU_REG_KEY);
             if (atlKey == null) return;
             RegistryKey key = atlKey.CreateSubKey(PAZU_KEY);
             if (key == null) return;
@@ -53,7 +53,7 @@ namespace Atlassian.plvs.store {
         }
 
         public void deleteCredentials(JiraServer server) {
-            RegistryKey atlKey = Registry.CurrentUser.CreateSubKey(ATL_KEY);
+            RegistryKey atlKey = Registry.CurrentUser.CreateSubKey(Constants.PAZU_REG_KEY);
             if (atlKey == null) return;
             RegistryKey key = atlKey.CreateSubKey(PAZU_KEY);
             if (key == null) return;

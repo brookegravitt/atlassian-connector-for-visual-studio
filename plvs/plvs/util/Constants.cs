@@ -6,5 +6,7 @@
         public static string USER_NOT_VALUDATED = "Warning! This field is not validated prior to sending to JIRA";
         public static string TIME_TRACKING_SYNTAX = "The format of this is '*w *d *h *m' (weeks, days, hours and minutes)";
         public static string INTEGRATE_WITH_ANKH = "integrate.with.ankh";
+
+        public const string PAZU_REG_KEY = @"Software\Atlassian\Atlassian Connector for Visual Studio";
     }
 }
