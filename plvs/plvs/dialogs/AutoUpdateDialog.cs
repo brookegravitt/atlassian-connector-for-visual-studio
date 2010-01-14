@@ -13,12 +13,12 @@ namespace Atlassian.plvs.dialogs {
 
             InitializeComponent();
 
-//            browser.IsWebBrowserContextMenuEnabled = false;
+            browser.IsWebBrowserContextMenuEnabled = false;
             browser.DocumentText = string.Format(
                 Resources.autoupdate_html, Font.FontFamily.Name, 
                 ColorTranslator.ToHtml(SystemColors.Control), 
                 stamp, blurbText, releaseNotesUrl);
-            browser.ScrollBarsEnabled = true;
+//            browser.ScrollBarsEnabled = true;
 
             StartPosition = FormStartPosition.CenterParent;
 

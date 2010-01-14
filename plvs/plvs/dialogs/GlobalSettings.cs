@@ -13,14 +13,12 @@ namespace Atlassian.plvs.dialogs {
         private const string REG_REPORT_USAGE = "AutoupdateReportUsage";
         private const string REG_MANUAL_UPDATE_STABLE_ONLY = "ManualUpdateCheckStableOnly";
 
-        private const string REG_KEY = @"Software\Atlassian\Atlassian Connector for Visual Studio";
-
         private const int DEFAULT_ISSUE_BATCH_SIZE = 25;
 
         static GlobalSettings() {
 
             try {
-                RegistryKey root = Registry.CurrentUser.CreateSubKey(REG_KEY);
+                RegistryKey root = Registry.CurrentUser.CreateSubKey(Constants.PAZU_REG_KEY);
                 if (root == null) {
                     throw new Exception();
                 }
@@ -60,7 +58,7 @@ namespace Atlassian.plvs.dialogs {
 
         public static void checkFirstRun() {
             try {
-                RegistryKey root = Registry.CurrentUser.CreateSubKey(REG_KEY);
+                RegistryKey root = Registry.CurrentUser.CreateSubKey(Constants.PAZU_REG_KEY);
                 if (root == null) {
                     throw new Exception();
                 }
@@ -115,7 +113,7 @@ namespace Atlassian.plvs.dialogs {
 
         private static void saveValues() {
             try {
-                RegistryKey root = Registry.CurrentUser.CreateSubKey(REG_KEY);
+                RegistryKey root = Registry.CurrentUser.CreateSubKey(Constants.PAZU_REG_KEY);
                 if (root == null) {
                     throw new Exception();
                 }

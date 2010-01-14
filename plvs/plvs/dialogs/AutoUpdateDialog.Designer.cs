@@ -37,6 +37,7 @@
             this.browser.Location = new System.Drawing.Point(12, 12);
             this.browser.MinimumSize = new System.Drawing.Size(20, 20);
             this.browser.Name = "browser";
+            this.browser.ScrollBarsEnabled = false;
             this.browser.Size = new System.Drawing.Size(538, 205);
             this.browser.TabIndex = 0;
             this.browser.TabStop = false;
