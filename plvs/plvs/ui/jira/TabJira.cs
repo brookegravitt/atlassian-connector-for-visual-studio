@@ -3,26 +3,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Threading;
-using Atlassian.plvs.api.bamboo;
 using Atlassian.plvs.api.jira;
-using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.models;
-using Atlassian.plvs.models.bamboo;
 using Atlassian.plvs.models.jira;
-using Atlassian.plvs.ui;
 using Aga.Controls.Tree;
-using Atlassian.plvs.ui.jira;
 using Atlassian.plvs.ui.jira.issuefilternodes;
 using Atlassian.plvs.ui.jira.issues;
 using Atlassian.plvs.ui.jira.issues.treemodels;
-using Atlassian.plvs.util;
 
-namespace Atlassian.plvs.windows {
-    public partial class IssueListWindow : ToolWindowFrame {
-        private readonly JiraServerFacade jiraFacade = JiraServerFacade.Instance;
-        private readonly BambooServerFacade bambooFacade = BambooServerFacade.Instance;
-
+namespace Atlassian.plvs.ui.jira {
+    public partial class TabJira : UserControl {
         private JiraIssueTree issuesTree;
 
         private readonly JiraIssueListModelBuilder builder;
@@ -33,28 +24,20 @@ namespace Atlassian.plvs.windows {
 
         private readonly StatusLabel status;
 
-        public static IssueListWindow Instance { get; private set; }
-
-        public IssueListWindow() {
+        public TabJira() {
             InitializeComponent();
             setupGroupByCombo();
 
             status = new StatusLabel(statusStrip, jiraStatus);
 
             registerIssueModelListener();
-            builder = new JiraIssueListModelBuilder(jiraFacade);
+            builder = new JiraIssueListModelBuilder(Facade);
 
             filtersTree.setReloadIssuesCallback(reloadIssues);
             filtersTree.addToolTip(filtersTreeToolTip);
-
-            productTabs.ImageList = new ImageList();
-            productTabs.ImageList.Images.Add(Resources.tab_jira);
-            productTabs.ImageList.Images.Add(Resources.tab_bamboo);
-
-            buttonUpdate.Visible = false;
-
-            Instance = this;
         }
+
+        public JiraServerFacade Facade { get { return JiraServerFacade.Instance; } }
 
         private void setupGroupByCombo() {
             foreach (JiraIssueGroupByComboItem.GroupBy groupBy in Enum.GetValues(typeof (JiraIssueGroupByComboItem.GroupBy))) {
@@ -77,14 +60,14 @@ namespace Atlassian.plvs.windows {
             issuesTree = new JiraIssueTree(jiraSplitter.Panel2, status, searchingModel);
 
             issuesTree.addContextMenu(new[]
-                                        {
-                                            new ToolStripMenuItem("Open in IDE", Resources.open_in_ide,
-                                                                  new EventHandler(openIssue)),
-                                            new ToolStripMenuItem("View in Browser", Resources.view_in_browser,
-                                                                  new EventHandler(browseIssue)),
-                                            new ToolStripMenuItem("Edit in Browser", Resources.edit_in_browser,
-                                                                  new EventHandler(browseEditIssue)),
-                                        });
+                                      {
+                                          new ToolStripMenuItem("Open in IDE", Resources.open_in_ide,
+                                                                new EventHandler(openIssue)),
+                                          new ToolStripMenuItem("View in Browser", Resources.view_in_browser,
+                                                                new EventHandler(browseIssue)),
+                                          new ToolStripMenuItem("Edit in Browser", Resources.edit_in_browser,
+                                                                new EventHandler(browseEditIssue)),
+                                      });
 
             issuesTree.NodeMouseDoubleClick += issuesTree_NodeMouseDoubleClick;
             issuesTree.KeyPress += issuesTree_KeyPress;
@@ -222,7 +205,7 @@ namespace Atlassian.plvs.windows {
             }
         }
 
-        private void reloadKnownJiraServers() {
+        public void reloadKnownJiraServers() {
             filtersTree.clear();
             searchingModel.clear(true);
 
@@ -251,45 +234,45 @@ namespace Atlassian.plvs.windows {
 
                 foreach (JiraServer server in servers) {
                     status.setInfo("[" + server.Name + "] Loading project definitions...");
-                    List<JiraProject> projects = jiraFacade.getProjects(server);
+                    List<JiraProject> projects = Facade.getProjects(server);
                     foreach (JiraProject proj in projects) {
                         JiraServerCache.Instance.addProject(server, proj);
                     }
 
                     status.setInfo("[" + server.Name + "] Loading issue types...");
-                    List<JiraNamedEntity> issueTypes = jiraFacade.getIssueTypes(server);
+                    List<JiraNamedEntity> issueTypes = Facade.getIssueTypes(server);
                     foreach (JiraNamedEntity type in issueTypes) {
                         JiraServerCache.Instance.addIssueType(server, type);
                         ImageCache.Instance.getImage(type.IconUrl);
                     }
-                    List<JiraNamedEntity> subtaskIssueTypes = jiraFacade.getSubtaskIssueTypes(server);
+                    List<JiraNamedEntity> subtaskIssueTypes = Facade.getSubtaskIssueTypes(server);
                     foreach (JiraNamedEntity type in subtaskIssueTypes) {
                         JiraServerCache.Instance.addIssueType(server, type);
                         ImageCache.Instance.getImage(type.IconUrl);
                     }
 
                     status.setInfo("[" + server.Name + "] Loading issue priorities...");
-                    List<JiraNamedEntity> priorities = jiraFacade.getPriorities(server);
+                    List<JiraNamedEntity> priorities = Facade.getPriorities(server);
                     foreach (JiraNamedEntity prio in priorities) {
                         JiraServerCache.Instance.addPriority(server, prio);
                         ImageCache.Instance.getImage(prio.IconUrl);
                     }
 
                     status.setInfo("[" + server.Name + "] Loading issue resolutions...");
-                    List<JiraNamedEntity> resolutions = jiraFacade.getResolutions(server);
+                    List<JiraNamedEntity> resolutions = Facade.getResolutions(server);
                     foreach (JiraNamedEntity res in resolutions) {
                         JiraServerCache.Instance.addResolution(server, res);
                     }
 
                     status.setInfo("[" + server.Name + "] Loading issue statuses...");
-                    List<JiraNamedEntity> statuses = jiraFacade.getStatuses(server);
+                    List<JiraNamedEntity> statuses = Facade.getStatuses(server);
                     foreach (JiraNamedEntity s in statuses) {
                         JiraServerCache.Instance.addStatus(server, s);
                         ImageCache.Instance.getImage(s.IconUrl);
                     }
 
                     status.setInfo("[" + server.Name + "] Loading saved filters...");
-                    List<JiraSavedFilter> filters = jiraFacade.getSavedFilters(server);
+                    List<JiraSavedFilter> filters = Facade.getSavedFilters(server);
                     JiraServer jiraServer = server;
                     Invoke(new MethodInvoker(delegate {
                                                  filtersTree.addFilterGroupNodes(jiraServer);
@@ -324,33 +307,9 @@ namespace Atlassian.plvs.windows {
             return MODEL.Issues.Count%GlobalSettings.JiraIssuesBatch == 0;
         }
 
-        private void buttonProjectProperties_Click(object sender, EventArgs e) {
-            ProjectConfiguration dialog = new ProjectConfiguration(JiraServerModel.Instance, BambooServerModel.Instance, jiraFacade, bambooFacade);
-            dialog.ShowDialog(this);
-            if (dialog.SomethingChanged) {
-                // todo: only do this for changed servers - add server model listeners
-                reloadKnownJiraServers();
-            }
-            tabBamboo.reinitialize();
-        }
-
-        private void buttonAbout_Click(object sender, EventArgs e) {
-            new About().ShowDialog(this);
-        }
-
         private void buttonRefreshAll_Click(object sender, EventArgs e) {
             comboFind.Text = "";
             reloadKnownJiraServers();
-        }
-
-        public void reinitialize() {
-            searchingModel.reinit(MODEL);
-            registerIssueModelListener();
-            Invoke(new MethodInvoker(initIssuesTree));
-            reloadKnownJiraServers();
-            comboGroupBy.restoreSelectedIndex();
-            tabBamboo.shutdown();
-            tabBamboo.init();
         }
 
         private void filtersTree_AfterSelect(object sender, TreeViewEventArgs e) {
@@ -528,11 +487,6 @@ namespace Atlassian.plvs.windows {
             dlg.ShowDialog(this);
         }
 
-        private void buttonGlobalProperties_Click(object sender, EventArgs e) {
-            GlobalSettings globals = new GlobalSettings();
-            globals.ShowDialog();
-        }
-
         public delegate void FindFinished(bool success, string message);
 
         public void findAndOpenIssue(string key, FindFinished onFinish) {
@@ -576,43 +530,6 @@ namespace Atlassian.plvs.windows {
             }
         }
 
-
-        private Autoupdate.UpdateAction updateAction;
-        private Exception updateException;
-
-        private void buttonUpdate_Click(object sender, EventArgs e) {
-            if (updateAction != null) {
-                updateAction();
-            } else if (updateException != null) {
-                MessageBox.Show(
-                    "Unable to retrieve autoupdate information:\n\n" + updateException.Message,
-                    Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        public void setAutoupdateAvailable(Autoupdate.UpdateAction action) {
-            Invoke(new MethodInvoker(delegate
-                                         {
-                                             updateAction = action;
-                                             updateException = null;
-                                             buttonUpdate.Enabled = true;
-                                             buttonUpdate.Image = Resources.status_plugin;
-                                             buttonUpdate.Visible = true;
-                                             buttonUpdate.Text = "New version of the connector is available";
-                                         }));
-        }
-
-        public void setAutoupdateUnavailable(Exception exception) {
-            Invoke(new MethodInvoker(delegate
-                                         {
-                                             updateAction = null;
-                                             updateException = exception;
-                                             buttonUpdate.Enabled = true;
-                                             buttonUpdate.Image = Resources.update_unavailable;
-                                             buttonUpdate.Visible = true;
-                                             buttonUpdate.Text = "Unable to retrieve connector update information";
-                                         }));
-        }
 
         private void buttonExpandAll_Click(object sender, EventArgs e) {
             expandIssuesTree();
@@ -689,8 +606,14 @@ namespace Atlassian.plvs.windows {
             public JiraIssue Issue { get; private set; }
         }
 
-        public void shutdown() {
-            tabBamboo.shutdown();
+        public void reinitialize() {
+            searchingModel.reinit(MODEL);
+            registerIssueModelListener();
+            Invoke(new MethodInvoker(initIssuesTree));
+            reloadKnownJiraServers();
+            comboGroupBy.restoreSelectedIndex();
         }
+
+        public void shutdown() {}
     }
 }

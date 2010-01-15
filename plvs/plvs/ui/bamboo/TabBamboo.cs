@@ -29,6 +29,8 @@ namespace Atlassian.plvs.ui.bamboo {
             notifyBuildStatus.BalloonTipTitle = "Atlassian Bamboo Notification";
         }
 
+        public BambooServerFacade Facade { get { return BambooServerFacade.Instance; } }
+
         private void globalSettingsChanged(object sender, EventArgs e) {
             reinitialize();
         }
@@ -64,7 +66,7 @@ namespace Atlassian.plvs.ui.bamboo {
             List<Exception> allExceptions = new List<Exception>();
             foreach (BambooServer server in BambooServerModel.Instance.getAllServers()) {
                 try {
-                    ICollection<BambooBuild> builds = BambooServerFacade.Instance.getLatestBuildsForFavouritePlans(server);
+                    ICollection<BambooBuild> builds = Facade.getLatestBuildsForFavouritePlans(server);
                     allBuilds.AddRange(builds);
                 } catch (Exception e) {
                     allExceptions.Add(e);

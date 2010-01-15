@@ -244,17 +244,23 @@
     <Compile Include="util\ExceptionBuilder.cs" />
     <Compile Include="util\jira\IssueActionRunner.cs" />
     <Compile Include="util\XPathUtils.cs" />
-    <Compile Include="windows\IssueDetailsPanel.cs">
+    <Compile Include="ui\jira\TabJira.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="windows\IssueDetailsPanel.Designer.cs">
+    <Compile Include="ui\jira\TabJira.Designer.cs">
+      <DependentUpon>TabJira.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ui\jira\IssueDetailsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\jira\IssueDetailsPanel.Designer.cs">
       <DependentUpon>IssueDetailsPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="windows\IssueDetailsToolWindow.cs" />
-    <Compile Include="windows\IssueDetailsWindow.cs">
+    <Compile Include="ui\jira\IssueDetailsToolWindow.cs" />
+    <Compile Include="ui\jira\IssueDetailsWindow.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="windows\IssueDetailsWindow.Designer.cs">
+    <Compile Include="ui\jira\IssueDetailsWindow.Designer.cs">
       <DependentUpon>IssueDetailsWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="markers\JiraEditorLinkManager.cs" />
@@ -283,11 +289,11 @@
     <Compile Include="models\jira\RecentlyViewedIssuesModel.cs" />
     <Compile Include="windows\AtlassianToolWindow.cs" />
     <Compile Include="Guids.cs" />
-    <Compile Include="windows\IssueListWindow.cs">
+    <Compile Include="windows\AtlassianPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="windows\IssueListWindow.Designer.cs">
-      <DependentUpon>IssueListWindow.cs</DependentUpon>
+    <Compile Include="windows\AtlassianPanel.Designer.cs">
+      <DependentUpon>AtlassianPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -444,16 +450,20 @@
       <DependentUpon>TabBamboo.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="windows\IssueDetailsPanel.resx">
+    <EmbeddedResource Include="ui\jira\TabJira.resx">
+      <DependentUpon>TabJira.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\jira\IssueDetailsPanel.resx">
       <DependentUpon>IssueDetailsPanel.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="windows\IssueDetailsWindow.resx">
+    <EmbeddedResource Include="ui\jira\IssueDetailsWindow.resx">
       <DependentUpon>IssueDetailsWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="windows\IssueListWindow.resx">
-      <DependentUpon>IssueListWindow.cs</DependentUpon>
+    <EmbeddedResource Include="windows\AtlassianPanel.resx">
+      <DependentUpon>AtlassianPanel.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources.resx">

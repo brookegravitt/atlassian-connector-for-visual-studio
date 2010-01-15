@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.Shell;
 
-namespace Atlassian.plvs.windows {
+namespace Atlassian.plvs.ui.jira {
     [Guid("34218DB5-88B7-4773-B356-C07E94987CD2")]
     public class IssueDetailsToolWindow : ToolWindowPane {
         private readonly IssueDetailsWindow control;

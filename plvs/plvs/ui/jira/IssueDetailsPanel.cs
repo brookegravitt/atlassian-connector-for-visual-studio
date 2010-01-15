@@ -9,14 +9,13 @@ using System.Diagnostics;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.models.jira;
-using Atlassian.plvs.ui;
 using Atlassian.plvs.util.jira;
 using EnvDTE;
 using Constants=EnvDTE.Constants;
 using Process=System.Diagnostics.Process;
 using Thread=System.Threading.Thread;
 
-namespace Atlassian.plvs.windows {
+namespace Atlassian.plvs.ui.jira {
     public partial class IssueDetailsPanel : UserControl {
         private readonly JiraIssueListModel model;
         private readonly Solution solution;

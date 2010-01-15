@@ -1,10 +1,9 @@
 ﻿using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models.jira;
-using Atlassian.plvs.ui;
 using EnvDTE;
 
-namespace Atlassian.plvs.windows {
+namespace Atlassian.plvs.ui.jira {
     public partial class IssueDetailsWindow : ToolWindowFrame {
         public static IssueDetailsWindow Instance { get; private set; }
 
