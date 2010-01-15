@@ -331,6 +331,7 @@ namespace Atlassian.plvs.windows {
                 // todo: only do this for changed servers - add server model listeners
                 reloadKnownJiraServers();
             }
+            tabBamboo.reinitialize();
         }
 
         private void buttonAbout_Click(object sender, EventArgs e) {

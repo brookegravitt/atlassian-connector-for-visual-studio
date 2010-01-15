@@ -8,6 +8,8 @@
 !include MUI.nsh
 ;--------------------------------
 
+!define WNDCLASS "wndclass_desked_gsk"
+
 !ifndef VERSION
 !error "VERSION is not undefined"
 !endif
@@ -34,24 +36,38 @@ Function .onInit
 	Call CheckVS
 	Call CheckDotNET35
 	Call CheckDotNET20
+	FindWindow $0 "${WNDCLASS}"
+	StrCmp $0 0 +3
+	    MessageBox MB_ICONSTOP|MB_OK "Visual Studio is running. Close it and try again."
+		Abort
+FunctionEnd
+
+Function un.onInit
+	FindWindow $0 "${WNDCLASS}"
+	StrCmp $0 0 +3
+	    MessageBox MB_ICONSTOP|MB_OK "Visual Studio is running. Close it and try again."
+		Abort
 FunctionEnd
 
 Function CheckDotNET20
 	ReadRegDWORD $0 HKLM "SOFTWARE\Microsoft\NET Framework Setup\NDP\v2.0.50727" "Install"
-	IfErrors 0 +2
-		Abort ".NET Framework 2.0 is not installed"
+	IfErrors 0 +3
+		MessageBox MB_ICONSTOP|MB_OK ".NET Framework 2.0 is not installed"
+		Abort
 FunctionEnd
 
 Function CheckDotNET35
 	ReadRegDWORD $0 HKLM "SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5" "Install"
-	IfErrors 0 +2
-		Abort ".NET Framework 3.5 is not installed"
+	IfErrors 0 +3
+		MessageBox MB_ICONSTOP|MB_OK ".NET Framework 3.5 is not installed"
+		Abort
 FunctionEnd
 
 Function CheckVS
 	ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\9.0" "InstallDir"
-	IfErrors 0 +2
-		Abort "Visual Studio 2008 is not installed"
+	IfErrors 0 +3
+		MessageBox MB_ICONSTOP|MB_OK "Visual Studio 2008 is not installed"
+		Abort
 FunctionEnd
 
 ; Pages

@@ -30,8 +30,7 @@ namespace Atlassian.plvs.ui.bamboo {
         }
 
         private void globalSettingsChanged(object sender, EventArgs e) {
-            shutdown();
-            init();
+            reinitialize();
         }
 
         public void init() {
@@ -48,6 +47,11 @@ namespace Atlassian.plvs.ui.bamboo {
             pollTimer.Stop();
             pollTimer.Enabled = false;
             showPollResults(null, null);
+        }
+
+        public void reinitialize() {
+            shutdown();
+            init();
         }
 
         void pollTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
