@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models.jira;
+using Atlassian.plvs.ui.jira;
 using Atlassian.plvs.windows;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
@@ -86,7 +87,7 @@ namespace Atlassian.plvs.eventsinks {
                 break;
             }
             if (!found) {
-                IssueListWindow.Instance.findAndOpenIssue(issueKey, findFinished);
+                AtlassianPanel.Instance.Jira.findAndOpenIssue(issueKey, findFinished);
             }
         }
 
@@ -101,7 +102,7 @@ namespace Atlassian.plvs.eventsinks {
                 return;
             }
             try {
-                JiraServer server = IssueListWindow.Instance.getCurrentlySelectedServer();
+                JiraServer server = AtlassianPanel.Instance.Jira.getCurrentlySelectedServer();
                 if (server != null) {
                     Process.Start(server.Url + "/browse/" + issueKey);
                 } else {

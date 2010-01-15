@@ -6,6 +6,7 @@ using Atlassian.plvs.markers;
 using Atlassian.plvs.models.bamboo;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.store;
+using Atlassian.plvs.ui.jira;
 using Atlassian.plvs.windows;
 using EnvDTE;
 using Microsoft.VisualStudio;
@@ -61,7 +62,7 @@ namespace Atlassian.plvs.eventsinks {
                 RecentlyViewedIssuesModel.Instance.load();
                 JiraCustomFilter.load();
                 ToolWindowManager.Instance.AtlassianWindow = createJiraWindow();
-                IssueListWindow.Instance.reinitialize();
+                AtlassianPanel.Instance.reinitialize();
                 ToolWindowManager.Instance.IssueDetailsWindow = createIssueDetailsWindow();
 
                 DTE dte = (DTE) package.GetService(typeof(DTE));
@@ -88,8 +89,8 @@ namespace Atlassian.plvs.eventsinks {
                 if (ToolWindowManager.Instance.AtlassianWindow == null) return VSConstants.S_OK;
                 JiraServerModel.Instance.clear();
                 BambooServerModel.Instance.clear();
-                IssueListWindow.Instance.shutdown();
-                IssueListWindow.Instance.FrameVisible = false;
+                AtlassianPanel.Instance.shutdown();
+                AtlassianPanel.Instance.FrameVisible = false;
                 ParameterStoreManager.Instance.clear();
                 JiraIssueListModelImpl.Instance.removeAllListeners();
                 IssueDetailsWindow.Instance.clearAllIssues();

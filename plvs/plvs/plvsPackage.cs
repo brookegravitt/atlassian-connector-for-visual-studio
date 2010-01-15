@@ -10,6 +10,7 @@ using Atlassian.plvs.eventsinks;
 using Atlassian.plvs.markers;
 using Atlassian.plvs.scm;
 using Atlassian.plvs.store;
+using Atlassian.plvs.ui.jira;
 using Atlassian.plvs.windows;
 using EnvDTE;
 using Microsoft.VisualStudio;
@@ -53,7 +54,7 @@ namespace Atlassian.plvs {
                 throw new NotSupportedException(Resources.CanNotCreateWindow);
             }
             IVsWindowFrame windowFrame = (IVsWindowFrame) window.Frame;
-            IssueListWindow.Instance.WindowFrame = window;
+            AtlassianPanel.Instance.WindowFrame = window;
             ErrorHandler.ThrowOnFailure(windowFrame.Show());
             return window;
         }

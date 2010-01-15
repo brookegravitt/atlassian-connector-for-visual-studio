@@ -59,7 +59,7 @@ namespace Atlassian.plvs.scm {
             }
 
             public override void PreCommit(PreCommitArgs args) {
-                JiraIssue issue = IssueListWindow.Instance.SelectedIssue;
+                JiraIssue issue = AtlassianPanel.Instance.Jira.SelectedIssue;
                 if (issue != null && (String.IsNullOrEmpty(args.CommitMessage))) {
                     args.CommitMessage = issue.Key + " - " + issue.Summary;
                 }

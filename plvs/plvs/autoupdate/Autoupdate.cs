@@ -102,7 +102,7 @@ namespace Atlassian.plvs.autoupdate {
         }
 
         private bool runSingleUpdateQuery(string url, bool updateToolWindowButton) {
-            IssueListWindow issueListWindow = IssueListWindow.Instance;
+            AtlassianPanel issueListWindow = AtlassianPanel.Instance;
             try {
                 HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
 

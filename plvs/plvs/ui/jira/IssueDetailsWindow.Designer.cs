@@ -1,4 +1,4 @@
-﻿namespace Atlassian.plvs.windows {
+﻿namespace Atlassian.plvs.ui.jira {
     partial class IssueDetailsWindow
     {
         /// <summary> 

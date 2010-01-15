@@ -298,7 +298,7 @@ namespace Atlassian.plvs.dialogs {
                                              setAllEnabled(true);
                                              buttonCancel.Enabled = true;
                                              Close();
-                                             IssueListWindow.Instance.findAndOpenIssue(key, null);
+                                             AtlassianPanel.Instance.Jira.findAndOpenIssue(key, null);
                                          }));
             }
             catch (Exception e) {
