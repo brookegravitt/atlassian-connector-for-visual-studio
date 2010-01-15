@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Policy;
 using System.Text;
 using System.Web;
 using System.Xml.XPath;
@@ -10,33 +13,48 @@ using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.api.bamboo.rest {
     public class RestSession {
+
         private readonly string url;
         private string authToken;
-        private Dictionary<string, string> cookieMap;
-        private WebHeaderCollection headerCollection = new WebHeaderCollection();
+        private string userName;
+        private string password;
 
-        private const string LIST_PLAN_ACTION = "/api/rest/listBuildNames.action";
-        private const string LATEST_USER_BUILDS_ACTION = "/api/rest/getLatestUserBuilds.action";
-        private const string LATEST_BUILD_FOR_PLAN_ACTION = "/api/rest/getLatestBuildResults.action";
+        private string cookie;
+
+        private const string LATEST_BUILDS_FOR_FAVOURITE_PLANS_ACTION = "/rest/api/latest/build?favourite&expand=builds.build";
+
+        private const string ALL_PLANS_ACTION = "/rest/api/latest/plan?expand=plans.plan";
+        private const string FAVOURITE_PLANS_ACTION = "/rest/api/latest/plan?favourite&expand=plans.plan";
 
         private const string LOGIN_ACTION = "/api/rest/login.action";
     	private const string LOGOUT_ACTION = "/api/rest/logout.action";
 
         public RestSession(string url) {
             this.url = url;
+            ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(certValidationCallback);
+        }
+
+        private static bool certValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslpolicyerrors) {
+            // todo - this is lame :)
+            return true;
         }
 
         public bool LoggedIn { get; private set; }
 
-        public RestSession login(string userName, string password) {
+        public RestSession login(string username, string pwd) {
 
             string endpoint = url + LOGIN_ACTION 
-                + "?username=" + HttpUtility.UrlEncode(userName, Encoding.UTF8) + "&password=" + HttpUtility.UrlEncode(password, Encoding.UTF8) 
-                + "&os_username=" + HttpUtility.UrlEncode(userName, Encoding.UTF8) + "&os_password=" + HttpUtility.UrlEncode(password, Encoding.UTF8);
+                + "?username=" + HttpUtility.UrlEncode(username, Encoding.UTF8) + "&password=" + HttpUtility.UrlEncode(pwd, Encoding.UTF8) 
+                + "&os_username=" + HttpUtility.UrlEncode(username, Encoding.UTF8) + "&os_password=" + HttpUtility.UrlEncode(pwd, Encoding.UTF8);
 
-            Stream stream = getQueryResultStream(endpoint);
+            Stream stream = getQueryResultStream(endpoint, false);
 
             XPathDocument doc = XPathUtils.getDocument(stream);
+
+            string exceptions = getRemoteExceptionMessages(doc);
+            if (exceptions != null) {
+                throw new Exception(exceptions);
+            }
 
             XPathNavigator nav = doc.CreateNavigator();
             XPathExpression expr = nav.Compile("/response/auth");
@@ -49,6 +67,8 @@ namespace Atlassian.plvs.api.bamboo.rest {
             }
             it.MoveNext();
             authToken = it.Current.Value;
+            userName = username;
+            password = pwd;
 
             LoggedIn = true;
             return this;
@@ -58,109 +78,189 @@ namespace Atlassian.plvs.api.bamboo.rest {
             if (!LoggedIn) return;
             try {
                 string endpoint = url + LOGOUT_ACTION + "?auth=" + HttpUtility.UrlEncode(authToken, Encoding.UTF8);
-                getQueryResultStream(endpoint);
+                getQueryResultStream(endpoint, false);
             } catch (Exception e) {
                 Debug.WriteLine("RestSession.logout() - exception (ignored): " + e.Message);
             }
             authToken = null;
+            userName = null;
+            password = null;
             LoggedIn = false;
         }
 
-        public ICollection<BambooPlan> getPlanList() {
+        public ICollection<BambooPlan> getAllPlans() {
+            return getPlansFromUrl(url + ALL_PLANS_ACTION);
+        }
 
-            String endpoint = url + LIST_PLAN_ACTION + "?auth=" + HttpUtility.UrlEncode(authToken, Encoding.UTF8);
+        public ICollection<BambooPlan> getFavouritePlans() {
+            return getPlansFromUrl(url + FAVOURITE_PLANS_ACTION);
+        }
 
-            Stream stream = getQueryResultStream(endpoint);
+        private ICollection<BambooPlan> getPlansFromUrl(string endpoint) {
+
+            Stream stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint), true);
 
             XPathDocument doc = XPathUtils.getDocument(stream);
 
+            string code = getRestErrorStatusCode(doc);
+            if (code != null) {
+                throw new Exception(code);
+            }
+
             XPathNavigator nav = doc.CreateNavigator();
-            XPathExpression expr = nav.Compile("/response/build");
+            XPathExpression expr = nav.Compile("/plans/plans/plan");
             XPathNodeIterator it = nav.Select(expr);
 
             List<BambooPlan> plans = new List<BambooPlan>();
 
             while(it.MoveNext()) {
                 string enabledValue = XPathUtils.getAttributeSafely(it.Current, "enabled", "true");
-				bool enabled = true;
+                string key = XPathUtils.getAttributeSafely(it.Current, "key", null);
+                string name = XPathUtils.getAttributeSafely(it.Current, "name", null);
+                bool enabled = true;
 				if (enabledValue != null) {
 					enabled = Boolean.Parse(enabledValue);
 				}
                 it.Current.MoveToFirstChild();
-                string key = null;
-                string name = null;
+                bool favourite = false;
                 do {
                     switch (it.Current.Name) {
-                        case "key":
-                            key = it.Current.Value;
-                            break;
-                        case "name":
-                            name = it.Current.Value;
+                        case "isFavourite":
+                            favourite = it.Current.Value.Equals("true");
                             break;
                     }
-                    if (key == null || name == null) continue;
-                    BambooPlan plan = new BambooPlan(key, name, enabled);
-                    plans.Add(plan);
                 } while (it.Current.MoveToNext());
+                if (key == null || name == null) continue;
+                BambooPlan plan = new BambooPlan(key, name, enabled, favourite);
+                plans.Add(plan);
             }
             return plans;
         }
 
-        private List<string> getFavouriteUserPlans(string userName) {
-            String endpoint = url + LATEST_USER_BUILDS_ACTION + "?auth=" + HttpUtility.UrlEncode(authToken, Encoding.UTF8) + "&username" + HttpUtility.UrlEncode(userName, Encoding.UTF8);
-            Stream stream = getQueryResultStream(endpoint);
+        public ICollection<BambooBuild> getLatestBuildsForFavouritePlans() {
+            String endpoint = url + LATEST_BUILDS_FOR_FAVOURITE_PLANS_ACTION;
+            return getBuildsFromUrl(endpoint);
+        }
+    
+        private ICollection<BambooBuild> getBuildsFromUrl(string endpoint) {
+            Stream stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint), true);
+
             XPathDocument doc = XPathUtils.getDocument(stream);
+
+            string code = getRestErrorStatusCode(doc);
+            if (code != null) {
+                throw new Exception(code);
+            }
+
             XPathNavigator nav = doc.CreateNavigator();
-            XPathExpression expr = nav.Compile("/response/build");
+            XPathExpression expr = nav.Compile("/builds/builds/build");
             XPathNodeIterator it = nav.Select(expr);
 
-            List<string> result = new List<string>();
+            List<BambooBuild> builds = new List<BambooBuild>();
+
             while (it.MoveNext()) {
+                int number = int.Parse(XPathUtils.getAttributeSafely(it.Current, "number", "-1"));
+                string key = XPathUtils.getAttributeSafely(it.Current, "key", null);
+                string state = XPathUtils.getAttributeSafely(it.Current, "state", null);
                 it.Current.MoveToFirstChild();
+                string buildRelativeTime = null;
+                string buildDurationDescription = null;
+                int successfulTestCount = 0;
+                int failedTestCount = 0;
+                string buildReason = null;
                 do {
-                    if (it.Current.Name.Equals("key")) {
-                        result.Add(it.Current.Value);
+                    switch (it.Current.Name) {
+                        case "buildRelativeTime":
+                            buildRelativeTime = it.Current.Value;
+                            break;
+                        case "buildDurationDescription":
+                            buildDurationDescription = it.Current.Value;
+                            break;
+                        case "successfulTestCount":
+                            successfulTestCount = int.Parse(it.Current.Value);
+                            break;
+                        case "failedTestCount":
+                            failedTestCount = int.Parse(it.Current.Value);
+                            break;
+                        case "buildReason":
+                            buildReason = it.Current.Value;
+                            break;
                     }
                 } while (it.Current.MoveToNext());
-            }
-            return result;
-        }
-
-        public ICollection<BambooBuild> getLatestBuildsForFavouritePlans(string userName) {
-            List<BambooBuild> builds = new List<BambooBuild>();
-            foreach (string plan in getFavouriteUserPlans(userName)) {
-                
-            }
-            foreach (BambooPlan plan in getPlanList()) {
-                if (plan.Favourite == null || !plan.Favourite.Value) continue;
-
-                String endpoint = url + LATEST_BUILD_FOR_PLAN_ACTION + "?auth=" 
-                    + HttpUtility.UrlEncode(authToken, Encoding.UTF8) + "&buildKey=" + HttpUtility.UrlEncode(plan.Key);
-
-                Stream stream = getQueryResultStream(endpoint);
-
-                XPathDocument doc = XPathUtils.getDocument(stream);
-
-                XPathNavigator nav = doc.CreateNavigator();
-                XPathExpression expr = nav.Compile("/response");
-                XPathNodeIterator it = nav.Select(expr);
+                if (key == null) continue;
+                BambooBuild build = new BambooBuild(
+                    key, BambooBuild.stringToResult(state), number, buildRelativeTime, 
+                    buildDurationDescription, successfulTestCount, failedTestCount, buildReason);
+                builds.Add(build);
             }
             return builds;
         }
 
-        private Stream getQueryResultStream(string url) {
-            var req = (HttpWebRequest)WebRequest.Create(url);
-//            req.KeepAlive = true;
+        private Stream getQueryResultStream(string endpoint, bool setBasicAuth) {
+            var req = (HttpWebRequest)WebRequest.Create(endpoint);
             req.Timeout = 10000;
             req.ReadWriteTimeout = 20000;
-            restoreSessionContext(req);
+            if (setBasicAuth) {
+                setBasicAuthHeader(req);
+            } else {
+                restoreSessionContext(req);
+            }
             var resp = (HttpWebResponse)req.GetResponse();
-            saveSessionContext(resp);
+            if (!setBasicAuth) {
+                saveSessionContext(resp);
+            }
             return resp.GetResponseStream();
         }
 
-        private void saveSessionContext(HttpWebResponse resp) {
-            if (cookieMap != null) {
+        private static string getBasicAuthParameter(string url) {
+            return url.Contains("?") ? "&os_authType=basic" : "?os_authType=basic";
+        }
+
+        private void setBasicAuthHeader(WebRequest req) {
+            if (userName == null || password == null) {
+                return;
+            }
+            string authInfo = userName + ":" + password;
+            authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
+            req.Headers["Authorization"] = "Basic " + authInfo;
+        }
+
+       	private static string getRemoteExceptionMessages(IXPathNavigable doc) {
+            XPathNavigator nav = doc.CreateNavigator();
+            XPathExpression expr = nav.Compile("/errors/error");
+            XPathNodeIterator it = nav.Select(expr);
+
+       	    return messagesFromNode(it);
+	    }
+
+        private static string getRestErrorStatusCode(IXPathNavigable doc) {
+            XPathNavigator nav = doc.CreateNavigator();
+            XPathExpression expr = nav.Compile("/status/status-code");
+            XPathNodeIterator it = nav.Select(expr);
+            string code = messagesFromNode(it);
+            expr = nav.Compile("/status/message");
+            it = nav.Select(expr);
+            string message = messagesFromNode(it);
+            if (code == null || message == null) {
+                return null;
+            }
+            return "Status code: " + code + ", Message: " + message;
+        }
+
+        private static string messagesFromNode(XPathNodeIterator it) {
+            if (it.Count <= 0) {
+                return null;
+            }
+            StringBuilder msg = new StringBuilder();
+            while (it.MoveNext()) {
+                msg.Append(it.Current.Value);
+                msg.Append("\n");
+            }
+            return msg.ToString().Trim(new[] { '\n' });
+        }
+
+        private void saveSessionContext(WebResponse resp) {
+            if (cookie != null) {
                 return;
             }
 
@@ -168,46 +268,13 @@ namespace Atlassian.plvs.api.bamboo.rest {
                 return;
             }
 
-            string cookie = resp.Headers["Set-Cookie"];
-            string[] strings = cookie.Split(new[] {';'});
-            cookieMap = new Dictionary<string, string>();
-            foreach (var pair in strings) {
-                string[] split = pair.Split(new[] {'='});
-                cookieMap[split[0].Trim()] = split[1].Trim();
-            }
-//                cookies.Add(new Cookie());
-//            for (int i = 0; i < resp.Headers.Count; i++) {
-//                headerCollection.Add(resp.Headers.AllKeys[i], resp.Headers.Get(i));
-//            }
-
-//            cookies = new CookieContainer();
-//            foreach (Cookie cookie in resp.Cookies) {
-//                cookies.Add(cookie);
-//            }
+            cookie = resp.Headers["Set-Cookie"];
         }
 
-        private void restoreSessionContext(HttpWebRequest req) {
-            if (cookieMap != null) {
-                StringBuilder sb = new StringBuilder();
-                foreach (var key in cookieMap.Keys) {
-                    sb.Append(key).Append('=').Append(cookieMap[key]).Append(' ');
-                }
-                req.Headers["Cookie"] = sb.ToString().TrimEnd();
+        private void restoreSessionContext(WebRequest req) {
+            if (cookie != null) {
+                req.Headers["Cookie"] = cookie;
             }
-//            if (cookies == null) {
-//                return;
-//            }
-//            for (int i = 0; i < headerCollection.Count; i++) {
-//                string key = headerCollection.GetKey(i);
-//                if (key == "Set-Cookie") {
-//                    key = "Cookie";
-//                } else {
-//                    continue;
-//                }
-//                string value = headerCollection.Get(i);
-//                req.Headers.Add(key, value);
-//            }
-//            req.CookieContainer = cookies;
         }
     }
 }

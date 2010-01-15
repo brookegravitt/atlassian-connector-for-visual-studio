@@ -44,19 +44,27 @@ namespace Atlassian.plvs.api.bamboo {
         }
 
         public void login(BambooServer server) {
-            new RestSession(server.Url).login(server.UserName, server.Password);
+            lock(this) {
+                new RestSession(server.Url).login(server.UserName, server.Password);
+            }
         }
 
         public void logout(BambooServer server) {
-            getSession(server).logout();
+            lock (this) {
+                getSession(server).logout();
+            }
         }
 
         public ICollection<BambooPlan> getPlanList(BambooServer server) {
-            return wrapExceptions(server, () => getSession(server).getPlanList());
+            lock (this) {
+                return wrapExceptions(server, () => getSession(server).getAllPlans());
+            }
         }
 
         public ICollection<BambooBuild> getLatestBuildsForFavouritePlans(BambooServer server) {
-            return wrapExceptions(server, () => getSession(server).getLatestBuildsForFavouritePlans(server.UserName));
+            lock (this) {
+                return wrapExceptions(server, () => getSession(server).getLatestBuildsForFavouritePlans());
+            }
         }
     }
 }

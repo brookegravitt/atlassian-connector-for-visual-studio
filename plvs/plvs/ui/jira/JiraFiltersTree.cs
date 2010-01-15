@@ -231,7 +231,7 @@ namespace Atlassian.plvs.ui.jira {
         private void clearAllPresetFiltersProject(JiraPresetFiltersGroupTreeNode groupNode) {
             DialogResult result = MessageBox.Show(
                 "Do you really want to clear projects from all preset filters?",
-                Constants.QUESTION_CAPTION, MessageBoxButtons.YesNo);
+                Constants.QUESTION_CAPTION, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (DialogResult.Yes != result) return;
 
             foreach (var n in groupNode.Nodes) {
@@ -251,7 +251,8 @@ namespace Atlassian.plvs.ui.jira {
                 return;
             }
             DialogResult result =
-                MessageBox.Show("Do you really want to remove this custom filter?", Constants.QUESTION_CAPTION, MessageBoxButtons.YesNo);
+                MessageBox.Show("Do you really want to remove this custom filter?", 
+                Constants.QUESTION_CAPTION, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (DialogResult.Yes != result) return;
 
             TreeNodeWithJiraServer groupNode = findGroupNode(node.Server, typeof(JiraCustomFiltersGroupTreeNode));

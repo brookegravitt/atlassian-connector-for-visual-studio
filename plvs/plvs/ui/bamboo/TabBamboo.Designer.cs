@@ -23,11 +23,12 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TabBamboo));
+            this.components = new System.ComponentModel.Container();
             this.webBambooBuildSummary = new System.Windows.Forms.WebBrowser();
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.buttonPoll = new System.Windows.Forms.ToolStripButton();
+            this.notifyBuildStatus = new System.Windows.Forms.NotifyIcon(this.components);
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer1.SuspendLayout();
@@ -37,6 +38,7 @@
             // webBambooBuildSummary
             // 
             this.webBambooBuildSummary.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webBambooBuildSummary.IsWebBrowserContextMenuEnabled = false;
             this.webBambooBuildSummary.Location = new System.Drawing.Point(0, 0);
             this.webBambooBuildSummary.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBambooBuildSummary.Name = "webBambooBuildSummary";
@@ -68,18 +70,23 @@
             this.buttonPoll});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(66, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(35, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonPoll
             // 
             this.buttonPoll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonPoll.Image = Resources.refresh;
+            this.buttonPoll.Image = global::Atlassian.plvs.Resources.refresh;
             this.buttonPoll.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonPoll.Name = "buttonPoll";
             this.buttonPoll.Size = new System.Drawing.Size(23, 22);
             this.buttonPoll.Text = "Poll Now";
             this.buttonPoll.Click += new System.EventHandler(this.buttonPoll_Click);
+            // 
+            // notifyBuildStatus
+            // 
+            this.notifyBuildStatus.Text = "notifyIcon1";
+            this.notifyBuildStatus.Visible = true;
             // 
             // TabBamboo
             // 
@@ -105,5 +112,6 @@
         private System.Windows.Forms.ToolStripContainer toolStripContainer1;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton buttonPoll;
+        private System.Windows.Forms.NotifyIcon notifyBuildStatus;
     }
 }
