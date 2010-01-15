@@ -47,6 +47,10 @@ namespace Atlassian.plvs.windows {
             filtersTree.setReloadIssuesCallback(reloadIssues);
             filtersTree.addToolTip(filtersTreeToolTip);
 
+            productTabs.ImageList = new ImageList();
+            productTabs.ImageList.Images.Add(Resources.tab_jira);
+            productTabs.ImageList.Images.Add(Resources.tab_bamboo);
+
             buttonUpdate.Visible = false;
 
             Instance = this;

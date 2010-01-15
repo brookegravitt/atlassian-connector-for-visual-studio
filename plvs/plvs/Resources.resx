@@ -259,4 +259,25 @@
   <data name="ico_clonefilter" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\icons\ico_clonefilter.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="bamboo_green_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\icons\bamboo-green-16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="bamboo_green_161" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\icons\bamboo-green-16.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="bamboo_grey_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\icons\bamboo-grey-16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="bamboo_grey_161" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\icons\bamboo-grey-16.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="bamboo_red_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\icons\bamboo-red-16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="bamboo_red_161" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\icons\bamboo-red-16.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tab_bamboo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\icons\tab_bamboo.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

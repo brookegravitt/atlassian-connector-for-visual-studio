@@ -133,6 +133,48 @@ namespace Atlassian.plvs {
             }
         }
         
+        internal static System.Drawing.Bitmap bamboo_green_16 {
+            get {
+                object obj = ResourceManager.GetObject("bamboo_green_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon bamboo_green_161 {
+            get {
+                object obj = ResourceManager.GetObject("bamboo_green_161", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap bamboo_grey_16 {
+            get {
+                object obj = ResourceManager.GetObject("bamboo_grey_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon bamboo_grey_161 {
+            get {
+                object obj = ResourceManager.GetObject("bamboo_grey_161", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap bamboo_red_16 {
+            get {
+                object obj = ResourceManager.GetObject("bamboo_red_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon bamboo_red_161 {
+            get {
+                object obj = ResourceManager.GetObject("bamboo_red_161", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to Can not create tool window..
         /// </summary>
@@ -428,6 +470,13 @@ namespace Atlassian.plvs {
         internal static string summary_and_description_css {
             get {
                 return ResourceManager.GetString("summary_and_description_css", resourceCulture);
+            }
+        }
+        
+        internal static System.Drawing.Bitmap tab_bamboo {
+            get {
+                object obj = ResourceManager.GetObject("tab_bamboo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
