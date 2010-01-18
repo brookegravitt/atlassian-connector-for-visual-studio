@@ -122,7 +122,7 @@ namespace Atlassian.plvs.api.jira.soap {
         public JiraNamedEntity getSecurityLevel(string key) {
             try {
                 RemoteSecurityLevel securityLevel = service.getSecurityLevel(token, key);
-                return new JiraNamedEntity(int.Parse(securityLevel.id), securityLevel.name, null);
+                return securityLevel == null ? null : new JiraNamedEntity(int.Parse(securityLevel.id), securityLevel.name, null);
             } catch (Exception) {
                 return null;
             }
@@ -197,6 +197,21 @@ namespace Atlassian.plvs.api.jira.soap {
             if (!string.IsNullOrEmpty(comment)) {
                 service.addComment(token, issue.Key, new RemoteComment { body = comment });
             }
+        }
+
+        public void logWorkAndAutoUpdateRemaining(string key, string timeSpent, DateTime startDate) {
+            RemoteWorklog worklog = new RemoteWorklog { timeSpent = timeSpent, startDate = startDate };
+            service.addWorklogAndAutoAdjustRemainingEstimate(token, key, worklog);
+        }
+
+        public void logWorkAndLeaveRemainingUnchanged(string key, string timeSpent, DateTime startDate) {
+            RemoteWorklog worklog = new RemoteWorklog { timeSpent = timeSpent, startDate = startDate };
+            service.addWorklogAndRetainRemainingEstimate(token, key, worklog);
+        }
+
+        public void logWorkAndUpdateRemainingManually(string key, string timeSpent, DateTime startDate, string remainingEstimate) {
+            RemoteWorklog worklog = new RemoteWorklog { timeSpent = timeSpent, startDate = startDate };
+            service.addWorklogWithNewRemainingEstimate(token, key, worklog, remainingEstimate);
         }
 
         #region private parts

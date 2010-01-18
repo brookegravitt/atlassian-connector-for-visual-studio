@@ -135,6 +135,21 @@ namespace Atlassian.plvs.api.jira {
             return wrapExceptions(issue.Server, () => getSoapSession(issue.Server).getSecurityLevel(issue.Key));
         }
 
+        public void logWorkAndAutoUpdateRemaining(JiraIssue issue, string timeSpent, DateTime startDate) {
+            wrapExceptionsVoid(issue.Server, 
+                () => getSoapSession(issue.Server).logWorkAndAutoUpdateRemaining(issue.Key, timeSpent, startDate));
+        }
+
+        public void logWorkAndLeaveRemainingUnchanged(JiraIssue issue, string timeSpent, DateTime startDate) {
+            wrapExceptionsVoid(issue.Server, 
+                () => getSoapSession(issue.Server).logWorkAndLeaveRemainingUnchanged(issue.Key, timeSpent, startDate));
+        }
+
+        public void logWorkAndUpdateRemainingManually(JiraIssue issue, string timeSpent, DateTime startDate, string remainingEstimate) {
+            wrapExceptionsVoid(issue.Server, 
+                () => getSoapSession(issue.Server).logWorkAndUpdateRemainingManually(issue.Key, timeSpent, startDate, remainingEstimate));
+        }
+
         #endregion
 
         #region private parts

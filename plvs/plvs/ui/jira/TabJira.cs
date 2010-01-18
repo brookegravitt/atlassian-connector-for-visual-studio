@@ -169,8 +169,8 @@ namespace Atlassian.plvs.ui.jira {
             Process.Start(issue.Server.Url + "/secure/EditIssue!default.jspa?id=" + issue.Id);
         }
 
-        private static void logWorkOnSelectedIssue(JiraIssue issue) {
-            new LogWork(issue).ShowDialog();
+        private void logWorkOnSelectedIssue(JiraIssue issue) {
+            new LogWork(this, MODEL, Facade, issue, status).ShowDialog();
         }
 
         private void openIssue(object sender, EventArgs e) {
