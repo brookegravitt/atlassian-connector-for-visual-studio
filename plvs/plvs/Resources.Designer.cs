@@ -446,6 +446,13 @@ namespace Atlassian.plvs {
             }
         }
         
+        internal static System.Drawing.Icon status_plugin2 {
+            get {
+                object obj = ResourceManager.GetObject("status_plugin2", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to &lt;style type=&quot;text/css&quot;&gt;
         ///.summary, .description { 
@@ -530,6 +537,13 @@ namespace Atlassian.plvs {
             get {
                 object obj = ResourceManager.GetObject("update_unavailable", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon update_unavailable1 {
+            get {
+                object obj = ResourceManager.GetObject("update_unavailable1", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         

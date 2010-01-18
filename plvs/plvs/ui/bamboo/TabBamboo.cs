@@ -27,6 +27,7 @@ namespace Atlassian.plvs.ui.bamboo {
             notifyBuildStatus.Icon = Resources.bamboo_grey_161;
             notifyBuildStatus.Visible = false;
             notifyBuildStatus.BalloonTipTitle = "Atlassian Bamboo Notification";
+            notifyBuildStatus.Text = "No build information retrieved yet";
         }
 
         public BambooServerFacade Facade { get { return BambooServerFacade.Instance; } }

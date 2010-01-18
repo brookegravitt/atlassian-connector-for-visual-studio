@@ -618,10 +618,12 @@
     <Content Include="Resources\icons\refresh.png" />
     <Content Include="Resources\icons\search-jira.png" />
     <Content Include="Resources\icons\status_plugin.gif" />
+    <Content Include="Resources\icons\status_plugin.ico" />
     <Content Include="Resources\icons\status_plugin.png" />
     <Content Include="Resources\icons\tab_bamboo.png" />
     <Content Include="Resources\icons\tab_jira.png" />
     <Content Include="Resources\icons\unknown.png" />
+    <Content Include="Resources\icons\update_unavailable.ico" />
     <Content Include="Resources\icons\update_unavailable.png" />
     <Content Include="Resources\icons\view_in_browser.png" />
     <None Include="Resources\texts\about_html.txt" />
