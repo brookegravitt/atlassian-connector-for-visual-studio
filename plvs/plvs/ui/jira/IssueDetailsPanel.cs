@@ -445,10 +445,17 @@ namespace Atlassian.plvs.ui.jira {
                                          foreach (var action in actions) {
                                              var actionCopy = action;
                                              ToolStripMenuItem item = new ToolStripMenuItem(action.Name, null, 
-                                                                                            new EventHandler(delegate { IssueActionRunner.runAction(this, actionCopy, model, issue, status); }));
+                                                 new EventHandler(delegate
+                                                                      {
+                                                                          IssueActionRunner.runAction(this, actionCopy, model, issue, status);
+                                                                      }));
                                              dropDownIssueActions.DropDownItems.Add(item);
                                          }
                                      }));
+        }
+
+        private void buttonLogWork_Click(object sender, EventArgs e) {
+            new LogWork(issue).ShowDialog();
         }
     }
 }

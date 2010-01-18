@@ -50,6 +50,7 @@ namespace Atlassian.plvs.ui.jira {
             this.buttonViewInBrowser = new System.Windows.Forms.ToolStripButton();
             this.buttonRefresh = new System.Windows.Forms.ToolStripButton();
             this.buttonClose = new System.Windows.Forms.ToolStripButton();
+            this.buttonLogWork = new System.Windows.Forms.ToolStripButton();
             this.dropDownIssueActions = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
@@ -95,7 +96,7 @@ namespace Atlassian.plvs.ui.jira {
             // 
             this.statusStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                                                                                         this.jiraStatus});
+            this.jiraStatus});
             this.statusStrip.Location = new System.Drawing.Point(0, 0);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(785, 22);
@@ -227,9 +228,9 @@ namespace Atlassian.plvs.ui.jira {
             // 
             this.toolStrip2.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                                                                                        this.buttonAddComment,
-                                                                                        this.buttonExpandAll,
-                                                                                        this.buttonCollapseAll});
+            this.buttonAddComment,
+            this.buttonExpandAll,
+            this.buttonCollapseAll});
             this.toolStrip2.Location = new System.Drawing.Point(3, 0);
             this.toolStrip2.Name = "toolStrip2";
             this.toolStrip2.Size = new System.Drawing.Size(81, 25);
@@ -279,13 +280,14 @@ namespace Atlassian.plvs.ui.jira {
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                                                                                        this.buttonViewInBrowser,
-                                                                                        this.buttonRefresh,
-                                                                                        this.buttonClose,
-                                                                                        this.dropDownIssueActions});
+            this.buttonViewInBrowser,
+            this.buttonRefresh,
+            this.buttonClose,
+            this.buttonLogWork,
+            this.dropDownIssueActions});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(110, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(164, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonViewInBrowser
@@ -317,6 +319,16 @@ namespace Atlassian.plvs.ui.jira {
             this.buttonClose.Size = new System.Drawing.Size(23, 22);
             this.buttonClose.Text = "Close";
             this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
+            // 
+            // buttonLogWork
+            // 
+            this.buttonLogWork.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonLogWork.Image = global::Atlassian.plvs.Resources.log_work;
+            this.buttonLogWork.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonLogWork.Name = "buttonLogWork";
+            this.buttonLogWork.Size = new System.Drawing.Size(23, 22);
+            this.buttonLogWork.Text = "Log Work";
+            this.buttonLogWork.Click += new System.EventHandler(this.buttonLogWork_Click);
             // 
             // dropDownIssueActions
             // 
@@ -390,5 +402,6 @@ namespace Atlassian.plvs.ui.jira {
         private System.Windows.Forms.ToolStripStatusLabel jiraStatus;
         private System.Windows.Forms.ToolStripButton buttonViewInBrowser;
         private System.Windows.Forms.ToolStripDropDownButton dropDownIssueActions;
+        private System.Windows.Forms.ToolStripButton buttonLogWork;
     }
 }

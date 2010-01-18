@@ -137,6 +137,12 @@
     <Compile Include="dialogs\jira\TestJiraConnection.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="dialogs\LogWork.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\LogWork.Designer.cs">
+      <DependentUpon>LogWork.cs</DependentUpon>
+    </Compile>
     <Compile Include="dialogs\NewIssueComment.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -166,6 +172,12 @@
     </Compile>
     <Compile Include="dialogs\AbstractTestConnection.Designer.cs">
       <DependentUpon>AbstractTestConnection.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\SetEndTime.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\SetEndTime.Designer.cs">
+      <DependentUpon>SetEndTime.cs</DependentUpon>
     </Compile>
     <Compile Include="eventsinks\AbstractMarkerClientEventSink.cs" />
     <Compile Include="eventsinks\MarginMarkerClientEventSink.cs" />
@@ -418,6 +430,10 @@
       <DependentUpon>IssueWorkflowAction.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\LogWork.resx">
+      <DependentUpon>LogWork.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="dialogs\NewIssueComment.resx">
       <DependentUpon>NewIssueComment.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -436,6 +452,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\AbstractTestConnection.resx">
       <DependentUpon>AbstractTestConnection.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\SetEndTime.resx">
+      <DependentUpon>SetEndTime.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="scm\AnkhSvnJiraActiveIssueControl.resx">
@@ -605,6 +625,7 @@
     <Content Include="Resources\icons\ide_plugin_32.ico" />
     <Content Include="Resources\icons\Images.bmp" />
     <Content Include="Resources\icons\jira-blue-16.png" />
+    <Content Include="Resources\icons\log-work.png" />
     <Content Include="Resources\icons\minus.png" />
     <Content Include="Resources\icons\new_comment.png" />
     <Content Include="Resources\icons\open_in_ide.png" />

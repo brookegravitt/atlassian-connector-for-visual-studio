@@ -13,13 +13,13 @@ namespace Atlassian.plvs.ui.jira.issues.menus {
         private readonly JiraIssueListModel model;
         private readonly StatusLabel status;
         private readonly TreeViewAdv tree;
-        private readonly ToolStripMenuItem[] items;
+        private readonly ToolStripItem[] items;
         private JiraIssue issue;
 
         private int menuOpenGeneration;
 
         public IssueContextMenu(JiraIssueListModel model, StatusLabel status, TreeViewAdv tree,
-                                ToolStripMenuItem[] items) {
+                                ToolStripItem[] items) {
             this.model = model;
             this.status = status;
             this.tree = tree;
@@ -72,8 +72,7 @@ namespace Atlassian.plvs.ui.jira.issues.menus {
                                                  action.Name, null,
                                                  new EventHandler(
                                                      delegate {
-                                                         IssueActionRunner.runAction(this, actionCopy, model, issue,
-                                                                                     status);
+                                                         IssueActionRunner.runAction(this, actionCopy, model, issue, status);
                                                      }));
                                              Items.Add(item);
                                          }
