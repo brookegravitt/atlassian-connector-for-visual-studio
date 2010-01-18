@@ -246,12 +246,11 @@ namespace Atlassian.plvs {
             // Remove running document table (RDT) event notifications.
             // Ignore any errors that might occur since we're shutting down.
             IVsRunningDocumentTable rdt = (IVsRunningDocumentTable) GetService(typeof (SVsRunningDocumentTable));
-            try {
-                rdt.UnadviseRunningDocTableEvents(rdtEventCookie);
+            if (rdt != null) {
+                try {
+                    rdt.UnadviseRunningDocTableEvents(rdtEventCookie);
+                } catch (Exception) {}
             }
-// ReSharper disable EmptyGeneralCatchClause
-            catch (Exception) {}
-// ReSharper restore EmptyGeneralCatchClause
         }
 
         private bool? inCommandLineMode;

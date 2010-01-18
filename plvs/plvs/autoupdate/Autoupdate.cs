@@ -4,8 +4,10 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Timers;
+using System.Windows.Forms;
 using System.Xml.XPath;
 using Atlassian.plvs.dialogs;
+using Atlassian.plvs.util;
 using Atlassian.plvs.windows;
 using Timer=System.Timers.Timer;
 
@@ -82,18 +84,21 @@ namespace Atlassian.plvs.autoupdate {
             timer.Dispose();
         }
 
-        public void runManualUpdate(bool stableOnly) {
+        public void runManualUpdate(bool stableOnly, Form parent) {
             string url = stableOnly ? STABLE_URL : SNAPSHOT_URL;
             if (GlobalSettings.ReportUsage) {
                 url = getUsageReportingUrl(url);
             }
-//            Thread t = new Thread(new ThreadStart(delegate { 
-//                if (runSingleUpdateQuery(url, false)) {
-//                    Invoke(new MethodInvoker(delegate {
-
-//                                             }));
-//                } 
-//            }));
+            Thread t = new Thread(new ThreadStart(delegate { 
+                if (runSingleUpdateQuery(url, false)) {
+                    parent.Invoke(new MethodInvoker(showUpdateDialog));
+                } else {
+                    parent.Invoke(new MethodInvoker(() => 
+                        MessageBox.Show("You have the latest connector version installed", 
+                            Constants.INFO_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Information)));
+                }
+            }));
+            t.Start();
         }
 
         private void showUpdateDialog() {

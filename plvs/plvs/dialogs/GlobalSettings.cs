@@ -142,7 +142,7 @@ namespace Atlassian.plvs.dialogs {
         }
 
         private void buttonCheckNow_Click(object sender, EventArgs e) {
-
+            Autoupdate.Instance.runManualUpdate(radioStable.Checked, this);
         }
 
         private void checkAutoupdate_CheckedChanged(object sender, EventArgs e) {
