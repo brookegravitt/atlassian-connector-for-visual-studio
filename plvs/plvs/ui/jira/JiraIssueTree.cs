@@ -110,7 +110,7 @@ namespace Atlassian.plvs.ui.jira {
             colUpdated.TextAlign = HorizontalAlignment.Right;
         }
 
-        public void addContextMenu(ToolStripMenuItem[] items) {
+        public void addContextMenu(ToolStripItem[] items) {
             IssueContextMenu strip = new IssueContextMenu(model, status, this, items);
             ContextMenuStrip = strip;
         }

@@ -37,7 +37,9 @@ namespace Atlassian.plvs.ui.jira {
             filtersTree.addToolTip(filtersTreeToolTip);
         }
 
-        public JiraServerFacade Facade { get { return JiraServerFacade.Instance; } }
+        public JiraServerFacade Facade {
+            get { return JiraServerFacade.Instance; }
+        }
 
         private void setupGroupByCombo() {
             foreach (JiraIssueGroupByComboItem.GroupBy groupBy in Enum.GetValues(typeof (JiraIssueGroupByComboItem.GroupBy))) {
@@ -59,7 +61,7 @@ namespace Atlassian.plvs.ui.jira {
 
             issuesTree = new JiraIssueTree(jiraSplitter.Panel2, status, searchingModel);
 
-            issuesTree.addContextMenu(new[]
+            issuesTree.addContextMenu(new ToolStripItem[]
                                       {
                                           new ToolStripMenuItem("Open in IDE", Resources.open_in_ide,
                                                                 new EventHandler(openIssue)),
@@ -67,6 +69,9 @@ namespace Atlassian.plvs.ui.jira {
                                                                 new EventHandler(browseIssue)),
                                           new ToolStripMenuItem("Edit in Browser", Resources.edit_in_browser,
                                                                 new EventHandler(browseEditIssue)),
+                                          new ToolStripSeparator(),
+                                          new ToolStripMenuItem("Log Work", Resources.log_work,
+                                                                new EventHandler(logWork))
                                       });
 
             issuesTree.NodeMouseDoubleClick += issuesTree_NodeMouseDoubleClick;
@@ -138,7 +143,9 @@ namespace Atlassian.plvs.ui.jira {
 
         private void runSelectedIssueAction(IssueAction action) {
             TreeNodeAdv node = issuesTree.SelectedNode;
-            if (node == null || !(node.Tag is IssueNode)) return;
+            if (node == null || !(node.Tag is IssueNode)) {
+                return;
+            }
             action((node.Tag as IssueNode).Issue);
         }
 
@@ -154,8 +161,16 @@ namespace Atlassian.plvs.ui.jira {
             runSelectedIssueAction(browseEditSelectedIssue);
         }
 
+        private void logWork(object sender, EventArgs e) {
+            runSelectedIssueAction(logWorkOnSelectedIssue);
+        }
+
         private static void browseEditSelectedIssue(JiraIssue issue) {
             Process.Start(issue.Server.Url + "/secure/EditIssue!default.jspa?id=" + issue.Id);
+        }
+
+        private static void logWorkOnSelectedIssue(JiraIssue issue) {
+            new LogWork(issue).ShowDialog();
         }
 
         private void openIssue(object sender, EventArgs e) {
@@ -163,7 +178,9 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void issuesTree_KeyPress(object sender, KeyPressEventArgs e) {
-            if (e.KeyChar != (char) Keys.Enter) return;
+            if (e.KeyChar != (char) Keys.Enter) {
+                return;
+            }
             runSelectedIssueAction(openSelectedIssue);
         }
 
@@ -189,7 +206,9 @@ namespace Atlassian.plvs.ui.jira {
 
         private void invokeSelectedIssueChanged() {
             EventHandler<SelectedIssueEventArgs> handler = SelectedIssueChanged;
-            if (handler == null) return;
+            if (handler == null) {
+                return;
+            }
 
             handler(this, new SelectedIssueEventArgs(SelectedIssue));
         }
@@ -199,7 +218,7 @@ namespace Atlassian.plvs.ui.jira {
                 bool issueSelected = (issuesTree.SelectedNode != null && issuesTree.SelectedNode.Tag is IssueNode);
                 JiraIssue issue = null;
                 if (issueSelected) {
-                    issue = ((IssueNode)issuesTree.SelectedNode.Tag).Issue;
+                    issue = ((IssueNode) issuesTree.SelectedNode.Tag).Issue;
                 }
                 return issue;
             }
@@ -274,33 +293,37 @@ namespace Atlassian.plvs.ui.jira {
                     status.setInfo("[" + server.Name + "] Loading saved filters...");
                     List<JiraSavedFilter> filters = Facade.getSavedFilters(server);
                     JiraServer jiraServer = server;
-                    Invoke(new MethodInvoker(delegate {
-                                                 filtersTree.addFilterGroupNodes(jiraServer);
-                                                 filtersTree.addPresetFilterNodes(jiraServer);
-                                                 filtersTree.addSavedFilterNodes(jiraServer, filters);
-                                                 status.setInfo("Loaded saved filters for server " + jiraServer.Name);
-                                                 filtersTree.addCustomFilterNodes(jiraServer);
-                                             }));
+                    Invoke(new MethodInvoker(delegate
+                                                 {
+                                                     filtersTree.addFilterGroupNodes(jiraServer);
+                                                     filtersTree.addPresetFilterNodes(jiraServer);
+                                                     filtersTree.addSavedFilterNodes(jiraServer, filters);
+                                                     status.setInfo("Loaded saved filters for server " + jiraServer.Name);
+                                                     filtersTree.addCustomFilterNodes(jiraServer);
+                                                 }));
                 }
-                Invoke(new MethodInvoker(delegate {
-                                             filtersTree.addRecentlyViewedNode();
-                                             filtersTree.ExpandAll();
-                                             filtersTree.restoreLastSelectedFilterItem();
-                                         }));
-            }
-            catch (Exception e) {
+                Invoke(new MethodInvoker(delegate
+                                             {
+                                                 filtersTree.addRecentlyViewedNode();
+                                                 filtersTree.ExpandAll();
+                                                 filtersTree.restoreLastSelectedFilterItem();
+                                             }));
+            } catch (Exception e) {
                 status.setError("Failed to load server metadata", e);
             }
         }
 
         private void searchingModel_ModelChanged(object sender, EventArgs e) {
-            Invoke(new MethodInvoker(delegate {
-                                         if (!(filtersTree.FilterOrRecentlyViewedSelected)) return;
-                                         status.setInfo("Loaded " + MODEL.Issues.Count + " issues");
-                                         getMoreIssues.Visible = !(filtersTree.RecentlyViewedSelected) && MODEL.Issues.Count > 0 &&
-                                                                 probablyHaveMoreIssues();
-                                         updateIssueListButtons();
-                                     }));
+            Invoke(new MethodInvoker(delegate
+                                         {
+                                             if (!(filtersTree.FilterOrRecentlyViewedSelected)) {
+                                                 return;
+                                             }
+                                             status.setInfo("Loaded " + MODEL.Issues.Count + " issues");
+                                             getMoreIssues.Visible = !(filtersTree.RecentlyViewedSelected) && MODEL.Issues.Count > 0 &&
+                                                                     probablyHaveMoreIssues();
+                                             updateIssueListButtons();
+                                         }));
         }
 
         private static bool probablyHaveMoreIssues() {
@@ -335,14 +358,15 @@ namespace Atlassian.plvs.ui.jira {
 
             Thread issueLoadThread = null;
 
-            if (savedFilterNode != null)
+            if (savedFilterNode != null) {
                 issueLoadThread = reloadIssuesWithSavedFilter(savedFilterNode);
-            else if (customFilterNode != null && !customFilterNode.Filter.Empty)
+            } else if (customFilterNode != null && !customFilterNode.Filter.Empty) {
                 issueLoadThread = reloadIssuesWithCustomFilter(customFilterNode);
-            else if (presetFilterNode != null)
+            } else if (presetFilterNode != null) {
                 issueLoadThread = reloadIssuesWithPresetFilter(presetFilterNode);
-            else if (recentIssuesNode != null)
+            } else if (recentIssuesNode != null) {
                 issueLoadThread = reloadIssuesWithRecentlyViewedIssues();
+            }
 
             loadIssuesInThread(issueLoadThread);
         }
@@ -359,84 +383,83 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private Thread reloadIssuesWithRecentlyViewedIssues() {
-            return new Thread(new ThreadStart(delegate {
-                                                  try {
-                                                      builder.rebuildModelWithRecentlyViewedIssues(MODEL);
-                                                  }
-                                                  catch (Exception ex) {
-                                                      status.setError(RETRIEVING_ISSUES_FAILED, ex);
-                                                  }
-                                              }));
+            return new Thread(new ThreadStart(delegate
+                                                  {
+                                                      try {
+                                                          builder.rebuildModelWithRecentlyViewedIssues(MODEL);
+                                                      } catch (Exception ex) {
+                                                          status.setError(RETRIEVING_ISSUES_FAILED, ex);
+                                                      }
+                                                  }));
         }
 
         private Thread reloadIssuesWithSavedFilter(JiraSavedFilterTreeNode node) {
-            return new Thread(new ThreadStart(delegate {
-                                                  try {
-                                                      builder.rebuildModelWithSavedFilter(MODEL, node.Server, node.Filter);
-                                                  }
-                                                  catch (Exception ex) {
-                                                      status.setError(RETRIEVING_ISSUES_FAILED, ex);
-                                                  }
-                                              }));
+            return new Thread(new ThreadStart(delegate
+                                                  {
+                                                      try {
+                                                          builder.rebuildModelWithSavedFilter(MODEL, node.Server, node.Filter);
+                                                      } catch (Exception ex) {
+                                                          status.setError(RETRIEVING_ISSUES_FAILED, ex);
+                                                      }
+                                                  }));
         }
 
         private Thread updateIssuesWithSavedFilter(JiraSavedFilterTreeNode node) {
-            return new Thread(new ThreadStart(delegate {
-                                                  try {
-                                                      builder.updateModelWithSavedFilter(MODEL, node.Server, node.Filter);
-                                                  }
-                                                  catch (Exception ex) {
-                                                      status.setError(RETRIEVING_ISSUES_FAILED, ex);
-                                                  }
-                                              }));
+            return new Thread(new ThreadStart(delegate
+                                                  {
+                                                      try {
+                                                          builder.updateModelWithSavedFilter(MODEL, node.Server, node.Filter);
+                                                      } catch (Exception ex) {
+                                                          status.setError(RETRIEVING_ISSUES_FAILED, ex);
+                                                      }
+                                                  }));
         }
 
         private Thread reloadIssuesWithPresetFilter(JiraPresetFilterTreeNode node) {
-            return new Thread(new ThreadStart(delegate {
-                                                  try {
-                                                      builder.rebuildModelWithPresetFilter(MODEL, node.Server, node.Filter);
-                                                  }
-                                                  catch (Exception ex) {
-                                                      status.setError(RETRIEVING_ISSUES_FAILED, ex);
-                                                  }
-                                              }));
+            return new Thread(new ThreadStart(delegate
+                                                  {
+                                                      try {
+                                                          builder.rebuildModelWithPresetFilter(MODEL, node.Server, node.Filter);
+                                                      } catch (Exception ex) {
+                                                          status.setError(RETRIEVING_ISSUES_FAILED, ex);
+                                                      }
+                                                  }));
         }
 
         private Thread updateIssuesWithPresetFilter(JiraPresetFilterTreeNode node) {
-            return new Thread(new ThreadStart(delegate {
-                                                  try {
-                                                      builder.updateModelWithPresetFilter(MODEL, node.Server, node.Filter);
-                                                  }
-                                                  catch (Exception ex) {
-                                                      status.setError(RETRIEVING_ISSUES_FAILED, ex);
-                                                  }
-                                              }));
+            return new Thread(new ThreadStart(delegate
+                                                  {
+                                                      try {
+                                                          builder.updateModelWithPresetFilter(MODEL, node.Server, node.Filter);
+                                                      } catch (Exception ex) {
+                                                          status.setError(RETRIEVING_ISSUES_FAILED, ex);
+                                                      }
+                                                  }));
         }
 
         private Thread reloadIssuesWithCustomFilter(JiraCustomFilterTreeNode node) {
-            return new Thread(new ThreadStart(delegate {
-                                                  try {
-                                                      builder.rebuildModelWithCustomFilter(MODEL, node.Server, node.Filter);
-                                                  }
-                                                  catch (Exception ex) {
-                                                      status.setError(RETRIEVING_ISSUES_FAILED, ex);
-                                                  }
-                                              }));
+            return new Thread(new ThreadStart(delegate
+                                                  {
+                                                      try {
+                                                          builder.rebuildModelWithCustomFilter(MODEL, node.Server, node.Filter);
+                                                      } catch (Exception ex) {
+                                                          status.setError(RETRIEVING_ISSUES_FAILED, ex);
+                                                      }
+                                                  }));
         }
 
         private Thread updateIssuesWithCustomFilter(JiraCustomFilterTreeNode node) {
-            return new Thread(new ThreadStart(delegate {
-                                                  try {
-                                                      builder.updateModelWithCustomFilter(MODEL, node.Server, node.Filter);
-                                                  }
-                                                  catch (Exception ex) {
-                                                      status.setError(RETRIEVING_ISSUES_FAILED, ex);
-                                                  }
-                                              }));
+            return new Thread(new ThreadStart(delegate
+                                                  {
+                                                      try {
+                                                          builder.updateModelWithCustomFilter(MODEL, node.Server, node.Filter);
+                                                      } catch (Exception ex) {
+                                                          status.setError(RETRIEVING_ISSUES_FAILED, ex);
+                                                      }
+                                                  }));
         }
 
         private void getMoreIssues_Click(object sender, EventArgs e) {
-
             JiraSavedFilterTreeNode savedFilterNode;
             RecentlyOpenIssuesTreeNode recentIssuesNode;
             JiraCustomFilterTreeNode customFilterNode;
@@ -446,12 +469,13 @@ namespace Atlassian.plvs.ui.jira {
 
             Thread issueLoadThread = null;
 
-            if (savedFilterNode != null)
+            if (savedFilterNode != null) {
                 issueLoadThread = updateIssuesWithSavedFilter(savedFilterNode);
-            else if (customFilterNode != null && !customFilterNode.Filter.Empty)
+            } else if (customFilterNode != null && !customFilterNode.Filter.Empty) {
                 issueLoadThread = updateIssuesWithCustomFilter(customFilterNode);
-            else if (presetFilterNode != null)
+            } else if (presetFilterNode != null) {
                 issueLoadThread = updateIssuesWithPresetFilter(presetFilterNode);
+            }
 
             loadIssuesInThread(issueLoadThread);
         }
@@ -475,14 +499,18 @@ namespace Atlassian.plvs.ui.jira {
 
         private void buttonCreate_Click(object sender, EventArgs e) {
             JiraServer server = filtersTree.getCurrentlySelectedServer();
-            if (server == null) return;
+            if (server == null) {
+                return;
+            }
             CreateIssue dlg = new CreateIssue(server);
             dlg.ShowDialog();
         }
 
         private void buttonSearch_Click(object sender, EventArgs e) {
             TreeNodeWithJiraServer node = filtersTree.SelectedNode as TreeNodeWithJiraServer;
-            if (node == null) return;
+            if (node == null) {
+                return;
+            }
             SearchIssue dlg = new SearchIssue(node.Server, MODEL, status);
             dlg.ShowDialog(this);
         }
@@ -509,24 +537,25 @@ namespace Atlassian.plvs.ui.jira {
                     JiraServerFacade.Instance.getIssue(server, key);
                 if (issue != null) {
                     status.setInfo("Issue " + key + " found");
-                    Invoke(new MethodInvoker(delegate {
-                                                 if (onFinish != null) {
-                                                     onFinish(true, null);
-                                                 }
-                                                 IssueDetailsWindow.Instance.openIssue(issue);
-                                             }));
+                    Invoke(new MethodInvoker(delegate
+                                                 {
+                                                     if (onFinish != null) {
+                                                         onFinish(true, null);
+                                                     }
+                                                     IssueDetailsWindow.Instance.openIssue(issue);
+                                                 }));
                 }
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 status.setError("Failed to find issue " + key, ex);
-                Invoke(new MethodInvoker(delegate {
-                                             string message = "Unable to find issue " +
-                                                              key + " on server \"" +
-                                                              server.Name + "\"\n\n" + ex.Message;
-                                             if (onFinish != null) {
-                                                 onFinish(false, message);
-                                             }
-                                         }));
+                Invoke(new MethodInvoker(delegate
+                                             {
+                                                 string message = "Unable to find issue " +
+                                                                  key + " on server \"" +
+                                                                  server.Name + "\"\n\n" + ex.Message;
+                                                 if (onFinish != null) {
+                                                     onFinish(false, message);
+                                                 }
+                                             }));
             }
         }
 
@@ -558,7 +587,7 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void updateSearchingModel(string text) {
-            searchingModel.Query = text;   
+            searchingModel.Query = text;
         }
 
         private void addFindComboText(string text) {
