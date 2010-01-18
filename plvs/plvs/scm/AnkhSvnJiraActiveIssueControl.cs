@@ -1,6 +1,7 @@
 ﻿using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.ui.jira;
+using Atlassian.plvs.windows;
 
 namespace Atlassian.plvs.scm {
     public partial class AnkhSvnJiraActiveIssueControl : UserControl {
@@ -13,8 +14,8 @@ namespace Atlassian.plvs.scm {
             this.enabled = enabled;
             InitializeComponent();
 
-//            IssueListWindow.Instance.SelectedIssueChanged += selectedIssueChanged;
-//            labelJira.Text = enabled ? getCommentText() : NO_INTEGRATION;
+            AtlassianPanel.Instance.Jira.SelectedIssueChanged += selectedIssueChanged;
+            labelJira.Text = enabled ? getCommentText() : NO_INTEGRATION;
         }
 
         private void selectedIssueChanged(object sender, TabJira.SelectedIssueEventArgs e) {
@@ -22,12 +23,11 @@ namespace Atlassian.plvs.scm {
         }
 
         private static string getCommentText() {
-//            JiraIssue issue = IssueListWindow.Instance.SelectedIssue;
-//            if (issue == null) {
-//                return NO_ISSUE_SELECTED;
-//            }
-//            return "Commit message is set to: \"" + issue.Key + " - " + issue.Summary + "\"";
-            return null;
+            JiraIssue issue = AtlassianPanel.Instance.Jira.SelectedIssue;
+            if (issue == null) {
+                return NO_ISSUE_SELECTED;
+            }
+            return "Commit message is set to: \"" + issue.Key + " - " + issue.Summary + "\"";
         }
     }
 }

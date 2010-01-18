@@ -14,6 +14,12 @@ namespace Atlassian.plvs.windows {
 
         public static AtlassianPanel Instance { get; private set; }
 
+        private Autoupdate.UpdateAction updateAction;
+        private Exception updateException;
+
+        private const string UPDATE_BALOON_TITLE = "Atlassian Connector for Visual Studio";
+        private const int UPDATE_BALOON_TIMEOUT = 60000;
+
         public TabJira Jira { get { return tabJira; }}
         public TabBamboo Bamboo { get { return tabBamboo; }}
 
@@ -24,7 +30,7 @@ namespace Atlassian.plvs.windows {
             productTabs.ImageList.Images.Add(Resources.tab_jira);
             productTabs.ImageList.Images.Add(Resources.tab_bamboo);
 
-            buttonUpdate.Visible = false;
+            notifyUpdate.Visible = false;
 
             Instance = this;
         }
@@ -50,10 +56,16 @@ namespace Atlassian.plvs.windows {
             globals.ShowDialog();
         }
 
-        private Autoupdate.UpdateAction updateAction;
-        private Exception updateException;
+        private void notifyUpdate_MouseDoubleClick(object sender, MouseEventArgs e) {
+            updateIconOrBaloonClicked();
+        }
 
-        private void buttonUpdate_Click(object sender, EventArgs e) {
+        private void notifyUpdate_BalloonTipClicked(object sender, EventArgs e) {
+            updateIconOrBaloonClicked();
+        }
+
+        private void updateIconOrBaloonClicked() {
+            notifyUpdate.Visible = false;
             if (updateAction != null) {
                 updateAction();
             } else if (updateException != null) {
@@ -68,10 +80,13 @@ namespace Atlassian.plvs.windows {
                                          {
                                              updateAction = action;
                                              updateException = null;
-                                             buttonUpdate.Enabled = true;
-                                             buttonUpdate.Image = Resources.status_plugin;
-                                             buttonUpdate.Visible = true;
-                                             buttonUpdate.Text = "New version of the connector is available";
+                                             notifyUpdate.Visible = true;
+                                             notifyUpdate.Icon = Resources.status_plugin2;
+                                             notifyUpdate.Text = "New version of the connector available, double-click to install";
+                                             notifyUpdate.BalloonTipIcon = ToolTipIcon.Info;
+                                             notifyUpdate.BalloonTipTitle = UPDATE_BALOON_TITLE;
+                                             notifyUpdate.BalloonTipText = "New version of the connector is available, click here to install";
+                                             notifyUpdate.ShowBalloonTip(UPDATE_BALOON_TIMEOUT);
                                          }));
         }
 
@@ -80,10 +95,13 @@ namespace Atlassian.plvs.windows {
                                          {
                                              updateAction = null;
                                              updateException = exception;
-                                             buttonUpdate.Enabled = true;
-                                             buttonUpdate.Image = Resources.update_unavailable;
-                                             buttonUpdate.Visible = true;
-                                             buttonUpdate.Text = "Unable to retrieve connector update information";
+                                             notifyUpdate.Visible = true;
+                                             notifyUpdate.Icon = Resources.update_unavailable1;
+                                             notifyUpdate.Text = "Unable to retrieve update information, double-click for details";
+                                             notifyUpdate.BalloonTipIcon = ToolTipIcon.Error;
+                                             notifyUpdate.BalloonTipTitle = UPDATE_BALOON_TITLE;
+                                             notifyUpdate.BalloonTipText = "Unable to retrieve connector update information, click here for details";
+                                             notifyUpdate.ShowBalloonTip(UPDATE_BALOON_TIMEOUT);
                                          }));
         }
 
