@@ -27,7 +27,10 @@ namespace Atlassian.plvs.models {
 
         public ICollection<T> getAllServers() {
             lock (serverMap) {
-                return serverMap.Values;
+                // return a clone. Otherwise NREs and IOEs happen at exit
+                List<T> result = new List<T>();
+                result.AddRange(serverMap.Values);
+                return result;
             }
         }
 

@@ -42,8 +42,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.numericJiraBatchSize = new System.Windows.Forms.NumericUpDown();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.label2 = new System.Windows.Forms.Label();
             this.numericBambooPollingInterval = new System.Windows.Forms.NumericUpDown();
+            this.label2 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -228,15 +228,6 @@
             this.tabPage3.Text = "Bamboo";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 16);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(125, 13);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Polling Interval [seconds]";
-            // 
             // numericBambooPollingInterval
             // 
             this.numericBambooPollingInterval.Location = new System.Drawing.Point(130, 14);
@@ -259,11 +250,21 @@
             0,
             0});
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 16);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(125, 13);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "Polling Interval [seconds]";
+            // 
             // GlobalSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(573, 327);
+            this.ControlBox = false;
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);

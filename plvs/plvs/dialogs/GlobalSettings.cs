@@ -6,32 +6,31 @@ using Microsoft.Win32;
 
 namespace Atlassian.plvs.dialogs {
     public partial class GlobalSettings : Form {
+        private const int DEFAULT_BAMBOO_POLLING_INTERVAL = 60;
+        private const int DEFAULT_ISSUE_BATCH_SIZE = 25;
+        private const string REG_AUTOUPDATE = "AutoupdateEnabled";
+        private const string REG_BAMBOO_POLLING_INTERVAL = "BambooPollingInterval";
+        private const string REG_CHECK_SNAPSHOTS = "AutoupdateCheckSnapshots";
         private const string REG_FIRST_RUN = "FirstRun";
         private const string REG_ISSUE_BATCH_SIZE = "JiraIssueBatchSize";
-        private const string REG_BAMBOO_POLLING_INTERVAL = "BambooPollingInterval";
-        private const string REG_AUTOUPDATE = "AutoupdateEnabled";
-        private const string REG_CHECK_SNAPSHOTS = "AutoupdateCheckSnapshots";
-        private const string REG_REPORT_USAGE = "AutoupdateReportUsage";
         private const string REG_MANUAL_UPDATE_STABLE_ONLY = "ManualUpdateCheckStableOnly";
+        private const string REG_REPORT_USAGE = "AutoupdateReportUsage";
 
-        private const int DEFAULT_ISSUE_BATCH_SIZE = 25;
-        private const int DEFAULT_BAMBOO_POLLING_INTERVAL = 60;
+        private bool isRunningManualUpdateQuery;
 
         static GlobalSettings() {
-
             try {
                 RegistryKey root = Registry.CurrentUser.CreateSubKey(Constants.PAZU_REG_KEY);
                 if (root == null) {
                     throw new Exception();
                 }
-                JiraIssuesBatch = (int)root.GetValue(REG_ISSUE_BATCH_SIZE, DEFAULT_ISSUE_BATCH_SIZE);
-                AutoupdateEnabled = (int)root.GetValue(REG_AUTOUPDATE, 1) > 0;
-                AutoupdateSnapshots = (int)root.GetValue(REG_CHECK_SNAPSHOTS, 0) > 0;
-                ReportUsage = (int)root.GetValue(REG_REPORT_USAGE, 1) > 0;
-                CheckStableOnlyNow = (int)root.GetValue(REG_MANUAL_UPDATE_STABLE_ONLY, 1) > 0;
+                JiraIssuesBatch = (int) root.GetValue(REG_ISSUE_BATCH_SIZE, DEFAULT_ISSUE_BATCH_SIZE);
+                AutoupdateEnabled = (int) root.GetValue(REG_AUTOUPDATE, 1) > 0;
+                AutoupdateSnapshots = (int) root.GetValue(REG_CHECK_SNAPSHOTS, 0) > 0;
+                ReportUsage = (int) root.GetValue(REG_REPORT_USAGE, 1) > 0;
+                CheckStableOnlyNow = (int) root.GetValue(REG_MANUAL_UPDATE_STABLE_ONLY, 1) > 0;
                 BambooPollingInterval = (int) root.GetValue(REG_BAMBOO_POLLING_INTERVAL, DEFAULT_BAMBOO_POLLING_INTERVAL);
-            }
-            catch (Exception) {
+            } catch (Exception) {
                 JiraIssuesBatch = DEFAULT_ISSUE_BATCH_SIZE;
                 AutoupdateEnabled = true;
                 AutoupdateSnapshots = false;
@@ -48,6 +47,13 @@ namespace Atlassian.plvs.dialogs {
 
             initializeWidgets();
         }
+
+        public static int JiraIssuesBatch { get; private set; }
+        public static bool AutoupdateEnabled { get; private set; }
+        public static bool AutoupdateSnapshots { get; private set; }
+        public static bool ReportUsage { get; private set; }
+        public static bool CheckStableOnlyNow { get; private set; }
+        public static int BambooPollingInterval { get; private set; }
 
         private void initializeWidgets() {
             numericJiraBatchSize.Value = Math.Min(Math.Max(JiraIssuesBatch, 10), 1000);
@@ -67,35 +73,28 @@ namespace Atlassian.plvs.dialogs {
                 if (root == null) {
                     throw new Exception();
                 }
-                int firstRun = (int) root.GetValue(REG_FIRST_RUN, 1);
+                var firstRun = (int) root.GetValue(REG_FIRST_RUN, 1);
                 if (firstRun > 0) {
                     root.SetValue(REG_FIRST_RUN, 0);
                     handleFirstRun();
                 }
             } catch (Exception e) {
                 MessageBox.Show("Unable to read registry: " + e.Message, Constants.ERROR_CAPTION,
-                               MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private static void handleFirstRun() {
             DialogResult result = MessageBox.Show(
-                "We would greatly appreciate it if you would allow us to collect anonymous" 
-                + " usage statistics to help us provide a better quality product. Is this OK?", 
+                "We would greatly appreciate it if you would allow us to collect anonymous"
+                + " usage statistics to help us provide a better quality product. Is this OK?",
                 Constants.QUESTION_CAPTION, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             ReportUsage = result == DialogResult.Yes;
             saveValues();
         }
 
-        public static int JiraIssuesBatch { get; private set; }
-        public static bool AutoupdateEnabled { get; private set; }
-        public static bool AutoupdateSnapshots { get; private set; }
-        public static bool ReportUsage { get; private set; }
-        public static bool CheckStableOnlyNow { get; private set; }
-        public static int BambooPollingInterval { get; private set; }
-
         private void GlobalSettings_KeyPress(object sender, KeyPressEventArgs e) {
-            if (e.KeyChar == (char) Keys.Escape) {
+            if (e.KeyChar == (char) Keys.Escape && !isRunningManualUpdateQuery) {
                 Close();
             }
         }
@@ -121,7 +120,7 @@ namespace Atlassian.plvs.dialogs {
             Close();
         }
 
-        static public event EventHandler<EventArgs> SettingsChanged;
+        public static event EventHandler<EventArgs> SettingsChanged;
 
         private static void saveValues() {
             try {
@@ -142,7 +141,18 @@ namespace Atlassian.plvs.dialogs {
         }
 
         private void buttonCheckNow_Click(object sender, EventArgs e) {
-            Autoupdate.Instance.runManualUpdate(radioStable.Checked, this);
+            setCloseButtonsEnabled(false);
+            isRunningManualUpdateQuery = true;
+            Autoupdate.Instance.runManualUpdate(radioStable.Checked, this, delegate
+                                                                               {
+                                                                                   setCloseButtonsEnabled(true);
+                                                                                   isRunningManualUpdateQuery = false;
+                                                                               });
+        }
+
+        private void setCloseButtonsEnabled(bool enabled) {
+            buttonOk.Enabled = enabled;
+            buttonCancel.Enabled = enabled;
         }
 
         private void checkAutoupdate_CheckedChanged(object sender, EventArgs e) {
