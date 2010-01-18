@@ -26,16 +26,16 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LogWork));
             this.buttonOk = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.textTimeSpent = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
-            this.radioButton3 = new System.Windows.Forms.RadioButton();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.radioAutoUpdate = new System.Windows.Forms.RadioButton();
+            this.radioLeaveUnchanged = new System.Windows.Forms.RadioButton();
+            this.radioUpdateManually = new System.Windows.Forms.RadioButton();
+            this.textRemainingEstimate = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
+            this.labelEndTime = new System.Windows.Forms.Label();
             this.buttonChange = new System.Windows.Forms.Button();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.textExplanation = new System.Windows.Forms.TextBox();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
@@ -48,6 +48,7 @@
             this.buttonOk.TabIndex = 6;
             this.buttonOk.Text = "Add Worklog";
             this.buttonOk.UseVisualStyleBackColor = true;
+            this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
             // 
             // label1
             // 
@@ -58,12 +59,13 @@
             this.label1.TabIndex = 2;
             this.label1.Text = "Time Spent";
             // 
-            // textBox1
+            // textTimeSpent
             // 
-            this.textBox1.Location = new System.Drawing.Point(79, 10);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(148, 20);
-            this.textBox1.TabIndex = 0;
+            this.textTimeSpent.Location = new System.Drawing.Point(79, 10);
+            this.textTimeSpent.Name = "textTimeSpent";
+            this.textTimeSpent.Size = new System.Drawing.Size(148, 20);
+            this.textTimeSpent.TabIndex = 0;
+            this.textTimeSpent.TextChanged += new System.EventHandler(this.textTimeSpent_TextChanged);
             // 
             // label2
             // 
@@ -74,45 +76,47 @@
             this.label2.TabIndex = 4;
             this.label2.Text = "Remaining Estimate";
             // 
-            // radioButton1
+            // radioAutoUpdate
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(290, 36);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(85, 17);
-            this.radioButton1.TabIndex = 1;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Auto Update";
-            this.radioButton1.UseVisualStyleBackColor = true;
+            this.radioAutoUpdate.AutoSize = true;
+            this.radioAutoUpdate.Location = new System.Drawing.Point(290, 36);
+            this.radioAutoUpdate.Name = "radioAutoUpdate";
+            this.radioAutoUpdate.Size = new System.Drawing.Size(85, 17);
+            this.radioAutoUpdate.TabIndex = 1;
+            this.radioAutoUpdate.TabStop = true;
+            this.radioAutoUpdate.Text = "Auto Update";
+            this.radioAutoUpdate.UseVisualStyleBackColor = true;
             // 
-            // radioButton2
+            // radioLeaveUnchanged
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(290, 59);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(114, 17);
-            this.radioButton2.TabIndex = 2;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "Leave Unchanged";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.radioLeaveUnchanged.AutoSize = true;
+            this.radioLeaveUnchanged.Location = new System.Drawing.Point(290, 59);
+            this.radioLeaveUnchanged.Name = "radioLeaveUnchanged";
+            this.radioLeaveUnchanged.Size = new System.Drawing.Size(114, 17);
+            this.radioLeaveUnchanged.TabIndex = 2;
+            this.radioLeaveUnchanged.TabStop = true;
+            this.radioLeaveUnchanged.Text = "Leave Unchanged";
+            this.radioLeaveUnchanged.UseVisualStyleBackColor = true;
             // 
-            // radioButton3
+            // radioUpdateManually
             // 
-            this.radioButton3.AutoSize = true;
-            this.radioButton3.Location = new System.Drawing.Point(290, 82);
-            this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(105, 17);
-            this.radioButton3.TabIndex = 3;
-            this.radioButton3.TabStop = true;
-            this.radioButton3.Text = "Update Manually";
-            this.radioButton3.UseVisualStyleBackColor = true;
+            this.radioUpdateManually.AutoSize = true;
+            this.radioUpdateManually.Location = new System.Drawing.Point(290, 82);
+            this.radioUpdateManually.Name = "radioUpdateManually";
+            this.radioUpdateManually.Size = new System.Drawing.Size(105, 17);
+            this.radioUpdateManually.TabIndex = 3;
+            this.radioUpdateManually.TabStop = true;
+            this.radioUpdateManually.Text = "Update Manually";
+            this.radioUpdateManually.UseVisualStyleBackColor = true;
+            this.radioUpdateManually.CheckedChanged += new System.EventHandler(this.radioUpdateManually_CheckedChanged);
             // 
-            // textBox2
+            // textRemainingEstimate
             // 
-            this.textBox2.Location = new System.Drawing.Point(401, 81);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(148, 20);
-            this.textBox2.TabIndex = 4;
+            this.textRemainingEstimate.Location = new System.Drawing.Point(401, 81);
+            this.textRemainingEstimate.Name = "textRemainingEstimate";
+            this.textRemainingEstimate.Size = new System.Drawing.Size(148, 20);
+            this.textRemainingEstimate.TabIndex = 4;
+            this.textRemainingEstimate.TextChanged += new System.EventHandler(this.textRemainingEstimate_TextChanged);
             // 
             // label3
             // 
@@ -123,14 +127,14 @@
             this.label3.TabIndex = 9;
             this.label3.Text = "End Time";
             // 
-            // label4
+            // labelEndTime
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(91, 138);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(79, 13);
-            this.label4.TabIndex = 10;
-            this.label4.Text = "18.01.10 11:33";
+            this.labelEndTime.AutoSize = true;
+            this.labelEndTime.Location = new System.Drawing.Point(91, 138);
+            this.labelEndTime.Name = "labelEndTime";
+            this.labelEndTime.Size = new System.Drawing.Size(79, 13);
+            this.labelEndTime.TabIndex = 10;
+            this.labelEndTime.Text = "18.01.10 11:33";
             // 
             // buttonChange
             // 
@@ -140,18 +144,19 @@
             this.buttonChange.TabIndex = 5;
             this.buttonChange.Text = "Change";
             this.buttonChange.UseVisualStyleBackColor = true;
+            this.buttonChange.Click += new System.EventHandler(this.buttonChange_Click);
             // 
-            // textBox3
+            // textExplanation
             // 
-            this.textBox3.BackColor = System.Drawing.SystemColors.Control;
-            this.textBox3.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox3.Location = new System.Drawing.Point(39, 36);
-            this.textBox3.Multiline = true;
-            this.textBox3.Name = "textBox3";
-            this.textBox3.ReadOnly = true;
-            this.textBox3.Size = new System.Drawing.Size(227, 70);
-            this.textBox3.TabIndex = 12;
-            this.textBox3.Text = resources.GetString("textBox3.Text");
+            this.textExplanation.BackColor = System.Drawing.SystemColors.Control;
+            this.textExplanation.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textExplanation.Location = new System.Drawing.Point(39, 36);
+            this.textExplanation.Multiline = true;
+            this.textExplanation.Name = "textExplanation";
+            this.textExplanation.ReadOnly = true;
+            this.textExplanation.Size = new System.Drawing.Size(227, 70);
+            this.textExplanation.TabIndex = 12;
+            this.textExplanation.Text = resources.GetString("textExplanation.Text");
             // 
             // buttonCancel
             // 
@@ -171,22 +176,24 @@
             this.ClientSize = new System.Drawing.Size(561, 204);
             this.ControlBox = false;
             this.Controls.Add(this.buttonCancel);
-            this.Controls.Add(this.textBox3);
+            this.Controls.Add(this.textExplanation);
             this.Controls.Add(this.buttonChange);
-            this.Controls.Add(this.label4);
+            this.Controls.Add(this.labelEndTime);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.radioButton3);
-            this.Controls.Add(this.radioButton2);
-            this.Controls.Add(this.radioButton1);
+            this.Controls.Add(this.textRemainingEstimate);
+            this.Controls.Add(this.radioUpdateManually);
+            this.Controls.Add(this.radioLeaveUnchanged);
+            this.Controls.Add(this.radioAutoUpdate);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.textTimeSpent);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.buttonOk);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.KeyPreview = true;
             this.Name = "LogWork";
             this.ShowIcon = false;
             this.Text = "LogWork";
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.LogWork_KeyPress);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -196,16 +203,16 @@
 
         private System.Windows.Forms.Button buttonOk;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox textTimeSpent;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.RadioButton radioButton1;
-        private System.Windows.Forms.RadioButton radioButton2;
-        private System.Windows.Forms.RadioButton radioButton3;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.RadioButton radioAutoUpdate;
+        private System.Windows.Forms.RadioButton radioLeaveUnchanged;
+        private System.Windows.Forms.RadioButton radioUpdateManually;
+        private System.Windows.Forms.TextBox textRemainingEstimate;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label labelEndTime;
         private System.Windows.Forms.Button buttonChange;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox textExplanation;
         private System.Windows.Forms.Button buttonCancel;
     }
 }

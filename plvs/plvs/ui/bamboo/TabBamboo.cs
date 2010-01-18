@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -73,13 +74,18 @@ namespace Atlassian.plvs.ui.bamboo {
                     allExceptions.Add(e);
                 }
             }
-            Invoke(new MethodInvoker(delegate
-                                         {
-                                             showPollResults(allBuilds, allExceptions);
-                                             if (rescheduleTimer) {
-                                                 pollTimer.Start();
-                                             }
-                                         }));
+            
+            try {
+                Invoke(new MethodInvoker(delegate {
+                                                 showPollResults(allBuilds, allExceptions);
+                                                 if (rescheduleTimer) {
+                                                     pollTimer.Start();
+                                                 }
+                                             }));
+                
+            } catch (Exception e) {
+                Debug.WriteLine("Exception while trying to show poll results: " + e.Message);
+            }
         }
 
         private void showPollResults(IEnumerable<BambooBuild> builds, ICollection<Exception> exceptions) {

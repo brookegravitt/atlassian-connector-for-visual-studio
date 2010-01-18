@@ -435,7 +435,9 @@ namespace Atlassian.plvs.ui.jira {
         private void addIssueActionItems() {
             List<JiraNamedEntity> actions = null;
             try {
+                status.setInfo("Retring issue actions...");
                 actions = JiraServerFacade.Instance.getActionsForIssue(issue);
+                status.setInfo("Issue actions retrieved");
             } catch (Exception ex) {
                 status.setError("Failed to retrieve issue actions", ex);
             }
@@ -455,7 +457,7 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void buttonLogWork_Click(object sender, EventArgs e) {
-            new LogWork(issue).ShowDialog();
+            new LogWork(this, model, facade, issue, status).ShowDialog();
         }
     }
 }

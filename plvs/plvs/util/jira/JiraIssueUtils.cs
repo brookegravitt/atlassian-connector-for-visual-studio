@@ -48,5 +48,26 @@ namespace Atlassian.plvs.util.jira {
         public static string getShortDateStringFromDateTime(DateTime time) {
             return time.ToString(ShortFormatToJira, new CultureInfo("en-US"));
         }
+
+        public static string addSpacesToTimeSpec(string text) {
+            Regex regex = new Regex(Constants.TIME_TRACKING_REGEX);
+
+            if (!regex.IsMatch(text)) {
+                throw new ArgumentException("Time specification must be in the " + Constants.TIME_TRACKING_SYNTAX + " format");
+            }
+
+            Match match = regex.Match(text);
+            Group @groupWeeks = match.Groups[2];
+            Group @groupDays = match.Groups[4];
+            Group @groupHours = match.Groups[6];
+            Group @groupMinutes = match.Groups[8];
+
+            string result = "";
+            if (groupWeeks != null && groupWeeks.Success) result = result + groupWeeks.Value + "w ";
+            if (groupDays != null && groupDays.Success) result = result + groupDays.Value + "d ";
+            if (groupHours != null && groupHours.Success) result = result + groupHours.Value + "h ";
+            if (groupMinutes != null && groupMinutes.Success) result = result + groupMinutes.Value + "m";
+            return result.Trim();
+        }
     }
 }

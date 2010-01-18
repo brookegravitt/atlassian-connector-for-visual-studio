@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.util;
+using Atlassian.plvs.util.jira;
 
 namespace Atlassian.plvs.ui.jira.fields {
     public class TimeTrackingEditor : JiraFieldEditor {
@@ -38,7 +39,7 @@ namespace Atlassian.plvs.ui.jira.fields {
         }
 
         private void trackingBox_TextChanged(object sender, EventArgs e) {
-            Regex regex = new Regex(@"^\s*(\d+w\s*)?(\d+d\s*)?(\d+h\s*)?(\d+m\s*)?$"); 
+            Regex regex = new Regex(Constants.TIME_TRACKING_REGEX); 
             if (String.IsNullOrEmpty(trackingBox.Text) || regex.IsMatch(trackingBox.Text)) {
                 trackingBox.ForeColor = Color.Black;
                 FieldValid = true;
@@ -65,7 +66,9 @@ namespace Atlassian.plvs.ui.jira.fields {
         }
 
         public override List<string> getValues() {
-            return FieldValid ? new List<string> { trackingBox.Text.Trim()} : new List<string>();
+            return FieldValid 
+                ? new List<string> { JiraIssueUtils.addSpacesToTimeSpec(trackingBox.Text.Trim()) } 
+                : new List<string>();
         }
     }
 }
