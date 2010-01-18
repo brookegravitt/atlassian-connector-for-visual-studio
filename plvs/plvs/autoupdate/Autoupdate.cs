@@ -84,18 +84,22 @@ namespace Atlassian.plvs.autoupdate {
             timer.Dispose();
         }
 
-        public void runManualUpdate(bool stableOnly, Form parent) {
+        public void runManualUpdate(bool stableOnly, Form parent, Action onFinished) {
             string url = stableOnly ? STABLE_URL : SNAPSHOT_URL;
             if (GlobalSettings.ReportUsage) {
                 url = getUsageReportingUrl(url);
             }
             Thread t = new Thread(new ThreadStart(delegate { 
                 if (runSingleUpdateQuery(url, false)) {
-                    parent.Invoke(new MethodInvoker(showUpdateDialog));
+                    parent.Invoke(new MethodInvoker(delegate { showUpdateDialog(); onFinished(); }));
                 } else {
-                    parent.Invoke(new MethodInvoker(() => 
-                        MessageBox.Show("You have the latest connector version installed", 
-                            Constants.INFO_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Information)));
+                    parent.Invoke(new MethodInvoker(delegate
+                                                        {
+                                                            MessageBox.Show("You have the latest connector version installed",
+                                                                            Constants.INFO_CAPTION, MessageBoxButtons.OK, 
+                                                                            MessageBoxIcon.Information);
+                                                            onFinished();
+                                                        }));
                 }
             }));
             t.Start();
