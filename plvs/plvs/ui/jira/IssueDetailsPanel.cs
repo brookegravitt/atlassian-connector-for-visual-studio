@@ -10,7 +10,9 @@ using Atlassian.plvs.api.jira;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.util.jira;
+using Atlassian.plvs.windows;
 using EnvDTE;
+using AtlassianConstants=Atlassian.plvs.util.Constants;
 using Constants=EnvDTE.Constants;
 using Process=System.Diagnostics.Process;
 using Thread=System.Threading.Thread;
@@ -188,8 +190,15 @@ namespace Atlassian.plvs.ui.jira {
                 .Append("<tr><td class=\"labelcolumn\">Type</td><td>")
                 .Append("<img alt=\"\" src=\"").Append(issue.IssueTypeIconUrl).Append("\"/>").Append(issue.IssueType).Append("</td></tr>\n")
                 .Append("<tr><td class=\"labelcolumn\">Status</td><td>")
-                .Append("<img alt=\"\" src=\"").Append(issue.StatusIconUrl).Append("\"/>").Append(issue.Status).Append("</td></tr>\n")
-                .Append("<tr><td class=\"labelcolumn\">Priority</td><td>")
+                .Append("<img alt=\"\" src=\"").Append(issue.StatusIconUrl).Append("\"/>").Append(issue.Status).Append("</td></tr>\n");
+
+            if (issue.IsSubtask) {
+                sb.Append("<tr><td class=\"labelcolumn\">Parent Issue</td><td>")
+                    .Append("<a href=\"parentissue:").Append(issue.ParentKey).Append("\">")
+                    .Append(issue.ParentKey).Append("</a></td>");
+            }
+            
+            sb.Append("<tr><td class=\"labelcolumn\">Priority</td><td>")
                 .Append("<img alt=\"\" src=\"").Append(issue.PriorityIconUrl).Append("\"/>").Append(issue.Priority).Append("</td></tr>\n")
                 .Append("<tr><td class=\"labelcolumn\">Assignee</td><td>")
                 .Append(issue.Assignee).Append("</td></tr>\n")
@@ -412,7 +421,18 @@ namespace Atlassian.plvs.ui.jira {
 
         private void issueSummary_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
             if (!issueSummaryLoaded) return;
+            if (e.Url.ToString().StartsWith("parentissue:")) {
+                AtlassianPanel.Instance.Jira.findAndOpenIssue(e.Url.ToString().Substring("parentissue:".Length), openParentFinished);
+                e.Cancel = true;
+                return;
+            }
             navigate(e);
+        }
+
+        private static void openParentFinished(bool success, string message) {
+            if (!success) {
+                MessageBox.Show(message, AtlassianConstants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private static void navigate(WebBrowserNavigatingEventArgs e) {
