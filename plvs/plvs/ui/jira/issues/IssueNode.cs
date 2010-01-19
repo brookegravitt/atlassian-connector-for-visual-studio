@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models;
 using Atlassian.plvs.util.jira;
@@ -7,8 +8,13 @@ namespace Atlassian.plvs.ui.jira.issues {
     public class IssueNode : AbstractIssueTreeNode {
         public JiraIssue Issue { get; set; }
 
+        public List<IssueNode> SubtaskNodes { get; private set; }
+
         public IssueNode(JiraIssue issue) {
             Issue = issue;
+            if (issue.HasSubtasks) {
+                SubtaskNodes = new List<IssueNode>();
+            }
         }
 
         public override Image Icon {

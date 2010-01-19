@@ -57,6 +57,12 @@ namespace Atlassian.plvs.api.jira {
                         Id = XPathUtils.getAttributeSafely(nav, "id", UNKNOWN);
                         ProjectKey = Key.Substring(0, Key.LastIndexOf('-'));
                         break;
+                    case "parent":
+                        ParentKey = nav.Value;
+                        break;
+                    case "subtasks":
+                        getSubtasks(nav);
+                        break;
                     case "summary":
                         Summary = nav.Value;
                         break;
@@ -147,11 +153,33 @@ namespace Atlassian.plvs.api.jira {
             nav.MoveToParent();
         }
 
+        private void getSubtasks(XPathNavigator nav) {
+            XPathExpression expr = nav.Compile("subtask");
+            XPathNodeIterator it = nav.Select(expr);
+
+            if (!nav.MoveToFirstChild()) return;
+            while (it.MoveNext()) {
+                string subKey = it.Current.Value;
+                SubtaskKeys.Add(subKey);
+            }
+            nav.MoveToParent();
+        }
+
         public JiraServer Server { get; private set; }
 
         public string IssueType { get; private set; }
 
         public int IssueTypeId { get; set; }
+
+        public string ParentKey { get; private set; }
+
+        public bool IsSubtask { get { return ParentKey != null; } }
+
+        public bool HasSubtasks { get { return subtaskKeys.Count > 0; } }
+
+        public List<string> SubtaskKeys { get { return subtaskKeys; } }
+
+        private readonly List<string> subtaskKeys = new List<string>();
 
         public string IssueTypeIconUrl { get; private set; }
 
@@ -249,6 +277,7 @@ namespace Atlassian.plvs.api.jira {
             eq &= string.Equals(other.OriginalEstimate, OriginalEstimate);
             eq &= string.Equals(other.RemainingEstimate, RemainingEstimate);
             eq &= string.Equals(other.TimeSpent, TimeSpent);
+            eq &= string.Equals(other.ParentKey, ParentKey);
             eq &= other.PriorityIconUrl.Equals(PriorityIconUrl);
             eq &= other.StatusId == StatusId;
             eq &= other.PriorityId == PriorityId;
@@ -256,6 +285,7 @@ namespace Atlassian.plvs.api.jira {
             eq &= compareLists(other.versions, versions);
             eq &= compareLists(other.fixVersions, fixVersions);
             eq &= compareLists(other.components, components);
+            eq &= compareLists(other.SubtaskKeys, SubtaskKeys);
 
             return eq;
         }
@@ -276,6 +306,7 @@ namespace Atlassian.plvs.api.jira {
                 int result = (comments != null ? comments.GetHashCode() : 0);
                 result = (result*397) ^ (versions != null ? versions.GetHashCode() : 0);
                 result = (result*397) ^ (fixVersions != null ? fixVersions.GetHashCode() : 0);
+                result = (result*397) ^ (SubtaskKeys.GetHashCode());
                 result = (result*397) ^ (components != null ? components.GetHashCode() : 0);
                 result = (result*397) ^ (Server != null ? Server.GUID.GetHashCode() : 0);
                 result = (result*397) ^ (IssueType != null ? IssueType.GetHashCode() : 0);
@@ -298,6 +329,7 @@ namespace Atlassian.plvs.api.jira {
                 result = (result*397) ^ (OriginalEstimate != null ? OriginalEstimate.GetHashCode() : 0);
                 result = (result*397) ^ (RemainingEstimate != null ? RemainingEstimate.GetHashCode() : 0);
                 result = (result*397) ^ (TimeSpent != null ? TimeSpent.GetHashCode() : 0);
+                result = (result*397) ^ (ParentKey != null ? ParentKey.GetHashCode() : 0);
                 result = (result*397) ^ (PriorityIconUrl != null ? PriorityIconUrl.GetHashCode() : 0);
                 result = (result*397) ^ StatusId;
                 result = (result*397) ^ PriorityId;

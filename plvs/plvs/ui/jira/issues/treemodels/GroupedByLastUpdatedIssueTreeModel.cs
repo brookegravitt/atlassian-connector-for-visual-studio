@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui.jira.issues.issuegroupnodes;
@@ -16,8 +17,8 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
                                                                   new ByLastUpdatedIssueGroupNode("Older Than Last Month"),
                                                               };
 
-        public GroupedByLastUpdatedIssueTreeModel(JiraIssueListModel model)
-            : base(model) {
+        public GroupedByLastUpdatedIssueTreeModel(JiraIssueListModel model, ToolStripButton groupSubtasksButton)
+            : base(model, groupSubtasksButton) {
         }
 
         protected override AbstractIssueGroupNode findGroupNode(JiraIssue issue) {

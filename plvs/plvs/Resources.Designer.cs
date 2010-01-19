@@ -276,6 +276,13 @@ namespace Atlassian.plvs {
             }
         }
         
+        internal static System.Drawing.Bitmap group_subtasks {
+            get {
+                object obj = ResourceManager.GetObject("group_subtasks", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap ico_clonefilter {
             get {
                 object obj = ResourceManager.GetObject("ico_clonefilter", resourceCulture);
