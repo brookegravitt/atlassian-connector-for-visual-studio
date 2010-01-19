@@ -299,7 +299,9 @@ namespace Atlassian.plvs.dialogs {
                 editor.Widget.Visible = !visible;
             }
             textComment.Visible = !visible;
-            textUnsupported.Visible = !visible;
+            if (textUnsupported != null) {
+                textUnsupported.Visible = !visible;
+            }
             panelContent.ResumeLayout(true);
             ResumeLayout(true);
         }
