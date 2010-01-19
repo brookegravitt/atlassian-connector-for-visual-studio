@@ -39,6 +39,12 @@ namespace Atlassian.plvs.models.jira {
             get { return filter(model.Issues); }
         }
 
+        public JiraIssue getIssue(string key, JiraServer server) {
+            JiraIssue issue = model.getIssue(key, server);
+            if (issue == null) return null;
+            return matches(issue) ? issue : null;
+        }
+
         private ICollection<JiraIssue> filter(ICollection<JiraIssue> issues) {
             if (string.IsNullOrEmpty(Query)) {
                 return issues;

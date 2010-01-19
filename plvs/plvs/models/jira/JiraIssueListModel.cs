@@ -7,6 +7,8 @@ namespace Atlassian.plvs.models.jira {
 
         ICollection<JiraIssue> Issues { get; }
 
+        JiraIssue getIssue(string key, JiraServer server);
+
         event EventHandler<EventArgs> ModelChanged;
         event EventHandler<IssueChangedEventArgs> IssueChanged;
 

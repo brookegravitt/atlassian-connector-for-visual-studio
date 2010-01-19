@@ -33,7 +33,12 @@ namespace Atlassian.plvs.ui.jira {
         private bool issueCommentsLoaded;
         private bool issueDescriptionLoaded;
         private bool issueSummaryLoaded;
-        private bool issueSubtasksLoaded;
+
+        // two-step loading:
+        // 1. load "Subtask loading..." text
+        // 2. load actual subtask info
+        // panel gets to be clickable when issueSubtasksLoaded becomes 2
+        private int issueSubtasksLoaded;
         
         private const int A_LOT = 100000;
 
@@ -75,11 +80,14 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void model_IssueChanged(object sender, IssueChangedEventArgs e) {
-            if (!e.Issue.Id.Equals(issue.Id)) return;
             if (!e.Issue.Server.GUID.Equals(issue.Server.GUID)) return;
-            if (e.Issue.Equals(issue)) return;
-            buttonRefresh.Enabled = false;
-            runRefreshThread();
+            if (e.Issue.Id.Equals(issue.Id)) {
+                if (e.Issue.Equals(issue)) return;
+                buttonRefresh.Enabled = false;
+                runRefreshThread();
+            } else if (e.Issue.IsSubtask && e.Issue.ParentKey.Equals(issue.ParentKey)) {
+                rebuildSubtasksPanel();
+            }
         }
 
         private void IssueDetailsPanel_VisibleChanged(object sender, EventArgs e) {
@@ -302,25 +310,64 @@ namespace Atlassian.plvs.ui.jira {
                     issueTabs.TabPages.Add(tabSubtasks);
                 }
 
-                issueSubtasksLoaded = false;
+                setWebSubtasksText("Loading subtasks...");
 
-                StringBuilder sb = new StringBuilder();
+                issueSubtasksLoaded = 0;
 
-                sb.Append("<html>\n<head>\n").Append(Resources.summary_and_description_css)
-                    .Append("\n</head>\n<body>\n<table class=\"summary\">\n");
+                List<JiraIssue> subsInModel = new List<JiraIssue>();
+                List<string> subsToQuery = new List<string>();
                 foreach (string key in issue.SubtaskKeys) {
-                    sb.Append("<tr><td width=\"24px\">").Append("i")
-                        .Append("</td><td>").Append("<a href=\"")
-                        .Append(SUBTASK_ISSUE_URL_TYPE).Append(key).Append("\">").Append(key).Append("</a></td><td>")
-                        .Append("Retrieving subtask summary...").Append("</td></tr>\n");
+                    JiraIssue sub = model.getIssue(key, issue.Server);
+                    if (sub != null) {
+                        subsInModel.Add(sub);
+                    } else {
+                        subsToQuery.Add(key);
+                    }
                 }
-                sb.Append("\n</table>\n</body>\n</html>\n");
-                webSubtasks.DocumentText = sb.ToString();
+                Thread t = new Thread(() => querySubtasksAndDisplay(subsInModel, subsToQuery));
+                t.Start();
             } else {
                 if (issueTabs.TabPages.Contains(tabSubtasks)) {
                     issueTabs.TabPages.Remove(tabSubtasks);
                 }
             }
+        }
+
+        private void setWebSubtasksText(string txt) {
+            webSubtasks.DocumentText =
+                "<html>\n<head>\n"
+                + Resources.summary_and_description_css
+                + "\n</head>\n<body class=\"summary\">\n"
+                + txt
+                + "\n</body>\n</html>\n";
+        }
+
+        private void querySubtasksAndDisplay(ICollection<JiraIssue> subsInModel, IEnumerable<string> subsToQuery) {
+            StringBuilder sb = new StringBuilder();
+
+            try {
+                foreach (string key in subsToQuery) {
+                    JiraIssue sub = facade.getIssue(issue.Server, key);
+                    subsInModel.Add(sub);
+                }
+                Invoke(new MethodInvoker(delegate {
+                    sb.Append("<html>\n<head>\n").Append(Resources.summary_and_description_css)
+                        .Append("\n</head>\n<body>\n<table class=\"summary\">\n");
+                    foreach (JiraIssue sub in subsInModel) {
+                        // let's pray all issue icons are 16x16 :)
+                        sb.Append("<tr><td width=\"16px\">").Append("<img src=\"" + sub.IssueTypeIconUrl + "\"/>").Append("</td>");
+                        sb.Append("<td>").Append("<a href=\"").Append(SUBTASK_ISSUE_URL_TYPE).Append(sub.Key).Append("\">").Append(sub.Key).Append("</a></td>");
+                        sb.Append("<td width=\"16px\">").Append("<img src=\"" + sub.PriorityIconUrl + "\" alt=\"" + sub.Priority + "\"/>").Append("</td>");
+                        sb.Append("<td width=\"16px\">").Append("<img src=\"" + sub.StatusIconUrl + "\" alt=\"" + sub.Status + "\"/>").Append("</td>");
+                        sb.Append("<td>").Append(sub.Summary).Append("</td></tr>\n");
+                    }
+                    sb.Append("\n</table>\n</body>\n</html>\n");
+                    webSubtasks.DocumentText = sb.ToString();
+                }));
+            } catch (Exception e) {
+                Invoke(new MethodInvoker(() => setWebSubtasksText("Failed to retrieve subtasks")));
+                status.setError("Failed to retrieve subtasks", e);
+            }                
         }
 
         private void buttonAddComment_Click(object sender, EventArgs e) {
@@ -378,7 +425,7 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void webSubtasks_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) {
-            issueSubtasksLoaded = true;
+            ++issueSubtasksLoaded;
         }
 
         private void issueComments_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
@@ -469,7 +516,7 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void webSubtasks_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
-            if (!issueSubtasksLoaded) return;
+            if (issueSubtasksLoaded != 2) return;
             if (e.Url.ToString().StartsWith(SUBTASK_ISSUE_URL_TYPE)) {
                 AtlassianPanel.Instance.Jira.findAndOpenIssue(e.Url.ToString().Substring(SUBTASK_ISSUE_URL_TYPE.Length), openParentOrSubtaskFinished);
                 e.Cancel = true;
