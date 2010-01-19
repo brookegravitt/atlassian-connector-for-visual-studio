@@ -34,11 +34,7 @@ namespace Atlassian.plvs.ui.jira {
         private bool issueDescriptionLoaded;
         private bool issueSummaryLoaded;
 
-        // two-step loading:
-        // 1. load "Subtask loading..." text
-        // 2. load actual subtask info
-        // panel gets to be clickable when issueSubtasksLoaded becomes 2
-        private int issueSubtasksLoaded;
+        private bool issueSubtasksLoaded;
         
         private const int A_LOT = 100000;
 
@@ -310,9 +306,7 @@ namespace Atlassian.plvs.ui.jira {
                     issueTabs.TabPages.Add(tabSubtasks);
                 }
 
-                setWebSubtasksText("Loading subtasks...");
-
-                issueSubtasksLoaded = 0;
+                issueSubtasksLoaded = false;
 
                 List<JiraIssue> subsInModel = new List<JiraIssue>();
                 List<string> subsToQuery = new List<string>();
@@ -365,7 +359,11 @@ namespace Atlassian.plvs.ui.jira {
                     webSubtasks.DocumentText = sb.ToString();
                 }));
             } catch (Exception e) {
-                Invoke(new MethodInvoker(() => setWebSubtasksText("Failed to retrieve subtasks")));
+                try {
+                    Invoke(new MethodInvoker(() => setWebSubtasksText("Failed to retrieve subtasks")));
+                } catch (InvalidOperationException ex) {
+                    Debug.WriteLine("IssueDetailsPanel.querySubtasksAndDisplay(): " + ex.Message);
+                }
                 status.setError("Failed to retrieve subtasks", e);
             }                
         }
@@ -425,7 +423,7 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void webSubtasks_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) {
-            ++issueSubtasksLoaded;
+            issueSubtasksLoaded = true;
         }
 
         private void issueComments_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
@@ -516,7 +514,8 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void webSubtasks_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
-            if (issueSubtasksLoaded != 2) return;
+            if (e.Url.Equals("about:blank")) return;
+            if (!issueSubtasksLoaded) return;
             if (e.Url.ToString().StartsWith(SUBTASK_ISSUE_URL_TYPE)) {
                 AtlassianPanel.Instance.Jira.findAndOpenIssue(e.Url.ToString().Substring(SUBTASK_ISSUE_URL_TYPE.Length), openParentOrSubtaskFinished);
                 e.Cancel = true;

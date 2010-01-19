@@ -23,18 +23,22 @@ namespace Atlassian.plvs.ui {
         private Exception lastException;
 
         public void setError(string txt, Exception e) {
-            statusBar.Invoke(new MethodInvoker(delegate
-                                                   {
-                                                       targetLabel.BackColor = Color.LightPink;
-                                                       Exception inner = e.InnerException;
-                                                       statusBar.BackColor = Color.LightPink;
-                                                       targetLabel.Text = txt;
-                                                       lastException = inner ?? e;
-                                                       targetLabel.Visible = true;
-                                                       targetLabel.IsLink = true;
-                                                       targetLabel.Click += targetLabel_Click;
-                                                       targetLabel.Image = SystemIcons.Error.ToBitmap();
-                                                   }));
+            try {
+                statusBar.Invoke(new MethodInvoker(delegate
+                                                       {
+                                                           targetLabel.BackColor = Color.LightPink;
+                                                           Exception inner = e.InnerException;
+                                                           statusBar.BackColor = Color.LightPink;
+                                                           targetLabel.Text = txt;
+                                                           lastException = inner ?? e;
+                                                           targetLabel.Visible = true;
+                                                           targetLabel.IsLink = true;
+                                                           targetLabel.Click += targetLabel_Click;
+                                                           targetLabel.Image = SystemIcons.Error.ToBitmap();
+                                                       }));
+            } catch (InvalidOperationException ex) {
+                Debug.WriteLine("StatusLabel.setInfo(): " + ex.Message);
+            }
         }
 
         private void targetLabel_Click(object sender, EventArgs e) {
@@ -53,15 +57,19 @@ namespace Atlassian.plvs.ui {
         }
 
         public void setInfo(string txt) {
-            statusBar.Invoke(new MethodInvoker(delegate
-                                                   {
-                                                       targetLabel.BackColor = SystemColors.Control;
-                                                       statusBar.BackColor = SystemColors.Control;
-                                                       targetLabel.Text = txt;
-                                                       targetLabel.Visible = true;
-                                                       targetLabel.IsLink = false;
-                                                       targetLabel.Image = null;
-                                                   }));
+            try {
+                statusBar.Invoke(new MethodInvoker(delegate
+                                                       {
+                                                           targetLabel.BackColor = SystemColors.Control;
+                                                           statusBar.BackColor = SystemColors.Control;
+                                                           targetLabel.Text = txt;
+                                                           targetLabel.Visible = true;
+                                                           targetLabel.IsLink = false;
+                                                           targetLabel.Image = null;
+                                                       }));
+            } catch (InvalidOperationException e) {
+                Debug.WriteLine("StatusLabel.setInfo(): " + e.Message);
+            }
         }
     }
 }
