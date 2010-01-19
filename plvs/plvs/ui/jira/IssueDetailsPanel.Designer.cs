@@ -46,14 +46,14 @@ namespace Atlassian.plvs.ui.jira {
             this.buttonExpandAll = new System.Windows.Forms.ToolStripButton();
             this.buttonCollapseAll = new System.Windows.Forms.ToolStripButton();
             this.label2 = new System.Windows.Forms.Label();
+            this.tabSubtasks = new System.Windows.Forms.TabPage();
+            this.webSubtasks = new System.Windows.Forms.WebBrowser();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.buttonViewInBrowser = new System.Windows.Forms.ToolStripButton();
             this.buttonRefresh = new System.Windows.Forms.ToolStripButton();
             this.buttonClose = new System.Windows.Forms.ToolStripButton();
             this.buttonLogWork = new System.Windows.Forms.ToolStripButton();
             this.dropDownIssueActions = new System.Windows.Forms.ToolStripDropDownButton();
-            this.tabSubtasks = new System.Windows.Forms.TabPage();
-            this.webSubtasks = new System.Windows.Forms.WebBrowser();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -69,8 +69,8 @@ namespace Atlassian.plvs.ui.jira {
             this.toolStripContainer2.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer2.SuspendLayout();
             this.toolStrip2.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
             this.tabSubtasks.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStripContainer1
@@ -280,6 +280,28 @@ namespace Atlassian.plvs.ui.jira {
             this.label2.TabIndex = 0;
             this.label2.Text = "Comments";
             // 
+            // tabSubtasks
+            // 
+            this.tabSubtasks.Controls.Add(this.webSubtasks);
+            this.tabSubtasks.Location = new System.Drawing.Point(4, 22);
+            this.tabSubtasks.Name = "tabSubtasks";
+            this.tabSubtasks.Padding = new System.Windows.Forms.Padding(3);
+            this.tabSubtasks.Size = new System.Drawing.Size(777, 402);
+            this.tabSubtasks.TabIndex = 2;
+            this.tabSubtasks.Text = "Subtasks";
+            this.tabSubtasks.UseVisualStyleBackColor = true;
+            // 
+            // webSubtasks
+            // 
+            this.webSubtasks.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webSubtasks.Location = new System.Drawing.Point(3, 3);
+            this.webSubtasks.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webSubtasks.Name = "webSubtasks";
+            this.webSubtasks.Size = new System.Drawing.Size(771, 396);
+            this.webSubtasks.TabIndex = 0;
+            this.webSubtasks.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webSubtasks_Navigating);
+            this.webSubtasks.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webSubtasks_DocumentCompleted);
+            // 
             // toolStrip1
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
@@ -344,28 +366,6 @@ namespace Atlassian.plvs.ui.jira {
             this.dropDownIssueActions.Text = "Issue Actions";
             this.dropDownIssueActions.DropDownOpened += new System.EventHandler(this.dropDownIssueActions_DropDownOpened);
             // 
-            // tabSubtasks
-            // 
-            this.tabSubtasks.Controls.Add(this.webSubtasks);
-            this.tabSubtasks.Location = new System.Drawing.Point(4, 22);
-            this.tabSubtasks.Name = "tabSubtasks";
-            this.tabSubtasks.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSubtasks.Size = new System.Drawing.Size(777, 402);
-            this.tabSubtasks.TabIndex = 2;
-            this.tabSubtasks.Text = "Subtasks";
-            this.tabSubtasks.UseVisualStyleBackColor = true;
-            // 
-            // webSubtasks
-            // 
-            this.webSubtasks.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webSubtasks.Location = new System.Drawing.Point(3, 3);
-            this.webSubtasks.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webSubtasks.Name = "webSubtasks";
-            this.webSubtasks.Size = new System.Drawing.Size(771, 396);
-            this.webSubtasks.TabIndex = 0;
-            this.webSubtasks.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webSubtasks_Navigating);
-            this.webSubtasks.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webSubtasks_DocumentCompleted);
-            // 
             // IssueDetailsPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -398,9 +398,9 @@ namespace Atlassian.plvs.ui.jira {
             this.toolStripContainer2.PerformLayout();
             this.toolStrip2.ResumeLayout(false);
             this.toolStrip2.PerformLayout();
+            this.tabSubtasks.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
-            this.tabSubtasks.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
