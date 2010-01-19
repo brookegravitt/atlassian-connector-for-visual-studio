@@ -613,6 +613,7 @@
     <Content Include="Resources\icons\expand_all.png" />
     <Content Include="Resources\icons\find-jira.png" />
     <Content Include="Resources\icons\global_properties.png" />
+    <Content Include="Resources\icons\group-subtasks.png" />
     <Content Include="Resources\icons\ico_clonefilter.png" />
     <Content Include="Resources\icons\ico_jira_custom_filter.png" />
     <Content Include="Resources\icons\ico_jira_filter.png" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using Aga.Controls.Tree;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models.jira;
@@ -9,45 +10,120 @@ using Atlassian.plvs.ui.jira.issues.issuegroupnodes;
 namespace Atlassian.plvs.ui.jira.issues.treemodels {
     internal abstract class AbstractGroupingIssueTreeModel : AbstractIssueTreeModel {
 
-        protected AbstractGroupingIssueTreeModel(JiraIssueListModel model)
-            : base(model) {
+        protected AbstractGroupingIssueTreeModel(JiraIssueListModel model, ToolStripButton groupSubtasksButton)
+            : base(model, groupSubtasksButton) {
         }
 
         protected override void fillModel(IEnumerable<JiraIssue> issues) {
             clearGroupNodes();
 
+//            foreach (var issue in issues) {
+//                AbstractIssueGroupNode group = findGroupNode(issue);
+//                group.IssueNodes.Add(new IssueNode(issue));
+//            }
+
+
+
+
+
+
+
+
+
+            List<JiraIssue> subs = new List<JiraIssue>();
+            List<JiraIssue> orphanSubs = new List<JiraIssue>();
+
             foreach (var issue in issues) {
-                AbstractIssueGroupNode group = findGroupNode(issue);
-                group.IssueNodes.Add(new IssueNode(issue));
+                if (!(issue.IsSubtask && GroupSubtasksUnderParent)) {
+                    AbstractIssueGroupNode group = findGroupNode(issue);
+                    group.IssueNodes.Add(new IssueNode(issue));
+                } else {
+                    subs.Add(issue);
+                }
             }
+
+            foreach (JiraIssue sub in subs) {
+                IssueNode parent = findIssueNodeByKey(sub.ParentKey);
+                if (parent != null) {
+                    parent.SubtaskNodes.Add(new IssueNode(sub));
+                } else {
+                    orphanSubs.Add(sub);
+                }
+            }
+
+            // orphaned subtasks go at the end of the tree. 
+            // Not really kosher, priority order is lost :(
+            foreach (JiraIssue sub in orphanSubs) {
+                AbstractIssueGroupNode group = findGroupNode(sub);
+                group.IssueNodes.Add(new IssueNode(sub));
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             if (StructureChanged != null) {
                 StructureChanged(this, new TreePathEventArgs(TreePath.Empty));
             }
         }
 
+        private IssueNode findIssueNodeByKey(IEquatable<string> key) {
+            foreach (AbstractIssueGroupNode n in getGroupNodes()) {
+                foreach (IssueNode issueNode in n.IssueNodes) {
+                    if (!key.Equals(issueNode.Issue.Key)) {
+                        continue;
+                    }
+                    return issueNode;
+                }
+            }
+            return null;
+        }
+
         protected abstract void clearGroupNodes();
 
         protected abstract AbstractIssueGroupNode findGroupNode(JiraIssue issue);
-
-        #region ITreeModel Members
 
         public override IEnumerable GetChildren(TreePath treePath) {
             if (treePath.IsEmpty()) {
                 return getGroupNodes();
             }
             AbstractIssueGroupNode groupNode = treePath.LastNode as AbstractIssueGroupNode;
-            return groupNode != null ? groupNode.IssueNodes : null;
+            if (groupNode != null) {
+                return groupNode.IssueNodes;
+            }
+            IssueNode issueNode = treePath.LastNode as IssueNode;
+            return issueNode != null ? issueNode.SubtaskNodes : null;
         }
 
         protected abstract IEnumerable<AbstractIssueGroupNode> getGroupNodes();
 
         public override bool IsLeaf(TreePath treePath) {
-            return treePath.LastNode is IssueNode;
+            if (!(treePath.LastNode is IssueNode)) {
+                return false;
+            }
+
+            if (GroupSubtasksUnderParent) {
+                IssueNode n = treePath.LastNode as IssueNode;
+                if (n != null) {
+                    return n.Issue.IsSubtask || !n.Issue.HasSubtasks;
+                }
+            }
+
+            return true;
         }
 
         protected override void model_ModelChanged(object sender, EventArgs e) {
-            fillModel(model.Issues);
+            fillModel(Model.Issues);
         }
 
         protected override void model_IssueChanged(object sender, IssueChangedEventArgs e) {
@@ -55,7 +131,7 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
                 foreach (var issueNode in groupNode.IssueNodes) {
                     if (issueNode.Issue.Id != e.Issue.Id) continue;
                     if (findGroupNode(e.Issue) != groupNode) {
-                        fillModel(model.Issues);
+                        fillModel(Model.Issues);
                     } else if (NodesChanged != null) {
                         issueNode.Issue = e.Issue;
                         NodesChanged(this, new TreeModelEventArgs(new TreePath(groupNode), new object[] { issueNode }));
@@ -65,17 +141,11 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
             }
         }
 
-        #region Overrides of AbstractIssueTreeModel
-
         public override event EventHandler<TreeModelEventArgs> NodesChanged;
         public override event EventHandler<TreePathEventArgs> StructureChanged;
 
 #pragma warning disable 67
         public override event EventHandler<TreeModelEventArgs> NodesInserted;
         public override event EventHandler<TreeModelEventArgs> NodesRemoved;
-
-        #endregion
-
-        #endregion
     }
 }

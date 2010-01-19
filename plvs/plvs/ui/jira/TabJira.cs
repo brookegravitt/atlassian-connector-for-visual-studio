@@ -8,12 +8,16 @@ using Atlassian.plvs.dialogs;
 using Atlassian.plvs.models;
 using Atlassian.plvs.models.jira;
 using Aga.Controls.Tree;
+using Atlassian.plvs.store;
 using Atlassian.plvs.ui.jira.issuefilternodes;
 using Atlassian.plvs.ui.jira.issues;
 using Atlassian.plvs.ui.jira.issues.treemodels;
 
 namespace Atlassian.plvs.ui.jira {
     public partial class TabJira : UserControl {
+
+        private const string GROUP_SUBTASKS_UNDER_PARENT = "JiraIssueListGroupSubtasksUnderParent";
+
         private JiraIssueTree issuesTree;
 
         private readonly JiraIssueListModelBuilder builder;
@@ -35,6 +39,10 @@ namespace Atlassian.plvs.ui.jira {
 
             filtersTree.setReloadIssuesCallback(reloadIssues);
             filtersTree.addToolTip(filtersTreeToolTip);
+
+            ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
+            bool groupSubtasks = store.loadParameter(GROUP_SUBTASKS_UNDER_PARENT, 1) != 0;
+            buttonGroupSubtasks.Checked = groupSubtasks;
         }
 
         public JiraServerFacade Facade {
@@ -43,7 +51,7 @@ namespace Atlassian.plvs.ui.jira {
 
         private void setupGroupByCombo() {
             foreach (JiraIssueGroupByComboItem.GroupBy groupBy in Enum.GetValues(typeof (JiraIssueGroupByComboItem.GroupBy))) {
-                comboGroupBy.Items.Add(new JiraIssueGroupByComboItem(groupBy, searchingModel));
+                comboGroupBy.Items.Add(new JiraIssueGroupByComboItem(groupBy, searchingModel, buttonGroupSubtasks));
             }
             comboGroupBy.SelectedIndexChanged += comboGroupBy_SelectedIndexChanged;
         }
@@ -98,7 +106,7 @@ namespace Atlassian.plvs.ui.jira {
             AbstractIssueTreeModel issueTreeModel;
 
             if (filtersTree.RecentlyViewedSelected) {
-                issueTreeModel = new FlatIssueTreeModel(searchingModel);
+                issueTreeModel = new FlatIssueTreeModel(searchingModel, buttonGroupSubtasks);
             } else {
                 JiraIssueGroupByComboItem item = comboGroupBy.SelectedItem as JiraIssueGroupByComboItem;
                 if (item == null) {
@@ -644,5 +652,10 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         public void shutdown() {}
+
+        private void buttonGroupSubtasks_Click(object sender, EventArgs e) {
+            ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
+            store.storeParameter(GROUP_SUBTASKS_UNDER_PARENT, buttonGroupSubtasks.Checked ? 1 : 0);
+        }
     }
 }

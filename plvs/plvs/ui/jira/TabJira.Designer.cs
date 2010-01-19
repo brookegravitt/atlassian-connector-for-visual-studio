@@ -48,6 +48,7 @@
             this.comboGroupBy = new JiraIssueGroupByCombo(this.components);
             this.buttonExpandAll = new System.Windows.Forms.ToolStripButton();
             this.buttonCollapseAll = new System.Windows.Forms.ToolStripButton();
+            this.buttonGroupSubtasks = new System.Windows.Forms.ToolStripButton();
             this.buttonOpen = new System.Windows.Forms.ToolStripButton();
             this.buttonViewInBrowser = new System.Windows.Forms.ToolStripButton();
             this.buttonEditInBrowser = new System.Windows.Forms.ToolStripButton();
@@ -83,7 +84,7 @@
             // jiraContainer.ContentPanel
             // 
             this.jiraContainer.ContentPanel.Controls.Add(this.jiraSplitter);
-            this.jiraContainer.ContentPanel.Size = new System.Drawing.Size(852, 314);
+            this.jiraContainer.ContentPanel.Size = new System.Drawing.Size(852, 289);
             this.jiraContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.jiraContainer.Location = new System.Drawing.Point(0, 0);
             this.jiraContainer.Name = "jiraContainer";
@@ -95,8 +96,8 @@
             // 
             this.statusStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                                                                                         this.jiraStatus,
-                                                                                         this.getMoreIssues});
+            this.jiraStatus,
+            this.getMoreIssues});
             this.statusStrip.Location = new System.Drawing.Point(0, 0);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(852, 22);
@@ -130,7 +131,7 @@
             // jiraSplitter.Panel2
             // 
             this.jiraSplitter.Panel2.Controls.Add(this.issueTreeContainer);
-            this.jiraSplitter.Size = new System.Drawing.Size(852, 314);
+            this.jiraSplitter.Size = new System.Drawing.Size(852, 289);
             this.jiraSplitter.SplitterDistance = 222;
             this.jiraSplitter.TabIndex = 0;
             // 
@@ -140,11 +141,11 @@
             // filterTreeContainer.ContentPanel
             // 
             this.filterTreeContainer.ContentPanel.Controls.Add(this.filtersTree);
-            this.filterTreeContainer.ContentPanel.Size = new System.Drawing.Size(222, 289);
+            this.filterTreeContainer.ContentPanel.Size = new System.Drawing.Size(222, 264);
             this.filterTreeContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.filterTreeContainer.Location = new System.Drawing.Point(0, 0);
             this.filterTreeContainer.Name = "filterTreeContainer";
-            this.filterTreeContainer.Size = new System.Drawing.Size(222, 314);
+            this.filterTreeContainer.Size = new System.Drawing.Size(222, 289);
             this.filterTreeContainer.TabIndex = 0;
             this.filterTreeContainer.Text = "toolStripContainer2";
             // 
@@ -160,7 +161,7 @@
             this.filtersTree.Location = new System.Drawing.Point(0, 0);
             this.filtersTree.Name = "filtersTree";
             this.filtersTree.SelectedImageIndex = 0;
-            this.filtersTree.Size = new System.Drawing.Size(222, 289);
+            this.filtersTree.Size = new System.Drawing.Size(222, 264);
             this.filtersTree.TabIndex = 0;
             this.filtersTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.filtersTree_AfterSelect);
             // 
@@ -168,10 +169,10 @@
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                                                                                        this.buttonRefreshAll,
-                                                                                        this.buttonAddFilter,
-                                                                                        this.buttonRemoveFilter,
-                                                                                        this.buttonEditFilter});
+            this.buttonRefreshAll,
+            this.buttonAddFilter,
+            this.buttonRemoveFilter,
+            this.buttonEditFilter});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(104, 25);
@@ -222,11 +223,11 @@
             // 
             // issueTreeContainer.ContentPanel
             // 
-            this.issueTreeContainer.ContentPanel.Size = new System.Drawing.Size(626, 289);
+            this.issueTreeContainer.ContentPanel.Size = new System.Drawing.Size(626, 264);
             this.issueTreeContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.issueTreeContainer.Location = new System.Drawing.Point(0, 0);
             this.issueTreeContainer.Name = "issueTreeContainer";
-            this.issueTreeContainer.Size = new System.Drawing.Size(626, 314);
+            this.issueTreeContainer.Size = new System.Drawing.Size(626, 289);
             this.issueTreeContainer.TabIndex = 0;
             this.issueTreeContainer.Text = "toolStripContainer2";
             // 
@@ -238,21 +239,22 @@
             // 
             this.toolStrip2.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                                                                                        this.labelNarrow,
-                                                                                        this.comboFind,
-                                                                                        this.labelGroupBy,
-                                                                                        this.comboGroupBy,
-                                                                                        this.buttonExpandAll,
-                                                                                        this.buttonCollapseAll,
-                                                                                        this.buttonOpen,
-                                                                                        this.buttonViewInBrowser,
-                                                                                        this.buttonEditInBrowser,
-                                                                                        this.buttonCreate,
-                                                                                        this.buttonSearch,
-                                                                                        this.buttonRefresh});
+            this.labelNarrow,
+            this.comboFind,
+            this.labelGroupBy,
+            this.comboGroupBy,
+            this.buttonExpandAll,
+            this.buttonCollapseAll,
+            this.buttonGroupSubtasks,
+            this.buttonOpen,
+            this.buttonViewInBrowser,
+            this.buttonEditInBrowser,
+            this.buttonCreate,
+            this.buttonSearch,
+            this.buttonRefresh});
             this.toolStrip2.Location = new System.Drawing.Point(3, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(557, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(611, 25);
             this.toolStrip2.TabIndex = 0;
             // 
             // labelNarrow
@@ -300,6 +302,17 @@
             this.buttonCollapseAll.Size = new System.Drawing.Size(23, 22);
             this.buttonCollapseAll.Text = "Collapse All";
             this.buttonCollapseAll.Click += new System.EventHandler(this.buttonCollapseAll_Click);
+            // 
+            // buttonGroupSubtasks
+            // 
+            this.buttonGroupSubtasks.CheckOnClick = true;
+            this.buttonGroupSubtasks.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonGroupSubtasks.Image = global::Atlassian.plvs.Resources.group_subtasks;
+            this.buttonGroupSubtasks.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonGroupSubtasks.Name = "buttonGroupSubtasks";
+            this.buttonGroupSubtasks.Size = new System.Drawing.Size(23, 22);
+            this.buttonGroupSubtasks.Text = "Group Subtasks Under Parent";
+            this.buttonGroupSubtasks.Click += new System.EventHandler(this.buttonGroupSubtasks_Click);
             // 
             // buttonOpen
             // 
@@ -442,5 +455,6 @@
         private System.Windows.Forms.ToolStripButton buttonRemoveFilter;
         private System.Windows.Forms.ToolStripButton buttonEditFilter;
         private System.Windows.Forms.ToolStripButton buttonCreate;
+        private System.Windows.Forms.ToolStripButton buttonGroupSubtasks;
     }
 }

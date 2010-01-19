@@ -70,7 +70,7 @@ namespace Atlassian.plvs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Atlassian Connector for Visual Studio.
+        ///   Looks up a localized string similar to Atlassian Connector.
         /// </summary>
         public static string _110 {
             get {
