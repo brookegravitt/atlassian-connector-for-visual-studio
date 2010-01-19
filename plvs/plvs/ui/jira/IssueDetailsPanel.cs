@@ -29,9 +29,12 @@ namespace Atlassian.plvs.ui.jira {
         private JiraIssue issue;
         private readonly TabControl tabWindow;
         private readonly TabPage myTab;
+
         private bool issueCommentsLoaded;
         private bool issueDescriptionLoaded;
         private bool issueSummaryLoaded;
+        private bool issueSubtasksLoaded;
+        
         private const int A_LOT = 100000;
 
         public IssueDetailsPanel(JiraIssueListModel model, Solution solution, JiraIssue issue, TabControl tabWindow,
@@ -93,12 +96,14 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void rebuildAllPanels(bool enableRefresh) {
-            Invoke(new MethodInvoker(delegate {
-                                         rebuildSummaryPanel();
-                                         rebuildDescriptionPanel();
-                                         rebuildCommentsPanel(true);
-                                         buttonRefresh.Enabled = enableRefresh;
-                                     }));
+            Invoke(new MethodInvoker(delegate
+                                         {
+                                             rebuildSummaryPanel();
+                                             rebuildDescriptionPanel();
+                                             rebuildCommentsPanel(true);
+                                             rebuildSubtasksPanel();
+                                             buttonRefresh.Enabled = enableRefresh;
+                                         }));
         }
 
         private void runRefreshThread() {
@@ -147,6 +152,9 @@ namespace Atlassian.plvs.ui.jira {
 
         private static readonly Regex STACK_REGEX = new Regex(@"(\s*\w+\S+\(.*\)\s+\w+\s+)(\S+)(:\w+\s+)(\d+)");
 
+        private const string PARENT_ISSUE_URL_TYPE = "parentissue:";
+        private const string SUBTASK_ISSUE_URL_TYPE = "subtaskkey:";
+
         private const string STACKLINE_URL_TYPE = "stackline:";
         private const string STACKLINE_LINE_NUMBER_SEPARATOR = "@";
 
@@ -194,7 +202,7 @@ namespace Atlassian.plvs.ui.jira {
 
             if (issue.IsSubtask) {
                 sb.Append("<tr><td class=\"labelcolumn\">Parent Issue</td><td>")
-                    .Append("<a href=\"parentissue:").Append(issue.ParentKey).Append("\">")
+                    .Append("<a href=\"").Append(PARENT_ISSUE_URL_TYPE).Append(issue.ParentKey).Append("\">")
                     .Append(issue.ParentKey).Append("</a></td>");
             }
             
@@ -288,6 +296,33 @@ namespace Atlassian.plvs.ui.jira {
             issueComments.DocumentText = createCommentsHtml(expanded);
         }
 
+        private void rebuildSubtasksPanel() {
+            if (issue.HasSubtasks) {
+                if (!issueTabs.TabPages.Contains(tabSubtasks)) {
+                    issueTabs.TabPages.Add(tabSubtasks);
+                }
+
+                issueSubtasksLoaded = false;
+
+                StringBuilder sb = new StringBuilder();
+
+                sb.Append("<html>\n<head>\n").Append(Resources.summary_and_description_css)
+                    .Append("\n</head>\n<body>\n<table class=\"summary\">\n");
+                foreach (string key in issue.SubtaskKeys) {
+                    sb.Append("<tr><td width=\"24px\">").Append("i")
+                        .Append("</td><td>").Append("<a href=\"")
+                        .Append(SUBTASK_ISSUE_URL_TYPE).Append(key).Append("\">").Append(key).Append("</a></td><td>")
+                        .Append("Retrieving subtask summary...").Append("</td></tr>\n");
+                }
+                sb.Append("\n</table>\n</body>\n</html>\n");
+                webSubtasks.DocumentText = sb.ToString();
+            } else {
+                if (issueTabs.TabPages.Contains(tabSubtasks)) {
+                    issueTabs.TabPages.Remove(tabSubtasks);
+                }
+            }
+        }
+
         private void buttonAddComment_Click(object sender, EventArgs e) {
             NewIssueComment dlg = new NewIssueComment();
             dlg.ShowDialog();
@@ -340,6 +375,10 @@ namespace Atlassian.plvs.ui.jira {
 // ReSharper disable PossibleNullReferenceException
             issueComments.Document.Body.ScrollTop = A_LOT;
 // ReSharper restore PossibleNullReferenceException
+        }
+
+        private void webSubtasks_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) {
+            issueSubtasksLoaded = true;
         }
 
         private void issueComments_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
@@ -421,15 +460,25 @@ namespace Atlassian.plvs.ui.jira {
 
         private void issueSummary_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
             if (!issueSummaryLoaded) return;
-            if (e.Url.ToString().StartsWith("parentissue:")) {
-                AtlassianPanel.Instance.Jira.findAndOpenIssue(e.Url.ToString().Substring("parentissue:".Length), openParentFinished);
+            if (e.Url.ToString().StartsWith(PARENT_ISSUE_URL_TYPE)) {
+                AtlassianPanel.Instance.Jira.findAndOpenIssue(e.Url.ToString().Substring(PARENT_ISSUE_URL_TYPE.Length), openParentOrSubtaskFinished);
                 e.Cancel = true;
                 return;
             }
             navigate(e);
         }
 
-        private static void openParentFinished(bool success, string message) {
+        private void webSubtasks_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
+            if (!issueSubtasksLoaded) return;
+            if (e.Url.ToString().StartsWith(SUBTASK_ISSUE_URL_TYPE)) {
+                AtlassianPanel.Instance.Jira.findAndOpenIssue(e.Url.ToString().Substring(SUBTASK_ISSUE_URL_TYPE.Length), openParentOrSubtaskFinished);
+                e.Cancel = true;
+                return;
+            }
+            navigate(e);
+        }
+
+        private static void openParentOrSubtaskFinished(bool success, string message) {
             if (!success) {
                 MessageBox.Show(message, AtlassianConstants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
