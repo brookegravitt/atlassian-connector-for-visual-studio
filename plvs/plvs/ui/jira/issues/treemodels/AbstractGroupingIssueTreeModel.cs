@@ -17,19 +17,6 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
         protected override void fillModel(IEnumerable<JiraIssue> issues) {
             clearGroupNodes();
 
-//            foreach (var issue in issues) {
-//                AbstractIssueGroupNode group = findGroupNode(issue);
-//                group.IssueNodes.Add(new IssueNode(issue));
-//            }
-
-
-
-
-
-
-
-
-
             List<JiraIssue> subs = new List<JiraIssue>();
             List<JiraIssue> orphanSubs = new List<JiraIssue>();
 
@@ -57,20 +44,6 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
                 AbstractIssueGroupNode group = findGroupNode(sub);
                 group.IssueNodes.Add(new IssueNode(sub));
             }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
             if (StructureChanged != null) {
                 StructureChanged(this, new TreePathEventArgs(TreePath.Empty));

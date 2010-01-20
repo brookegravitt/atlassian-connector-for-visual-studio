@@ -73,6 +73,7 @@
     <Compile Include="api\jira\RssClient.cs" />
     <Compile Include="api\Server.cs" />
     <Compile Include="api\jira\soap\SoapSession.cs" />
+    <Compile Include="api\ServerFacade.cs" />
     <Compile Include="attributes\ProvideIssueRepositoryConnector.cs" />
     <Compile Include="attributes\StringValueAttribute.cs" />
     <Compile Include="autoupdate\Autoupdate.cs">
@@ -221,14 +222,19 @@
     <Compile Include="scm\AnkhSvnJiraConnectorControl.Designer.cs">
       <DependentUpon>AnkhSvnJiraConnectorControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="ui\bamboo\BambooBuildTree.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ui\bamboo\bamboonodes\BambooServerTreeNode.cs" />
     <Compile Include="ui\bamboo\bamboonodes\TreeNodeWithBambooServer.cs" />
+    <Compile Include="ui\bamboo\BuildNode.cs" />
     <Compile Include="ui\bamboo\TabBamboo.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ui\bamboo\TabBamboo.Designer.cs">
       <DependentUpon>TabBamboo.cs</DependentUpon>
     </Compile>
+    <Compile Include="ui\bamboo\treemodels\FlatBuildTreeModel.cs" />
     <Compile Include="ui\ComboBoxWithImages.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -614,6 +620,9 @@
     <Content Include="Resources\icons\find-jira.png" />
     <Content Include="Resources\icons\global_properties.png" />
     <Content Include="Resources\icons\group-subtasks.png" />
+    <Content Include="Resources\icons\icn_plan_disabled.gif" />
+    <Content Include="Resources\icons\icn_plan_failed.gif" />
+    <Content Include="Resources\icons\icn_plan_passed.gif" />
     <Content Include="Resources\icons\ico_clonefilter.png" />
     <Content Include="Resources\icons\ico_jira_custom_filter.png" />
     <Content Include="Resources\icons\ico_jira_filter.png" />
@@ -638,6 +647,7 @@
     <Content Include="Resources\icons\plus.png" />
     <Content Include="Resources\icons\projectsettings.png" />
     <Content Include="Resources\icons\refresh.png" />
+    <Content Include="Resources\icons\run-build.png" />
     <Content Include="Resources\icons\search-jira.png" />
     <Content Include="Resources\icons\status_plugin.gif" />
     <Content Include="Resources\icons\status_plugin.ico" />

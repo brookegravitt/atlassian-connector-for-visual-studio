@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using System.Windows.Forms;
 using Atlassian.plvs.api.bamboo;
 using Atlassian.plvs.api.jira;
@@ -57,6 +56,10 @@ namespace Atlassian.plvs.dialogs {
 
         private void buttonClose_Click(object sender, EventArgs e) {
             Close();
+            if (SomethingChanged) {
+                jiraFacade.dropAllSessions();
+                bambooFacade.dropAllSessions();
+            }
         }
 
         private void serverTree_AfterSelect(object sender, TreeViewEventArgs e) {

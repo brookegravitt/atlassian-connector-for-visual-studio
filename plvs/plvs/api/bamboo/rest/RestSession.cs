@@ -13,7 +13,7 @@ using Atlassian.plvs.util;
 namespace Atlassian.plvs.api.bamboo.rest {
     public class RestSession {
 
-        private readonly string url;
+        private readonly BambooServer server;
         private string authToken;
         private string userName;
         private string password;
@@ -28,8 +28,8 @@ namespace Atlassian.plvs.api.bamboo.rest {
         private const string LOGIN_ACTION = "/api/rest/login.action";
     	private const string LOGOUT_ACTION = "/api/rest/logout.action";
 
-        public RestSession(string url) {
-            this.url = url;
+        public RestSession(BambooServer server) {
+            this.server = server;
             ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(certValidationCallback);
         }
 
@@ -42,7 +42,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
         public RestSession login(string username, string pwd) {
 
-            string endpoint = url + LOGIN_ACTION 
+            string endpoint = server.Url + LOGIN_ACTION 
                 + "?username=" + HttpUtility.UrlEncode(username, Encoding.UTF8) + "&password=" + HttpUtility.UrlEncode(pwd, Encoding.UTF8) 
                 + "&os_username=" + HttpUtility.UrlEncode(username, Encoding.UTF8) + "&os_password=" + HttpUtility.UrlEncode(pwd, Encoding.UTF8);
 
@@ -76,7 +76,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
         public void logout() {
             if (!LoggedIn) return;
             try {
-                string endpoint = url + LOGOUT_ACTION + "?auth=" + HttpUtility.UrlEncode(authToken, Encoding.UTF8);
+                string endpoint = server.Url + LOGOUT_ACTION + "?auth=" + HttpUtility.UrlEncode(authToken, Encoding.UTF8);
                 getQueryResultStream(endpoint, false);
             } catch (Exception e) {
                 Debug.WriteLine("RestSession.logout() - exception (ignored): " + e.Message);
@@ -88,11 +88,11 @@ namespace Atlassian.plvs.api.bamboo.rest {
         }
 
         public ICollection<BambooPlan> getAllPlans() {
-            return getPlansFromUrl(url + ALL_PLANS_ACTION);
+            return getPlansFromUrl(server.Url + ALL_PLANS_ACTION);
         }
 
         public ICollection<BambooPlan> getFavouritePlans() {
-            return getPlansFromUrl(url + FAVOURITE_PLANS_ACTION);
+            return getPlansFromUrl(server.Url + FAVOURITE_PLANS_ACTION);
         }
 
         private ICollection<BambooPlan> getPlansFromUrl(string endpoint) {
@@ -137,7 +137,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
         }
 
         public ICollection<BambooBuild> getLatestBuildsForFavouritePlans() {
-            String endpoint = url + LATEST_BUILDS_FOR_FAVOURITE_PLANS_ACTION;
+            String endpoint = server.Url + LATEST_BUILDS_FOR_FAVOURITE_PLANS_ACTION;
             return getBuildsFromUrl(endpoint);
         }
     
@@ -187,7 +187,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
                     }
                 } while (it.Current.MoveToNext());
                 if (key == null) continue;
-                BambooBuild build = new BambooBuild(
+                BambooBuild build = new BambooBuild(server,
                     key, BambooBuild.stringToResult(state), number, buildRelativeTime, 
                     buildDurationDescription, successfulTestCount, failedTestCount, buildReason);
                 builds.Add(build);
