@@ -175,14 +175,39 @@ namespace Atlassian.plvs.ui.bamboo {
         private void buttonViewInBrowser_Click(object sender, EventArgs e) {
             runOnSelectedNode(delegate(BambooBuild b) {
                                   try {
-                                      string plan = b.Key.Substring(0, b.Key.LastIndexOf("-"));
                                       Process.Start(b.Server.Url + "/build/viewBuildResults.action?buildKey="
-                                                    + plan + "&buildNumber=" + b.Number);
+                                                    + getPlanKey(b) + "&buildNumber=" + b.Number);
                                   }
                                   catch (Exception ex) {
                                       Debug.WriteLine("buttonViewInBrowser_Click - exception: " + ex.Message);
                                   }
                               });
+        }
+
+        private static string getPlanKey(BambooBuild build) {
+            int idx = build.Key.LastIndexOf("-");
+            if (idx < 0) {
+                throw new ArgumentException("Build key does not seem to contain plan key: " + build.Key);
+            }
+            return build.Key.Substring(0, idx);
+        }
+
+        private void buttonRunBuild_Click(object sender, EventArgs e) {
+            runOnSelectedNode(delegate(BambooBuild b) {
+                                  string key = getPlanKey(b);
+                                  status.setInfo("Adding build " + key + " to the build queue...");
+                                  Thread t = new Thread(() => runBuildWorker(b, key));
+                                  t.Start();
+                              });
+        }
+
+        private void runBuildWorker(BambooBuild b, string key) {
+            try {
+                Facade.runBuild(b.Server, key);
+                status.setInfo("Added build " + key + " to the build queue");
+            } catch (Exception ex) {
+                status.setError("Failed to add build " + key + " to the build queue", ex);
+            }
         }
 
         private delegate void SelectedBuildAction(BambooBuild b);
@@ -193,10 +218,6 @@ namespace Atlassian.plvs.ui.bamboo {
             if (n == null) return;
 
             action(n.Build);
-        }
-
-        private void buttonRunBuild_Click(object sender, EventArgs e) {
-
         }
     }
 }
