@@ -246,6 +246,7 @@
     <Compile Include="ui\jira\fields\TimeTrackingEditor.cs" />
     <Compile Include="ui\jira\fields\UserFieldEditor.cs" />
     <Compile Include="ui\jira\fields\NamedEntityListFieldEditor.cs" />
+    <Compile Include="ui\jira\issues\ToolWindowStateMonitor.cs" />
     <Compile Include="ui\jira\JiraFiltersTree.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -260,6 +261,7 @@
     </Compile>
     <Compile Include="util\Constants.cs" />
     <Compile Include="util\ExceptionBuilder.cs" />
+    <Compile Include="util\jira\BambooBuildUtils.cs" />
     <Compile Include="util\jira\IssueActionRunner.cs" />
     <Compile Include="util\XPathUtils.cs" />
     <Compile Include="ui\jira\TabJira.cs">

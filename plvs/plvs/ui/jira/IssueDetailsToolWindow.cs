@@ -1,5 +1,5 @@
-﻿using System.Windows.Forms;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using Microsoft.VisualStudio.Shell;
 
 namespace Atlassian.plvs.ui.jira {

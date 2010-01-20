@@ -8,6 +8,7 @@ using Atlassian.plvs.api.bamboo;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.models.bamboo;
 using Atlassian.plvs.ui.bamboo.treemodels;
+using Atlassian.plvs.util.jira;
 using Timer=System.Timers.Timer;
 
 namespace Atlassian.plvs.ui.bamboo {
@@ -176,7 +177,7 @@ namespace Atlassian.plvs.ui.bamboo {
             runOnSelectedNode(delegate(BambooBuild b) {
                                   try {
                                       Process.Start(b.Server.Url + "/build/viewBuildResults.action?buildKey="
-                                                    + getPlanKey(b) + "&buildNumber=" + b.Number);
+                                                    + BambooBuildUtils.getPlanKey(b) + "&buildNumber=" + b.Number);
                                   }
                                   catch (Exception ex) {
                                       Debug.WriteLine("buttonViewInBrowser_Click - exception: " + ex.Message);
@@ -184,17 +185,9 @@ namespace Atlassian.plvs.ui.bamboo {
                               });
         }
 
-        private static string getPlanKey(BambooBuild build) {
-            int idx = build.Key.LastIndexOf("-");
-            if (idx < 0) {
-                throw new ArgumentException("Build key does not seem to contain plan key: " + build.Key);
-            }
-            return build.Key.Substring(0, idx);
-        }
-
         private void buttonRunBuild_Click(object sender, EventArgs e) {
             runOnSelectedNode(delegate(BambooBuild b) {
-                                  string key = getPlanKey(b);
+                                  string key = BambooBuildUtils.getPlanKey(b);
                                   status.setInfo("Adding build " + key + " to the build queue...");
                                   Thread t = new Thread(() => runBuildWorker(b, key));
                                   t.Start();

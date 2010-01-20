@@ -101,6 +101,7 @@
             this.statusStrip.Location = new System.Drawing.Point(0, 0);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(852, 22);
+            this.statusStrip.SizingGrip = false;
             this.statusStrip.TabIndex = 0;
             // 
             // jiraStatus
@@ -254,7 +255,7 @@
             this.buttonRefresh});
             this.toolStrip2.Location = new System.Drawing.Point(3, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(611, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(580, 25);
             this.toolStrip2.TabIndex = 0;
             // 
             // labelNarrow

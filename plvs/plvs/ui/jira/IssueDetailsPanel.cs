@@ -9,6 +9,7 @@ using System.Diagnostics;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.models.jira;
+using Atlassian.plvs.ui.jira.issues;
 using Atlassian.plvs.util.jira;
 using Atlassian.plvs.windows;
 using EnvDTE;
@@ -29,6 +30,7 @@ namespace Atlassian.plvs.ui.jira {
         private JiraIssue issue;
         private readonly TabControl tabWindow;
         private readonly TabPage myTab;
+        private readonly ToolWindowStateMonitor toolWindowStateMonitor;
 
         private bool issueCommentsLoaded;
         private bool issueDescriptionLoaded;
@@ -39,7 +41,7 @@ namespace Atlassian.plvs.ui.jira {
         private const int A_LOT = 100000;
 
         public IssueDetailsPanel(JiraIssueListModel model, Solution solution, JiraIssue issue, TabControl tabWindow,
-                                 TabPage myTab) {
+                                 TabPage myTab, ToolWindowStateMonitor toolWindowStateMonitor) {
             this.model = model;
             this.solution = solution;
             InitializeComponent();
@@ -50,8 +52,32 @@ namespace Atlassian.plvs.ui.jira {
 
             this.tabWindow = tabWindow;
             this.myTab = myTab;
+            this.toolWindowStateMonitor = toolWindowStateMonitor;
 
             dropDownIssueActions.DropDownItems.Add("dummy");
+
+            toolWindowStateMonitor.ToolWindowShown += toolWindowStateMonitor_ToolWindowShown;
+            toolWindowStateMonitor.ToolWindowHidden += toolWindowStateMonitor_ToolWindowHidden;
+        }
+
+        private void init() {
+            addModelListeners();
+
+            rebuildAllPanels(false);
+            status.setInfo("No issue details yet");
+            runRefreshThread();
+        }
+
+        protected override void OnLoad(EventArgs e) {
+            init();
+        }
+
+        void toolWindowStateMonitor_ToolWindowShown(object sender, EventArgs e) {
+            init();
+        }
+
+        void toolWindowStateMonitor_ToolWindowHidden(object sender, EventArgs e) {
+            removeModelListeners();
         }
 
         private void addModelListeners() {
@@ -81,21 +107,8 @@ namespace Atlassian.plvs.ui.jira {
                 if (e.Issue.Equals(issue)) return;
                 buttonRefresh.Enabled = false;
                 runRefreshThread();
-            } else if (e.Issue.IsSubtask && e.Issue.ParentKey.Equals(issue.ParentKey)) {
+            } else if (e.Issue.IsSubtask && e.Issue.ParentKey.Equals(issue.Key)) {
                 rebuildSubtasksPanel();
-            }
-        }
-
-        private void IssueDetailsPanel_VisibleChanged(object sender, EventArgs e) {
-            if (Visible) {
-                addModelListeners();
-
-                rebuildAllPanels(false);
-                status.setInfo("No issue details yet");
-                runRefreshThread();
-            }
-            else {
-                removeModelListeners();
             }
         }
 
@@ -401,6 +414,8 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void buttonClose_Click(object sender, EventArgs e) {
+            removeModelListeners();
+
             tabWindow.TabPages.Remove(myTab);
             if (tabWindow.TabPages.Count == 0) {
                 IssueDetailsWindow.Instance.FrameVisible = false;

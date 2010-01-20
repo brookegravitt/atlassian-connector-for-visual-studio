@@ -77,11 +77,25 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
 
         protected override void model_IssueChanged(object sender, IssueChangedEventArgs e) {
             foreach (var node in nodes) {
+                if (GroupSubtasksUnderParent && e.Issue.IsSubtask) {
+                    if (!node.Issue.Key.Equals(e.Issue.ParentKey)) continue;
+
+                    foreach (IssueNode subNode in node.SubtaskNodes) {
+                        if (subNode.Issue.Id != e.Issue.Id) continue;
+
+                        subNode.Issue = e.Issue;
+                        if (NodesChanged != null) {
+                            NodesChanged(this, new TreeModelEventArgs(new TreePath(node), new object[] { subNode }));
+                        }
+                        return;
+                    }
+                }
+
                 if (node.Issue.Id != e.Issue.Id) continue;
 
                 node.Issue = e.Issue;
                 if (NodesChanged != null) {
-                    NodesChanged(this, new TreeModelEventArgs(TreePath.Empty, new object[] {node}));
+                    NodesChanged(this, new TreeModelEventArgs(TreePath.Empty, new object[] { node }));
                 }
 
                 return;

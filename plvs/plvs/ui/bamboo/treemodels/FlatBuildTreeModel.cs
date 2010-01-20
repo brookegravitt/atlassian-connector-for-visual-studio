@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Aga.Controls.Tree;
 using Atlassian.plvs.api.bamboo;
+using Atlassian.plvs.util.jira;
 
 namespace Atlassian.plvs.ui.bamboo.treemodels {
     public class FlatBuildTreeModel : ITreeModel {
@@ -26,13 +27,13 @@ namespace Atlassian.plvs.ui.bamboo.treemodels {
                 return;
             }
             foreach (BambooBuild build in builds) {
-                if (buildNodes.ContainsKey(build.Server.GUID + build.Key)) {
-                    buildNodes[build.Server.GUID + build.Key].Build = build;
+                if (buildNodes.ContainsKey(getMapKeyFromBuild(build))) {
+                    buildNodes[getMapKeyFromBuild(build)].Build = build;
                     if (NodesChanged != null) {
                         NodesChanged(this, new TreeModelEventArgs(TreePath.Empty, new[] { getIndex(build) }, new[] { getNode(build) }));
                     }
                 } else {
-                    buildNodes[build.Server.GUID + build.Key] = new BuildNode(build);
+                    buildNodes[getMapKeyFromBuild(build)] = new BuildNode(build);
                     if (NodesInserted != null) {
                         NodesInserted(this, new TreeModelEventArgs(TreePath.Empty, new[] { getIndex(build) }, new[] { getNode(build) }));
                     }
@@ -41,7 +42,7 @@ namespace Atlassian.plvs.ui.bamboo.treemodels {
                 foreach (string key in buildNodes.Keys) {
                     bool found = false;
                     foreach (BambooBuild b in builds) {
-                        if (!key.Equals(b.Server.GUID + b.Key)) continue;
+                        if (!key.Equals(getMapKeyFromBuild(b))) continue;
                         found = true;
                         break;
                     }
@@ -58,10 +59,14 @@ namespace Atlassian.plvs.ui.bamboo.treemodels {
             }
         }
 
+        private static string getMapKeyFromBuild(BambooBuild build) {
+            return build.Server.GUID + BambooBuildUtils.getPlanKey(build);
+        }
+
         private int getIndex(BambooBuild build) {
             int i = 0;
             foreach (string key in buildNodes.Keys) {
-                if (key.Equals(build.Server.GUID + build.Key)) {
+                if (key.Equals(getMapKeyFromBuild(build))) {
                     return i;
                 }
                 ++i;
@@ -70,7 +75,7 @@ namespace Atlassian.plvs.ui.bamboo.treemodels {
         }
 
         private object getNode(BambooBuild build) {
-            return buildNodes[build.Server.GUID + build.Key];
+            return buildNodes[getMapKeyFromBuild(build)];
         }
 
         public IEnumerable GetChildren(TreePath treePath) {
