@@ -23,9 +23,9 @@ namespace Atlassian.plvs.api.bamboo {
         }
 
         public BambooBuild(
-            string key, BuildResult result, int number, string relativeTime, 
+            BambooServer server, string key, BuildResult result, int number, string relativeTime, 
             string duration, int successfulTests, int failedTests, string reason) {
-
+            Server = server;
             Key = key;
             Result = result;
             Number = number;
@@ -36,6 +36,7 @@ namespace Atlassian.plvs.api.bamboo {
             Reason = reason;
         }
 
+        public BambooServer Server { get; private set; }
         public string Key { get; private set; }
         public BuildResult Result { get; private set; }
         public int Number { get; private set; }
@@ -44,5 +45,7 @@ namespace Atlassian.plvs.api.bamboo {
         public int SuccessfulTests { get; private set; }
         public int FailedTests { get; private set; }
         public string Reason { get; private set; }
+
+
     }
 }

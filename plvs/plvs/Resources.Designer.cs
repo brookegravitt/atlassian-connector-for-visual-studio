@@ -283,6 +283,27 @@ namespace Atlassian.plvs {
             }
         }
         
+        internal static System.Drawing.Bitmap icn_plan_disabled {
+            get {
+                object obj = ResourceManager.GetObject("icn_plan_disabled", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap icn_plan_failed {
+            get {
+                object obj = ResourceManager.GetObject("icn_plan_failed", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap icn_plan_passed {
+            get {
+                object obj = ResourceManager.GetObject("icn_plan_passed", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap ico_clonefilter {
             get {
                 object obj = ResourceManager.GetObject("ico_clonefilter", resourceCulture);
@@ -435,6 +456,13 @@ namespace Atlassian.plvs {
         internal static System.Drawing.Bitmap refresh {
             get {
                 object obj = ResourceManager.GetObject("refresh", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap run_build {
+            get {
+                object obj = ResourceManager.GetObject("run_build", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

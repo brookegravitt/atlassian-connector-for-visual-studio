@@ -4,7 +4,7 @@ using Atlassian.plvs.api.jira.soap;
 using Atlassian.plvs.models.jira;
 
 namespace Atlassian.plvs.api.jira {
-    public class JiraServerFacade {
+    public class JiraServerFacade : ServerFacade {
         private readonly SortedDictionary<string, SoapSession> sessionMap = new SortedDictionary<string, SoapSession>();
 
         private static readonly JiraServerFacade INSTANCE = new JiraServerFacade();
@@ -35,6 +35,12 @@ namespace Atlassian.plvs.api.jira {
 
         public void login(JiraServer server) {
             new SoapSession(server.Url).login(server.UserName, server.Password);
+        }
+
+        public void dropAllSessions() {
+            lock(this) {
+                sessionMap.Clear();
+            }
         }
 
         #region rss methods
@@ -156,29 +162,33 @@ namespace Atlassian.plvs.api.jira {
 
         private delegate T Wrapped<T>();
         private T wrapExceptions<T>(JiraServer server, Wrapped<T> wrapped) {
-            try {
-                return wrapped();
-            } catch (System.Web.Services.Protocols.SoapException) {
-                // let's retry _just once_ - PLVS-27
-                removeSession(server);
-                return wrapped();
-            } catch (Exception) {
-                removeSession(server);
-                throw;
+            lock (this) {
+                try {
+                    return wrapped();
+                } catch (System.Web.Services.Protocols.SoapException) {
+                    // let's retry _just once_ - PLVS-27
+                    removeSession(server);
+                    return wrapped();
+                } catch (Exception) {
+                    removeSession(server);
+                    throw;
+                }
             }
         }
 
         private delegate void WrappedVoid();
         private void wrapExceptionsVoid(JiraServer server, WrappedVoid wrapped) {
-            try {
-                wrapped();
-            } catch (System.Web.Services.Protocols.SoapException) {
-                // let's retry _just once_ - PLVS-27
-                removeSession(server);
-                wrapped();
-            } catch (Exception) {
-                removeSession(server);
-                throw;
+            lock (this) {
+                try {
+                    wrapped();
+                } catch (System.Web.Services.Protocols.SoapException) {
+                    // let's retry _just once_ - PLVS-27
+                    removeSession(server);
+                    wrapped();
+                } catch (Exception) {
+                    removeSession(server);
+                    throw;
+                }
             }
         }
 

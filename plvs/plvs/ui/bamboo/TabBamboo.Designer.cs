@@ -24,53 +24,53 @@
         /// </summary>
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
-            this.webBambooBuildSummary = new System.Windows.Forms.WebBrowser();
-            this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TabBamboo));
+            this.toolStripContainer = new System.Windows.Forms.ToolStripContainer();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.buttonPoll = new System.Windows.Forms.ToolStripButton();
             this.notifyBuildStatus = new System.Windows.Forms.NotifyIcon(this.components);
-            this.toolStripContainer1.ContentPanel.SuspendLayout();
-            this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
-            this.toolStripContainer1.SuspendLayout();
+            this.statusStrip = new System.Windows.Forms.StatusStrip();
+            this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.buttonViewInBrowser = new System.Windows.Forms.ToolStripButton();
+            this.buttonRunBuild = new System.Windows.Forms.ToolStripButton();
+            this.toolStripContainer.BottomToolStripPanel.SuspendLayout();
+            this.toolStripContainer.TopToolStripPanel.SuspendLayout();
+            this.toolStripContainer.SuspendLayout();
             this.toolStrip1.SuspendLayout();
+            this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
-            // webBambooBuildSummary
-            // 
-            this.webBambooBuildSummary.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webBambooBuildSummary.IsWebBrowserContextMenuEnabled = false;
-            this.webBambooBuildSummary.Location = new System.Drawing.Point(0, 0);
-            this.webBambooBuildSummary.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBambooBuildSummary.Name = "webBambooBuildSummary";
-            this.webBambooBuildSummary.Size = new System.Drawing.Size(1120, 532);
-            this.webBambooBuildSummary.TabIndex = 0;
-            // 
-            // toolStripContainer1
+            // toolStripContainer
             // 
             // 
-            // toolStripContainer1.ContentPanel
+            // toolStripContainer.BottomToolStripPanel
             // 
-            this.toolStripContainer1.ContentPanel.Controls.Add(this.webBambooBuildSummary);
-            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(1120, 532);
-            this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.toolStripContainer1.Location = new System.Drawing.Point(0, 0);
-            this.toolStripContainer1.Name = "toolStripContainer1";
-            this.toolStripContainer1.Size = new System.Drawing.Size(1120, 557);
-            this.toolStripContainer1.TabIndex = 1;
-            this.toolStripContainer1.Text = "toolStripContainer1";
+            this.toolStripContainer.BottomToolStripPanel.Controls.Add(this.statusStrip);
             // 
-            // toolStripContainer1.TopToolStripPanel
+            // toolStripContainer.ContentPanel
             // 
-            this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.toolStrip1);
+            this.toolStripContainer.ContentPanel.Size = new System.Drawing.Size(1120, 510);
+            this.toolStripContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.toolStripContainer.Location = new System.Drawing.Point(0, 0);
+            this.toolStripContainer.Name = "toolStripContainer";
+            this.toolStripContainer.Size = new System.Drawing.Size(1120, 557);
+            this.toolStripContainer.TabIndex = 1;
+            this.toolStripContainer.Text = "toolStripContainer1";
+            // 
+            // toolStripContainer.TopToolStripPanel
+            // 
+            this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStrip1);
             // 
             // toolStrip1
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.buttonPoll});
+            this.buttonPoll,
+            this.buttonViewInBrowser,
+            this.buttonRunBuild});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(35, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(112, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonPoll
@@ -88,30 +88,71 @@
             this.notifyBuildStatus.Text = "notifyIcon1";
             this.notifyBuildStatus.Visible = true;
             // 
+            // statusStrip
+            // 
+            this.statusStrip.Dock = System.Windows.Forms.DockStyle.None;
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.statusLabel});
+            this.statusStrip.Location = new System.Drawing.Point(0, 0);
+            this.statusStrip.Name = "statusStrip";
+            this.statusStrip.Size = new System.Drawing.Size(1120, 22);
+            this.statusStrip.TabIndex = 0;
+            // 
+            // statusLabel
+            // 
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(0, 17);
+            // 
+            // buttonViewInBrowser
+            // 
+            this.buttonViewInBrowser.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonViewInBrowser.Image = Resources.view_in_browser;
+            this.buttonViewInBrowser.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonViewInBrowser.Name = "buttonViewInBrowser";
+            this.buttonViewInBrowser.Size = new System.Drawing.Size(23, 22);
+            this.buttonViewInBrowser.Text = "View Build In Browser";
+            this.buttonViewInBrowser.Click += new System.EventHandler(this.buttonViewInBrowser_Click);
+            // 
+            // buttonRunBuild
+            // 
+            this.buttonRunBuild.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonRunBuild.Image = Resources.run_build;
+            this.buttonRunBuild.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonRunBuild.Name = "buttonRunBuild";
+            this.buttonRunBuild.Size = new System.Drawing.Size(23, 22);
+            this.buttonRunBuild.Text = "Run Build";
+            this.buttonRunBuild.Click += new System.EventHandler(this.buttonRunBuild_Click);
+            // 
             // TabBamboo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.toolStripContainer1);
+            this.Controls.Add(this.toolStripContainer);
             this.Name = "TabBamboo";
             this.Size = new System.Drawing.Size(1120, 557);
-            this.toolStripContainer1.ContentPanel.ResumeLayout(false);
-            this.toolStripContainer1.TopToolStripPanel.ResumeLayout(false);
-            this.toolStripContainer1.TopToolStripPanel.PerformLayout();
-            this.toolStripContainer1.ResumeLayout(false);
-            this.toolStripContainer1.PerformLayout();
+            this.toolStripContainer.BottomToolStripPanel.ResumeLayout(false);
+            this.toolStripContainer.BottomToolStripPanel.PerformLayout();
+            this.toolStripContainer.TopToolStripPanel.ResumeLayout(false);
+            this.toolStripContainer.TopToolStripPanel.PerformLayout();
+            this.toolStripContainer.ResumeLayout(false);
+            this.toolStripContainer.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
+            this.statusStrip.ResumeLayout(false);
+            this.statusStrip.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.WebBrowser webBambooBuildSummary;
-        private System.Windows.Forms.ToolStripContainer toolStripContainer1;
+        private System.Windows.Forms.ToolStripContainer toolStripContainer;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton buttonPoll;
         private System.Windows.Forms.NotifyIcon notifyBuildStatus;
+        private System.Windows.Forms.StatusStrip statusStrip;
+        private System.Windows.Forms.ToolStripStatusLabel statusLabel;
+        private System.Windows.Forms.ToolStripButton buttonViewInBrowser;
+        private System.Windows.Forms.ToolStripButton buttonRunBuild;
     }
 }
