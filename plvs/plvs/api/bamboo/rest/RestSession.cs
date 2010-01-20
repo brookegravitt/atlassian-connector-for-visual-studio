@@ -19,11 +19,13 @@ namespace Atlassian.plvs.api.bamboo.rest {
         private string password;
 
         private string cookie;
-
         private const string LATEST_BUILDS_FOR_FAVOURITE_PLANS_ACTION = "/rest/api/latest/build?favourite&expand=builds.build";
 
         private const string ALL_PLANS_ACTION = "/rest/api/latest/plan?expand=plans.plan";
         private const string FAVOURITE_PLANS_ACTION = "/rest/api/latest/plan?favourite&expand=plans.plan";
+
+        private const string RUN_BUILD_ACTION_NEW_AND_IT_DOES_NOT_WORK = "/rest/api/latest/queue";
+        private const string RUN_BUILD_ACTION_OLD = "/api/rest/executeBuild.action";
 
         private const string LOGIN_ACTION = "/api/rest/login.action";
     	private const string LOGOUT_ACTION = "/api/rest/logout.action";
@@ -195,6 +197,34 @@ namespace Atlassian.plvs.api.bamboo.rest {
             return builds;
         }
 
+        public void runBuild(string planKey) {
+#if USE_NEW_API
+            string endpoint = server.Url + RUN_BUILD_ACTION_NEW_AND_IT_DOES_NOT_WORK + "/" + planKey;
+
+            Stream stream = postWithNullBody(endpoint + getBasicAuthParameter(endpoint), true);
+
+            XPathDocument doc = XPathUtils.getDocument(stream);
+
+            string code = getRestErrorStatusCode(doc);
+            if (code != null) {
+                throw new Exception(code);
+            }
+#else 
+            string endpoint = server.Url + RUN_BUILD_ACTION_OLD 
+                + "?buildKey=" + planKey 
+                + "&auth=" + HttpUtility.UrlEncode(authToken, Encoding.UTF8);
+
+            Stream stream = getQueryResultStream(endpoint, false);
+
+            XPathDocument doc = XPathUtils.getDocument(stream);
+
+            string code = getRestErrorStatusCode(doc);
+            if (code != null) {
+                throw new Exception(code);
+            }
+#endif
+        }
+
         private Stream getQueryResultStream(string endpoint, bool setBasicAuth) {
             var req = (HttpWebRequest)WebRequest.Create(endpoint);
             req.Timeout = 10000;
@@ -204,6 +234,35 @@ namespace Atlassian.plvs.api.bamboo.rest {
             } else {
                 restoreSessionContext(req);
             }
+            var resp = (HttpWebResponse)req.GetResponse();
+            if (!setBasicAuth) {
+                saveSessionContext(resp);
+            }
+            return resp.GetResponseStream();
+        }
+
+        private Stream postWithNullBody(string endpoint, bool setBasicAuth) {
+            var req = (HttpWebRequest)WebRequest.Create(endpoint);
+            req.Timeout = 10000;
+            req.ReadWriteTimeout = 20000;
+            req.Method = "POST";
+            req.ContentType = "text/xml";
+            req.ContentLength = 0;
+
+            const string postData = "";
+
+            byte[] byteArray = Encoding.UTF8.GetBytes(postData);
+
+            if (setBasicAuth) {
+                setBasicAuthHeader(req);
+            } else {
+                restoreSessionContext(req);
+            }
+
+            Stream dataStream = req.GetRequestStream();
+            dataStream.Write(byteArray, 0, byteArray.Length);
+            dataStream.Close();
+
             var resp = (HttpWebResponse)req.GetResponse();
             if (!setBasicAuth) {
                 saveSessionContext(resp);

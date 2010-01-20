@@ -45,6 +45,18 @@ namespace Atlassian.plvs.api.bamboo {
             }
         }
 
+        private delegate void WrappedVoid();
+        private void wrapExceptionsVoid(BambooServer server, WrappedVoid wrapped) {
+            lock (this) {
+                try {
+                    wrapped();
+                } catch (Exception) {
+                    removeSession(server);
+                    throw;
+                }
+            }
+        }
+
         public void login(BambooServer server) {
             lock(this) {
                 new RestSession(server).login(server.UserName, server.Password);
@@ -63,6 +75,10 @@ namespace Atlassian.plvs.api.bamboo {
 
         public ICollection<BambooBuild> getLatestBuildsForFavouritePlans(BambooServer server) {
             return wrapExceptions(server, () => getSession(server).getLatestBuildsForFavouritePlans());
+        }
+
+        public void runBuild(BambooServer server, string planKey) {
+            wrapExceptionsVoid(server, () => getSession(server).runBuild(planKey));
         }
 
         public void dropAllSessions() {
