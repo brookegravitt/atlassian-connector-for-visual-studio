@@ -66,6 +66,9 @@ namespace Atlassian.plvs {
             }
             IVsWindowFrame windowFrame = (IVsWindowFrame) window.Frame;
             IssueDetailsWindow.Instance.WindowFrame = window;
+            IVsWindowFrame2 wf2 = (IVsWindowFrame2) windowFrame;
+            uint cookie;
+            wf2.Advise(IssueDetailsWindow.Instance, out cookie);
             ErrorHandler.ThrowOnFailure(windowFrame.Hide());
             return window;
         }

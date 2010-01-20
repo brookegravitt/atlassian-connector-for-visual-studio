@@ -373,7 +373,6 @@ namespace Atlassian.plvs.ui.jira {
             this.Controls.Add(this.toolStripContainer1);
             this.Name = "IssueDetailsPanel";
             this.Size = new System.Drawing.Size(785, 475);
-            this.VisibleChanged += new System.EventHandler(this.IssueDetailsPanel_VisibleChanged);
             this.toolStripContainer1.BottomToolStripPanel.ResumeLayout(false);
             this.toolStripContainer1.BottomToolStripPanel.PerformLayout();
             this.toolStripContainer1.ContentPanel.ResumeLayout(false);

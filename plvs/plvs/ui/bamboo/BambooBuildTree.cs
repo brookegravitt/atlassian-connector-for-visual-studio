@@ -107,6 +107,8 @@ namespace Atlassian.plvs.ui.bamboo {
             colCompleted.Width = COMPLETED_WIDTH;
             colDuration.Width = DURATION_WIDTH;
             colServer.Width = SERVER_WIDTH;
+
+            colServer.TextAlign = HorizontalAlignment.Right;
         }
     }
 }

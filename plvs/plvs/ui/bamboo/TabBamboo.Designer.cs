@@ -24,20 +24,19 @@
         /// </summary>
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TabBamboo));
             this.toolStripContainer = new System.Windows.Forms.ToolStripContainer();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.buttonPoll = new System.Windows.Forms.ToolStripButton();
-            this.notifyBuildStatus = new System.Windows.Forms.NotifyIcon(this.components);
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.buttonPoll = new System.Windows.Forms.ToolStripButton();
             this.buttonViewInBrowser = new System.Windows.Forms.ToolStripButton();
             this.buttonRunBuild = new System.Windows.Forms.ToolStripButton();
+            this.notifyBuildStatus = new System.Windows.Forms.NotifyIcon(this.components);
             this.toolStripContainer.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
             this.statusStrip.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStripContainer
@@ -61,6 +60,22 @@
             // 
             this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStrip1);
             // 
+            // statusStrip
+            // 
+            this.statusStrip.Dock = System.Windows.Forms.DockStyle.None;
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.statusLabel});
+            this.statusStrip.Location = new System.Drawing.Point(0, 0);
+            this.statusStrip.Name = "statusStrip";
+            this.statusStrip.Size = new System.Drawing.Size(1120, 22);
+            this.statusStrip.SizingGrip = false;
+            this.statusStrip.TabIndex = 0;
+            // 
+            // statusLabel
+            // 
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(0, 17);
+            // 
             // toolStrip1
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
@@ -70,7 +85,7 @@
             this.buttonRunBuild});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(112, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(81, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonPoll
@@ -83,30 +98,10 @@
             this.buttonPoll.Text = "Poll Now";
             this.buttonPoll.Click += new System.EventHandler(this.buttonPoll_Click);
             // 
-            // notifyBuildStatus
-            // 
-            this.notifyBuildStatus.Text = "notifyIcon1";
-            this.notifyBuildStatus.Visible = true;
-            // 
-            // statusStrip
-            // 
-            this.statusStrip.Dock = System.Windows.Forms.DockStyle.None;
-            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.statusLabel});
-            this.statusStrip.Location = new System.Drawing.Point(0, 0);
-            this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(1120, 22);
-            this.statusStrip.TabIndex = 0;
-            // 
-            // statusLabel
-            // 
-            this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(0, 17);
-            // 
             // buttonViewInBrowser
             // 
             this.buttonViewInBrowser.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonViewInBrowser.Image = Resources.view_in_browser;
+            this.buttonViewInBrowser.Image = global::Atlassian.plvs.Resources.view_in_browser;
             this.buttonViewInBrowser.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonViewInBrowser.Name = "buttonViewInBrowser";
             this.buttonViewInBrowser.Size = new System.Drawing.Size(23, 22);
@@ -116,12 +111,17 @@
             // buttonRunBuild
             // 
             this.buttonRunBuild.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonRunBuild.Image = Resources.run_build;
+            this.buttonRunBuild.Image = global::Atlassian.plvs.Resources.run_build;
             this.buttonRunBuild.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonRunBuild.Name = "buttonRunBuild";
             this.buttonRunBuild.Size = new System.Drawing.Size(23, 22);
             this.buttonRunBuild.Text = "Run Build";
             this.buttonRunBuild.Click += new System.EventHandler(this.buttonRunBuild_Click);
+            // 
+            // notifyBuildStatus
+            // 
+            this.notifyBuildStatus.Text = "notifyIcon1";
+            this.notifyBuildStatus.Visible = true;
             // 
             // TabBamboo
             // 
@@ -136,10 +136,10 @@
             this.toolStripContainer.TopToolStripPanel.PerformLayout();
             this.toolStripContainer.ResumeLayout(false);
             this.toolStripContainer.PerformLayout();
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
 
         }
