@@ -23,6 +23,8 @@ namespace Atlassian.plvs.ui.bamboo {
 
         private bool? summaryStatusOk;
 
+        private LinkLabel linkAddBambooServers;
+
         public TabBamboo() {
             InitializeComponent();
 
@@ -61,20 +63,41 @@ namespace Atlassian.plvs.ui.bamboo {
                 toolStripContainer.ContentPanel.Controls.Remove(buildTree);
             }
 
-            if (BambooServerModel.Instance.getAllServers().Count == 0) {
-                linkAddBambooServers.Visible = true;
-                return;
+            if (linkAddBambooServers != null) {
+                Controls.Remove(linkAddBambooServers);
             }
 
-            linkAddBambooServers.Visible = false;
+            if (BambooServerModel.Instance.getAllServers().Count == 0) {
+                toolStripContainer.Visible = false;
 
-            buildTree = new BambooBuildTree { Model = new FlatBuildTreeModel() };
-            buildTree.Model = new FlatBuildTreeModel();
-            toolStripContainer.ContentPanel.Controls.Add(buildTree);
+                linkAddBambooServers = new LinkLabel
+                                       {
+                                           Dock = DockStyle.Fill,
+                                           Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 238),
+                                           Image = Resources.bamboo_blue_16_with_padding,
+                                           Location = new Point(0, 0),
+                                           Name = "linkAddBambooServers",
+                                           Size = new Size(1120, 510),
+                                           TabIndex = 0,
+                                           TabStop = true,
+                                           Text = "Add Bamboo Servers",
+                                           TextAlign = ContentAlignment.MiddleCenter
+                                       };
 
-            updateBuildListButtons();
+                linkAddBambooServers.LinkClicked += linkAddBambooServers_LinkClicked;
 
-            buildTree.SelectionChanged += buildTree_SelectionChanged;
+                Controls.Add(linkAddBambooServers);
+            } else {
+                toolStripContainer.Visible = true;
+
+                buildTree = new BambooBuildTree { Model = new FlatBuildTreeModel() };
+                buildTree.Model = new FlatBuildTreeModel();
+                toolStripContainer.ContentPanel.Controls.Add(buildTree);
+
+                updateBuildListButtons();
+
+                buildTree.SelectionChanged += buildTree_SelectionChanged;
+            }
         }
 
         void buildTree_SelectionChanged(object sender, EventArgs e) {
