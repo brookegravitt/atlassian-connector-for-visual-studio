@@ -43,6 +43,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
             foreach (JiraNamedEntity version in versions) {
                 Nodes.Add(new VersionNode(Server, project, version));
             }
+            ExpandAll();
         }
     }
 }

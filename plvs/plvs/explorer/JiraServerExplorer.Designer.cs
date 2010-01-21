@@ -1,5 +1,5 @@
 ﻿namespace Atlassian.plvs.explorer {
-    partial class JiraServerExplorer {
+    sealed partial class JiraServerExplorer {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -155,6 +155,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(918, 448);
             this.Controls.Add(this.toolStripContainer1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "JiraServerExplorer";
             this.Text = "JiraServerExplorer";
             this.toolStripContainer1.BottomToolStripPanel.ResumeLayout(false);

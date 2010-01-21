@@ -108,6 +108,8 @@ namespace Atlassian.plvs.ui.jira {
             colStatus.TextAlign = HorizontalAlignment.Left;
             colPriority.TextAlign = HorizontalAlignment.Left;
             colUpdated.TextAlign = HorizontalAlignment.Right;
+
+            MouseDown += jiraIssueTreeMouseDown;
         }
 
         public void addContextMenu(ToolStripItem[] items) {
@@ -141,6 +143,17 @@ namespace Atlassian.plvs.ui.jira {
             protected override bool DrawTextMustBeFired(TreeNodeAdv node) {
                 return !(node.Tag is IssueNode);
             }
+        }
+
+        private void jiraIssueTreeMouseDown(object sender, MouseEventArgs e) {
+            if (SelectedNode == null || !(SelectedNode.Tag is IssueNode)) return;
+
+            IssueNode n = (IssueNode) SelectedNode.Tag;
+            DataObject d = new DataObject();
+
+            d.SetText("ISSUE:" + n.Issue.Key + ":SERVER:{" + n.Issue.Server.GUID + "}");
+
+            DoDragDrop(d, DragDropEffects.Copy | DragDropEffects.Move);
         }
     }
 }
