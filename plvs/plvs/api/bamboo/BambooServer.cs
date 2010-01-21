@@ -13,7 +13,7 @@ namespace Atlassian.plvs.api.bamboo {
             UseFavourites = other.UseFavourites;
         }
 
-        public override Guid Type { get { return new Guid("1C7A224E-52C4-4575-9212-7D731C13CFE9"); } }
+        public override Guid Type { get { return BambooServerTypeGuid; } }
 
         public override string displayDetails() {
             var sb = new StringBuilder();

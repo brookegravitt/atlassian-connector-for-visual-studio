@@ -55,7 +55,6 @@
             this.buttonCreate = new System.Windows.Forms.ToolStripButton();
             this.buttonSearch = new System.Windows.Forms.ToolStripButton();
             this.buttonRefresh = new System.Windows.Forms.ToolStripButton();
-            this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
             this.filtersTreeToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.jiraContainer.BottomToolStripPanel.SuspendLayout();
             this.jiraContainer.ContentPanel.SuspendLayout();
@@ -71,7 +70,6 @@
             this.issueTreeContainer.TopToolStripPanel.SuspendLayout();
             this.issueTreeContainer.SuspendLayout();
             this.toolStrip2.SuspendLayout();
-            this.toolStripContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // jiraContainer
@@ -375,26 +373,12 @@
             this.buttonRefresh.Text = "Refresh Issues";
             this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
             // 
-            // toolStripContainer1
-            // 
-            // 
-            // toolStripContainer1.ContentPanel
-            // 
-            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(852, 311);
-            this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.toolStripContainer1.Location = new System.Drawing.Point(0, 0);
-            this.toolStripContainer1.Name = "toolStripContainer1";
-            this.toolStripContainer1.Size = new System.Drawing.Size(852, 336);
-            this.toolStripContainer1.TabIndex = 0;
-            this.toolStripContainer1.Text = "toolStripContainer1";
-            // 
             // TabJira
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.Controls.Add(this.jiraContainer);
-            this.Controls.Add(this.toolStripContainer1);
             this.Name = "TabJira";
             this.Size = new System.Drawing.Size(852, 336);
             this.jiraContainer.BottomToolStripPanel.ResumeLayout(false);
@@ -420,8 +404,6 @@
             this.issueTreeContainer.PerformLayout();
             this.toolStrip2.ResumeLayout(false);
             this.toolStrip2.PerformLayout();
-            this.toolStripContainer1.ResumeLayout(false);
-            this.toolStripContainer1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -433,7 +415,6 @@
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel jiraStatus;
         private System.Windows.Forms.ToolStripContainer filterTreeContainer;
-        private System.Windows.Forms.ToolStripContainer toolStripContainer1;
         private System.Windows.Forms.ToolStripContainer issueTreeContainer;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton buttonRefreshAll;
