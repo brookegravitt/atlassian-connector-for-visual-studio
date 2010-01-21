@@ -8,7 +8,7 @@ using Atlassian.plvs.explorer.treeNodes;
 using Atlassian.plvs.ui;
 
 namespace Atlassian.plvs.explorer {
-    public partial class JiraServerExplorer : Form {
+    public sealed partial class JiraServerExplorer : Form {
         private readonly JiraServer server;
         private readonly JiraServerFacade facade;
 
@@ -21,6 +21,8 @@ namespace Atlassian.plvs.explorer {
             InitializeComponent();
 
             status = new StatusLabel(statusStrip, labelPath);
+
+            Text = "JIRA Server Explorer: " + server.Name + " (" + server.Url + ")";
 
             StartPosition = FormStartPosition.CenterParent;
         }

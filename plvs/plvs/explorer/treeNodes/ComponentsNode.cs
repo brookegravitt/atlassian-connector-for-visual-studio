@@ -44,7 +44,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
             foreach (JiraNamedEntity comp in components) {
                 Nodes.Add(new ComponentNode(Server, project, comp));
             }
+            ExpandAll();
         }
-
     }
 }
