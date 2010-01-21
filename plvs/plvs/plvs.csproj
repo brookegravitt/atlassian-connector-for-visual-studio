@@ -188,6 +188,19 @@
     <Compile Include="eventsinks\TextLinesEventSink.cs" />
     <Compile Include="eventsinks\TextManagerEventSink.cs" />
     <Compile Include="eventsinks\TextMarkerClientEventSink.cs" />
+    <Compile Include="explorer\JiraServerExplorer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="explorer\JiraServerExplorer.Designer.cs">
+      <DependentUpon>JiraServerExplorer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="explorer\NavigableJiraServerEntity.cs" />
+    <Compile Include="explorer\treeNodes\AbstractNavigableTreeNodeWithServer.cs" />
+    <Compile Include="explorer\treeNodes\ComponentsNode.cs" />
+    <Compile Include="explorer\treeNodes\ComponentNode.cs" />
+    <Compile Include="explorer\treeNodes\VersionNode.cs" />
+    <Compile Include="explorer\treeNodes\VersionsNode.cs" />
+    <Compile Include="explorer\treeNodes\ProjectNode.cs" />
     <Compile Include="models\AbstractServerModel.cs" />
     <Compile Include="api\bamboo\BambooServer.cs" />
     <Compile Include="models\bamboo\BambooServerModel.cs" />
@@ -465,6 +478,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\SetEndTime.resx">
       <DependentUpon>SetEndTime.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="explorer\JiraServerExplorer.resx">
+      <DependentUpon>JiraServerExplorer.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="scm\AnkhSvnJiraActiveIssueControl.resx">

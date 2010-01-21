@@ -37,6 +37,7 @@
             this.filtersTree = new JiraFiltersTree();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.buttonRefreshAll = new System.Windows.Forms.ToolStripButton();
+            this.buttonServerExplorer = new System.Windows.Forms.ToolStripButton();
             this.buttonAddFilter = new System.Windows.Forms.ToolStripButton();
             this.buttonRemoveFilter = new System.Windows.Forms.ToolStripButton();
             this.buttonEditFilter = new System.Windows.Forms.ToolStripButton();
@@ -169,12 +170,13 @@
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.buttonRefreshAll,
+            this.buttonServerExplorer,
             this.buttonAddFilter,
             this.buttonRemoveFilter,
             this.buttonEditFilter});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(104, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(158, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonRefreshAll
@@ -186,6 +188,16 @@
             this.buttonRefreshAll.Size = new System.Drawing.Size(23, 22);
             this.buttonRefreshAll.Text = "Refresh All";
             this.buttonRefreshAll.Click += new System.EventHandler(this.buttonRefreshAll_Click);
+            // 
+            // buttonServerExplorer
+            // 
+            this.buttonServerExplorer.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonServerExplorer.Image = global::Atlassian.plvs.Resources.view_in_browser;
+            this.buttonServerExplorer.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonServerExplorer.Name = "buttonServerExplorer";
+            this.buttonServerExplorer.Size = new System.Drawing.Size(23, 22);
+            this.buttonServerExplorer.Text = "Start JIRA Server Explorer";
+            this.buttonServerExplorer.Click += new System.EventHandler(this.buttonServerExplorer_Click);
             // 
             // buttonAddFilter
             // 
@@ -438,5 +450,6 @@
         private System.Windows.Forms.ToolStripButton buttonEditFilter;
         private System.Windows.Forms.ToolStripButton buttonCreate;
         private System.Windows.Forms.ToolStripButton buttonGroupSubtasks;
+        private System.Windows.Forms.ToolStripButton buttonServerExplorer;
     }
 }

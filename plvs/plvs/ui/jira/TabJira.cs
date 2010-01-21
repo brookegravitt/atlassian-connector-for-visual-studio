@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Threading;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.dialogs;
+using Atlassian.plvs.explorer;
 using Atlassian.plvs.models;
 using Atlassian.plvs.models.jira;
 using Aga.Controls.Tree;
@@ -150,6 +151,7 @@ namespace Atlassian.plvs.ui.jira {
             buttonEditFilter.Enabled = filtersTree.SelectedNode is JiraCustomFilterTreeNode;
             buttonRemoveFilter.Enabled = filtersTree.SelectedNode is JiraCustomFilterTreeNode;
             buttonAddFilter.Enabled = filtersTree.SelectedNode is JiraCustomFiltersGroupTreeNode;
+            buttonServerExplorer.Enabled = filtersTree.SelectedNode is TreeNodeWithJiraServer;
         }
 
         private delegate void IssueAction(JiraIssue issue);
@@ -696,6 +698,14 @@ namespace Atlassian.plvs.ui.jira {
         private void buttonGroupSubtasks_Click(object sender, EventArgs e) {
             ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
             store.storeParameter(GROUP_SUBTASKS_UNDER_PARENT, buttonGroupSubtasks.Checked ? 1 : 0);
+        }
+
+        private void buttonServerExplorer_Click(object sender, EventArgs e) {
+            TreeNodeWithJiraServer node = filtersTree.SelectedNode as TreeNodeWithJiraServer;
+            if (node != null) {
+                JiraServerExplorer explorer = new JiraServerExplorer(node.Server, Facade);
+                explorer.Show();
+            }
         }
     }
 }

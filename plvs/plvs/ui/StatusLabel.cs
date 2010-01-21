@@ -14,15 +14,7 @@ namespace Atlassian.plvs.ui {
         public StatusLabel(StatusStrip statusBar, ToolStripStatusLabel targetLabel) {
             this.statusBar = statusBar;
             this.targetLabel = targetLabel;
-
-//            targetLabel.TextChanged += targetLabel_TextChanged;
         }
-
-//        private void targetLabel_TextChanged(object sender, EventArgs e) {
-//            Debug.WriteLine(targetLabel.Text);
-//        }
-
-//        private Exception lastException;
 
         private ICollection<Exception> lastExceptions;
 
