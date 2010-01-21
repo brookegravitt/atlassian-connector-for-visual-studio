@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 using System.Threading;
 using Atlassian.plvs.api.jira;
@@ -14,7 +15,7 @@ using Atlassian.plvs.ui.jira.issues;
 using Atlassian.plvs.ui.jira.issues.treemodels;
 
 namespace Atlassian.plvs.ui.jira {
-    public partial class TabJira : UserControl {
+    public partial class TabJira : UserControl, AddNewServerLink {
 
         private const string GROUP_SUBTASKS_UNDER_PARENT = "JiraIssueListGroupSubtasksUnderParent";
 
@@ -27,6 +28,8 @@ namespace Atlassian.plvs.ui.jira {
         private readonly JiraIssueListSearchingModel searchingModel = new JiraIssueListSearchingModel(MODEL);
 
         private readonly StatusLabel status;
+
+        private LinkLabel linkAddJiraServer;
 
         public TabJira() {
             InitializeComponent();
@@ -44,6 +47,8 @@ namespace Atlassian.plvs.ui.jira {
             bool groupSubtasks = store.loadParameter(GROUP_SUBTASKS_UNDER_PARENT, 1) != 0;
             buttonGroupSubtasks.Checked = groupSubtasks;
         }
+
+        public event EventHandler<EventArgs> AddNewServerLinkClicked;
 
         public JiraServerFacade Facade {
             get { return JiraServerFacade.Instance; }
@@ -70,17 +75,17 @@ namespace Atlassian.plvs.ui.jira {
             issuesTree = new JiraIssueTree(jiraSplitter.Panel2, status, searchingModel);
 
             issuesTree.addContextMenu(new ToolStripItem[]
-                                      {
-                                          new ToolStripMenuItem("Open in IDE", Resources.open_in_ide,
-                                                                new EventHandler(openIssue)),
-                                          new ToolStripMenuItem("View in Browser", Resources.view_in_browser,
-                                                                new EventHandler(browseIssue)),
-                                          new ToolStripMenuItem("Edit in Browser", Resources.edit_in_browser,
-                                                                new EventHandler(browseEditIssue)),
-                                          new ToolStripSeparator(),
-                                          new ToolStripMenuItem("Log Work", Resources.log_work,
-                                                                new EventHandler(logWork))
-                                      });
+                                  {
+                                      new ToolStripMenuItem("Open in IDE", Resources.open_in_ide,
+                                                            new EventHandler(openIssue)),
+                                      new ToolStripMenuItem("View in Browser", Resources.view_in_browser,
+                                                            new EventHandler(browseIssue)),
+                                      new ToolStripMenuItem("Edit in Browser", Resources.edit_in_browser,
+                                                            new EventHandler(browseEditIssue)),
+                                      new ToolStripSeparator(),
+                                      new ToolStripMenuItem("Log Work", Resources.log_work,
+                                                            new EventHandler(logWork))
+                                  });
 
             issuesTree.NodeMouseDoubleClick += issuesTree_NodeMouseDoubleClick;
             issuesTree.KeyPress += issuesTree_KeyPress;
@@ -233,22 +238,57 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         public void reloadKnownJiraServers() {
-            filtersTree.clear();
-            searchingModel.clear(true);
 
-            getMoreIssues.Visible = false;
-
-            // copy to local list so that we can reuse in our threads
-            List<JiraServer> servers = new List<JiraServer>(JiraServerModel.Instance.getAllServers());
-            if (servers.Count == 0) {
-                status.setInfo("No JIRA servers defined");
-                return;
+            if (linkAddJiraServer != null) {
+                Controls.Remove(linkAddJiraServer);
             }
 
-            filtersTree.addServerNodes(servers);
+            if (JiraServerModel.Instance.getAllServers().Count == 0) {
+                linkAddJiraServer = new LinkLabel
+                                    {
+                                        Dock = DockStyle.Fill,
+                                        Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 238),
+                                        Image = Resources.jira_blue_16_with_padding,
+                                        Location = new Point(0, 0),
+                                        Name = "linkAddJiraServers",
+                                        Size = new Size(1120, 510),
+                                        TabIndex = 0,
+                                        TabStop = true,
+                                        Text = "Add JIRA Servers",
+                                        BackColor = Color.White,
+                                        TextAlign = ContentAlignment.MiddleCenter
+                                    };
 
-            Thread metadataThread = new Thread(() => reloadKnownServersWorker(servers));
-            metadataThread.Start();
+                linkAddJiraServer.LinkClicked += linkAddJiraServers_LinkClicked;
+                jiraContainer.Visible = false;
+                Controls.Add(linkAddJiraServer);
+            } else {
+
+                jiraContainer.Visible = true;
+
+                filtersTree.clear();
+                searchingModel.clear(true);
+
+                getMoreIssues.Visible = false;
+
+                // copy to local list so that we can reuse in our threads
+                List<JiraServer> servers = new List<JiraServer>(JiraServerModel.Instance.getAllServers());
+                if (servers.Count == 0) {
+                    status.setInfo("No JIRA servers defined");
+                    return;
+                }
+
+                filtersTree.addServerNodes(servers);
+
+                Thread metadataThread = new Thread(() => reloadKnownServersWorker(servers));
+                metadataThread.Start();
+            }
+        }
+
+        private void linkAddJiraServers_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            if (AddNewServerLinkClicked != null) {
+                AddNewServerLinkClicked(this, new EventArgs());
+            }
         }
 
         private void reloadKnownServersWorker(IEnumerable<JiraServer> servers) {

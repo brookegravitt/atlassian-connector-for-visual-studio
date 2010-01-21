@@ -27,12 +27,14 @@
             this.toolStripContainer = new System.Windows.Forms.ToolStripContainer();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.linkAddBambooServers = new System.Windows.Forms.LinkLabel();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.buttonPoll = new System.Windows.Forms.ToolStripButton();
             this.buttonViewInBrowser = new System.Windows.Forms.ToolStripButton();
             this.buttonRunBuild = new System.Windows.Forms.ToolStripButton();
             this.notifyBuildStatus = new System.Windows.Forms.NotifyIcon(this.components);
             this.toolStripContainer.BottomToolStripPanel.SuspendLayout();
+            this.toolStripContainer.ContentPanel.SuspendLayout();
             this.toolStripContainer.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -48,6 +50,7 @@
             // 
             // toolStripContainer.ContentPanel
             // 
+            this.toolStripContainer.ContentPanel.Controls.Add(this.linkAddBambooServers);
             this.toolStripContainer.ContentPanel.Size = new System.Drawing.Size(1120, 510);
             this.toolStripContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStripContainer.Location = new System.Drawing.Point(0, 0);
@@ -75,6 +78,20 @@
             // 
             this.statusLabel.Name = "statusLabel";
             this.statusLabel.Size = new System.Drawing.Size(0, 17);
+            // 
+            // linkAddBambooServers
+            // 
+            this.linkAddBambooServers.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.linkAddBambooServers.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.linkAddBambooServers.Image = global::Atlassian.plvs.Resources.bamboo_blue_16_with_padding;
+            this.linkAddBambooServers.Location = new System.Drawing.Point(0, 0);
+            this.linkAddBambooServers.Name = "linkAddBambooServers";
+            this.linkAddBambooServers.Size = new System.Drawing.Size(1120, 510);
+            this.linkAddBambooServers.TabIndex = 0;
+            this.linkAddBambooServers.TabStop = true;
+            this.linkAddBambooServers.Text = "Add Bamboo Servers";
+            this.linkAddBambooServers.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.linkAddBambooServers.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkAddBambooServers_LinkClicked);
             // 
             // toolStrip1
             // 
@@ -132,6 +149,7 @@
             this.Size = new System.Drawing.Size(1120, 557);
             this.toolStripContainer.BottomToolStripPanel.ResumeLayout(false);
             this.toolStripContainer.BottomToolStripPanel.PerformLayout();
+            this.toolStripContainer.ContentPanel.ResumeLayout(false);
             this.toolStripContainer.TopToolStripPanel.ResumeLayout(false);
             this.toolStripContainer.TopToolStripPanel.PerformLayout();
             this.toolStripContainer.ResumeLayout(false);
@@ -154,5 +172,6 @@
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
         private System.Windows.Forms.ToolStripButton buttonViewInBrowser;
         private System.Windows.Forms.ToolStripButton buttonRunBuild;
+        private System.Windows.Forms.LinkLabel linkAddBambooServers;
     }
 }

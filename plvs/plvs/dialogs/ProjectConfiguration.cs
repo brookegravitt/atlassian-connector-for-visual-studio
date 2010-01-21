@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using Atlassian.plvs.api;
 using Atlassian.plvs.api.bamboo;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.dialogs.bamboo;
@@ -23,7 +24,7 @@ namespace Atlassian.plvs.dialogs {
 
         public bool SomethingChanged { get; private set; }
 
-        public ProjectConfiguration(JiraServerModel jiraServerModel, BambooServerModel bambooServerModel, 
+        public ProjectConfiguration(Guid? serverTypeToCreate, JiraServerModel jiraServerModel, BambooServerModel bambooServerModel, 
             JiraServerFacade jiraFacade, BambooServerFacade bambooFacade) {
 
             InitializeComponent();
@@ -52,6 +53,14 @@ namespace Atlassian.plvs.dialogs {
             StartPosition = FormStartPosition.CenterParent;
 
             serverTree.ExpandAll();
+
+            if (serverTypeToCreate != null) {
+                if (serverTypeToCreate.Value.Equals(Server.JiraServerTypeGuid)) {
+                    serverTree.SelectedNode = jiraRoot;
+                } else if (serverTypeToCreate.Value.Equals(Server.BambooServerTypeGuid)) {
+                    serverTree.SelectedNode = bambooRoot;
+                }
+            }
         }
 
         private void buttonClose_Click(object sender, EventArgs e) {

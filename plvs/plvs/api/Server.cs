@@ -8,6 +8,9 @@ namespace Atlassian.plvs.api {
         private string userName;
         private string password;
 
+        public static Guid JiraServerTypeGuid = new Guid("0C644383-BC4C-406d-B325-CA0AB1815B38");
+        public static Guid BambooServerTypeGuid = new Guid("1C7A224E-52C4-4575-9212-7D731C13CFE9");
+
         protected Server(string name, string url, string userName, string password)
             : this(Guid.NewGuid(), name, url, userName, password) {}
 

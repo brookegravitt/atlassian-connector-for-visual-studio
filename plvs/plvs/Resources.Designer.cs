@@ -133,6 +133,20 @@ namespace Atlassian.plvs {
             }
         }
         
+        internal static System.Drawing.Bitmap bamboo_blue_16 {
+            get {
+                object obj = ResourceManager.GetObject("bamboo_blue_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap bamboo_blue_16_with_padding {
+            get {
+                object obj = ResourceManager.GetObject("bamboo_blue_16_with_padding", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap bamboo_green_16 {
             get {
                 object obj = ResourceManager.GetObject("bamboo_green_16", resourceCulture);
@@ -386,6 +400,13 @@ namespace Atlassian.plvs {
         internal static System.Drawing.Bitmap jira_blue_16 {
             get {
                 object obj = ResourceManager.GetObject("jira_blue_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap jira_blue_16_with_padding {
+            get {
+                object obj = ResourceManager.GetObject("jira_blue_16_with_padding", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

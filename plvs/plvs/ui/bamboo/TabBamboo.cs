@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using Aga.Controls.Tree;
@@ -12,7 +13,7 @@ using Atlassian.plvs.util.jira;
 using Timer=System.Timers.Timer;
 
 namespace Atlassian.plvs.ui.bamboo {
-    public partial class TabBamboo : UserControl {
+    public partial class TabBamboo : UserControl, AddNewServerLink {
 
         private readonly Timer pollTimer;
 
@@ -60,7 +61,14 @@ namespace Atlassian.plvs.ui.bamboo {
                 toolStripContainer.ContentPanel.Controls.Remove(buildTree);
             }
 
-            buildTree = new BambooBuildTree {Model = new FlatBuildTreeModel()};
+            if (BambooServerModel.Instance.getAllServers().Count == 0) {
+                linkAddBambooServers.Visible = true;
+                return;
+            }
+
+            linkAddBambooServers.Visible = false;
+
+            buildTree = new BambooBuildTree { Model = new FlatBuildTreeModel() };
             buildTree.Model = new FlatBuildTreeModel();
             toolStripContainer.ContentPanel.Controls.Add(buildTree);
 
@@ -211,6 +219,14 @@ namespace Atlassian.plvs.ui.bamboo {
             if (n == null) return;
 
             action(n.Build);
+        }
+
+        public event EventHandler<EventArgs> AddNewServerLinkClicked;
+
+        private void linkAddBambooServers_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            if (AddNewServerLinkClicked != null) {
+                AddNewServerLinkClicked(this, new EventArgs());
+            }
         }
     }
 }

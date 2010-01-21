@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using Atlassian.plvs.api;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.models.bamboo;
@@ -33,11 +34,26 @@ namespace Atlassian.plvs.windows {
             notifyUpdate.Visible = false;
 
             Instance = this;
+
+            Jira.AddNewServerLinkClicked += jira_AddNewServerLinkClicked;
+            Bamboo.AddNewServerLinkClicked += bamboo_AddNewServerLinkClicked;
+        }
+
+        private void bamboo_AddNewServerLinkClicked(object sender, EventArgs e) {
+            openProjectProperties(Server.BambooServerTypeGuid);
+        }
+
+        private void jira_AddNewServerLinkClicked(object sender, EventArgs e) {
+            openProjectProperties(Server.JiraServerTypeGuid);
         }
 
         private void buttonProjectProperties_Click(object sender, EventArgs e) {
-            ProjectConfiguration dialog = new ProjectConfiguration(
-                JiraServerModel.Instance, BambooServerModel.Instance, tabJira.Facade, tabBamboo.Facade);
+            openProjectProperties(null);
+        }
+
+        private void openProjectProperties(Guid? serverTypeToCreate) {
+            ProjectConfiguration dialog = 
+                new ProjectConfiguration(serverTypeToCreate, JiraServerModel.Instance, BambooServerModel.Instance, tabJira.Facade, tabBamboo.Facade);
             dialog.ShowDialog(this);
             if (dialog.SomethingChanged) {
                 // todo: only do this for changed servers - add server model listeners
