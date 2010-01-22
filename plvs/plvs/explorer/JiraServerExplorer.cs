@@ -53,7 +53,7 @@ namespace Atlassian.plvs.explorer {
 
             activeExplorers[server.GUID.ToString()] = this;
 
-            webJira.DocumentText = "Loading projects...";
+            webJira.Navigate(server.Url + "?" + getAuthString());
 
             Thread t = new Thread(loadProjects);
             t.Start();
@@ -79,7 +79,6 @@ namespace Atlassian.plvs.explorer {
                 projectNode.Nodes.Add(new ComponentsNode(this, model, facade, server, project));
                 projectNode.Nodes.Add(new VersionsNode(this, model, facade, server, project));
             }
-            webJira.DocumentText = "Projects loaded";
         }
 
         private string getAuthString() {
