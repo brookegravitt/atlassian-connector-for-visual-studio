@@ -703,8 +703,7 @@ namespace Atlassian.plvs.ui.jira {
         private void buttonServerExplorer_Click(object sender, EventArgs e) {
             TreeNodeWithJiraServer node = filtersTree.SelectedNode as TreeNodeWithJiraServer;
             if (node != null) {
-                JiraServerExplorer explorer = new JiraServerExplorer(node.Server, Facade);
-                explorer.Show();
+                JiraServerExplorer.showJiraServerExplorerFor(MODEL, node.Server, Facade);
             }
         }
     }

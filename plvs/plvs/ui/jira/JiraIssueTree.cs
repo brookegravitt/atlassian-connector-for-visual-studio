@@ -109,7 +109,7 @@ namespace Atlassian.plvs.ui.jira {
             colPriority.TextAlign = HorizontalAlignment.Left;
             colUpdated.TextAlign = HorizontalAlignment.Right;
 
-            MouseDown += jiraIssueTreeMouseDown;
+            ItemDrag += jiraIssueTreeItemDrag;
         }
 
         public void addContextMenu(ToolStripItem[] items) {
@@ -145,7 +145,8 @@ namespace Atlassian.plvs.ui.jira {
             }
         }
 
-        private void jiraIssueTreeMouseDown(object sender, MouseEventArgs e) {
+        private void jiraIssueTreeItemDrag(object sender, ItemDragEventArgs e) {
+            
             if (SelectedNode == null || !(SelectedNode.Tag is IssueNode)) return;
 
             IssueNode n = (IssueNode) SelectedNode.Tag;

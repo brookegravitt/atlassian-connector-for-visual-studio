@@ -156,6 +156,10 @@ namespace Atlassian.plvs.api.jira {
                 () => getSoapSession(issue.Server).logWorkAndUpdateRemainingManually(issue.Key, timeSpent, startDate, remainingEstimate));
         }
 
+        public void updateIssue(JiraIssue issue, ICollection<JiraField> fields) {
+            wrapExceptionsVoid(issue.Server, () => getSoapSession(issue.Server).updateIssue(issue.Key, fields));
+        }
+
         #endregion
 
         #region private parts
