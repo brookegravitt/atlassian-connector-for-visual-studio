@@ -9,6 +9,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
     sealed class VersionNode : AbstractNavigableTreeNodeWithServer {
         private readonly JiraProject project;
         private readonly JiraNamedEntity version;
+        private readonly List<ToolStripItem> menuItems = new List<ToolStripItem>();
 
         public VersionNode(JiraIssueListModel model, JiraServerFacade facade, JiraServer server, JiraProject project, JiraNamedEntity version)
             : base(model, facade, server, version.Name, 0) {
@@ -39,8 +40,6 @@ namespace Atlassian.plvs.explorer.treeNodes {
             e.Cancel = false;
         }
 
-        private readonly List<ToolStripItem> menuItems = new List<ToolStripItem>();
-
         public override List<ToolStripItem> MenuItems { get { return menuItems; } }
 
         private void createAffectsDropZone(object sender, EventArgs e) {
@@ -68,10 +67,26 @@ namespace Atlassian.plvs.explorer.treeNodes {
 
             protected abstract string FieldName { get; }
 
+            protected abstract ICollection<string> getIssueVersions(JiraIssue issue);
+
             private void dropAction(JiraIssue issue, bool add) {
-                JiraField versionField = new JiraField(FieldName, null) {
-                    Values = new List<string> { Parent.version.Id.ToString() }
-                };
+                JiraField versionField = new JiraField(FieldName, null) {Values = new List<string>()};
+                if (add) {
+                    List<JiraNamedEntity> projectVersions = Parent.Facade.getVersions(issue.Server, Parent.project);
+                    ICollection<string> issueVersions = getIssueVersions(issue);
+                    foreach (string issueVersion in issueVersions) {
+                        foreach (JiraNamedEntity ver in projectVersions) {
+                            if (!ver.Name.Equals(issueVersion)) continue;
+                            versionField.Values.Add(ver.Id.ToString());
+                            break;
+                        }
+                    }
+                }
+
+                // skip if issue already has this version
+                if (versionField.Values.Contains(Parent.version.Id.ToString())) return;
+
+                versionField.Values.Add(Parent.version.Id.ToString());
                 Parent.Facade.updateIssue(issue, new List<JiraField> { versionField });
             }
 
@@ -101,6 +116,8 @@ namespace Atlassian.plvs.explorer.treeNodes {
             }
 
             public override string ZoneKey { get { return Parent.Server.GUID + "_" + Parent.project.Key + "_fixversion_" + Parent.version.Id; } }
+
+            protected override ICollection<string> getIssueVersions(JiraIssue issue) { return issue.FixVersions; }
         }
 
         private class AffectsDropZoneWorker : AbstractVersionDropZoneWorker {
@@ -121,6 +138,8 @@ namespace Atlassian.plvs.explorer.treeNodes {
             }
 
             public override string ZoneKey { get { return Parent.Server.GUID + "_" + Parent.project.Key + "_affectsversion_" + Parent.version.Id; } }
+
+            protected override ICollection<string> getIssueVersions(JiraIssue issue) { return issue.Versions; }
         }
     }
 }
