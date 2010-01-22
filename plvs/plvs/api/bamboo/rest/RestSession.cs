@@ -198,7 +198,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
         }
 
         public void runBuild(string planKey) {
-#if USE_NEW_API
+#if false
             string endpoint = server.Url + RUN_BUILD_ACTION_NEW_AND_IT_DOES_NOT_WORK + "/" + planKey;
 
             Stream stream = postWithNullBody(endpoint + getBasicAuthParameter(endpoint), true);
@@ -218,7 +218,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
             XPathDocument doc = XPathUtils.getDocument(stream);
 
-            string code = getRestErrorStatusCode(doc);
+            string code = getRemoteExceptionMessages(doc);
             if (code != null) {
                 throw new Exception(code);
             }
