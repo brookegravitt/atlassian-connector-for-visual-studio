@@ -204,6 +204,9 @@
     <Compile Include="explorer\treeNodes\AbstractNavigableTreeNodeWithServer.cs" />
     <Compile Include="explorer\treeNodes\ComponentsNode.cs" />
     <Compile Include="explorer\treeNodes\ComponentNode.cs" />
+    <Compile Include="explorer\treeNodes\PriorityNode.cs" />
+    <Compile Include="explorer\treeNodes\PrioritiesNode.cs" />
+    <Compile Include="explorer\treeNodes\ProjectsNode.cs" />
     <Compile Include="explorer\treeNodes\VersionNode.cs" />
     <Compile Include="explorer\treeNodes\VersionsNode.cs" />
     <Compile Include="explorer\treeNodes\ProjectNode.cs" />

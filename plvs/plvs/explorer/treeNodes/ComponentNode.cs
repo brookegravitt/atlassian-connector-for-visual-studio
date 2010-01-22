@@ -19,7 +19,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
 
             ContextMenuStrip = new ContextMenuStrip();
 
-            menuItems.Add(new ToolStripMenuItem("Open \"Components\" Drop Zone", null, createDropZone));
+            menuItems.Add(new ToolStripMenuItem("Open \"Component\" Drop Zone", null, createDropZone));
 
             ContextMenuStrip.Items.Add("dummy");
 
@@ -78,7 +78,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
 
         public string ZoneName { get { return "Component: " + comp.Name; } }
 
-        public string ZoneKey { get { return Server.GUID + "_" + project.Key + "_component_" + comp.Id; } }
+        public string ZoneKey { get { return Server.GUID + "_project_" + project.Key + "_component_" + comp.Id; } }
 
         public bool CanAdd { get { return true; } }
 

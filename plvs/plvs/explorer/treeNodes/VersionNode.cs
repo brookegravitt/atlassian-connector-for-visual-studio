@@ -115,7 +115,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
                 get { return "Drag issues here to set fix version, Ctrl-drag to add to the list of fix versions"; }
             }
 
-            public override string ZoneKey { get { return Parent.Server.GUID + "_" + Parent.project.Key + "_fixversion_" + Parent.version.Id; } }
+            public override string ZoneKey { get { return Parent.Server.GUID + "_project_" + Parent.project.Key + "_fixversion_" + Parent.version.Id; } }
 
             protected override ICollection<string> getIssueVersions(JiraIssue issue) { return issue.FixVersions; }
         }
@@ -137,7 +137,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
                 get { return "Drag issues here to set fix version, Ctrl-drag to add to the list of affect versions"; }
             }
 
-            public override string ZoneKey { get { return Parent.Server.GUID + "_" + Parent.project.Key + "_affectsversion_" + Parent.version.Id; } }
+            public override string ZoneKey { get { return Parent.Server.GUID + "_project_" + Parent.project.Key + "_affectsversion_" + Parent.version.Id; } }
 
             protected override ICollection<string> getIssueVersions(JiraIssue issue) { return issue.Versions; }
         }

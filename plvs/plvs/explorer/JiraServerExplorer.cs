@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Web;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
@@ -55,30 +54,10 @@ namespace Atlassian.plvs.explorer {
 
             webJira.Navigate(server.Url + "?" + getAuthString());
 
-            Thread t = new Thread(loadProjects);
-            t.Start();
-        }
+            treeJira.Nodes.Add(new PrioritiesNode(this, model, facade, server));
+            treeJira.Nodes.Add(new ProjectsNode(this, model, facade, server));
 
-        private void loadProjects() {
-            try {
-                List<JiraProject> projects = facade.getProjects(server);
-                Invoke(new MethodInvoker(() => populateProjects(projects)));
-            } catch (Exception e) {
-                status.setError("Failed to load projects", e);
-            }
-        }
-
-        private void populateProjects(IEnumerable<JiraProject> projects) {
-            SortedDictionary<string, JiraProject> sorted = new SortedDictionary<string, JiraProject>();
-            foreach (JiraProject project in projects) {
-                sorted[project.Key] = project;
-            }
-            foreach (JiraProject project in sorted.Values) {
-                ProjectNode projectNode = new ProjectNode(model, facade, server, project);
-                treeJira.Nodes.Add(projectNode);
-                projectNode.Nodes.Add(new ComponentsNode(this, model, facade, server, project));
-                projectNode.Nodes.Add(new VersionsNode(this, model, facade, server, project));
-            }
+            treeJira.SelectedNode = null;
         }
 
         private string getAuthString() {
@@ -107,6 +86,14 @@ namespace Atlassian.plvs.explorer {
 
         private void JiraServerExplorer_FormClosed(object sender, FormClosedEventArgs e) {
             activeExplorers.Remove(server.GUID.ToString());
+        }
+
+        private bool firstSelect = true;
+
+        private void treeJira_BeforeSelect(object sender, TreeViewCancelEventArgs e) {
+            if (!firstSelect) return;
+            firstSelect = false;
+            e.Cancel = true;
         }
     }
 }
