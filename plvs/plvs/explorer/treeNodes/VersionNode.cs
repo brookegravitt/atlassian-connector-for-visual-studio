@@ -112,7 +112,10 @@ namespace Atlassian.plvs.explorer.treeNodes {
             }
 
             public override string InitialText {
-                get { return "Drag issues here to set fix version, Ctrl-drag to add to the list of fix versions"; }
+                get {
+                    return "Drag issues here to set their fix version to \"" + Parent.version.Name 
+                        + "\", Ctrl-drag to add to the list of fix versions";
+                }
             }
 
             public override string ZoneKey { get { return Parent.Server.GUID + "_project_" + Parent.project.Key + "_fixversion_" + Parent.version.Id; } }
@@ -134,7 +137,10 @@ namespace Atlassian.plvs.explorer.treeNodes {
             }
 
             public override string InitialText { 
-                get { return "Drag issues here to set fix version, Ctrl-drag to add to the list of affect versions"; }
+                get { 
+                    return "Drag issues here to set their affect version to \"" + Parent.version.Name 
+                        + "\", Ctrl-drag to add to the list of affect versions"; 
+                }
             }
 
             public override string ZoneKey { get { return Parent.Server.GUID + "_project_" + Parent.project.Key + "_affectsversion_" + Parent.version.Id; } }

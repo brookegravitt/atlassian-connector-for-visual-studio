@@ -76,6 +76,6 @@ namespace Atlassian.plvs.explorer.treeNodes {
 
         public string issueWillBeMovedText { get { return "Priority " + priority.Name + " will be set as priority for issue"; } }
 
-        public string InitialText { get { return "Drag issues here to set their priority to " + priority.Name; } }
+        public string InitialText { get { return "Drag issues here to set their priority to \"" + priority.Name + "\""; } }
     }
 }
