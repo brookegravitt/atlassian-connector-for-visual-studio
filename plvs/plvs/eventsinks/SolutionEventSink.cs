@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs;
+using Atlassian.plvs.explorer;
 using Atlassian.plvs.markers;
 using Atlassian.plvs.models.bamboo;
 using Atlassian.plvs.models.jira;
@@ -97,6 +98,8 @@ namespace Atlassian.plvs.eventsinks {
                 IssueDetailsWindow.Instance.FrameVisible = false;
                 ToolWindowManager.Instance.AtlassianWindow = null;
                 Autoupdate.Instance.shutdown();
+                DropZone.closeAll();
+                JiraServerExplorer.closeAll();
             }
             catch (Exception e) {
                 Debug.WriteLine(e);

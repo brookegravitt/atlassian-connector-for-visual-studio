@@ -1,4 +1,5 @@
 ﻿using Atlassian.plvs.api.jira;
+using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
 
 namespace Atlassian.plvs.explorer.treeNodes {
@@ -6,8 +7,8 @@ namespace Atlassian.plvs.explorer.treeNodes {
         private readonly JiraProject project;
         private readonly JiraNamedEntity comp;
 
-        public ComponentNode(JiraServer server, JiraProject project, JiraNamedEntity comp)
-            : base(server, comp.Name, 0) {
+        public ComponentNode(JiraIssueListModel model, JiraServerFacade facade, JiraServer server, JiraProject project, JiraNamedEntity comp)
+            : base(model, facade, server, comp.Name, 0) {
             this.project = project;
             this.comp = comp;
         }
@@ -16,6 +17,6 @@ namespace Atlassian.plvs.explorer.treeNodes {
             return Server.Url + "/browse/" + project.Key + "/component/" + comp.Id + "?" + authString; 
         }
 
-        public override void onClick(JiraServerFacade facade, StatusLabel status) { }
+        public override void onClick(StatusLabel status) { }
     }
 }

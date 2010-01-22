@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
 
 namespace Atlassian.plvs.explorer.treeNodes {
@@ -8,23 +10,117 @@ namespace Atlassian.plvs.explorer.treeNodes {
         private readonly JiraProject project;
         private readonly JiraNamedEntity version;
 
-        public VersionNode(JiraServer server, JiraProject project, JiraNamedEntity version) : base(server, version.Name, 0) {
+        public VersionNode(JiraIssueListModel model, JiraServerFacade facade, JiraServer server, JiraProject project, JiraNamedEntity version)
+            : base(model, facade, server, version.Name, 0) {
             this.project = project;
             this.version = version;
 
-            ContextMenuStrip =  new ContextMenuStrip();
-            ContextMenuStrip.Items.Add("Create Drop Zone", null, createDropZone);
+            ContextMenuStrip = new ContextMenuStrip();
+
+            menuItems.Add(new ToolStripMenuItem("Open \"Fix For\" Drop Zone", null, createFixForDropZone));
+            menuItems.Add(new ToolStripMenuItem("Open \"Affects\" Drop Zone", null, createAffectsDropZone));
+
+            ContextMenuStrip.Items.Add("dummy");
+
+            ContextMenuStrip.Items.AddRange(MenuItems.ToArray());
+
+            ContextMenuStrip.Opening += contextMenuStripOpening;
+            ContextMenuStrip.Opened += contextMenuStripOpened;
         }
 
-        private void createDropZone(object sender, EventArgs e) {
-            DropZone zone = new DropZone("Version: " + version.Name);
-            zone.Show();
+        private void contextMenuStripOpened(object sender, EventArgs e) {
+            ContextMenuStrip.Items.Clear();
+            foreach (ToolStripItem item in MenuItems) {
+                ContextMenuStrip.Items.Add(item);
+            }
+        }
+
+        private static void contextMenuStripOpening(object sender, System.ComponentModel.CancelEventArgs e) {
+            e.Cancel = false;
+        }
+
+        private readonly List<ToolStripItem> menuItems = new List<ToolStripItem>();
+
+        public override List<ToolStripItem> MenuItems { get { return menuItems; } }
+
+        private void createAffectsDropZone(object sender, EventArgs e) {
+            DropZone.showDropZoneFor(Model, Server, Facade, new AffectsDropZoneWorker(this));
+        }
+
+        private void createFixForDropZone(object sender, EventArgs e) {
+            DropZone.showDropZoneFor(Model, Server, Facade, new FixForDropZoneWorker(this));
         }
 
         public override string getUrl(string authString) {
             return Server.Url + "/browse/" + project.Key + "/fixforversion/" + version.Id + "?" + authString; 
         }
 
-        public override void onClick(JiraServerFacade facade, StatusLabel status) { }
+        public override void onClick(StatusLabel status) { }
+
+        private abstract class AbstractVersionDropZoneWorker : DropZone.DropZoneWorker {
+            protected VersionNode Parent { get; private set; }
+
+            protected AbstractVersionDropZoneWorker(VersionNode parent) {
+                Parent = parent;
+            }
+
+            public DropZone.PerformAction Action { get { return dropAction; } }
+
+            protected abstract string FieldName { get; }
+
+            private void dropAction(JiraIssue issue, bool add) {
+                JiraField versionField = new JiraField(FieldName, null) {
+                    Values = new List<string> { Parent.version.Id.ToString() }
+                };
+                Parent.Facade.updateIssue(issue, new List<JiraField> { versionField });
+            }
+
+            public bool CanAdd { get { return true; } }
+            public abstract string IssueWillBeAddedText { get; }
+            public abstract string issueWillBeMovedText { get; }
+            public abstract string InitialText { get; }
+            public abstract string ZoneKey { get; }
+            public abstract string ZoneName { get; }
+        }
+
+        private class FixForDropZoneWorker : AbstractVersionDropZoneWorker {
+            public FixForDropZoneWorker(VersionNode parent) : base(parent) {}
+            protected override string FieldName { get { return "fixVersions"; } }
+            public override string ZoneName { get { return "Fix For Version: " + Parent.version.Name; } }
+
+            public override string IssueWillBeAddedText {
+                get { return "Version " + Parent.version.Name + " will be added to fix versions for issue"; }
+            }
+
+            public override string issueWillBeMovedText {
+                get { return "Version " + Parent.version.Name + " will be set as fix version for issue"; }
+            }
+
+            public override string InitialText {
+                get { return "Drag issues here to set fix version, Ctrl-drag to add to the list of fix versions"; }
+            }
+
+            public override string ZoneKey { get { return Parent.Server.GUID + "_" + Parent.project.Key + "_fixversion_" + Parent.version.Id; } }
+        }
+
+        private class AffectsDropZoneWorker : AbstractVersionDropZoneWorker {
+            public AffectsDropZoneWorker(VersionNode parent) : base(parent) { }
+            protected override string FieldName { get { return "versions"; } }
+            public override string ZoneName { get { return "Affects Version: " + Parent.version.Name; } }
+
+            public override string IssueWillBeAddedText {
+                get { return "Version " + Parent.version.Name + " will be added to affect versions for issue"; }
+            }
+
+            public override string issueWillBeMovedText {
+                get { return "Version " + Parent.version.Name + " will be set as affect version for issue"; }
+            }
+
+            public override string InitialText { 
+                get { return "Drag issues here to set fix version, Ctrl-drag to add to the list of affect versions"; }
+            }
+
+            public override string ZoneKey { get { return Parent.Server.GUID + "_" + Parent.project.Key + "_affectsversion_" + Parent.version.Id; } }
+        }
     }
 }

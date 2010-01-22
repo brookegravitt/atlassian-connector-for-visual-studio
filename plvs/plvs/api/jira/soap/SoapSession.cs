@@ -214,6 +214,15 @@ namespace Atlassian.plvs.api.jira.soap {
             service.addWorklogWithNewRemainingEstimate(token, key, worklog, remainingEstimate);
         }
 
+        public void updateIssue(string key, ICollection<JiraField> fields) {
+            List<RemoteFieldValue> fieldValues = new List<RemoteFieldValue>();
+            foreach (JiraField field in fields) {
+                RemoteFieldValue fv = new RemoteFieldValue {id = field.Id, values = field.Values.ToArray()};
+                fieldValues.Add(fv);
+            }
+            service.updateIssue(token, key, fieldValues.ToArray());
+        }
+
         #region private parts
 
         private static List<JiraNamedEntity> createEntityList(IEnumerable<AbstractNamedRemoteEntity> entities) {

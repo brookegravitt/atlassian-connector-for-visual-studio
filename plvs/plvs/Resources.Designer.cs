@@ -255,6 +255,13 @@ namespace Atlassian.plvs {
             }
         }
         
+        internal static System.Drawing.Bitmap dropzone {
+            get {
+                object obj = ResourceManager.GetObject("dropzone", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap edit {
             get {
                 object obj = ResourceManager.GetObject("edit", resourceCulture);
@@ -408,6 +415,13 @@ namespace Atlassian.plvs {
             get {
                 object obj = ResourceManager.GetObject("jira_blue_16_with_padding", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon jira_blue_161 {
+            get {
+                object obj = ResourceManager.GetObject("jira_blue_161", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         

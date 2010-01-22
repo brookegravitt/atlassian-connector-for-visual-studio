@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
 
 namespace Atlassian.plvs.explorer.treeNodes {
@@ -11,7 +12,9 @@ namespace Atlassian.plvs.explorer.treeNodes {
         private readonly JiraProject project;
 
         private bool versionsLoaded;
-        public VersionsNode(Control parent, JiraServer server, JiraProject project) : base(server, "Versions", 0) {
+        public VersionsNode(Control parent, JiraIssueListModel model, JiraServerFacade facade, JiraServer server, JiraProject project)
+            : base(model, facade, server, "Versions", 0) {
+
             this.parent = parent;
             this.project = project;
         }
@@ -22,10 +25,10 @@ namespace Atlassian.plvs.explorer.treeNodes {
                 + "#selectedTab=com.atlassian.jira.plugin.system.project%3Aversions-panel"; 
         }
 
-        public override void onClick(JiraServerFacade facade, StatusLabel status) {
+        public override void onClick(StatusLabel status) {
             if (versionsLoaded) return;
             versionsLoaded = true;
-            Thread t = new Thread(() => loadVersions(facade, status));
+            Thread t = new Thread(() => loadVersions(Facade, status));
             t.Start();
         }
 
@@ -41,7 +44,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
         private void populateVersions(List<JiraNamedEntity> versions) {
             versions.Reverse();
             foreach (JiraNamedEntity version in versions) {
-                Nodes.Add(new VersionNode(Server, project, version));
+                Nodes.Add(new VersionNode(Model, Facade, Server, project, version));
             }
             ExpandAll();
         }

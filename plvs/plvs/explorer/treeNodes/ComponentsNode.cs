@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
 
 namespace Atlassian.plvs.explorer.treeNodes {
@@ -12,7 +13,9 @@ namespace Atlassian.plvs.explorer.treeNodes {
 
         private bool componentsLoaded;
 
-        public ComponentsNode(Control parent, JiraServer server, JiraProject project) : base(server, "Components", 0) {
+        public ComponentsNode(Control parent, JiraIssueListModel model, JiraServerFacade facade, JiraServer server, JiraProject project) 
+            : base(model, facade, server, "Components", 0) {
+
             this.parent = parent;
             this.project = project;
         }
@@ -23,10 +26,10 @@ namespace Atlassian.plvs.explorer.treeNodes {
                 + "#selectedTab=com.atlassian.jira.plugin.system.project%3Acomponents-panel"; 
         }
 
-        public override void onClick(JiraServerFacade facade, StatusLabel status) {
+        public override void onClick(StatusLabel status) {
             if (componentsLoaded) return;
             componentsLoaded = true;
-            Thread t = new Thread(() => loadComponents(facade, status));
+            Thread t = new Thread(() => loadComponents(Facade, status));
             t.Start();
         }
 
@@ -42,7 +45,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
         private void populateComponents(List<JiraNamedEntity> components) {
             components.Reverse();
             foreach (JiraNamedEntity comp in components) {
-                Nodes.Add(new ComponentNode(Server, project, comp));
+                Nodes.Add(new ComponentNode(Model, Facade, Server, project, comp));
             }
             ExpandAll();
         }

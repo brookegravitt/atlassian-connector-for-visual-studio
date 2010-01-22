@@ -23,6 +23,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(JiraServerExplorer));
             this.BottomToolStripPanel = new System.Windows.Forms.ToolStripPanel();
             this.TopToolStripPanel = new System.Windows.Forms.ToolStripPanel();
             this.RightToolStripPanel = new System.Windows.Forms.ToolStripPanel();
@@ -34,13 +35,17 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.treeJira = new System.Windows.Forms.TreeView();
             this.webJira = new System.Windows.Forms.WebBrowser();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.dropDownCreateDropZone = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
+            this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer1.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // BottomToolStripPanel
@@ -98,6 +103,10 @@
             this.toolStripContainer1.TabIndex = 0;
             this.toolStripContainer1.Text = "toolStripContainer1";
             // 
+            // toolStripContainer1.TopToolStripPanel
+            // 
+            this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.toolStrip1);
+            // 
             // statusStrip
             // 
             this.statusStrip.Dock = System.Windows.Forms.DockStyle.None;
@@ -149,6 +158,24 @@
             this.webJira.Size = new System.Drawing.Size(608, 401);
             this.webJira.TabIndex = 0;
             // 
+            // toolStrip1
+            // 
+            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.dropDownCreateDropZone});
+            this.toolStrip1.Location = new System.Drawing.Point(3, 0);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(136, 25);
+            this.toolStrip1.TabIndex = 0;
+            // 
+            // dropDownCreateDropZone
+            // 
+            this.dropDownCreateDropZone.Image = global::Atlassian.plvs.Resources.dropzone;
+            this.dropDownCreateDropZone.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.dropDownCreateDropZone.Name = "dropDownCreateDropZone";
+            this.dropDownCreateDropZone.Size = new System.Drawing.Size(124, 22);
+            this.dropDownCreateDropZone.Text = "Open Drop Zone";
+            // 
             // JiraServerExplorer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -156,11 +183,15 @@
             this.ClientSize = new System.Drawing.Size(918, 448);
             this.Controls.Add(this.toolStripContainer1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "JiraServerExplorer";
             this.Text = "JiraServerExplorer";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.JiraServerExplorer_FormClosed);
             this.toolStripContainer1.BottomToolStripPanel.ResumeLayout(false);
             this.toolStripContainer1.BottomToolStripPanel.PerformLayout();
             this.toolStripContainer1.ContentPanel.ResumeLayout(false);
+            this.toolStripContainer1.TopToolStripPanel.ResumeLayout(false);
+            this.toolStripContainer1.TopToolStripPanel.PerformLayout();
             this.toolStripContainer1.ResumeLayout(false);
             this.toolStripContainer1.PerformLayout();
             this.statusStrip.ResumeLayout(false);
@@ -168,6 +199,8 @@
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.ResumeLayout(false);
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -185,6 +218,8 @@
         private System.Windows.Forms.ToolStripPanel RightToolStripPanel;
         private System.Windows.Forms.ToolStripPanel LeftToolStripPanel;
         private System.Windows.Forms.ToolStripContentPanel ContentPanel;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripDropDownButton dropDownCreateDropZone;
 
 
     }
