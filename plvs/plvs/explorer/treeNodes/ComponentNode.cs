@@ -86,6 +86,10 @@ namespace Atlassian.plvs.explorer.treeNodes {
 
         public string issueWillBeMovedText { get { return "Component " + comp.Name + " will be set as component for issue"; } }
 
-        public string InitialText { get { return "Drag issues here to set component, Ctrl-drag to add to the list of components"; } }
+        public string InitialText { 
+            get {
+                return "Drag issues here to set their component to \"" + comp.Name + "\", Ctrl-drag to add to the list of components";
+            } 
+        }
     }
 }

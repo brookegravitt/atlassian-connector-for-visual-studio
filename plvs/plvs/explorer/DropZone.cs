@@ -48,7 +48,7 @@ namespace Atlassian.plvs.explorer {
 
             Text = worker.ZoneName;
 
-            updateModelAndResetToInitialState(null);
+            updateModelAndResetToInitialState(null, false);
         }
 
         public static void closeAll() {
@@ -92,7 +92,7 @@ namespace Atlassian.plvs.explorer {
 
         private void DropZone_DragLeave(object sender, EventArgs e) {
             if (AllowDrop) {
-                updateModelAndResetToInitialState(null);
+                updateModelAndResetToInitialState(null, false);
             }
         }
 
@@ -132,7 +132,7 @@ namespace Atlassian.plvs.explorer {
                 worker.Action(issue, add);
                 issue = facade.getIssue(server, issueKey);
 
-                Invoke(new MethodInvoker(() => updateModelAndResetToInitialState(issue)));
+                Invoke(new MethodInvoker(() => updateModelAndResetToInitialState(issue, add)));
             } catch (Exception e) {
                 Invoke(new MethodInvoker(() => showErrorAndReset(e)));
             }
@@ -141,12 +141,15 @@ namespace Atlassian.plvs.explorer {
         private void showErrorAndReset(Exception e) {
             MessageBox.Show("Failed to perform drop action: " + e.Message, Constants.ERROR_CAPTION, 
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
-            updateModelAndResetToInitialState(null);
+            updateModelAndResetToInitialState(null, false);
         }
 
-        private void updateModelAndResetToInitialState(JiraIssue issue) {
+        private void updateModelAndResetToInitialState(JiraIssue issue, bool add) {
             if (issue != null) {
-                model.updateIssue(issue);    
+                model.updateIssue(issue);
+                textHistory.Text = 
+                    DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() 
+                    + " - " + issue.Key + (add ? " [added]" : " [moved]") + "\r\n" + textHistory.Text;
             }
             AllowDrop = true;
             labelInfo.Text = worker.InitialText;

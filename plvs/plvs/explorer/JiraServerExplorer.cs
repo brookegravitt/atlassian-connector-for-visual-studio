@@ -88,8 +88,12 @@ namespace Atlassian.plvs.explorer {
             activeExplorers.Remove(server.GUID.ToString());
         }
 
+        //
+        // this is a stupid trick that prevents the first node to be selected 
+        // (and hence - expanded) on first loading of the form.
+        // Beats me why TreeView behaves like that - go complain to Microsoft
+        //
         private bool firstSelect = true;
-
         private void treeJira_BeforeSelect(object sender, TreeViewCancelEventArgs e) {
             if (!firstSelect) return;
             firstSelect = false;
