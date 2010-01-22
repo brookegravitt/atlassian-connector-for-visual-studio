@@ -12,6 +12,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
         private readonly JiraProject project;
 
         private bool versionsLoaded;
+
         public VersionsNode(Control parent, JiraIssueListModel model, JiraServerFacade facade, JiraServer server, JiraProject project)
             : base(model, facade, server, "Versions", 0) {
 

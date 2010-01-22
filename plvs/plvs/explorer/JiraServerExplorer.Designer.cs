@@ -142,11 +142,13 @@
             // treeJira
             // 
             this.treeJira.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeJira.FullRowSelect = true;
             this.treeJira.Location = new System.Drawing.Point(0, 0);
             this.treeJira.Name = "treeJira";
             this.treeJira.Size = new System.Drawing.Size(306, 401);
             this.treeJira.TabIndex = 0;
             this.treeJira.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeJira_AfterSelect);
+            this.treeJira.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeJira_BeforeSelect);
             // 
             // webJira
             // 
