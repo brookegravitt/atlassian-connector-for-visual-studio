@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Web;
+using Atlassian.plvs.api.jira;
 
 namespace Atlassian.plvs.util.jira {
     public sealed class JiraIssueUtils {
@@ -68,6 +70,10 @@ namespace Atlassian.plvs.util.jira {
             if (groupHours != null && groupHours.Success) result = result + groupHours.Value + "h ";
             if (groupMinutes != null && groupMinutes.Success) result = result + groupMinutes.Value + "m";
             return result.Trim();
+        }
+
+        public static string getAuthString(JiraServer server) {
+            return "os_username=" + HttpUtility.UrlEncode(server.UserName) + "&os_password=" + HttpUtility.UrlEncode(server.Password);
         }
     }
 }

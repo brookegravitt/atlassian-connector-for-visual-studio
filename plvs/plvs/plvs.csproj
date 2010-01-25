@@ -63,6 +63,7 @@
     <Compile Include="api\bamboo\BambooPlan.cs" />
     <Compile Include="api\bamboo\BambooServerFacade.cs" />
     <Compile Include="api\bamboo\rest\RestSession.cs" />
+    <Compile Include="api\jira\JiraAttachment.cs" />
     <Compile Include="api\jira\JiraField.cs" />
     <Compile Include="api\jira\JiraIssue.cs" />
     <Compile Include="api\jira\JiraNamedEntity.cs" />
@@ -271,6 +272,7 @@
     <Compile Include="ui\jira\fields\UserFieldEditor.cs" />
     <Compile Include="ui\jira\fields\NamedEntityListFieldEditor.cs" />
     <Compile Include="ui\jira\issues\ToolWindowStateMonitor.cs" />
+    <Compile Include="ui\jira\JiraAttachmentListViewItem.cs" />
     <Compile Include="ui\jira\JiraFiltersTree.cs">
       <SubType>Component</SubType>
     </Compile>

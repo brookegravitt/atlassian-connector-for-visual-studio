@@ -48,6 +48,14 @@ namespace Atlassian.plvs.ui.jira {
             this.label2 = new System.Windows.Forms.Label();
             this.tabSubtasks = new System.Windows.Forms.TabPage();
             this.webSubtasks = new System.Windows.Forms.WebBrowser();
+            this.tabAttachments = new System.Windows.Forms.TabPage();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.listViewAttachments = new System.Windows.Forms.ListView();
+            this.columnName = new System.Windows.Forms.ColumnHeader();
+            this.columnAuthor = new System.Windows.Forms.ColumnHeader();
+            this.columnSize = new System.Windows.Forms.ColumnHeader();
+            this.columnDate = new System.Windows.Forms.ColumnHeader();
+            this.webAttachmentView = new System.Windows.Forms.WebBrowser();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.buttonViewInBrowser = new System.Windows.Forms.ToolStripButton();
             this.buttonRefresh = new System.Windows.Forms.ToolStripButton();
@@ -70,6 +78,10 @@ namespace Atlassian.plvs.ui.jira {
             this.toolStripContainer2.SuspendLayout();
             this.toolStrip2.SuspendLayout();
             this.tabSubtasks.SuspendLayout();
+            this.tabAttachments.SuspendLayout();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -116,6 +128,7 @@ namespace Atlassian.plvs.ui.jira {
             this.issueTabs.Controls.Add(this.tabSummary);
             this.issueTabs.Controls.Add(this.tabDescriptionAndComments);
             this.issueTabs.Controls.Add(this.tabSubtasks);
+            this.issueTabs.Controls.Add(this.tabAttachments);
             this.issueTabs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.issueTabs.Location = new System.Drawing.Point(0, 0);
             this.issueTabs.Name = "issueTabs";
@@ -302,6 +315,83 @@ namespace Atlassian.plvs.ui.jira {
             this.webSubtasks.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webSubtasks_Navigating);
             this.webSubtasks.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webSubtasks_DocumentCompleted);
             // 
+            // tabAttachments
+            // 
+            this.tabAttachments.Controls.Add(this.splitContainer2);
+            this.tabAttachments.Location = new System.Drawing.Point(4, 22);
+            this.tabAttachments.Name = "tabAttachments";
+            this.tabAttachments.Size = new System.Drawing.Size(777, 402);
+            this.tabAttachments.TabIndex = 3;
+            this.tabAttachments.Text = "Attachments";
+            this.tabAttachments.UseVisualStyleBackColor = true;
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Name = "splitContainer2";
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.listViewAttachments);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.webAttachmentView);
+            this.splitContainer2.Size = new System.Drawing.Size(777, 402);
+            this.splitContainer2.SplitterDistance = 340;
+            this.splitContainer2.TabIndex = 0;
+            // 
+            // listViewAttachments
+            // 
+            this.listViewAttachments.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.listViewAttachments.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnName,
+            this.columnAuthor,
+            this.columnSize,
+            this.columnDate});
+            this.listViewAttachments.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listViewAttachments.FullRowSelect = true;
+            this.listViewAttachments.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.listViewAttachments.HideSelection = false;
+            this.listViewAttachments.Location = new System.Drawing.Point(0, 0);
+            this.listViewAttachments.MultiSelect = false;
+            this.listViewAttachments.Name = "listViewAttachments";
+            this.listViewAttachments.Size = new System.Drawing.Size(340, 402);
+            this.listViewAttachments.TabIndex = 0;
+            this.listViewAttachments.UseCompatibleStateImageBehavior = false;
+            this.listViewAttachments.View = System.Windows.Forms.View.Details;
+            this.listViewAttachments.Click += new System.EventHandler(this.listViewAttachments_Click);
+            // 
+            // columnName
+            // 
+            this.columnName.Text = "Name";
+            this.columnName.Width = 114;
+            // 
+            // columnAuthor
+            // 
+            this.columnAuthor.Text = "Author";
+            // 
+            // columnSize
+            // 
+            this.columnSize.Text = "Size [bytes]";
+            // 
+            // columnDate
+            // 
+            this.columnDate.Text = "Date";
+            this.columnDate.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // webAttachmentView
+            // 
+            this.webAttachmentView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webAttachmentView.Location = new System.Drawing.Point(0, 0);
+            this.webAttachmentView.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webAttachmentView.Name = "webAttachmentView";
+            this.webAttachmentView.ScriptErrorsSuppressed = true;
+            this.webAttachmentView.Size = new System.Drawing.Size(433, 402);
+            this.webAttachmentView.TabIndex = 0;
+            this.webAttachmentView.Url = new System.Uri("", System.UriKind.Relative);
+            // 
             // toolStrip1
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
@@ -398,6 +488,10 @@ namespace Atlassian.plvs.ui.jira {
             this.toolStrip2.ResumeLayout(false);
             this.toolStrip2.PerformLayout();
             this.tabSubtasks.ResumeLayout(false);
+            this.tabAttachments.ResumeLayout(false);
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            this.splitContainer2.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -431,5 +525,13 @@ namespace Atlassian.plvs.ui.jira {
         private System.Windows.Forms.ToolStripButton buttonLogWork;
         private System.Windows.Forms.TabPage tabSubtasks;
         private System.Windows.Forms.WebBrowser webSubtasks;
+        private System.Windows.Forms.TabPage tabAttachments;
+        private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.ListView listViewAttachments;
+        private System.Windows.Forms.ColumnHeader columnName;
+        private System.Windows.Forms.WebBrowser webAttachmentView;
+        private System.Windows.Forms.ColumnHeader columnAuthor;
+        private System.Windows.Forms.ColumnHeader columnDate;
+        private System.Windows.Forms.ColumnHeader columnSize;
     }
 }
