@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Aga.Controls.Tree;
 using Atlassian.plvs.api.bamboo;
+using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.models.bamboo;
 using Atlassian.plvs.ui.bamboo.treemodels;
@@ -213,6 +214,7 @@ namespace Atlassian.plvs.ui.bamboo {
                                   catch (Exception ex) {
                                       Debug.WriteLine("buttonViewInBrowser_Click - exception: " + ex.Message);
                                   }
+                                  UsageCollector.Instance.bumpBambooBuildsOpen();
                               });
         }
 
@@ -229,6 +231,7 @@ namespace Atlassian.plvs.ui.bamboo {
             try {
                 Facade.runBuild(b.Server, key);
                 status.setInfo("Added build " + key + " to the build queue");
+                UsageCollector.Instance.bumpBambooBuildsOpen();
             } catch (Exception ex) {
                 status.setError("Failed to add build " + key + " to the build queue", ex);
             }

@@ -84,6 +84,7 @@
     <Compile Include="autoupdate\ManualUpdate.Designer.cs">
       <DependentUpon>ManualUpdate.cs</DependentUpon>
     </Compile>
+    <Compile Include="autoupdate\UsageCollector.cs" />
     <Compile Include="dialogs\About.cs">
       <SubType>Form</SubType>
     </Compile>

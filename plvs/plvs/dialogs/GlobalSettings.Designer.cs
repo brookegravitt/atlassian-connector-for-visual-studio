@@ -44,6 +44,9 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.numericBambooPollingInterval = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.linkUsageStatsDetails = new System.Windows.Forms.LinkLabel();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -107,6 +110,9 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.linkUsageStatsDetails);
+            this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.radioUnstable);
             this.groupBox1.Controls.Add(this.radioStable);
             this.groupBox1.Controls.Add(this.checkAutoupdate);
@@ -259,6 +265,35 @@
             this.label2.TabIndex = 0;
             this.label2.Text = "Polling Interval [seconds]";
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(161, 68);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(10, 13);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "(";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(204, 68);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(10, 13);
+            this.label4.TabIndex = 7;
+            this.label4.Text = ")";
+            // 
+            // linkUsageStatsDetails
+            // 
+            this.linkUsageStatsDetails.AutoSize = true;
+            this.linkUsageStatsDetails.Location = new System.Drawing.Point(167, 68);
+            this.linkUsageStatsDetails.Name = "linkUsageStatsDetails";
+            this.linkUsageStatsDetails.Size = new System.Drawing.Size(39, 13);
+            this.linkUsageStatsDetails.TabIndex = 8;
+            this.linkUsageStatsDetails.TabStop = true;
+            this.linkUsageStatsDetails.Text = "Details";
+            this.linkUsageStatsDetails.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkUsageStatsDetails_LinkClicked);
+            // 
             // GlobalSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -309,6 +344,9 @@
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.NumericUpDown numericBambooPollingInterval;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.LinkLabel linkUsageStatsDetails;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label3;
 
     }
 }

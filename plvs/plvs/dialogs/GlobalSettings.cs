@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.util;
@@ -90,6 +91,9 @@ namespace Atlassian.plvs.dialogs {
                 + " usage statistics to help us provide a better quality product. Is this OK?",
                 Constants.QUESTION_CAPTION, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             ReportUsage = result == DialogResult.Yes;
+
+            UsageCollector.Instance.sendOptInOptOut(ReportUsage);
+
             saveValues();
         }
 
@@ -107,7 +111,10 @@ namespace Atlassian.plvs.dialogs {
             JiraIssuesBatch = (int) numericJiraBatchSize.Value;
             AutoupdateEnabled = checkAutoupdate.Checked;
             AutoupdateSnapshots = checkUnstable.Checked;
-            ReportUsage = checkStats.Checked;
+            if (ReportUsage != checkStats.Checked) {
+                ReportUsage = checkStats.Checked;
+                UsageCollector.Instance.sendOptInOptOut(ReportUsage);
+            }
             CheckStableOnlyNow = radioStable.Checked;
             BambooPollingInterval = (int) numericBambooPollingInterval.Value;
 
@@ -158,6 +165,15 @@ namespace Atlassian.plvs.dialogs {
         private void checkAutoupdate_CheckedChanged(object sender, EventArgs e) {
             checkUnstable.Enabled = checkAutoupdate.Checked;
             checkStats.Enabled = checkAutoupdate.Checked;
+        }
+
+        private void linkUsageStatsDetails_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            try {
+                Process.Start(
+                    "http://confluence.atlassian.com/display/IDEPLUGIN/Collecting+Usage+Statistics+for+the+IntelliJ+Connector");
+            } catch (Exception ex) {
+                Debug.WriteLine("GlobalSettings.linkUsageStatsDetails_LinkClicked() - exception: " + ex.Message);
+            }
         }
     }
 }
