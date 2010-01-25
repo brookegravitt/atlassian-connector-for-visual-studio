@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui.jira.issues;
 using EnvDTE;
@@ -47,6 +48,7 @@ namespace Atlassian.plvs.ui.jira {
                 issueTabs.TabPages.Add(issueTab);
             }
             issueTabs.SelectTab(key);
+            UsageCollector.Instance.bumpJiraIssuesOpen();
         }
 
         private static string getIssueTabKey(JiraIssue issue) {

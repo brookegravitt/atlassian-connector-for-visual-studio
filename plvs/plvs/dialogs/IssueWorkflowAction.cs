@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
 using Atlassian.plvs.ui.jira.fields;
@@ -270,6 +271,7 @@ namespace Atlassian.plvs.dialogs {
                                                           JiraServerFacade.Instance.runIssueActionWithParams(
                                                               issue, action, updatedFields, textComment.Text.Length > 0 ? textComment.Text : null);
                                                           var newIssue = JiraServerFacade.Instance.getIssue(issue.Server, issue.Key);
+                                                          UsageCollector.Instance.bumpJiraIssuesOpen();
                                                           status.setInfo("Action \"" + action.Name + "\" successfully run on issue " + issue.Key);
                                                           Invoke(new MethodInvoker(delegate {
                                                                                        Close();

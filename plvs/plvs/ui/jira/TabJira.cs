@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Threading;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.explorer;
 using Atlassian.plvs.models;
@@ -169,7 +170,12 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private static void browseSelectedIssue(JiraIssue issue) {
-            Process.Start(issue.Server.Url + "/browse/" + issue.Key);
+            try {
+                Process.Start(issue.Server.Url + "/browse/" + issue.Key);
+            } catch (Exception e) {
+                Debug.WriteLine("TabJira.browseSelectedIssue() - exception: " + e.Message);
+            }
+            UsageCollector.Instance.bumpJiraIssuesOpen();
         }
 
         private void browseEditIssue(object sender, EventArgs e) {
@@ -181,7 +187,12 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private static void browseEditSelectedIssue(JiraIssue issue) {
-            Process.Start(issue.Server.Url + "/secure/EditIssue!default.jspa?id=" + issue.Id);
+            try {
+                Process.Start(issue.Server.Url + "/secure/EditIssue!default.jspa?id=" + issue.Id);
+            } catch (Exception e) {
+                Debug.WriteLine("TabJira.browseEditSelectedIssue() - exception: " + e.Message);
+            }
+            UsageCollector.Instance.bumpJiraIssuesOpen();
         }
 
         private void logWorkOnSelectedIssue(JiraIssue issue) {

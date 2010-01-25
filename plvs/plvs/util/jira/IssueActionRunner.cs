@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
@@ -44,6 +45,7 @@ namespace Atlassian.plvs.util.jira {
             JiraServerFacade.Instance.runIssueActionWithoutParams(issue, action);
             status.setInfo("Action \"" + action.Name + "\" successfully run on issue " + issue.Key);
             var newIssue = JiraServerFacade.Instance.getIssue(issue.Server, issue.Key);
+            UsageCollector.Instance.bumpJiraIssuesOpen();
             owner.Invoke(new MethodInvoker(() => model.updateIssue(newIssue)));
         }
     }

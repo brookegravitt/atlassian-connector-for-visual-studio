@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
 using Atlassian.plvs.util;
@@ -132,6 +133,7 @@ namespace Atlassian.plvs.dialogs {
                 status.setInfo("Logging work for issue " + issue.Key + "...");
                 action();
                 status.setInfo("Logged work for issue " + issue.Key);
+                UsageCollector.Instance.bumpJiraIssuesOpen();
                 JiraIssue updatedIssue = facade.getIssue(issue.Server, issue.Key);
                 parent.Invoke(new MethodInvoker(() => model.updateIssue(updatedIssue)));
             } catch (Exception e) {

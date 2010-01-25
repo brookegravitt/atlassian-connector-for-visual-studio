@@ -24,7 +24,7 @@ namespace Atlassian.plvs.autoupdate {
             get { return INSTANCE; }
         }
 
-        private const string STABLE_URL = "http://update.atlassian.com/atlassian-vs-plugin/latestStableVersion.xml";
+        public const string STABLE_URL = "http://update.atlassian.com/atlassian-vs-plugin/latestStableVersion.xml";
         private const string SNAPSHOT_URL = "http://docs.atlassian.com/atlassian-vs-plugin/latestPossibleVersion.xml";
 
         public string NewVersionNumber { get; private set; }
@@ -68,7 +68,7 @@ namespace Atlassian.plvs.autoupdate {
             }
             string url = GlobalSettings.AutoupdateSnapshots ? SNAPSHOT_URL : STABLE_URL;
             if (GlobalSettings.ReportUsage) {
-                url = getUsageReportingUrl(url);
+                url = UsageCollector.Instance.getUsageReportingUrl(url);
             }
 
             Thread t = new Thread(() => runSingleUpdateQuery(url, true));
@@ -87,7 +87,7 @@ namespace Atlassian.plvs.autoupdate {
         public void runManualUpdate(bool stableOnly, Form parent, Action onFinished) {
             string url = stableOnly ? STABLE_URL : SNAPSHOT_URL;
             if (GlobalSettings.ReportUsage) {
-                url = getUsageReportingUrl(url);
+                url = UsageCollector.Instance.getUsageReportingUrl(url);
             }
             Thread t = new Thread(new ThreadStart(delegate { 
                 if (runSingleUpdateQuery(url, false)) {
@@ -159,10 +159,6 @@ namespace Atlassian.plvs.autoupdate {
                 }
             }
             return false;
-        }
-
-        private string getUsageReportingUrl(string url) {
-            return url;
         }
     }
 }

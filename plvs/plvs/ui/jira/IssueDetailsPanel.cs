@@ -7,6 +7,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Diagnostics;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui.jira.issues;
@@ -391,6 +392,7 @@ namespace Atlassian.plvs.ui.jira {
                                                                          status.setInfo("Adding comment to issue...");
                                                                          facade.addComment(issue, dlg.CommentBody);
                                                                          status.setInfo("Comment added, refreshing view...");
+                                                                         UsageCollector.Instance.bumpJiraIssuesOpen();
                                                                          runRefreshThread();
                                                                      }
                                                                      catch (Exception ex) {
@@ -552,7 +554,12 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void buttonViewInBrowser_Click(object sender, EventArgs e) {
-            Process.Start(issue.Server.Url + "/browse/" + issue.Key);
+            try {
+                Process.Start(issue.Server.Url + "/browse/" + issue.Key);
+            } catch (Exception ex) {
+                Debug.WriteLine("IssueDetailsPanel.buttonViewInBrowser_Click() - exception: " + ex);
+            }
+            UsageCollector.Instance.bumpJiraIssuesOpen();
         }
 
         private void dropDownIssueActions_DropDownOpened(object sender, EventArgs e) {
