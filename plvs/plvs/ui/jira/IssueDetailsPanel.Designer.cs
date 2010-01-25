@@ -50,7 +50,7 @@ namespace Atlassian.plvs.ui.jira {
             this.webSubtasks = new System.Windows.Forms.WebBrowser();
             this.tabAttachments = new System.Windows.Forms.TabPage();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.listViewAttachments = new System.Windows.Forms.ListView();
+            this.listViewAttachments = new AutosizeListView();
             this.columnName = new System.Windows.Forms.ColumnHeader();
             this.columnAuthor = new System.Windows.Forms.ColumnHeader();
             this.columnSize = new System.Windows.Forms.ColumnHeader();
@@ -62,6 +62,7 @@ namespace Atlassian.plvs.ui.jira {
             this.buttonClose = new System.Windows.Forms.ToolStripButton();
             this.buttonLogWork = new System.Windows.Forms.ToolStripButton();
             this.dropDownIssueActions = new System.Windows.Forms.ToolStripDropDownButton();
+            this.label3 = new System.Windows.Forms.Label();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -338,13 +339,13 @@ namespace Atlassian.plvs.ui.jira {
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.webAttachmentView);
+            this.splitContainer2.Panel2.Controls.Add(this.label3);
             this.splitContainer2.Size = new System.Drawing.Size(777, 402);
             this.splitContainer2.SplitterDistance = 340;
             this.splitContainer2.TabIndex = 0;
             // 
             // listViewAttachments
             // 
-            this.listViewAttachments.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.listViewAttachments.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnName,
             this.columnAuthor,
@@ -361,34 +362,38 @@ namespace Atlassian.plvs.ui.jira {
             this.listViewAttachments.TabIndex = 0;
             this.listViewAttachments.UseCompatibleStateImageBehavior = false;
             this.listViewAttachments.View = System.Windows.Forms.View.Details;
+            this.listViewAttachments.SizeChanged += new System.EventHandler(this.listViewAttachments_SizeChanged);
             this.listViewAttachments.Click += new System.EventHandler(this.listViewAttachments_Click);
             // 
             // columnName
             // 
             this.columnName.Text = "Name";
-            this.columnName.Width = 114;
+            this.columnName.Width = 240;
             // 
             // columnAuthor
             // 
             this.columnAuthor.Text = "Author";
+            this.columnAuthor.Width = 140;
             // 
             // columnSize
             // 
             this.columnSize.Text = "Size [bytes]";
+            this.columnSize.Width = 100;
             // 
             // columnDate
             // 
             this.columnDate.Text = "Date";
             this.columnDate.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.columnDate.Width = 35;
             // 
             // webAttachmentView
             // 
             this.webAttachmentView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webAttachmentView.Location = new System.Drawing.Point(0, 0);
+            this.webAttachmentView.Location = new System.Drawing.Point(0, 24);
             this.webAttachmentView.MinimumSize = new System.Drawing.Size(20, 20);
             this.webAttachmentView.Name = "webAttachmentView";
             this.webAttachmentView.ScriptErrorsSuppressed = true;
-            this.webAttachmentView.Size = new System.Drawing.Size(433, 402);
+            this.webAttachmentView.Size = new System.Drawing.Size(433, 378);
             this.webAttachmentView.TabIndex = 0;
             this.webAttachmentView.Url = new System.Uri("", System.UriKind.Relative);
             // 
@@ -455,6 +460,16 @@ namespace Atlassian.plvs.ui.jira {
             this.dropDownIssueActions.Size = new System.Drawing.Size(29, 22);
             this.dropDownIssueActions.Text = "Issue Actions";
             this.dropDownIssueActions.DropDownOpened += new System.EventHandler(this.dropDownIssueActions_DropDownOpened);
+            // 
+            // label3
+            // 
+            this.label3.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label3.Location = new System.Drawing.Point(0, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(433, 24);
+            this.label3.TabIndex = 0;
+            this.label3.Text = "Preview";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // IssueDetailsPanel
             // 
@@ -527,11 +542,12 @@ namespace Atlassian.plvs.ui.jira {
         private System.Windows.Forms.WebBrowser webSubtasks;
         private System.Windows.Forms.TabPage tabAttachments;
         private System.Windows.Forms.SplitContainer splitContainer2;
-        private System.Windows.Forms.ListView listViewAttachments;
+        private AutosizeListView listViewAttachments;
         private System.Windows.Forms.ColumnHeader columnName;
         private System.Windows.Forms.WebBrowser webAttachmentView;
         private System.Windows.Forms.ColumnHeader columnAuthor;
         private System.Windows.Forms.ColumnHeader columnDate;
         private System.Windows.Forms.ColumnHeader columnSize;
+        private System.Windows.Forms.Label label3;
     }
 }

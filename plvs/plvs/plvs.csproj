@@ -247,6 +247,9 @@
       <DependentUpon>AnkhSvnJiraConnectorControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ui\AddNewServerLink.cs" />
+    <Compile Include="ui\AutosizeListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ui\bamboo\BambooBuildTree.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -704,6 +707,7 @@
     <None Include="Resources\texts\summary_and_description_css.txt" />
     <None Include="Resources\texts\toggler_javascript.txt" />
     <None Include="third party\ankh\LICENSE.rtf" />
+    <Content Include="Resources\texts\attachment_download_html.txt" />
     <Content Include="Resources\texts\autoupdate_html.txt" />
     <Content Include="third party\ankh\Ankh.ExtensionPoints.dll" />
     <Content Include="third party\treeviewadv\Aga.Controls.dll" />

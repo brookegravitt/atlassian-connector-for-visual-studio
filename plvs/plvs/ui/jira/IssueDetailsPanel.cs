@@ -623,8 +623,8 @@ namespace Atlassian.plvs.ui.jira {
             if (isInlineNavigable(item.Attachment.Name)) {
                 webAttachmentView.Navigate(item.Url + "?" + JiraIssueUtils.getAuthString(issue.Server));
             } else {
-                webAttachmentView.DocumentText = 
-                    "<html><body><a href=\"" + item.Url + "?" + JiraIssueUtils.getAuthString(issue.Server) + "\">click to view</a></body></html>";
+                webAttachmentView.DocumentText = string.Format(Resources.attachment_download_html, 
+                    Font.FontFamily.Name, item.Url + "?" + JiraIssueUtils.getAuthString(issue.Server));
             }
         }
 
@@ -638,6 +638,13 @@ namespace Atlassian.plvs.ui.jira {
                 || name.EndsWith(".txt") 
                 || name.EndsWith(".xml")
                 || name.EndsWith(".log");
+        }
+
+        private void listViewAttachments_SizeChanged(object sender, EventArgs e) {
+            columnName.Width = listViewAttachments.Width / 2;
+            columnAuthor.Width = listViewAttachments.Width / 6;
+            columnSize.Width = listViewAttachments.Width / 6;
+            columnDate.Width = -2;
         }
     }
 }
