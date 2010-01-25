@@ -44,6 +44,8 @@ namespace Atlassian.plvs.api.jira {
 
         private List<string> components = new List<string>();
 
+        private List<JiraAttachment> attachments = new List<JiraAttachment>();
+
         public JiraIssue() {}
 
         public JiraIssue(JiraServer server, XPathNavigator nav) {
@@ -65,6 +67,9 @@ namespace Atlassian.plvs.api.jira {
                         break;
                     case "summary":
                         Summary = nav.Value;
+                        break;
+                    case "attachments":
+                        getAttachments(nav);
                         break;
                     case "status":
                         Status = nav.Value;
@@ -122,7 +127,7 @@ namespace Atlassian.plvs.api.jira {
                         components.Add(nav.Value);
                         break;
                     case "comments":
-                        createComments(nav);
+                        getComments(nav);
                         break;
                     case "environment":
                         Environment = nav.Value;
@@ -136,7 +141,24 @@ namespace Atlassian.plvs.api.jira {
             }
         }
 
-        private void createComments(XPathNavigator nav) {
+        private void getAttachments(XPathNavigator nav) {
+            XPathExpression expr = nav.Compile("attachment");
+            XPathNodeIterator it = nav.Select(expr);
+
+            if (!nav.MoveToFirstChild()) return;
+            while (it.MoveNext()) {
+                JiraAttachment a = new JiraAttachment(
+                    int.Parse(XPathUtils.getAttributeSafely(it.Current, "id", "0")),
+                    XPathUtils.getAttributeSafely(it.Current, "name", "none"),
+                    JiraIssueUtils.getDateTimeFromJiraTimeString(XPathUtils.getAttributeSafely(it.Current, "created", "none")),
+                    XPathUtils.getAttributeSafely(it.Current, "author", "none"),
+                    int.Parse(XPathUtils.getAttributeSafely(it.Current, "size", "0")));
+                attachments.Add(a);
+            }
+            nav.MoveToParent();
+        }
+
+        private void getComments(XPathNavigator nav) {
             XPathExpression expr = nav.Compile("comment");
             XPathNodeIterator it = nav.Select(expr);
 
@@ -178,6 +200,8 @@ namespace Atlassian.plvs.api.jira {
         public bool HasSubtasks { get { return subtaskKeys.Count > 0; } }
 
         public List<string> SubtaskKeys { get { return subtaskKeys; } }
+
+        public List<JiraAttachment> Attachments { get { return attachments; } }
 
         private readonly List<string> subtaskKeys = new List<string>();
 
@@ -252,6 +276,8 @@ namespace Atlassian.plvs.api.jira {
 
         public JiraNamedEntity SecurityLevel { get; set; }
 
+        public bool HasAttachments { get { return Attachments != null && Attachments.Count > 0; } }
+
         public bool Equals(JiraIssue other) {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -286,6 +312,7 @@ namespace Atlassian.plvs.api.jira {
             eq &= compareLists(other.fixVersions, fixVersions);
             eq &= compareLists(other.components, components);
             eq &= compareLists(other.SubtaskKeys, SubtaskKeys);
+            eq &= compareLists(other.Attachments, Attachments);
 
             return eq;
         }
@@ -308,6 +335,7 @@ namespace Atlassian.plvs.api.jira {
                 result = (result*397) ^ (fixVersions != null ? fixVersions.GetHashCode() : 0);
                 result = (result*397) ^ (SubtaskKeys.GetHashCode());
                 result = (result*397) ^ (components != null ? components.GetHashCode() : 0);
+                result = (result*397) ^ (attachments != null ? attachments.GetHashCode() : 0);
                 result = (result*397) ^ (Server != null ? Server.GUID.GetHashCode() : 0);
                 result = (result*397) ^ (IssueType != null ? IssueType.GetHashCode() : 0);
                 result = (result*397) ^ IssueTypeId;

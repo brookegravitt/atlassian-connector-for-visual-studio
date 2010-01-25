@@ -120,6 +120,7 @@ namespace Atlassian.plvs.ui.jira {
                                              rebuildDescriptionPanel();
                                              rebuildCommentsPanel(true);
                                              rebuildSubtasksPanel();
+                                             rebuildAttachmentsPanel();
                                              buttonRefresh.Enabled = enableRefresh;
                                          }));
         }
@@ -312,6 +313,22 @@ namespace Atlassian.plvs.ui.jira {
         private void rebuildCommentsPanel(bool expanded) {
             issueCommentsLoaded = false;
             issueComments.DocumentText = createCommentsHtml(expanded);
+        }
+
+        private void rebuildAttachmentsPanel() {
+            listViewAttachments.Items.Clear();
+            if (issue.HasAttachments) {
+                if (!issueTabs.TabPages.Contains(tabAttachments)) {
+                    issueTabs.TabPages.Add(tabAttachments);
+                }
+                foreach (JiraAttachment att in issue.Attachments) {
+                    listViewAttachments.Items.Add(new JiraAttachmentListViewItem(issue, att));
+                }
+            } else {
+                if (issueTabs.TabPages.Contains(tabAttachments)) {
+                    issueTabs.TabPages.Remove(tabAttachments);
+                }
+            }
         }
 
         private void rebuildSubtasksPanel() {
@@ -595,6 +612,32 @@ namespace Atlassian.plvs.ui.jira {
 
         private void buttonLogWork_Click(object sender, EventArgs e) {
             new LogWork(this, model, facade, issue, status).ShowDialog();
+        }
+
+        private void listViewAttachments_Click(object sender, EventArgs e) {
+            if (listViewAttachments.SelectedItems.Count == 0) return;
+
+            JiraAttachmentListViewItem item = listViewAttachments.SelectedItems[0] as JiraAttachmentListViewItem;
+            if (item == null) return;
+
+            if (isInlineNavigable(item.Attachment.Name)) {
+                webAttachmentView.Navigate(item.Url + "?" + JiraIssueUtils.getAuthString(issue.Server));
+            } else {
+                webAttachmentView.DocumentText = 
+                    "<html><body><a href=\"" + item.Url + "?" + JiraIssueUtils.getAuthString(issue.Server) + "\">click to view</a></body></html>";
+            }
+        }
+
+        private static bool isInlineNavigable(string name) {
+            // hmm hmm, will these be typical files that are 
+            // (1) openable by IE and 
+            // (2) usually interesting for users to view?
+            return name.EndsWith(".jpg") 
+                || name.EndsWith(".png") 
+                || name.EndsWith(".gif") 
+                || name.EndsWith(".txt") 
+                || name.EndsWith(".xml")
+                || name.EndsWith(".log");
         }
     }
 }

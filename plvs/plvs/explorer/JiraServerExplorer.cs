@@ -6,6 +6,7 @@ using Atlassian.plvs.api.jira;
 using Atlassian.plvs.explorer.treeNodes;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
+using Atlassian.plvs.util.jira;
 
 namespace Atlassian.plvs.explorer {
     public sealed partial class JiraServerExplorer : Form {
@@ -52,7 +53,7 @@ namespace Atlassian.plvs.explorer {
 
             activeExplorers[server.GUID.ToString()] = this;
 
-            webJira.Navigate(server.Url + "?" + getAuthString());
+            webJira.Navigate(server.Url + "?" + JiraIssueUtils.getAuthString(server));
 
             treeJira.Nodes.Add(new PrioritiesNode(this, model, facade, server));
             treeJira.Nodes.Add(new ProjectsNode(this, model, facade, server));
@@ -60,15 +61,11 @@ namespace Atlassian.plvs.explorer {
             treeJira.SelectedNode = null;
         }
 
-        private string getAuthString() {
-            return "os_username=" + HttpUtility.UrlEncode(server.UserName) + "&os_password=" + HttpUtility.UrlEncode(server.Password);
-        }
-
         private void treeJira_AfterSelect(object sender, TreeViewEventArgs e) {
             AbstractNavigableTreeNodeWithServer node = treeJira.SelectedNode as AbstractNavigableTreeNodeWithServer;
             if (node != null) {
                 node.onClick(status);
-                string url = node.getUrl(getAuthString());
+                string url = node.getUrl(JiraIssueUtils.getAuthString(server));
                 webJira.Navigate(url);
 
                 ICollection<ToolStripItem> menuItems = node.MenuItems;
