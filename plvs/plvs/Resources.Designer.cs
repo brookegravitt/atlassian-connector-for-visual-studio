@@ -112,6 +112,23 @@ namespace Atlassian.plvs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;body style=&quot;padding:2em;margin:0;&quot;&gt;
+        ///&lt;div style=&quot;font-family:{0};font-size:12px;&quot;&gt;
+        ///
+        ///&lt;center&gt;Unable to view attachment&lt;/center&gt;
+        ///&lt;br&gt;
+        ///&lt;center&gt;&lt;a href=&quot;{1}&quot;&gt;Click hereto download it&lt;/a&gt;&lt;/center&gt;
+        ///
+        ///&lt;/div&gt;
+        ///&lt;/body&gt;.
+        /// </summary>
+        internal static string attachment_download_html {
+            get {
+                return ResourceManager.GetString("attachment_download_html", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;body style=&quot;padding:0;margin:0;background-color:{1};&quot;&gt;
         ///&lt;div style=&quot;font-family:{0};font-size:12px;background-color:{1};&quot;&gt;
         ///
