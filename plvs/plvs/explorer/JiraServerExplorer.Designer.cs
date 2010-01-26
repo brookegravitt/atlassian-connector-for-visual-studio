@@ -36,7 +36,7 @@
             this.treeJira = new System.Windows.Forms.TreeView();
             this.webJira = new System.Windows.Forms.WebBrowser();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.dropDownCreateDropZone = new System.Windows.Forms.ToolStripDropDownButton();
+            this.dropDownActions = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -164,19 +164,18 @@
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.dropDownCreateDropZone});
+            this.dropDownActions});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(136, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(146, 25);
             this.toolStrip1.TabIndex = 0;
             // 
-            // dropDownCreateDropZone
+            // dropDownActions
             // 
-            this.dropDownCreateDropZone.Image = global::Atlassian.plvs.Resources.dropzone;
-            this.dropDownCreateDropZone.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.dropDownCreateDropZone.Name = "dropDownCreateDropZone";
-            this.dropDownCreateDropZone.Size = new System.Drawing.Size(124, 22);
-            this.dropDownCreateDropZone.Text = "Open Drop Zone";
+            this.dropDownActions.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.dropDownActions.Name = "dropDownActions";
+            this.dropDownActions.Size = new System.Drawing.Size(134, 22);
+            this.dropDownActions.Text = "Selected Item Actions";
             // 
             // JiraServerExplorer
             // 
@@ -221,7 +220,7 @@
         private System.Windows.Forms.ToolStripPanel LeftToolStripPanel;
         private System.Windows.Forms.ToolStripContentPanel ContentPanel;
         private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripDropDownButton dropDownCreateDropZone;
+        private System.Windows.Forms.ToolStripDropDownButton dropDownActions;
 
 
     }
