@@ -208,6 +208,8 @@
     <Compile Include="explorer\treeNodes\AbstractNavigableTreeNodeWithServer.cs" />
     <Compile Include="explorer\treeNodes\ComponentsNode.cs" />
     <Compile Include="explorer\treeNodes\ComponentNode.cs" />
+    <Compile Include="explorer\treeNodes\UserNode.cs" />
+    <Compile Include="explorer\treeNodes\UsersNode.cs" />
     <Compile Include="explorer\treeNodes\PriorityNode.cs" />
     <Compile Include="explorer\treeNodes\PrioritiesNode.cs" />
     <Compile Include="explorer\treeNodes\ProjectsNode.cs" />
