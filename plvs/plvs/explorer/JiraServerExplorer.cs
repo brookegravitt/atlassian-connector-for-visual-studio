@@ -56,6 +56,7 @@ namespace Atlassian.plvs.explorer {
             webJira.Navigate(server.Url + "?" + JiraIssueUtils.getAuthString(server));
 
             treeJira.Nodes.Add(new PrioritiesNode(this, model, facade, server));
+            treeJira.Nodes.Add(new UsersNode(model, facade, server));
             treeJira.Nodes.Add(new ProjectsNode(this, model, facade, server));
 
             treeJira.SelectedNode = null;

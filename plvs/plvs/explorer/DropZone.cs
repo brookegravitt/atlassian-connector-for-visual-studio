@@ -149,7 +149,7 @@ namespace Atlassian.plvs.explorer {
                 model.updateIssue(issue);
                 textHistory.Text = 
                     DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() 
-                    + " - " + issue.Key + (add ? " [added]" : " [moved]") + "\r\n" + textHistory.Text;
+                    + " - " + issue.Key + (worker.CanAdd ? (add ? " [added]" : " [moved]") : "") + "\r\n" + textHistory.Text;
             }
             AllowDrop = true;
             labelInfo.Text = worker.InitialText;
