@@ -1,7 +1,4 @@
-﻿using Atlassian.plvs.api;
-using Atlassian.plvs.ui.jira;
-
-namespace Atlassian.plvs.dialogs {
+﻿namespace Atlassian.plvs.dialogs {
     partial class CreateIssue {
         /// <summary>
         /// Required designer variable.
@@ -29,15 +26,13 @@ namespace Atlassian.plvs.dialogs {
             this.buttonCreate = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.comboProjects = new System.Windows.Forms.ComboBox();
-            this.comboTypes = new JiraNamedEntityComboBox();
+            this.comboTypes = new ui.jira.JiraNamedEntityComboBox();
             this.listComponents = new System.Windows.Forms.ListBox();
             this.listAffectsVersions = new System.Windows.Forms.ListBox();
             this.listFixVersions = new System.Windows.Forms.ListBox();
-            this.comboPriorities = new JiraNamedEntityComboBox();
+            this.comboPriorities = new ui.jira.JiraNamedEntityComboBox();
             this.textSummary = new System.Windows.Forms.TextBox();
             this.textDescription = new System.Windows.Forms.TextBox();
-            this.textAssignee = new System.Windows.Forms.TextBox();
-            this.labelWarning = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -47,11 +42,12 @@ namespace Atlassian.plvs.dialogs {
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
+            this.jiraAssigneePicker = new ui.jira.JiraUserPicker();
             this.SuspendLayout();
             // 
             // buttonCreate
             // 
-            this.buttonCreate.Location = new System.Drawing.Point(372, 574);
+            this.buttonCreate.Location = new System.Drawing.Point(405, 574);
             this.buttonCreate.Name = "buttonCreate";
             this.buttonCreate.Size = new System.Drawing.Size(75, 23);
             this.buttonCreate.TabIndex = 9;
@@ -61,7 +57,7 @@ namespace Atlassian.plvs.dialogs {
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Location = new System.Drawing.Point(453, 574);
+            this.buttonCancel.Location = new System.Drawing.Point(486, 574);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 10;
@@ -75,7 +71,7 @@ namespace Atlassian.plvs.dialogs {
             this.comboProjects.FormattingEnabled = true;
             this.comboProjects.Location = new System.Drawing.Point(102, 12);
             this.comboProjects.Name = "comboProjects";
-            this.comboProjects.Size = new System.Drawing.Size(424, 21);
+            this.comboProjects.Size = new System.Drawing.Size(459, 21);
             this.comboProjects.TabIndex = 0;
             this.comboProjects.SelectedIndexChanged += new System.EventHandler(this.comboProjects_SelectedIndexChanged);
             // 
@@ -88,7 +84,7 @@ namespace Atlassian.plvs.dialogs {
             this.comboTypes.ItemHeight = 16;
             this.comboTypes.Location = new System.Drawing.Point(102, 40);
             this.comboTypes.Name = "comboTypes";
-            this.comboTypes.Size = new System.Drawing.Size(424, 22);
+            this.comboTypes.Size = new System.Drawing.Size(459, 22);
             this.comboTypes.TabIndex = 1;
             this.comboTypes.SelectedIndexChanged += new System.EventHandler(this.comboTypes_SelectedIndexChanged);
             // 
@@ -98,7 +94,7 @@ namespace Atlassian.plvs.dialogs {
             this.listComponents.Location = new System.Drawing.Point(102, 67);
             this.listComponents.Name = "listComponents";
             this.listComponents.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listComponents.Size = new System.Drawing.Size(424, 95);
+            this.listComponents.Size = new System.Drawing.Size(459, 95);
             this.listComponents.TabIndex = 2;
             // 
             // listAffectsVersions
@@ -107,7 +103,7 @@ namespace Atlassian.plvs.dialogs {
             this.listAffectsVersions.Location = new System.Drawing.Point(102, 168);
             this.listAffectsVersions.Name = "listAffectsVersions";
             this.listAffectsVersions.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listAffectsVersions.Size = new System.Drawing.Size(424, 95);
+            this.listAffectsVersions.Size = new System.Drawing.Size(459, 95);
             this.listAffectsVersions.TabIndex = 3;
             // 
             // listFixVersions
@@ -116,7 +112,7 @@ namespace Atlassian.plvs.dialogs {
             this.listFixVersions.Location = new System.Drawing.Point(102, 269);
             this.listFixVersions.Name = "listFixVersions";
             this.listFixVersions.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listFixVersions.Size = new System.Drawing.Size(424, 95);
+            this.listFixVersions.Size = new System.Drawing.Size(459, 95);
             this.listFixVersions.TabIndex = 4;
             // 
             // comboPriorities
@@ -128,14 +124,14 @@ namespace Atlassian.plvs.dialogs {
             this.comboPriorities.ItemHeight = 16;
             this.comboPriorities.Location = new System.Drawing.Point(102, 370);
             this.comboPriorities.Name = "comboPriorities";
-            this.comboPriorities.Size = new System.Drawing.Size(424, 22);
+            this.comboPriorities.Size = new System.Drawing.Size(459, 22);
             this.comboPriorities.TabIndex = 5;
             // 
             // textSummary
             // 
             this.textSummary.Location = new System.Drawing.Point(102, 397);
             this.textSummary.Name = "textSummary";
-            this.textSummary.Size = new System.Drawing.Size(424, 20);
+            this.textSummary.Size = new System.Drawing.Size(459, 20);
             this.textSummary.TabIndex = 6;
             this.textSummary.TextChanged += new System.EventHandler(this.textSummary_TextChanged);
             // 
@@ -144,24 +140,8 @@ namespace Atlassian.plvs.dialogs {
             this.textDescription.Location = new System.Drawing.Point(102, 423);
             this.textDescription.Multiline = true;
             this.textDescription.Name = "textDescription";
-            this.textDescription.Size = new System.Drawing.Size(424, 102);
+            this.textDescription.Size = new System.Drawing.Size(459, 102);
             this.textDescription.TabIndex = 7;
-            // 
-            // textAssignee
-            // 
-            this.textAssignee.Location = new System.Drawing.Point(102, 531);
-            this.textAssignee.Name = "textAssignee";
-            this.textAssignee.Size = new System.Drawing.Size(136, 20);
-            this.textAssignee.TabIndex = 8;
-            // 
-            // labelWarning
-            // 
-            this.labelWarning.AutoSize = true;
-            this.labelWarning.Location = new System.Drawing.Point(246, 534);
-            this.labelWarning.Name = "labelWarning";
-            this.labelWarning.Size = new System.Drawing.Size(282, 13);
-            this.labelWarning.TabIndex = 11;
-            this.labelWarning.Text = "Warning";
             // 
             // label2
             // 
@@ -246,19 +226,27 @@ namespace Atlassian.plvs.dialogs {
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(46, 534);
+            this.label10.Location = new System.Drawing.Point(46, 537);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(50, 13);
             this.label10.TabIndex = 20;
             this.label10.Text = "Assignee";
             this.label10.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
+            // jiraAssigneePicker
+            // 
+            this.jiraAssigneePicker.Location = new System.Drawing.Point(97, 531);
+            this.jiraAssigneePicker.Name = "jiraAssigneePicker";
+            this.jiraAssigneePicker.Size = new System.Drawing.Size(458, 30);
+            this.jiraAssigneePicker.TabIndex = 21;
+            // 
             // CreateIssue
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(540, 609);
+            this.ClientSize = new System.Drawing.Size(576, 609);
             this.ControlBox = false;
+            this.Controls.Add(this.jiraAssigneePicker);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
@@ -268,8 +256,6 @@ namespace Atlassian.plvs.dialogs {
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.labelWarning);
-            this.Controls.Add(this.textAssignee);
             this.Controls.Add(this.textDescription);
             this.Controls.Add(this.textSummary);
             this.Controls.Add(this.comboPriorities);
@@ -293,15 +279,13 @@ namespace Atlassian.plvs.dialogs {
         private System.Windows.Forms.Button buttonCreate;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.ComboBox comboProjects;
-        private JiraNamedEntityComboBox comboTypes;
+        private ui.jira.JiraNamedEntityComboBox comboTypes;
         private System.Windows.Forms.ListBox listComponents;
         private System.Windows.Forms.ListBox listAffectsVersions;
         private System.Windows.Forms.ListBox listFixVersions;
-        private JiraNamedEntityComboBox comboPriorities;
+        private ui.jira.JiraNamedEntityComboBox comboPriorities;
         private System.Windows.Forms.TextBox textSummary;
         private System.Windows.Forms.TextBox textDescription;
-        private System.Windows.Forms.TextBox textAssignee;
-        private System.Windows.Forms.Label labelWarning;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
@@ -311,5 +295,6 @@ namespace Atlassian.plvs.dialogs {
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
+        private ui.jira.JiraUserPicker jiraAssigneePicker;
     }
 }

@@ -172,10 +172,10 @@ namespace Atlassian.plvs.dialogs {
                         editor = new NamedEntityListFieldEditor(field, issue.FixVersions, versions, fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.ASSIGNEE:
-                        editor = new UserFieldEditor(field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
+                        editor = new UserFieldEditor(issue.Server, field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.REPORTER:
-                        editor = new UserFieldEditor(field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
+                        editor = new UserFieldEditor(issue.Server, field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.DUE_DATE:
                         editor = new DateFieldEditor(field, field.Values.Count > 0 

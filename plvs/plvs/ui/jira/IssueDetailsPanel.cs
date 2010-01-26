@@ -31,7 +31,6 @@ namespace Atlassian.plvs.ui.jira {
         private JiraIssue issue;
         private readonly TabControl tabWindow;
         private readonly TabPage myTab;
-        private readonly ToolWindowStateMonitor toolWindowStateMonitor;
 
         private bool issueCommentsLoaded;
         private bool issueDescriptionLoaded;
@@ -53,7 +52,6 @@ namespace Atlassian.plvs.ui.jira {
 
             this.tabWindow = tabWindow;
             this.myTab = myTab;
-            this.toolWindowStateMonitor = toolWindowStateMonitor;
 
             dropDownIssueActions.DropDownItems.Add("dummy");
 
@@ -151,7 +149,8 @@ namespace Atlassian.plvs.ui.jira {
 
             for (int i = 0; i < issue.Comments.Count; ++i) {
                 sb.Append("<div class=\"comment_header\">")
-                    .Append("<div class=\"author\">").Append(issue.Comments[i].Author)
+                    .Append("<div class=\"author\">").Append(
+                    JiraServerCache.Instance.getUsers(issue.Server).getUser(issue.Comments[i].Author))
                     .Append(" <span class=\"date\">").Append(
                     JiraIssueUtils.getTimeStringFromIssueDateTime(JiraIssueUtils.getDateTimeFromJiraTimeString(issue.Comments[i].Created)))
                     .Append("</span></div>")
@@ -228,9 +227,9 @@ namespace Atlassian.plvs.ui.jira {
             sb.Append("<tr><td class=\"labelcolumn\">Priority</td><td>")
                 .Append("<img alt=\"\" src=\"").Append(issue.PriorityIconUrl).Append("\"/>").Append(issue.Priority).Append("</td></tr>\n")
                 .Append("<tr><td class=\"labelcolumn\">Assignee</td><td>")
-                .Append(issue.Assignee).Append("</td></tr>\n")
+                .Append(JiraServerCache.Instance.getUsers(issue.Server).getUser(issue.Assignee)).Append("</td></tr>\n")
                 .Append("<tr><td class=\"labelcolumn\">Reporter</td><td>")
-                .Append(issue.Reporter).Append("</td></tr>\n")
+                .Append(JiraServerCache.Instance.getUsers(issue.Server).getUser(issue.Reporter)).Append("</td></tr>\n")
                 .Append("<tr><td class=\"labelcolumn\">Resolution</td><td>")
                 .Append(issue.Resolution).Append("</td></tr>\n")
                 .Append("<tr><td class=\"labelcolumn\">Created</td><td>")

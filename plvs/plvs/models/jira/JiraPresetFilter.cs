@@ -3,7 +3,7 @@ using Atlassian.plvs.api.jira;
 using Atlassian.plvs.store;
 
 namespace Atlassian.plvs.models.jira {
-    public abstract class JiraPresetFilter {
+    public abstract class JiraPresetFilter : JiraFilter {
         private readonly JiraServer server;
 
         private JiraProject project;
