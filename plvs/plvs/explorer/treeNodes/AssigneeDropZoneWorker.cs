@@ -29,7 +29,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
             facade.updateIssue(issue, new List<JiraField> { field });
         }
 
-        public string ZoneName { get { return "Assignee: " + user; } }
+        public string ZoneName { get { return "Assign to: " + user; } }
 
         public string ZoneKey { get { return server.GUID + "_priority_" + user.Id; } }
 
@@ -37,8 +37,8 @@ namespace Atlassian.plvs.explorer.treeNodes {
 
         public string IssueWillBeAddedText { get { return "Unavailable"; } }
 
-        public string issueWillBeMovedText { get { return "User " + user + " will be set as assignee for issue"; } }
+        public string issueWillBeMovedText { get { return "Issue will be assigned to \"" + user + "\""; } }
 
-        public string InitialText { get { return "Drag issues here to set their assignee to \"" + user + "\""; } }
+        public string InitialText { get { return "Drag issues here to assign them to \"" + user + "\""; } }
     }
 }

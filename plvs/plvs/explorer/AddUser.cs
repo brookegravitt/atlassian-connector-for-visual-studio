@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 
@@ -13,6 +14,7 @@ namespace Atlassian.plvs.explorer {
             StartPosition = FormStartPosition.CenterParent;
 
             buttonOk.Enabled = false;
+            labelUserExists.Visible = false;
         }
 
         private void buttonCancel_Click(object sender, EventArgs e) {
@@ -32,9 +34,13 @@ namespace Atlassian.plvs.explorer {
         private void updateOkButton() {
             if (textUserId.Text.Length == 0) {
                 buttonOk.Enabled = false;
+                labelUserExists.Visible = false;
                 return;
             }
-            buttonOk.Enabled = !JiraServerCache.Instance.getUsers(server).haveUser(textUserId.Text);
+            bool haveUser = JiraServerCache.Instance.getUsers(server).haveUser(textUserId.Text);
+            textUserId.ForeColor = haveUser ? Color.Red : SystemColors.ControlText;
+            buttonOk.Enabled = !haveUser;
+            labelUserExists.Visible = haveUser;
         }
 
         public JiraUser Value {
