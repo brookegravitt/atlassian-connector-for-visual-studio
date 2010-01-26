@@ -39,7 +39,7 @@ namespace Atlassian.plvs.explorer {
 
             StartPosition = FormStartPosition.CenterParent;
 
-            dropDownCreateDropZone.Enabled = false;
+            dropDownActions.Enabled = false;
         }
 
         public static void closeAll() {
@@ -70,15 +70,15 @@ namespace Atlassian.plvs.explorer {
                 webJira.Navigate(url);
 
                 ICollection<ToolStripItem> menuItems = node.MenuItems;
-                dropDownCreateDropZone.Enabled = menuItems != null && menuItems.Count > 0;
+                dropDownActions.Enabled = menuItems != null && menuItems.Count > 0;
                 if (menuItems != null) {
-                    dropDownCreateDropZone.DropDownItems.Clear();
+                    dropDownActions.DropDownItems.Clear();
                     foreach (ToolStripItem item in menuItems) {
-                        dropDownCreateDropZone.DropDownItems.Add(item);
+                        dropDownActions.DropDownItems.Add(item);
                     }
                 }
             } else {
-                dropDownCreateDropZone.Enabled = false;
+                dropDownActions.Enabled = false;
             }
         }
 

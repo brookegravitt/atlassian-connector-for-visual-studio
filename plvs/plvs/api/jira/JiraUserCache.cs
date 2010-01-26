@@ -11,6 +11,12 @@ namespace Atlassian.plvs.api.jira {
 
         private readonly Dictionary<string, JiraUser> users = new Dictionary<string, JiraUser>();
 
+        public bool haveUser(string userId) {
+            lock(this) {
+                return users.ContainsKey(userId);
+            }
+        }
+
         public JiraUser getUser(string userId) {
             lock (this) {
                 if (userId == null) {
