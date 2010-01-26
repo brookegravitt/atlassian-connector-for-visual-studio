@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Atlassian.plvs.api.jira;
 
-namespace Atlassian.plvs.models.jira {
+namespace Atlassian.plvs.api.jira {
     internal class JiraServerCache {
         private static readonly JiraServerCache INSTANCE = new JiraServerCache();
 
@@ -24,6 +23,8 @@ namespace Atlassian.plvs.models.jira {
 
         private readonly SortedDictionary<Guid, SortedDictionary<int, JiraNamedEntity>> resolutionCache =
             new SortedDictionary<Guid, SortedDictionary<int, JiraNamedEntity>>();
+
+        private readonly Dictionary<Guid, JiraUserCache> userCaches = new Dictionary<Guid, JiraUserCache>();
 
         public SortedDictionary<string, JiraProject> getProjects(JiraServer server) {
             lock (projectCache) {
@@ -142,6 +143,15 @@ namespace Atlassian.plvs.models.jira {
         public void clearResolutions() {
             lock(resolutionCache) {
                 resolutionCache.Clear();
+            }
+        }
+
+        public JiraUserCache getUsers(JiraServer server) {
+            lock(userCaches) {
+                if (!userCaches.ContainsKey(server.GUID)) {
+                    userCaches[server.GUID] = new JiraUserCache();
+                }
+                return userCaches[server.GUID];
             }
         }
     }

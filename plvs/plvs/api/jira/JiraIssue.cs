@@ -90,10 +90,14 @@ namespace Atlassian.plvs.api.jira {
                         IssueTypeId = XPathUtils.getAttributeSafely(nav, "id", UNKNOWN);
                         break;
                     case "assignee":
-                        Assignee = nav.Value;
+                        Assignee = XPathUtils.getAttributeSafely(nav, "username", "Unknown");
+                        string assigneName = nav.Value;
+                        JiraServerCache.Instance.getUsers(server).putUser(new JiraUser(Assignee, assigneName));
                         break;
                     case "reporter":
-                        Reporter = nav.Value;
+                        Reporter = XPathUtils.getAttributeSafely(nav, "username", "Unknown");
+                        string reporterName = nav.Value;
+                        JiraServerCache.Instance.getUsers(server).putUser(new JiraUser(Reporter, reporterName));
                         break;
                     case "created":
                         CreationDate = JiraIssueUtils.getDateTimeFromJiraTimeString(nav.Value);

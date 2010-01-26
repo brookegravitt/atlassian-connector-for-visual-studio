@@ -29,7 +29,7 @@ namespace Atlassian.plvs.models.jira {
 
         public void rebuildModelWithPresetFilter(JiraIssueListModel model, JiraServer server, JiraPresetFilter filter) {
             lock (this) {
-                List<JiraIssue> issues = facade.getPresetFilterIssues(server, filter, 0, GlobalSettings.JiraIssuesBatch);
+                List<JiraIssue> issues = facade.getCustomFilterIssues(server, filter, 0, GlobalSettings.JiraIssuesBatch);
                 model.clear(false);
                 model.addIssues(issues);
             }
@@ -37,7 +37,7 @@ namespace Atlassian.plvs.models.jira {
 
         public void updateModelWithPresetFilter(JiraIssueListModel model, JiraServer server, JiraPresetFilter filter) {
             lock (this) {
-                List<JiraIssue> issues = facade.getPresetFilterIssues(server, filter, model.Issues.Count,
+                List<JiraIssue> issues = facade.getCustomFilterIssues(server, filter, model.Issues.Count,
                                                                       GlobalSettings.JiraIssuesBatch);
                 model.addIssues(issues);
             }

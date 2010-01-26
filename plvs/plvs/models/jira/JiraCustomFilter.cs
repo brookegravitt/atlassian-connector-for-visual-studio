@@ -7,7 +7,7 @@ using Atlassian.plvs.store;
 using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.models.jira {
-    public class JiraCustomFilter {
+    public class JiraCustomFilter : JiraFilter {
         private JiraServer server;
         public readonly Guid Guid;
 
@@ -164,6 +164,10 @@ namespace Atlassian.plvs.models.jira {
             sb.Append(getQueryParameters());
 
             return sb.ToString();
+        }
+
+        public string getSortBy() {
+            return "priority";
         }
 
         private string getQueryParameters() {

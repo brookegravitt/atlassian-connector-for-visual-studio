@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models;
-using Atlassian.plvs.models.jira;
 using Atlassian.plvs.store;
 using Atlassian.plvs.ui;
-using Atlassian.plvs.util;
 using Atlassian.plvs.windows;
 
 namespace Atlassian.plvs.dialogs {
@@ -32,6 +29,8 @@ namespace Atlassian.plvs.dialogs {
             InitializeComponent();
 
             ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
+
+            buttonCreate.Enabled = false;
 
             SortedDictionary<string, JiraProject> projects = JiraServerCache.Instance.getProjects(server);
             foreach (var project in projects.Values) {
@@ -67,8 +66,7 @@ namespace Atlassian.plvs.dialogs {
 
             StartPosition = FormStartPosition.CenterParent;
 
-            labelWarning.Font = new Font(labelWarning.Font.FontFamily, labelWarning.Font.Size - 2);
-            labelWarning.Text = Constants.USER_NOT_VALUDATED;
+            jiraAssigneePicker.init(server, null);
         }
 
         private void buttonCancel_Click(object sender, EventArgs e) {
@@ -195,7 +193,7 @@ namespace Atlassian.plvs.dialogs {
             comboPriorities.Enabled = enabled;
             textSummary.Enabled = enabled;
             textDescription.Enabled = enabled;
-            textAssignee.Enabled = enabled;
+            jiraAssigneePicker.Enabled = enabled;
             buttonCreate.Enabled = enabled;
         }
 
@@ -284,8 +282,9 @@ namespace Atlassian.plvs.dialogs {
                 issue.FixVersions = fixes;
             }
 
-            if (textAssignee.Text.Length > 0) {
-                issue.Assignee = textAssignee.Text;
+            string assignee = jiraAssigneePicker.Value;
+            if (assignee.Length > 0) {
+                issue.Assignee = assignee;
             }
 
             return issue;
