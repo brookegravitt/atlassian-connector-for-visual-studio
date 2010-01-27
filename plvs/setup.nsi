@@ -103,6 +103,7 @@ Section "Atlassian Connector For Visual Studio (required)"
   File "plvs\bin\Release\plvs.dll"
   File "plvs\bin\Release\Ankh.ExtensionPoints.dll"
   File "plvs\bin\Release\Aga.Controls.dll"
+  File "plvs\bin\Release\edit.png"
 
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\Atlassian\Plvs "Install_Dir" "$INSTDIR"
@@ -215,6 +216,7 @@ Section "Uninstall"
   Delete $INSTDIR\plvs.dll
   Delete $INSTDIR\Ankh.ExtensionPoints.dll
   Delete $INSTDIR\Aga.Controls.dll
+  Delete $INSTDIR\edit.png
 
   Delete $INSTDIR\uninstall.exe
 

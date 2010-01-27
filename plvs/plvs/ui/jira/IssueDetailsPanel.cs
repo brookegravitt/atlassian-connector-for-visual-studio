@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -42,6 +43,8 @@ namespace Atlassian.plvs.ui.jira {
         
         private const int A_LOT = 100000;
 
+        private string editImagePath = null;
+
         public IssueDetailsPanel(JiraIssueListModel model, Solution solution, JiraIssue issue, TabControl tabWindow,
                                  TabPage myTab, ToolWindowStateMonitor toolWindowStateMonitor) {
             this.model = model;
@@ -67,6 +70,13 @@ namespace Atlassian.plvs.ui.jira {
             listViewAttachments.ContextMenuStrip.Opening += attachmentsMenuOpening;
 
             saveAsToolStripMenuItem.Enabled = false;
+
+            Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            string name = assembly.EscapedCodeBase;
+            if (name != null) {
+                name = name.Substring(0, name.LastIndexOf("/"));
+                editImagePath = name + "/edit.png";
+            }
         }
 
         private void init() {
@@ -179,7 +189,8 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private static readonly Regex STACK_REGEX = new Regex(@"(\s*\w+\S+\(.*\)\s+\w+\s+)(\S+)(:\w+\s+)(\d+)");
-
+        
+        private const string ISSUE_EDIT_URL_TYPE = "issueedit:";
         private const string PARENT_ISSUE_URL_TYPE = "parentissue:";
         private const string SUBTASK_ISSUE_URL_TYPE = "subtaskkey:";
 
@@ -237,7 +248,12 @@ namespace Atlassian.plvs.ui.jira {
             sb.Append("<tr><td class=\"labelcolumn\">Priority</td><td>")
                 .Append("<img alt=\"\" src=\"").Append(issue.PriorityIconUrl).Append("\"/>").Append(issue.Priority).Append("</td></tr>\n")
                 .Append("<tr><td class=\"labelcolumn\">Assignee</td><td>")
-                .Append(JiraServerCache.Instance.getUsers(issue.Server).getUser(issue.Assignee)).Append("</td></tr>\n")
+                
+                .Append(JiraServerCache.Instance.getUsers(issue.Server).getUser(issue.Assignee))
+                .Append(" <a href=\"").Append(ISSUE_EDIT_URL_TYPE).Append("assignee\"><img src=\"")
+                .Append(editImagePath).Append("\" alt=\"Edit\"  style=\"border-style: none\"></a>")
+                .Append("</td></tr>\n")
+                
                 .Append("<tr><td class=\"labelcolumn\">Reporter</td><td>")
                 .Append(JiraServerCache.Instance.getUsers(issue.Server).getUser(issue.Reporter)).Append("</td></tr>\n")
                 .Append("<tr><td class=\"labelcolumn\">Resolution</td><td>")
@@ -550,6 +566,11 @@ namespace Atlassian.plvs.ui.jira {
             if (!issueSummaryLoaded) return;
             if (e.Url.ToString().StartsWith(PARENT_ISSUE_URL_TYPE)) {
                 AtlassianPanel.Instance.Jira.findAndOpenIssue(e.Url.ToString().Substring(PARENT_ISSUE_URL_TYPE.Length), openParentOrSubtaskFinished);
+                e.Cancel = true;
+                return;
+            }
+            if (e.Url.ToString().StartsWith(ISSUE_EDIT_URL_TYPE)) {
+                MessageBox.Show("Editing " + e.Url.ToString().Substring(ISSUE_EDIT_URL_TYPE.Length));
                 e.Cancel = true;
                 return;
             }

@@ -776,4 +776,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PostBuildEvent>copy $(ProjectDir)\Resources\icons\edit.png $(ProjectDir)\$(OutDir)</PostBuildEvent>
+  </PropertyGroup>
 </Project>
