@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -44,6 +46,7 @@ namespace Atlassian.plvs.ui.jira {
                                  TabPage myTab, ToolWindowStateMonitor toolWindowStateMonitor) {
             this.model = model;
             this.solution = solution;
+
             InitializeComponent();
 
             status = new StatusLabel(statusStrip, jiraStatus);
@@ -57,6 +60,13 @@ namespace Atlassian.plvs.ui.jira {
 
             toolWindowStateMonitor.ToolWindowShown += toolWindowStateMonitor_ToolWindowShown;
             toolWindowStateMonitor.ToolWindowHidden += toolWindowStateMonitor_ToolWindowHidden;
+
+            listViewAttachments.ContextMenuStrip = new ContextMenuStrip();
+            listViewAttachments.ContextMenuStrip.Items.Add(new ToolStripMenuItem("Save as...", null,
+                                                                                 new EventHandler(saveAttachment)));
+            listViewAttachments.ContextMenuStrip.Opening += attachmentsMenuOpening;
+
+            saveAsToolStripMenuItem.Enabled = false;
         }
 
         private void init() {
@@ -627,6 +637,42 @@ namespace Atlassian.plvs.ui.jira {
             }
         }
 
+        private void attachmentsMenuOpening(object sender, System.ComponentModel.CancelEventArgs e) {
+            e.Cancel = !(listViewAttachments.SelectedItems.Count > 0);
+        }
+
+        private void saveAttachment(object sender, EventArgs e) {
+            if (listViewAttachments.SelectedItems.Count == 0) return;
+
+            JiraAttachmentListViewItem item = listViewAttachments.SelectedItems[0] as JiraAttachmentListViewItem;
+            if (item == null) return;
+
+            SaveFileDialog dlg = new SaveFileDialog {FileName = item.Attachment.Name};
+
+            if (dlg.ShowDialog() != DialogResult.OK) return;
+
+            saveAttachmentToStream(item, dlg.OpenFile());
+        }
+
+        private void saveAttachmentToStream(JiraAttachmentListViewItem item, Stream stream) {
+            status.setInfo("Saving attachment \"" + item.Attachment.Name + "\"...");
+            WebClient client = new WebClient();
+            client.DownloadDataCompleted += ((sender, e) => downloadDataCompleted(item.Attachment.Name, e, stream));
+            client.DownloadDataAsync(new Uri(item.Url + "?" + JiraIssueUtils.getAuthString(issue.Server)));
+        }
+
+        private void downloadDataCompleted(string name, DownloadDataCompletedEventArgs e, Stream stream) {
+            if (e.Error != null) {
+                status.setError("Failed to save attachment \"" + name + "\"", e.Error);
+                return;
+            }
+            stream.Write(e.Result, 0, e.Result.Length);
+            stream.Flush();
+            stream.Close();
+
+            status.setInfo("Attachment \"" + name + "\" saved");
+        }
+
         private static bool isInlineNavigable(string name) {
             // hmm hmm, will these be typical files that are 
             // (1) openable by IE and 
@@ -644,6 +690,10 @@ namespace Atlassian.plvs.ui.jira {
             columnAuthor.Width = listViewAttachments.Width / 6;
             columnSize.Width = listViewAttachments.Width / 6;
             columnDate.Width = -2;
+        }
+
+        private void listViewAttachments_SelectedIndexChanged(object sender, EventArgs e) {
+            saveAsToolStripMenuItem.Enabled = listViewAttachments.SelectedItems.Count > 0;
         }
     }
 }
