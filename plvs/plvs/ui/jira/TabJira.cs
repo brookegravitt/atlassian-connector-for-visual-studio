@@ -564,7 +564,7 @@ namespace Atlassian.plvs.ui.jira {
                 return;
             }
             CreateIssue dlg = new CreateIssue(server);
-            dlg.ShowDialog();
+            dlg.Show();
         }
 
         private void buttonSearch_Click(object sender, EventArgs e) {

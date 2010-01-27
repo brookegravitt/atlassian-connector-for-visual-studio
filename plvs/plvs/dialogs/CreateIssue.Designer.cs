@@ -245,7 +245,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(576, 609);
-            this.ControlBox = false;
             this.Controls.Add(this.jiraAssigneePicker);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
@@ -266,9 +265,12 @@
             this.Controls.Add(this.comboProjects);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonCreate);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "CreateIssue";
             this.Text = "Create JIRA Issue";
+            this.TopMost = true;
             this.ResumeLayout(false);
             this.PerformLayout();
 
