@@ -27,26 +27,28 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GlobalSettings));
             this.checkAutoupdate = new System.Windows.Forms.CheckBox();
             this.checkUnstable = new System.Windows.Forms.CheckBox();
             this.checkStats = new System.Windows.Forms.CheckBox();
             this.buttonCheckNow = new System.Windows.Forms.Button();
             this.radioStable = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.linkUsageStatsDetails = new System.Windows.Forms.LinkLabel();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.radioUnstable = new System.Windows.Forms.RadioButton();
             this.buttonOk = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.checkJiraExplorer = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.numericJiraBatchSize = new System.Windows.Forms.NumericUpDown();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.numericBambooPollingInterval = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.linkUsageStatsDetails = new System.Windows.Forms.LinkLabel();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -76,6 +78,7 @@
             this.checkUnstable.TabIndex = 1;
             this.checkUnstable.Text = "Check stable versions and snaphost versions";
             this.checkUnstable.UseVisualStyleBackColor = true;
+            this.checkUnstable.CheckedChanged += new System.EventHandler(this.checkUnstable_CheckedChanged);
             // 
             // checkStats
             // 
@@ -86,6 +89,7 @@
             this.checkStats.TabIndex = 2;
             this.checkStats.Text = "Report usage statistics";
             this.checkStats.UseVisualStyleBackColor = true;
+            this.checkStats.CheckedChanged += new System.EventHandler(this.checkStats_CheckedChanged);
             // 
             // buttonCheckNow
             // 
@@ -107,6 +111,7 @@
             this.radioStable.TabStop = true;
             this.radioStable.Text = "Stable Version";
             this.radioStable.UseVisualStyleBackColor = true;
+            this.radioStable.CheckedChanged += new System.EventHandler(this.radioStable_CheckedChanged);
             // 
             // groupBox1
             // 
@@ -126,6 +131,35 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Automatic Updates";
             // 
+            // linkUsageStatsDetails
+            // 
+            this.linkUsageStatsDetails.AutoSize = true;
+            this.linkUsageStatsDetails.Location = new System.Drawing.Point(167, 68);
+            this.linkUsageStatsDetails.Name = "linkUsageStatsDetails";
+            this.linkUsageStatsDetails.Size = new System.Drawing.Size(39, 13);
+            this.linkUsageStatsDetails.TabIndex = 8;
+            this.linkUsageStatsDetails.TabStop = true;
+            this.linkUsageStatsDetails.Text = "Details";
+            this.linkUsageStatsDetails.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkUsageStatsDetails_LinkClicked);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(204, 68);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(10, 13);
+            this.label4.TabIndex = 7;
+            this.label4.Text = ")";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(161, 68);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(10, 13);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "(";
+            // 
             // radioUnstable
             // 
             this.radioUnstable.AutoSize = true;
@@ -136,6 +170,7 @@
             this.radioUnstable.TabStop = true;
             this.radioUnstable.Text = "Stable and Snapshot Version";
             this.radioUnstable.UseVisualStyleBackColor = true;
+            this.radioUnstable.CheckedChanged += new System.EventHandler(this.radioUnstable_CheckedChanged);
             // 
             // buttonOk
             // 
@@ -181,6 +216,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.checkJiraExplorer);
             this.tabPage2.Controls.Add(this.label1);
             this.tabPage2.Controls.Add(this.numericJiraBatchSize);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
@@ -190,6 +226,17 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "JIRA";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // checkJiraExplorer
+            // 
+            this.checkJiraExplorer.AutoSize = true;
+            this.checkJiraExplorer.Location = new System.Drawing.Point(9, 40);
+            this.checkJiraExplorer.Name = "checkJiraExplorer";
+            this.checkJiraExplorer.Size = new System.Drawing.Size(228, 17);
+            this.checkJiraExplorer.TabIndex = 2;
+            this.checkJiraExplorer.Text = "Enable JIRA Server Explorer (experimental)";
+            this.checkJiraExplorer.UseVisualStyleBackColor = true;
+            this.checkJiraExplorer.CheckedChanged += new System.EventHandler(this.checkJiraExplorer_CheckedChanged);
             // 
             // label1
             // 
@@ -221,6 +268,7 @@
             0,
             0,
             0});
+            this.numericJiraBatchSize.ValueChanged += new System.EventHandler(this.numericJiraBatchSize_ValueChanged);
             // 
             // tabPage3
             // 
@@ -255,6 +303,7 @@
             0,
             0,
             0});
+            this.numericBambooPollingInterval.ValueChanged += new System.EventHandler(this.numericBambooPollingInterval_ValueChanged);
             // 
             // label2
             // 
@@ -264,35 +313,6 @@
             this.label2.Size = new System.Drawing.Size(125, 13);
             this.label2.TabIndex = 0;
             this.label2.Text = "Polling Interval [seconds]";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(161, 68);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(10, 13);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "(";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(204, 68);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(10, 13);
-            this.label4.TabIndex = 7;
-            this.label4.Text = ")";
-            // 
-            // linkUsageStatsDetails
-            // 
-            this.linkUsageStatsDetails.AutoSize = true;
-            this.linkUsageStatsDetails.Location = new System.Drawing.Point(167, 68);
-            this.linkUsageStatsDetails.Name = "linkUsageStatsDetails";
-            this.linkUsageStatsDetails.Size = new System.Drawing.Size(39, 13);
-            this.linkUsageStatsDetails.TabIndex = 8;
-            this.linkUsageStatsDetails.TabStop = true;
-            this.linkUsageStatsDetails.Text = "Details";
-            this.linkUsageStatsDetails.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkUsageStatsDetails_LinkClicked);
             // 
             // GlobalSettings
             // 
@@ -304,11 +324,11 @@
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "GlobalSettings";
-            this.ShowIcon = false;
             this.Text = "Global Settings";
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.GlobalSettings_KeyPress);
             this.groupBox1.ResumeLayout(false);
@@ -347,6 +367,7 @@
         private System.Windows.Forms.LinkLabel linkUsageStatsDetails;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.CheckBox checkJiraExplorer;
 
     }
 }

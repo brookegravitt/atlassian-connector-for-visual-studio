@@ -48,6 +48,11 @@ namespace Atlassian.plvs.ui.jira {
             ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
             bool groupSubtasks = store.loadParameter(GROUP_SUBTASKS_UNDER_PARENT, 1) != 0;
             buttonGroupSubtasks.Checked = groupSubtasks;
+
+            buttonServerExplorer.Visible = GlobalSettings.JiraServerExplorerEnabled;
+            buttonServerExplorer.Enabled = GlobalSettings.JiraServerExplorerEnabled;
+
+            GlobalSettings.SettingsChanged += globalSettingsSettingsChanged;
         }
 
         public event EventHandler<EventArgs> AddNewServerLinkClicked;
@@ -385,6 +390,11 @@ namespace Atlassian.plvs.ui.jira {
                                                                      probablyHaveMoreIssues();
                                              updateIssueListButtons();
                                          }));
+        }
+
+        private void globalSettingsSettingsChanged(object sender, EventArgs e) {
+            buttonServerExplorer.Visible = GlobalSettings.JiraServerExplorerEnabled;
+            buttonServerExplorer.Enabled = GlobalSettings.JiraServerExplorerEnabled;
         }
 
         private static bool probablyHaveMoreIssues() {
