@@ -190,7 +190,13 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private static readonly Regex STACK_REGEX = new Regex(@"(\s*\w+\S+\(.*\)\s+\w+\s+)(\S+)(:\w+\s+)(\d+)");
-        
+
+        private const string ASSIGNEE_EDIT_TAG = "assignee";
+        private const string COMPONENTS_EDIT_TAG = "components";
+        private const string FIX_VERSIONS_EDIT_TAG = "fixversions";
+        private const string AFFECTS_VERSIONS_EDIT_TAG = "affectsversions";
+        private const string PRIORITY_EDIT_TAG = "priority";
+
         private const string ISSUE_EDIT_URL_TYPE = "issueedit:";
         private const string PARENT_ISSUE_URL_TYPE = "parentissue:";
         private const string SUBTASK_ISSUE_URL_TYPE = "subtaskkey:";
@@ -247,11 +253,15 @@ namespace Atlassian.plvs.ui.jira {
             }
             
             sb.Append("<tr><td class=\"labelcolumn\">Priority</td><td>")
-                .Append("<img alt=\"\" src=\"").Append(issue.PriorityIconUrl).Append("\"/>").Append(issue.Priority).Append("</td></tr>\n")
+                .Append("<img alt=\"\" src=\"").Append(issue.PriorityIconUrl).Append("\"/>").Append(issue.Priority)
+                .Append(" <a href=\"").Append(ISSUE_EDIT_URL_TYPE).Append(PRIORITY_EDIT_TAG).Append("\"><img src=\"")
+                .Append(editImagePath).Append("\" alt=\"Edit\"  style=\"border-style: none\"></a>")
+                .Append("</td></tr>\n")
+                
                 .Append("<tr><td class=\"labelcolumn\">Assignee</td><td>")
                 
                 .Append(JiraServerCache.Instance.getUsers(issue.Server).getUser(issue.Assignee))
-                .Append(" <a href=\"").Append(ISSUE_EDIT_URL_TYPE).Append("assignee\"><img src=\"")
+                .Append(" <a href=\"").Append(ISSUE_EDIT_URL_TYPE).Append(ASSIGNEE_EDIT_TAG).Append("\"><img src=\"")
                 .Append(editImagePath).Append("\" alt=\"Edit\"  style=\"border-style: none\"></a>")
                 .Append("</td></tr>\n")
                 
@@ -270,7 +280,7 @@ namespace Atlassian.plvs.ui.jira {
                 sb.Append("<tr><td class=\"labelcolumn\">Affects Version</td><td>");
 
             if (issue.Versions.Count == 0)
-                sb.Append("None").Append("</td></tr>\n");
+                sb.Append("None");
             else {
                 int i = 0;
                 foreach (string v in issue.Versions) {
@@ -278,8 +288,11 @@ namespace Atlassian.plvs.ui.jira {
                     if (++i < issue.Versions.Count)
                         sb.Append(", ");
                 }
-                sb.Append("</td></tr>\n");
             }
+
+            sb.Append(" <a href=\"").Append(ISSUE_EDIT_URL_TYPE).Append(AFFECTS_VERSIONS_EDIT_TAG).Append("\"><img src=\"");
+            sb.Append(editImagePath).Append("\" alt=\"Edit\"  style=\"border-style: none\"></a>");
+            sb.Append("</td></tr>\n");
 
             if (issue.FixVersions.Count > 1)
                 sb.Append("<tr><td class=\"labelcolumn\">Fix Versions</td><td>");
@@ -287,7 +300,7 @@ namespace Atlassian.plvs.ui.jira {
                 sb.Append("<tr><td class=\"labelcolumn\">Fix Version</td><td>");
 
             if (issue.FixVersions.Count == 0)
-                sb.Append("None").Append("</td></tr>\n");
+                sb.Append("None");
             else {
                 int i = 0;
                 foreach (string v in issue.FixVersions) {
@@ -295,8 +308,11 @@ namespace Atlassian.plvs.ui.jira {
                     if (++i < issue.FixVersions.Count)
                         sb.Append(", ");
                 }
-                sb.Append("</td></tr>\n");
             }
+
+            sb.Append(" <a href=\"").Append(ISSUE_EDIT_URL_TYPE).Append(FIX_VERSIONS_EDIT_TAG).Append("\"><img src=\"");
+            sb.Append(editImagePath).Append("\" alt=\"Edit\"  style=\"border-style: none\"></a>");
+            sb.Append("</td></tr>\n");
 
             if (issue.Components.Count > 1)
                 sb.Append("<tr><td class=\"labelcolumn\">Components</td><td>");
@@ -304,7 +320,7 @@ namespace Atlassian.plvs.ui.jira {
                 sb.Append("<tr><td class=\"labelcolumn\">Component</td><td>");
 
             if (issue.Components.Count == 0)
-                sb.Append("None").Append("</td></tr>\n");
+                sb.Append("None");
             else {
                 int i = 0;
                 foreach (string c in issue.Components) {
@@ -312,8 +328,11 @@ namespace Atlassian.plvs.ui.jira {
                     if (++i < issue.Components.Count)
                         sb.Append(", ");
                 }
-                sb.Append("</td></tr>\n");
             }
+
+            sb.Append(" <a href=\"").Append(ISSUE_EDIT_URL_TYPE).Append(COMPONENTS_EDIT_TAG).Append("\"><img src=\"");
+            sb.Append(editImagePath).Append("\" alt=\"Edit\"  style=\"border-style: none\"></a>");
+            sb.Append("</td></tr>\n");
 
             sb.Append("<tr><td class=\"labelcolumn\">Original Estimate</td><td>")
                 .Append(issue.OriginalEstimate ?? "None").Append("</td></tr>\n")
@@ -571,7 +590,25 @@ namespace Atlassian.plvs.ui.jira {
                 return;
             }
             if (e.Url.ToString().StartsWith(ISSUE_EDIT_URL_TYPE)) {
-                MessageBox.Show("Editing " + e.Url.ToString().Substring(ISSUE_EDIT_URL_TYPE.Length));
+                string txt = "Nothing";
+                switch (e.Url.ToString().Substring(ISSUE_EDIT_URL_TYPE.Length)) {
+                    case PRIORITY_EDIT_TAG:
+                        txt = "priority";
+                        break;
+                    case FIX_VERSIONS_EDIT_TAG:
+                        txt = "fix version";
+                        break;
+                    case AFFECTS_VERSIONS_EDIT_TAG:
+                        txt = "affects version";
+                        break;
+                    case COMPONENTS_EDIT_TAG:
+                        txt = "components";
+                        break;
+                    case ASSIGNEE_EDIT_TAG:
+                        txt = "assignee";
+                        break;
+                }
+                MessageBox.Show("Editing " + txt);
                 e.Cancel = true;
                 return;
             }
