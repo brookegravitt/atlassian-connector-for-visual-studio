@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Reflection;
@@ -43,7 +42,7 @@ namespace Atlassian.plvs.ui.jira {
         
         private const int A_LOT = 100000;
 
-        private string editImagePath = null;
+        private readonly string editImagePath;
 
         public IssueDetailsPanel(JiraIssueListModel model, Solution solution, JiraIssue issue, TabControl tabWindow,
                                  TabPage myTab, ToolWindowStateMonitor toolWindowStateMonitor) {
@@ -69,9 +68,11 @@ namespace Atlassian.plvs.ui.jira {
                                                                                  new EventHandler(saveAttachment)));
             listViewAttachments.ContextMenuStrip.Opening += attachmentsMenuOpening;
 
-            saveAsToolStripMenuItem.Enabled = false;
+            buttonSaveAttachmentAs.Enabled = false;
 
-            Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            toolTipAttachments.SetToolTip(listViewAttachments, "Drop a file here\nto upload it as an attachment");
+
+            Assembly assembly = Assembly.GetExecutingAssembly();
             string name = assembly.EscapedCodeBase;
             if (name != null) {
                 name = name.Substring(0, name.LastIndexOf("/"));
@@ -714,7 +715,97 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void listViewAttachments_SelectedIndexChanged(object sender, EventArgs e) {
-            saveAsToolStripMenuItem.Enabled = listViewAttachments.SelectedItems.Count > 0;
+            buttonSaveAttachmentAs.Enabled = listViewAttachments.SelectedItems.Count > 0;
+        }
+
+        private void uploadAttachment(object sender, EventArgs e) {
+            OpenFileDialog dlg = new OpenFileDialog();
+
+            if (dlg.ShowDialog() != DialogResult.OK) return;
+
+            string fileName = dlg.SafeFileName;
+
+            try {
+                readFileFromStreamAndUpload(dlg.OpenFile(), fileName);
+            } catch (IOException ex) {
+                status.setError("Failed to read attachment \"" + fileName + "\" from file", ex);
+                listViewAttachments.AllowDrop = true;
+            } catch (Exception ex) {
+                status.setError("Failed to upload attachment \"" + fileName + "\"", ex);
+                listViewAttachments.AllowDrop = true;
+            } 
+        }
+
+        private void readFileFromStreamAndUpload(Stream stream, string fileName) {
+            listViewAttachments.AllowDrop = false;
+
+            long length = stream.Length;
+            byte[] att = new byte[length];
+            BinaryReader reader = new BinaryReader(stream);
+            for (int i = 0; i < length; ++i) {
+                att[i] = reader.ReadByte();
+            }
+
+            status.setInfo("Uploading attachment \"" + fileName + "\"...");
+            Thread t = new Thread(() => uploadAttachmentWorker(fileName, att));
+            t.Start();
+        }
+
+        private void uploadAttachmentWorker(string name, byte[] attachment) {
+            try {
+                facade.uploadAttachment(issue, name, attachment);
+                JiraIssue updatedIssue = facade.getIssue(issue.Server, issue.Key);
+                status.setInfo("Uploaded attachment \"" + name + "\"");
+                Invoke(new MethodInvoker(() => model.updateIssue(updatedIssue)));
+            } catch (Exception e) {
+                status.setError("Failed to upload attachment \"" + name + "\"", e);
+            } finally {
+                Invoke(new MethodInvoker(delegate { listViewAttachments.AllowDrop = true; }));
+            }
+        }
+
+        private void listViewAttachments_DragDrop(object sender, DragEventArgs e) {
+            if (!listViewAttachments.AllowDrop) return;
+
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop))
+                return;
+
+            string[] fileNames = (string[]) e.Data.GetData(DataFormats.FileDrop);
+
+            if (fileNames.Length != 1) return;
+
+            string name = fileNames[0].Contains("\\") 
+                ? fileNames[0].Substring(fileNames[0].LastIndexOf("\\") + 1) 
+                : fileNames[0];
+
+            FileStream stream = new FileStream(fileNames[0], FileMode.Open);
+
+            try {
+                readFileFromStreamAndUpload(stream, name);
+            } catch (IOException ex) {
+                status.setError("Failed to read attachment \"" + name + "\" from file", ex);
+                listViewAttachments.AllowDrop = true;
+            } catch (Exception ex) {
+                status.setError("Failed to upload attachment \"" + name + "\"", ex);
+                listViewAttachments.AllowDrop = true;
+            } 
+        }
+
+        private void listViewAttachments_DragEnter(object sender, DragEventArgs e) {
+            if (!listViewAttachments.AllowDrop) return;
+
+            e.Effect = DragDropEffects.None;
+
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop))
+                return;
+
+            string[] fileNames = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+            if (fileNames.Length != 1) return;
+
+            if ((e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy) {
+                e.Effect = DragDropEffects.Copy;
+            }
         }
     }
 }

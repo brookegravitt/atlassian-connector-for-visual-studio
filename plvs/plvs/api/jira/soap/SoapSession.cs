@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Atlassian.plvs.Atlassian.plvs.api.soap.service;
 
 namespace Atlassian.plvs.api.jira.soap {
@@ -221,6 +222,10 @@ namespace Atlassian.plvs.api.jira.soap {
                 fieldValues.Add(fv);
             }
             service.updateIssue(token, key, fieldValues.ToArray());
+        }
+
+        public void uploadAttachment(string key, string name, byte[] attachment) {
+            service.addBase64EncodedAttachmentsToIssue(token, key, new[] {name}, new[] {Convert.ToBase64String(attachment)});
         }
 
         #region private parts

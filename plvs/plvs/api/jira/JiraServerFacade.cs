@@ -155,6 +155,10 @@ namespace Atlassian.plvs.api.jira {
             wrapExceptionsVoid(issue.Server, () => getSoapSession(issue.Server).updateIssue(issue.Key, fields));
         }
 
+        public void uploadAttachment(JiraIssue issue, string name, byte[] attachment) {
+            wrapExceptionsVoid(issue.Server, () => getSoapSession(issue.Server).uploadAttachment(issue.Key, name, attachment));    
+        }
+
         #endregion
 
         #region private parts

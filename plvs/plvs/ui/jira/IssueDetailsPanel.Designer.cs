@@ -30,6 +30,8 @@ namespace Atlassian.plvs.ui.jira {
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(IssueDetailsPanel));
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.jiraStatus = new System.Windows.Forms.ToolStripStatusLabel();
@@ -56,8 +58,6 @@ namespace Atlassian.plvs.ui.jira {
             this.columnAuthor = new System.Windows.Forms.ColumnHeader();
             this.columnSize = new System.Windows.Forms.ColumnHeader();
             this.columnDate = new System.Windows.Forms.ColumnHeader();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.webAttachmentView = new System.Windows.Forms.WebBrowser();
             this.label3 = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -66,6 +66,11 @@ namespace Atlassian.plvs.ui.jira {
             this.buttonClose = new System.Windows.Forms.ToolStripButton();
             this.buttonLogWork = new System.Windows.Forms.ToolStripButton();
             this.dropDownIssueActions = new System.Windows.Forms.ToolStripDropDownButton();
+            this.toolTipAttachments = new System.Windows.Forms.ToolTip(this.components);
+            this.toolStripContainer3 = new System.Windows.Forms.ToolStripContainer();
+            this.toolStrip3 = new System.Windows.Forms.ToolStrip();
+            this.buttonSaveAttachmentAs = new System.Windows.Forms.ToolStripButton();
+            this.buttonUploadNew = new System.Windows.Forms.ToolStripButton();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -86,8 +91,11 @@ namespace Atlassian.plvs.ui.jira {
             this.splitContainerAttachments.Panel1.SuspendLayout();
             this.splitContainerAttachments.Panel2.SuspendLayout();
             this.splitContainerAttachments.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
+            this.toolStripContainer3.ContentPanel.SuspendLayout();
+            this.toolStripContainer3.TopToolStripPanel.SuspendLayout();
+            this.toolStripContainer3.SuspendLayout();
+            this.toolStrip3.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStripContainer1
@@ -249,13 +257,14 @@ namespace Atlassian.plvs.ui.jira {
             // toolStrip2
             // 
             this.toolStrip2.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStrip2.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.buttonAddComment,
             this.buttonExpandAll,
             this.buttonCollapseAll});
             this.toolStrip2.Location = new System.Drawing.Point(3, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(81, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(72, 25);
             this.toolStrip2.TabIndex = 0;
             // 
             // buttonAddComment
@@ -338,8 +347,7 @@ namespace Atlassian.plvs.ui.jira {
             // 
             // splitContainerAttachments.Panel1
             // 
-            this.splitContainerAttachments.Panel1.Controls.Add(this.listViewAttachments);
-            this.splitContainerAttachments.Panel1.Controls.Add(this.menuStrip1);
+            this.splitContainerAttachments.Panel1.Controls.Add(this.toolStripContainer3);
             // 
             // splitContainerAttachments.Panel2
             // 
@@ -351,6 +359,7 @@ namespace Atlassian.plvs.ui.jira {
             // 
             // listViewAttachments
             // 
+            this.listViewAttachments.AllowDrop = true;
             this.listViewAttachments.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnName,
             this.columnAuthor,
@@ -360,15 +369,17 @@ namespace Atlassian.plvs.ui.jira {
             this.listViewAttachments.FullRowSelect = true;
             this.listViewAttachments.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listViewAttachments.HideSelection = false;
-            this.listViewAttachments.Location = new System.Drawing.Point(0, 24);
+            this.listViewAttachments.Location = new System.Drawing.Point(0, 0);
             this.listViewAttachments.MultiSelect = false;
             this.listViewAttachments.Name = "listViewAttachments";
-            this.listViewAttachments.Size = new System.Drawing.Size(340, 378);
+            this.listViewAttachments.Size = new System.Drawing.Size(340, 377);
             this.listViewAttachments.TabIndex = 0;
             this.listViewAttachments.UseCompatibleStateImageBehavior = false;
             this.listViewAttachments.View = System.Windows.Forms.View.Details;
             this.listViewAttachments.SelectedIndexChanged += new System.EventHandler(this.listViewAttachments_SelectedIndexChanged);
             this.listViewAttachments.SizeChanged += new System.EventHandler(this.listViewAttachments_SizeChanged);
+            this.listViewAttachments.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewAttachments_DragDrop);
+            this.listViewAttachments.DragEnter += new System.Windows.Forms.DragEventHandler(this.listViewAttachments_DragEnter);
             this.listViewAttachments.Click += new System.EventHandler(this.listViewAttachments_Click);
             // 
             // columnName
@@ -390,24 +401,7 @@ namespace Atlassian.plvs.ui.jira {
             // 
             this.columnDate.Text = "Date";
             this.columnDate.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.columnDate.Width = 35;
-            // 
-            // menuStrip1
-            // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.saveAsToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(340, 24);
-            this.menuStrip1.TabIndex = 2;
-            this.menuStrip1.Text = "menuStrip1";
-            // 
-            // saveAsToolStripMenuItem
-            // 
-            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(68, 20);
-            this.saveAsToolStripMenuItem.Text = "Save As...";
-            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAttachment);
+            this.columnDate.Width = 66;
             // 
             // webAttachmentView
             // 
@@ -433,6 +427,7 @@ namespace Atlassian.plvs.ui.jira {
             // toolStrip1
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.buttonViewInBrowser,
             this.buttonRefresh,
@@ -441,7 +436,7 @@ namespace Atlassian.plvs.ui.jira {
             this.dropDownIssueActions});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(133, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(124, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonViewInBrowser
@@ -494,6 +489,56 @@ namespace Atlassian.plvs.ui.jira {
             this.dropDownIssueActions.Text = "Issue Actions";
             this.dropDownIssueActions.DropDownOpened += new System.EventHandler(this.dropDownIssueActions_DropDownOpened);
             // 
+            // toolStripContainer3
+            // 
+            // 
+            // toolStripContainer3.ContentPanel
+            // 
+            this.toolStripContainer3.ContentPanel.Controls.Add(this.listViewAttachments);
+            this.toolStripContainer3.ContentPanel.Size = new System.Drawing.Size(340, 377);
+            this.toolStripContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.toolStripContainer3.Location = new System.Drawing.Point(0, 0);
+            this.toolStripContainer3.Name = "toolStripContainer3";
+            this.toolStripContainer3.Size = new System.Drawing.Size(340, 402);
+            this.toolStripContainer3.TabIndex = 3;
+            this.toolStripContainer3.Text = "toolStripContainer3";
+            // 
+            // toolStripContainer3.TopToolStripPanel
+            // 
+            this.toolStripContainer3.TopToolStripPanel.Controls.Add(this.toolStrip3);
+            // 
+            // toolStrip3
+            // 
+            this.toolStrip3.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStrip3.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip3.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.buttonSaveAttachmentAs,
+            this.buttonUploadNew});
+            this.toolStrip3.Location = new System.Drawing.Point(3, 0);
+            this.toolStrip3.Name = "toolStrip3";
+            this.toolStrip3.Size = new System.Drawing.Size(148, 25);
+            this.toolStrip3.TabIndex = 0;
+            // 
+            // buttonSaveAttachmentAs
+            // 
+            this.buttonSaveAttachmentAs.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.buttonSaveAttachmentAs.Image = ((System.Drawing.Image)(resources.GetObject("buttonSaveAttachmentAs.Image")));
+            this.buttonSaveAttachmentAs.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonSaveAttachmentAs.Name = "buttonSaveAttachmentAs";
+            this.buttonSaveAttachmentAs.Size = new System.Drawing.Size(60, 22);
+            this.buttonSaveAttachmentAs.Text = "Save As...";
+            this.buttonSaveAttachmentAs.Click += new System.EventHandler(this.saveAttachment);
+            // 
+            // buttonUploadNew
+            // 
+            this.buttonUploadNew.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.buttonUploadNew.Image = ((System.Drawing.Image)(resources.GetObject("buttonUploadNew.Image")));
+            this.buttonUploadNew.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonUploadNew.Name = "buttonUploadNew";
+            this.buttonUploadNew.Size = new System.Drawing.Size(85, 22);
+            this.buttonUploadNew.Text = "Upload New...";
+            this.buttonUploadNew.Click += new System.EventHandler(this.uploadAttachment);
+            // 
             // IssueDetailsPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -528,13 +573,17 @@ namespace Atlassian.plvs.ui.jira {
             this.tabSubtasks.ResumeLayout(false);
             this.tabAttachments.ResumeLayout(false);
             this.splitContainerAttachments.Panel1.ResumeLayout(false);
-            this.splitContainerAttachments.Panel1.PerformLayout();
             this.splitContainerAttachments.Panel2.ResumeLayout(false);
             this.splitContainerAttachments.ResumeLayout(false);
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
+            this.toolStripContainer3.ContentPanel.ResumeLayout(false);
+            this.toolStripContainer3.TopToolStripPanel.ResumeLayout(false);
+            this.toolStripContainer3.TopToolStripPanel.PerformLayout();
+            this.toolStripContainer3.ResumeLayout(false);
+            this.toolStripContainer3.PerformLayout();
+            this.toolStrip3.ResumeLayout(false);
+            this.toolStrip3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -575,7 +624,10 @@ namespace Atlassian.plvs.ui.jira {
         private System.Windows.Forms.ColumnHeader columnDate;
         private System.Windows.Forms.ColumnHeader columnSize;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
+        private System.Windows.Forms.ToolTip toolTipAttachments;
+        private System.Windows.Forms.ToolStripContainer toolStripContainer3;
+        private System.Windows.Forms.ToolStrip toolStrip3;
+        private System.Windows.Forms.ToolStripButton buttonSaveAttachmentAs;
+        private System.Windows.Forms.ToolStripButton buttonUploadNew;
     }
 }

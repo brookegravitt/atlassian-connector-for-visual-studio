@@ -34,7 +34,7 @@
             this.getMoreIssues = new System.Windows.Forms.ToolStripStatusLabel();
             this.jiraSplitter = new System.Windows.Forms.SplitContainer();
             this.filterTreeContainer = new System.Windows.Forms.ToolStripContainer();
-            this.filtersTree = new JiraFiltersTree();
+            this.filtersTree = new ui.jira.JiraFiltersTree();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.buttonRefreshAll = new System.Windows.Forms.ToolStripButton();
             this.buttonServerExplorer = new System.Windows.Forms.ToolStripButton();
@@ -46,7 +46,7 @@
             this.labelNarrow = new System.Windows.Forms.ToolStripLabel();
             this.comboFind = new System.Windows.Forms.ToolStripComboBox();
             this.labelGroupBy = new System.Windows.Forms.ToolStripLabel();
-            this.comboGroupBy = new JiraIssueGroupByCombo(this.components);
+            this.comboGroupBy = new ui.jira.JiraIssueGroupByCombo(this.components);
             this.buttonExpandAll = new System.Windows.Forms.ToolStripButton();
             this.buttonCollapseAll = new System.Windows.Forms.ToolStripButton();
             this.buttonGroupSubtasks = new System.Windows.Forms.ToolStripButton();
@@ -168,6 +168,7 @@
             // toolStrip1
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.buttonRefreshAll,
             this.buttonServerExplorer,
@@ -176,7 +177,7 @@
             this.buttonEditFilter});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(158, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(118, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonRefreshAll
@@ -249,6 +250,7 @@
             // toolStrip2
             // 
             this.toolStrip2.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStrip2.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.labelNarrow,
             this.comboFind,
@@ -265,7 +267,7 @@
             this.buttonRefresh});
             this.toolStrip2.Location = new System.Drawing.Point(3, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(580, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(602, 25);
             this.toolStrip2.TabIndex = 0;
             // 
             // labelNarrow

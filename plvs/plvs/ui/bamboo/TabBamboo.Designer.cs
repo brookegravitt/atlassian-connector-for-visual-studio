@@ -33,7 +33,6 @@
             this.buttonRunBuild = new System.Windows.Forms.ToolStripButton();
             this.notifyBuildStatus = new System.Windows.Forms.NotifyIcon(this.components);
             this.toolStripContainer.BottomToolStripPanel.SuspendLayout();
-            this.toolStripContainer.ContentPanel.SuspendLayout();
             this.toolStripContainer.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -80,13 +79,14 @@
             // toolStrip1
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.buttonPoll,
             this.buttonViewInBrowser,
             this.buttonRunBuild});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(81, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(72, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonPoll
@@ -133,7 +133,6 @@
             this.Size = new System.Drawing.Size(1120, 557);
             this.toolStripContainer.BottomToolStripPanel.ResumeLayout(false);
             this.toolStripContainer.BottomToolStripPanel.PerformLayout();
-            this.toolStripContainer.ContentPanel.ResumeLayout(false);
             this.toolStripContainer.TopToolStripPanel.ResumeLayout(false);
             this.toolStripContainer.TopToolStripPanel.PerformLayout();
             this.toolStripContainer.ResumeLayout(false);
