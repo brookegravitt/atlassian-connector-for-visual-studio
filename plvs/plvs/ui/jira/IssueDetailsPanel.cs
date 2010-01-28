@@ -362,17 +362,10 @@ namespace Atlassian.plvs.ui.jira {
 
         private void rebuildAttachmentsPanel() {
             listViewAttachments.Items.Clear();
-            if (issue.HasAttachments) {
-                if (!issueTabs.TabPages.Contains(tabAttachments)) {
-                    issueTabs.TabPages.Add(tabAttachments);
-                }
-                foreach (JiraAttachment att in issue.Attachments) {
-                    listViewAttachments.Items.Add(new JiraAttachmentListViewItem(issue, att));
-                }
-            } else {
-                if (issueTabs.TabPages.Contains(tabAttachments)) {
-                    issueTabs.TabPages.Remove(tabAttachments);
-                }
+            if (!issue.HasAttachments) return;
+
+            foreach (JiraAttachment att in issue.Attachments) {
+                listViewAttachments.Items.Add(new JiraAttachmentListViewItem(issue, att));
             }
         }
 
