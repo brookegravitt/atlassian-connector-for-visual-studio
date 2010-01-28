@@ -12,7 +12,7 @@ using Atlassian.plvs.ui.jira.fields;
 using Atlassian.plvs.util;
 using Atlassian.plvs.util.jira;
 
-namespace Atlassian.plvs.dialogs {
+namespace Atlassian.plvs.dialogs.jira {
     public sealed partial class IssueWorkflowAction : Form {
         private readonly JiraIssue issue;
         private readonly JiraNamedEntity action;
@@ -179,8 +179,8 @@ namespace Atlassian.plvs.dialogs {
                         break;
                     case JiraActionFieldType.WidgetType.DUE_DATE:
                         editor = new DateFieldEditor(field, field.Values.Count > 0 
-                            ? JiraIssueUtils.getDateTimeFromShortString(field.Values[0]) 
-                            : (DateTime?) null, fieldValid);
+                                                                ? JiraIssueUtils.getDateTimeFromShortString(field.Values[0]) 
+                                                                : (DateTime?) null, fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.COMPONENTS:
                         editor = new NamedEntityListFieldEditor(field, issue.Components, comps, fieldValid);
@@ -287,7 +287,7 @@ namespace Atlassian.plvs.dialogs {
 
         private void showErrorAndResumeEditing(Exception ex) {
             MessageBox.Show("Failed to run action " + action.Name + " on issue " + issue.Key + "\n" + ex.Message, 
-                Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
             setThrobberVisible(false);
             setAllEnabled(true);
         }

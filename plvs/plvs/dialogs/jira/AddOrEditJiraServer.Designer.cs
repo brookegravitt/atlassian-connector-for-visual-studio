@@ -1,4 +1,4 @@
-﻿namespace Atlassian.plvs.dialogs {
+﻿namespace Atlassian.plvs.dialogs.jira {
     partial class AddOrEditJiraServer
     {
         /// <summary>

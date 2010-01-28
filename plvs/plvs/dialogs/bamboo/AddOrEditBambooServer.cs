@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using Atlassian.plvs.api.bamboo;
 
-namespace Atlassian.plvs.dialogs {
+namespace Atlassian.plvs.dialogs.bamboo {
     public partial class AddOrEditBambooServer : Form {
         private static int invocations;
 

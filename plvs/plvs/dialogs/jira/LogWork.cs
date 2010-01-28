@@ -10,7 +10,7 @@ using Atlassian.plvs.ui;
 using Atlassian.plvs.util;
 using Atlassian.plvs.util.jira;
 
-namespace Atlassian.plvs.dialogs {
+namespace Atlassian.plvs.dialogs.jira {
     public sealed partial class LogWork : Form {
         private readonly Control parent;
         private readonly JiraIssueListModel model;

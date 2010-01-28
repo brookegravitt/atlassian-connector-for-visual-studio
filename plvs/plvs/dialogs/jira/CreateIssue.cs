@@ -8,7 +8,7 @@ using Atlassian.plvs.store;
 using Atlassian.plvs.ui;
 using Atlassian.plvs.windows;
 
-namespace Atlassian.plvs.dialogs {
+namespace Atlassian.plvs.dialogs.jira {
     public partial class CreateIssue : Form {
         private readonly JiraServer server;
 
@@ -224,21 +224,21 @@ namespace Atlassian.plvs.dialogs {
 
         private void saveSelectedValues() {
             ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
-            store.storeParameter(PROJECT + server.GUID, comboProjects.SelectedIndex);
-            store.storeParameter(ISSUE_TYPE + server.GUID, comboTypes.SelectedIndex);
-            store.storeParameter(PRIORITY + server.GUID, comboPriorities.SelectedIndex);
-            store.storeParameter(COMPS_SIZE + server.GUID, listComponents.SelectedIndices.Count);
+            store.storeParameter(PROJECT + server.GUID, (int) comboProjects.SelectedIndex);
+            store.storeParameter(ISSUE_TYPE + server.GUID, (int) comboTypes.SelectedIndex);
+            store.storeParameter(PRIORITY + server.GUID, (int) comboPriorities.SelectedIndex);
+            store.storeParameter(COMPS_SIZE + server.GUID, (int) listComponents.SelectedIndices.Count);
             int i = 0;
             foreach (int index in listComponents.SelectedIndices) {
                 store.storeParameter(COMPS_SEL + (i++) + "_" + server.GUID, index);
             }
 
-            store.storeParameter(AFFECTS_SIZE + server.GUID, listAffectsVersions.SelectedIndices.Count);
+            store.storeParameter(AFFECTS_SIZE + server.GUID, (int) listAffectsVersions.SelectedIndices.Count);
             i = 0;
             foreach (int index in listAffectsVersions.SelectedIndices) {
                 store.storeParameter(AFFECTS_SEL + (i++) + "_" + server.GUID, index);
             }
-            store.storeParameter(FIXES_SIZE + server.GUID, listFixVersions.SelectedIndices.Count);
+            store.storeParameter(FIXES_SIZE + server.GUID, (int) listFixVersions.SelectedIndices.Count);
             i = 0;
             foreach (int index in listFixVersions.SelectedIndices) {
                 store.storeParameter(FIXES_SEL + (i++) + "_" + server.GUID, index);
@@ -247,16 +247,16 @@ namespace Atlassian.plvs.dialogs {
 
         private JiraIssue createIssueTemplate() {
             JiraIssue issue = new JiraIssue
-                                  {
-                                      Summary = textSummary.Text,
-                                      Description = textDescription.Text,
-                                      ProjectKey = ((JiraProject) comboProjects.SelectedItem).Key,
-                                      IssueTypeId =
-                                          ((ComboBoxWithImagesItem<JiraNamedEntity>) comboTypes.SelectedItem).Value.Id,
-                                      PriorityId =
-                                          ((ComboBoxWithImagesItem<JiraNamedEntity>) comboPriorities.SelectedItem).Value
-                                          .Id
-                                  };
+                              {
+                                  Summary = textSummary.Text,
+                                  Description = textDescription.Text,
+                                  ProjectKey = ((JiraProject) comboProjects.SelectedItem).Key,
+                                  IssueTypeId =
+                                      ((ComboBoxWithImagesItem<JiraNamedEntity>) comboTypes.SelectedItem).Value.Id,
+                                  PriorityId =
+                                      ((ComboBoxWithImagesItem<JiraNamedEntity>) comboPriorities.SelectedItem).Value
+                                      .Id
+                              };
 
             if (listComponents.SelectedItems.Count > 0) {
                 List<string> comps = new List<string>();

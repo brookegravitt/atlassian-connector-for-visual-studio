@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Atlassian.plvs.dialogs {
+namespace Atlassian.plvs.dialogs.jira {
     public partial class SetEndTime : Form {
 
         public SetEndTime(DateTime time) {

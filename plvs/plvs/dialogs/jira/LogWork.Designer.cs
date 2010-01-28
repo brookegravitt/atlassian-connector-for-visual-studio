@@ -1,4 +1,4 @@
-﻿namespace Atlassian.plvs.dialogs {
+﻿namespace Atlassian.plvs.dialogs.jira {
     sealed partial class LogWork {
         /// <summary>
         /// Required designer variable.
