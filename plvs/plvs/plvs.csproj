@@ -133,6 +133,12 @@
     <Compile Include="dialogs\GlobalSettings.Designer.cs">
       <DependentUpon>GlobalSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="dialogs\jira\FieldEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\jira\FieldEditor.Designer.cs">
+      <DependentUpon>FieldEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="dialogs\jira\IssueWorkflowAction.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -278,14 +284,14 @@
     <Compile Include="ui\ComboBoxWithImages.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ui\jira\fields\DateFieldEditor.cs" />
-    <Compile Include="ui\jira\fields\NamedEntityComboEditor.cs" />
-    <Compile Include="ui\jira\fields\JiraFieldEditor.cs" />
-    <Compile Include="ui\jira\fields\TextAreaFieldEditor.cs" />
-    <Compile Include="ui\jira\fields\TextLineFieldEditor.cs" />
-    <Compile Include="ui\jira\fields\TimeTrackingEditor.cs" />
-    <Compile Include="ui\jira\fields\UserFieldEditor.cs" />
-    <Compile Include="ui\jira\fields\NamedEntityListFieldEditor.cs" />
+    <Compile Include="ui\jira\fields\DateFieldEditorProvider.cs" />
+    <Compile Include="ui\jira\fields\NamedEntityComboEditorProvider.cs" />
+    <Compile Include="ui\jira\fields\JiraFieldEditorProvider.cs" />
+    <Compile Include="ui\jira\fields\TextAreaFieldEditorProvider.cs" />
+    <Compile Include="ui\jira\fields\TextLineFieldEditorProvider.cs" />
+    <Compile Include="ui\jira\fields\TimeTrackingEditorProvider.cs" />
+    <Compile Include="ui\jira\fields\UserFieldEditorProvider.cs" />
+    <Compile Include="ui\jira\fields\NamedEntityListFieldEditorProvider.cs" />
     <Compile Include="ui\jira\issues\ToolWindowStateMonitor.cs" />
     <Compile Include="ui\jira\JiraAttachmentListViewItem.cs" />
     <Compile Include="ui\jira\JiraFiltersTree.cs">
@@ -479,6 +485,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\GlobalSettings.resx">
       <DependentUpon>GlobalSettings.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\jira\FieldEditor.resx">
+      <DependentUpon>FieldEditor.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\jira\IssueWorkflowAction.resx">

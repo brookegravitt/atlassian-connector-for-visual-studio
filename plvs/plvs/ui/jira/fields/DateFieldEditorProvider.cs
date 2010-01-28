@@ -5,13 +5,13 @@ using Atlassian.plvs.api.jira;
 using Atlassian.plvs.util.jira;
 
 namespace Atlassian.plvs.ui.jira.fields {
-    internal class DateFieldEditor : JiraFieldEditor {
+    internal class DateFieldEditorProvider : JiraFieldEditorProvider {
         private readonly DateTimePicker picker = new DateTimePicker
                                                  {
                                                      ShowCheckBox = true
                                                  };
 
-        public DateFieldEditor(JiraField field, DateTime? date, FieldValidListener validListener)
+        public DateFieldEditorProvider(JiraField field, DateTime? date, FieldValidListener validListener)
             : base(field, validListener) {
             if (date != null) {
                 picker.Value = (DateTime) date;
@@ -32,7 +32,9 @@ namespace Atlassian.plvs.ui.jira.fields {
         public override void resizeToWidth(int width) {}
 
         public override List<string> getValues() {
-            return picker.Checked ? new List<string> { JiraIssueUtils.getShortDateStringFromDateTime(picker.Value)} : new List<string>();
+            return picker.Checked 
+                ? new List<string> { JiraIssueUtils.getShortDateStringFromDateTime(picker.Value)} 
+                : new List<string>();
         }
     }
 }

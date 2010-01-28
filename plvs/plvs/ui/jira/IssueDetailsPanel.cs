@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Reflection;
@@ -190,6 +191,7 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private static readonly Regex STACK_REGEX = new Regex(@"(\s*\w+\S+\(.*\)\s+\w+\s+)(\S+)(:\w+\s+)(\d+)");
+        private const int EDITOR_OFFSET = 40;
 
         private const string ASSIGNEE_EDIT_TAG = "assignee";
         private const string COMPONENTS_EDIT_TAG = "components";
@@ -578,30 +580,44 @@ namespace Atlassian.plvs.ui.jira {
         private void issueSummary_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
             if (!issueSummaryLoaded) return;
             if (e.Url.ToString().StartsWith(PARENT_ISSUE_URL_TYPE)) {
-                AtlassianPanel.Instance.Jira.findAndOpenIssue(e.Url.ToString().Substring(PARENT_ISSUE_URL_TYPE.Length), openParentOrSubtaskFinished);
+                AtlassianPanel.Instance.Jira.findAndOpenIssue(
+                    e.Url.ToString().Substring(PARENT_ISSUE_URL_TYPE.Length), openParentOrSubtaskFinished);
                 e.Cancel = true;
                 return;
             }
+            string title = null;
             if (e.Url.ToString().StartsWith(ISSUE_EDIT_URL_TYPE)) {
-                string txt = "Nothing";
+                string fieldId = null;
                 switch (e.Url.ToString().Substring(ISSUE_EDIT_URL_TYPE.Length)) {
                     case PRIORITY_EDIT_TAG:
-                        txt = "priority";
+                        title = "Edit Priority";
+                        fieldId = "priority";
                         break;
                     case FIX_VERSIONS_EDIT_TAG:
-                        txt = "fix version";
+                        title = "Edit Fix Versions";
+                        fieldId = "fixVersions";
                         break;
                     case AFFECTS_VERSIONS_EDIT_TAG:
-                        txt = "affects version";
+                        title = "Edit Affects Versions";
+                        fieldId = "versions";
                         break;
                     case COMPONENTS_EDIT_TAG:
-                        txt = "components";
+                        title = "Edit Components";
+                        fieldId = "components";
                         break;
                     case ASSIGNEE_EDIT_TAG:
-                        txt = "assignee";
+                        title = "Edit Assignee";
+                        fieldId = "assignee";
                         break;
                 }
-                MessageBox.Show("Editing " + txt);
+                if (fieldId != null) {
+                    Point pt = Cursor.Position;
+                    pt.X = Math.Max(pt.X - EDITOR_OFFSET, 0);
+                    pt.Y = Math.Max(pt.Y - EDITOR_OFFSET, 0);
+                    
+                    FieldEditor editor = new FieldEditor(title, model, facade, issue, fieldId, pt);
+                    editor.ShowDialog();
+                }
                 e.Cancel = true;
                 return;
             }
@@ -612,7 +628,8 @@ namespace Atlassian.plvs.ui.jira {
             if (e.Url.Equals("about:blank")) return;
             if (!issueSubtasksLoaded) return;
             if (e.Url.ToString().StartsWith(SUBTASK_ISSUE_URL_TYPE)) {
-                AtlassianPanel.Instance.Jira.findAndOpenIssue(e.Url.ToString().Substring(SUBTASK_ISSUE_URL_TYPE.Length), openParentOrSubtaskFinished);
+                AtlassianPanel.Instance.Jira.findAndOpenIssue(
+                    e.Url.ToString().Substring(SUBTASK_ISSUE_URL_TYPE.Length), openParentOrSubtaskFinished);
                 e.Cancel = true;
                 return;
             }
