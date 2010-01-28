@@ -27,6 +27,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(About));
             this.browser = new System.Windows.Forms.WebBrowser();
             this.buttonClose = new System.Windows.Forms.Button();
             this.picture = new System.Windows.Forms.PictureBox();
@@ -75,6 +76,7 @@
             this.Controls.Add(this.browser);
             this.Controls.Add(this.picture);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.Name = "About";

@@ -16,6 +16,7 @@ namespace Atlassian.plvs.dialogs {
         private const string REG_ISSUE_BATCH_SIZE = "JiraIssueBatchSize";
         private const string REG_MANUAL_UPDATE_STABLE_ONLY = "ManualUpdateCheckStableOnly";
         private const string REG_REPORT_USAGE = "AutoupdateReportUsage";
+        private const string REG_JIRA_SERVER_EXPLORER = "JiraServerExplorer";
 
         private bool isRunningManualUpdateQuery;
 
@@ -31,6 +32,7 @@ namespace Atlassian.plvs.dialogs {
                 ReportUsage = (int) root.GetValue(REG_REPORT_USAGE, 1) > 0;
                 CheckStableOnlyNow = (int) root.GetValue(REG_MANUAL_UPDATE_STABLE_ONLY, 1) > 0;
                 BambooPollingInterval = (int) root.GetValue(REG_BAMBOO_POLLING_INTERVAL, DEFAULT_BAMBOO_POLLING_INTERVAL);
+                JiraServerExplorerEnabled = (int)root.GetValue(REG_JIRA_SERVER_EXPLORER, 0) > 0;
             } catch (Exception) {
                 JiraIssuesBatch = DEFAULT_ISSUE_BATCH_SIZE;
                 AutoupdateEnabled = true;
@@ -38,6 +40,7 @@ namespace Atlassian.plvs.dialogs {
                 ReportUsage = true;
                 CheckStableOnlyNow = true;
                 BambooPollingInterval = DEFAULT_BAMBOO_POLLING_INTERVAL;
+                JiraServerExplorerEnabled = false;
             }
         }
 
@@ -47,6 +50,8 @@ namespace Atlassian.plvs.dialogs {
             StartPosition = FormStartPosition.CenterParent;
 
             initializeWidgets();
+
+            buttonOk.Enabled = false;
         }
 
         public static int JiraIssuesBatch { get; private set; }
@@ -55,6 +60,7 @@ namespace Atlassian.plvs.dialogs {
         public static bool ReportUsage { get; private set; }
         public static bool CheckStableOnlyNow { get; private set; }
         public static int BambooPollingInterval { get; private set; }
+        public static bool JiraServerExplorerEnabled { get; private set; }
 
         private void initializeWidgets() {
             numericJiraBatchSize.Value = Math.Min(Math.Max(JiraIssuesBatch, 10), 1000);
@@ -66,6 +72,7 @@ namespace Atlassian.plvs.dialogs {
             checkStats.Enabled = AutoupdateEnabled;
             radioStable.Checked = CheckStableOnlyNow;
             radioUnstable.Checked = !CheckStableOnlyNow;
+            checkJiraExplorer.Checked = JiraServerExplorerEnabled;
         }
 
         public static void checkFirstRun() {
@@ -117,6 +124,7 @@ namespace Atlassian.plvs.dialogs {
             }
             CheckStableOnlyNow = radioStable.Checked;
             BambooPollingInterval = (int) numericBambooPollingInterval.Value;
+            JiraServerExplorerEnabled = checkJiraExplorer.Checked;
 
             saveValues();
 
@@ -141,6 +149,7 @@ namespace Atlassian.plvs.dialogs {
                 root.SetValue(REG_REPORT_USAGE, ReportUsage ? 1 : 0);
                 root.SetValue(REG_MANUAL_UPDATE_STABLE_ONLY, CheckStableOnlyNow ? 1 : 0);
                 root.SetValue(REG_BAMBOO_POLLING_INTERVAL, BambooPollingInterval);
+                root.SetValue(REG_JIRA_SERVER_EXPLORER, JiraServerExplorerEnabled ? 1 : 0);
             } catch (Exception e) {
                 MessageBox.Show("Unable to save values to registry: " + e.Message, Constants.ERROR_CAPTION,
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -162,11 +171,6 @@ namespace Atlassian.plvs.dialogs {
             buttonCancel.Enabled = enabled;
         }
 
-        private void checkAutoupdate_CheckedChanged(object sender, EventArgs e) {
-            checkUnstable.Enabled = checkAutoupdate.Checked;
-            checkStats.Enabled = checkAutoupdate.Checked;
-        }
-
         private void linkUsageStatsDetails_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             try {
                 Process.Start(
@@ -174,6 +178,55 @@ namespace Atlassian.plvs.dialogs {
             } catch (Exception ex) {
                 Debug.WriteLine("GlobalSettings.linkUsageStatsDetails_LinkClicked() - exception: " + ex.Message);
             }
+        }
+
+        private void updateOkButton() {
+            bool changed = false;
+
+            changed |= JiraIssuesBatch != (int) numericJiraBatchSize.Value;
+            changed |= AutoupdateEnabled != checkAutoupdate.Checked;
+            changed |= AutoupdateSnapshots != checkUnstable.Checked;
+            changed |= ReportUsage != checkStats.Checked;
+            changed |= CheckStableOnlyNow != radioStable.Checked;
+            changed |= BambooPollingInterval != (int) numericBambooPollingInterval.Value;
+            changed |= JiraServerExplorerEnabled != checkJiraExplorer.Checked;
+
+            buttonOk.Enabled = changed;
+        }
+
+        private void checkAutoupdate_CheckedChanged(object sender, EventArgs e) {
+            checkUnstable.Enabled = checkAutoupdate.Checked;
+            checkStats.Enabled = checkAutoupdate.Checked;
+
+            updateOkButton();
+        }
+
+        private void checkJiraExplorer_CheckedChanged(object sender, EventArgs e) {
+            updateOkButton();
+        }
+
+        private void numericJiraBatchSize_ValueChanged(object sender, EventArgs e) {
+            updateOkButton();
+        }
+
+        private void numericBambooPollingInterval_ValueChanged(object sender, EventArgs e) {
+            updateOkButton();
+        }
+
+        private void checkUnstable_CheckedChanged(object sender, EventArgs e) {
+            updateOkButton();
+        }
+
+        private void checkStats_CheckedChanged(object sender, EventArgs e) {
+            updateOkButton();
+        }
+
+        private void radioStable_CheckedChanged(object sender, EventArgs e) {
+            updateOkButton();
+        }
+
+        private void radioUnstable_CheckedChanged(object sender, EventArgs e) {
+            updateOkButton();
         }
     }
 }
