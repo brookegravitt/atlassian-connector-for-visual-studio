@@ -39,7 +39,6 @@ namespace Atlassian.plvs.models.jira {
 
         private static readonly SortedDictionary<string, WidgetTypeAndFieldFiller> TypeMap = 
             new SortedDictionary<string, WidgetTypeAndFieldFiller> {
-		    
                                                                        { "summary", new WidgetTypeAndFieldFiller(WidgetType.SUMMARY, new SummaryFiller()) },
                                                                        { "resolution", new WidgetTypeAndFieldFiller(WidgetType.RESOLUTION, new ResolutionFiller()) },
                                                                        { "issuetype", new WidgetTypeAndFieldFiller(WidgetType.ISSUE_TYPE, new IssueTypeFiller()) },
@@ -64,7 +63,7 @@ namespace Atlassian.plvs.models.jira {
 
         private JiraActionFieldType() {}
 
-        public static WidgetType getFieldTypeForFieldId(JiraField field) {
+        public static WidgetType getFieldTypeForField(JiraField field) {
             return getFieldTypeForFieldId(field.Id);
         }
 

@@ -3,14 +3,14 @@ using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 
 namespace Atlassian.plvs.ui.jira.fields {
-    public class NamedEntityListFieldEditor : JiraFieldEditor {
+    public class NamedEntityListFieldEditorProvider : JiraFieldEditorProvider {
         private readonly ListBox list = new ListBox
                                         {
                                             SelectionMode = SelectionMode.MultiExtended,
                                             Height = MULTI_LINE_EDITOR_HEIGHT
                                         };
 
-        public NamedEntityListFieldEditor(
+        public NamedEntityListFieldEditorProvider(
             JiraField field, IEnumerable<string> selectedEntityNames, IEnumerable<JiraNamedEntity> entities, FieldValidListener validListener)
             : base(field, validListener) {
 

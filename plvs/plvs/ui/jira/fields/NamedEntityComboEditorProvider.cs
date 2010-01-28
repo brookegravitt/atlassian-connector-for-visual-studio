@@ -4,15 +4,17 @@ using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models;
 
 namespace Atlassian.plvs.ui.jira.fields {
-    public class NamedEntityComboEditor : JiraFieldEditor {
+    public class NamedEntityComboEditorProvider : JiraFieldEditorProvider {
         private readonly JiraNamedEntityComboBox combo = new JiraNamedEntityComboBox();
 
-        public NamedEntityComboEditor(JiraField field, int selectedEntityId, IEnumerable<JiraNamedEntity> entities, FieldValidListener validListener) 
+        public NamedEntityComboEditorProvider(
+            JiraField field, int selectedEntityId, IEnumerable<JiraNamedEntity> entities, FieldValidListener validListener) 
             : base(field, validListener) {
             init(selectedEntityId, entities, true);
         }
 
-        public NamedEntityComboEditor(JiraField field, int selectedEntityId, IEnumerable<JiraNamedEntity> entities, FieldValidListener validListener, bool useImages)
+        public NamedEntityComboEditorProvider(
+            JiraField field, int selectedEntityId, IEnumerable<JiraNamedEntity> entities, FieldValidListener validListener, bool useImages)
             : base(field, validListener) {
             init(selectedEntityId, entities, useImages);
         }

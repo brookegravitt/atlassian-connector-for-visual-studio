@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 
 namespace Atlassian.plvs.ui.jira.fields {
-    public abstract class JiraFieldEditor {
+    public abstract class JiraFieldEditorProvider {
         public JiraField Field { get; private set; }
 
         private readonly FieldValidListener validListener;
@@ -16,9 +16,9 @@ namespace Atlassian.plvs.ui.jira.fields {
         public abstract int VerticalSkip { get; }
         public abstract void resizeToWidth(int width);
 
-        public delegate void FieldValidListener(JiraFieldEditor sender, bool valid);
+        public delegate void FieldValidListener(JiraFieldEditorProvider sender, bool valid);
 
-        protected JiraFieldEditor(JiraField field, FieldValidListener validListener) {
+        protected JiraFieldEditorProvider(JiraField field, FieldValidListener validListener) {
             Field = field;
             this.validListener = validListener;
         }

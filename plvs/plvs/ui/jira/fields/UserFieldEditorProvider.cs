@@ -3,11 +3,11 @@ using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 
 namespace Atlassian.plvs.ui.jira.fields {
-    public class UserFieldEditor : JiraFieldEditor {
+    public class UserFieldEditorProvider : JiraFieldEditorProvider {
 
         private readonly JiraUserPicker picker;
 
-        public UserFieldEditor(JiraServer server, JiraField field, string userName, FieldValidListener validListener) 
+        public UserFieldEditorProvider(JiraServer server, JiraField field, string userName, FieldValidListener validListener) 
             : base(field, validListener) {
 
             picker = new JiraUserPicker();

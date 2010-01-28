@@ -25,7 +25,7 @@ namespace Atlassian.plvs.dialogs.jira {
 
         private readonly TextBox textComment = new TextBox();
         private TextBox textUnsupported;
-        private readonly List<JiraFieldEditor> editors = new List<JiraFieldEditor>();
+        private readonly List<JiraFieldEditorProvider> editors = new List<JiraFieldEditorProvider>();
 
         private const int LABEL_X_POS = 0;
         private const int FIELD_X_POS = 120;
@@ -134,7 +134,7 @@ namespace Atlassian.plvs.dialogs.jira {
                                               ClientSize.Height - MARGIN - buttonCancel.Height);
         }
 
-        private void fieldValid(JiraFieldEditor sender, bool valid) {
+        private void fieldValid(JiraFieldEditorProvider sender, bool valid) {
             updateOkButton();    
         }
 
@@ -151,49 +151,49 @@ namespace Atlassian.plvs.dialogs.jira {
             List<JiraField> unsupportedFields = new List<JiraField>();
 
             foreach (JiraField field in fields) {
-                JiraFieldEditor editor = null;
-                switch (JiraActionFieldType.getFieldTypeForFieldId(field)) {
+                JiraFieldEditorProvider editor = null;
+                switch (JiraActionFieldType.getFieldTypeForField(field)) {
                     case JiraActionFieldType.WidgetType.SUMMARY:
-                        editor = new TextLineFieldEditor(field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
+                        editor = new TextLineFieldEditorProvider(field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.DESCRIPTION:
-                        editor = new TextAreaFieldEditor(field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
+                        editor = new TextAreaFieldEditorProvider(field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.ENVIRONMENT:
-                        editor = new TextAreaFieldEditor(field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
+                        editor = new TextAreaFieldEditorProvider(field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.ISSUE_TYPE:
-                        editor = new NamedEntityComboEditor(field, issue.IssueTypeId, issueTypes, fieldValid);
+                        editor = new NamedEntityComboEditorProvider(field, issue.IssueTypeId, issueTypes, fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.VERSIONS:
-                        editor = new NamedEntityListFieldEditor(field, issue.Versions, versions, fieldValid);
+                        editor = new NamedEntityListFieldEditorProvider(field, issue.Versions, versions, fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.FIX_VERSIONS:
-                        editor = new NamedEntityListFieldEditor(field, issue.FixVersions, versions, fieldValid);
+                        editor = new NamedEntityListFieldEditorProvider(field, issue.FixVersions, versions, fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.ASSIGNEE:
-                        editor = new UserFieldEditor(issue.Server, field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
+                        editor = new UserFieldEditorProvider(issue.Server, field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.REPORTER:
-                        editor = new UserFieldEditor(issue.Server, field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
+                        editor = new UserFieldEditorProvider(issue.Server, field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.DUE_DATE:
-                        editor = new DateFieldEditor(field, field.Values.Count > 0 
+                        editor = new DateFieldEditorProvider(field, field.Values.Count > 0 
                                                                 ? JiraIssueUtils.getDateTimeFromShortString(field.Values[0]) 
                                                                 : (DateTime?) null, fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.COMPONENTS:
-                        editor = new NamedEntityListFieldEditor(field, issue.Components, comps, fieldValid);
+                        editor = new NamedEntityListFieldEditorProvider(field, issue.Components, comps, fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.RESOLUTION:
                         SortedDictionary<int, JiraNamedEntity> resolutions = JiraServerCache.Instance.getResolutions(issue.Server);
-                        editor = new NamedEntityComboEditor(field, issue.ResolutionId, resolutions != null ? resolutions.Values : null, fieldValid, false);
+                        editor = new NamedEntityComboEditorProvider(field, issue.ResolutionId, resolutions != null ? resolutions.Values : null, fieldValid, false);
                         break;
                     case JiraActionFieldType.WidgetType.PRIORITY:
-                        editor = new NamedEntityComboEditor(field, issue.PriorityId, JiraServerCache.Instance.getPriorities(issue.Server), fieldValid);
+                        editor = new NamedEntityComboEditorProvider(field, issue.PriorityId, JiraServerCache.Instance.getPriorities(issue.Server), fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.TIMETRACKING:
-                        editor = new TimeTrackingEditor(field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
+                        editor = new TimeTrackingEditorProvider(field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
                         break;
 // ReSharper disable RedundantCaseLabel
                     case JiraActionFieldType.WidgetType.SECURITY:
@@ -240,10 +240,10 @@ namespace Atlassian.plvs.dialogs.jira {
 
             textComment.Location = new Point(FIELD_X_POS, verticalPosition);
             textComment.Multiline = true;
-            textComment.Size = new Size(calculatedFieldWidth(), JiraFieldEditor.MULTI_LINE_EDITOR_HEIGHT);
+            textComment.Size = new Size(calculatedFieldWidth(), JiraFieldEditorProvider.MULTI_LINE_EDITOR_HEIGHT);
             textComment.TabIndex = tabIndex++;
 
-            verticalPosition += JiraFieldEditor.MULTI_LINE_EDITOR_HEIGHT + MARGIN;
+            verticalPosition += JiraFieldEditorProvider.MULTI_LINE_EDITOR_HEIGHT + MARGIN;
 
             panelContent.Controls.Add(textComment);
         }
@@ -297,7 +297,7 @@ namespace Atlassian.plvs.dialogs.jira {
             panelContent.SuspendLayout();
             panelThrobber.Visible = visible;
             panelContent.Visible = !visible;
-            foreach (JiraFieldEditor editor in editors) {
+            foreach (JiraFieldEditorProvider editor in editors) {
                 editor.Widget.Visible = !visible;
             }
             textComment.Visible = !visible;
@@ -310,7 +310,7 @@ namespace Atlassian.plvs.dialogs.jira {
 
         private void setAllEnabled(bool enabled) {
             buttonCancel.Enabled = enabled;
-            foreach (JiraFieldEditor editor in editors) {
+            foreach (JiraFieldEditorProvider editor in editors) {
                 editor.Widget.Enabled = enabled;
             }
             textComment.Enabled = enabled;
@@ -326,7 +326,7 @@ namespace Atlassian.plvs.dialogs.jira {
             foreach (var field in fields) {
                 map[field.Id] = field;
             }
-            foreach (JiraFieldEditor editor in editors) {
+            foreach (JiraFieldEditorProvider editor in editors) {
                 editor.Field.Values = editor.getValues();
                 map[editor.Field.Id] = editor.Field;
             }
@@ -344,8 +344,8 @@ namespace Atlassian.plvs.dialogs.jira {
 
             int width = calculatedFieldWidth();
 
-            textComment.Size = new Size(width, JiraFieldEditor.MULTI_LINE_EDITOR_HEIGHT);
-            foreach (JiraFieldEditor editor in editors) {
+            textComment.Size = new Size(width, JiraFieldEditorProvider.MULTI_LINE_EDITOR_HEIGHT);
+            foreach (JiraFieldEditorProvider editor in editors) {
                 editor.resizeToWidth(width);
             }
             if (textUnsupported != null) {
