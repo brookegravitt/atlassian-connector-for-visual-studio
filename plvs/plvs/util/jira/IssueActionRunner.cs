@@ -4,7 +4,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.autoupdate;
-using Atlassian.plvs.dialogs;
+using Atlassian.plvs.dialogs.jira;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
 

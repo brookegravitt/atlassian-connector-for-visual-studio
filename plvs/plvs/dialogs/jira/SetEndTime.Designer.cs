@@ -1,4 +1,4 @@
-﻿namespace Atlassian.plvs.dialogs {
+﻿namespace Atlassian.plvs.dialogs.jira {
     partial class SetEndTime {
         /// <summary>
         /// Required designer variable.
@@ -66,10 +66,10 @@
             // 
             this.numericHours.Location = new System.Drawing.Point(49, 69);
             this.numericHours.Maximum = new decimal(new int[] {
-            23,
-            0,
-            0,
-            0});
+                                                                  23,
+                                                                  0,
+                                                                  0,
+                                                                  0});
             this.numericHours.Name = "numericHours";
             this.numericHours.Size = new System.Drawing.Size(54, 20);
             this.numericHours.TabIndex = 3;
@@ -78,10 +78,10 @@
             // 
             this.numericMinutes.Location = new System.Drawing.Point(163, 69);
             this.numericMinutes.Maximum = new decimal(new int[] {
-            59,
-            0,
-            0,
-            0});
+                                                                    59,
+                                                                    0,
+                                                                    0,
+                                                                    0});
             this.numericMinutes.Name = "numericMinutes";
             this.numericMinutes.Size = new System.Drawing.Size(53, 20);
             this.numericMinutes.TabIndex = 4;

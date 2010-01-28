@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 
-namespace Atlassian.plvs.dialogs {
+namespace Atlassian.plvs.dialogs.jira {
     public partial class AddOrEditJiraServer : Form {
         private static int invocations;
 

@@ -9,7 +9,7 @@ using Atlassian.plvs.ui.jira;
 using Atlassian.plvs.util.jira;
 using Atlassian.plvs.windows;
 
-namespace Atlassian.plvs.dialogs {
+namespace Atlassian.plvs.dialogs.jira {
     public sealed partial class SearchIssue : Form {
         public JiraServer Server { get; set; }
         public JiraIssueListModel Model { get; set; }

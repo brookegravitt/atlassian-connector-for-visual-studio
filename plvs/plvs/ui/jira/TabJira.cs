@@ -7,6 +7,7 @@ using System.Threading;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs;
+using Atlassian.plvs.dialogs.jira;
 using Atlassian.plvs.explorer;
 using Atlassian.plvs.models;
 using Atlassian.plvs.models.jira;

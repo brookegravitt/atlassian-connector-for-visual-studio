@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 
-namespace Atlassian.plvs.dialogs {
+namespace Atlassian.plvs.dialogs.jira {
     public partial class SelectJiraProject : Form {
         public SelectJiraProject(IEnumerable<JiraProject> projects, JiraProject selectedProject) {
 

@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace Atlassian.plvs.dialogs {
+namespace Atlassian.plvs.dialogs.jira {
     public partial class NewIssueComment : Form {
         public NewIssueComment() {
             InitializeComponent();

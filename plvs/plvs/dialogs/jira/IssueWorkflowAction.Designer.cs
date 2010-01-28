@@ -1,4 +1,4 @@
-﻿namespace Atlassian.plvs.dialogs {
+﻿namespace Atlassian.plvs.dialogs.jira {
     partial class IssueWorkflowAction {
         /// <summary>
         /// Required designer variable.
@@ -46,8 +46,8 @@
             // panelContent
             // 
             this.panelContent.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+                                                                              | System.Windows.Forms.AnchorStyles.Left)
+                                                                             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelContent.AutoScroll = true;
             this.panelContent.Location = new System.Drawing.Point(12, 12);
             this.panelContent.Name = "panelContent";
@@ -68,7 +68,7 @@
             // progressWait
             // 
             this.progressWait.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+                                                                             | System.Windows.Forms.AnchorStyles.Right)));
             this.progressWait.Location = new System.Drawing.Point(190, 125);
             this.progressWait.Name = "progressWait";
             this.progressWait.Size = new System.Drawing.Size(304, 23);
@@ -89,7 +89,7 @@
             // labelWait
             // 
             this.labelWait.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+                                                                          | System.Windows.Forms.AnchorStyles.Right)));
             this.labelWait.Location = new System.Drawing.Point(12, 194);
             this.labelWait.Name = "labelWait";
             this.labelWait.Size = new System.Drawing.Size(660, 13);

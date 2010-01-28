@@ -94,10 +94,10 @@
     <Compile Include="dialogs\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
-    <Compile Include="dialogs\AddOrEditJiraServer.cs">
+    <Compile Include="dialogs\jira\AddOrEditJiraServer.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="dialogs\AddOrEditJiraServer.Designer.cs">
+    <Compile Include="dialogs\jira\AddOrEditJiraServer.Designer.cs">
       <DependentUpon>AddOrEditJiraServer.cs</DependentUpon>
     </Compile>
     <Compile Include="dialogs\AutoUpdateDialog.cs">
@@ -106,25 +106,25 @@
     <Compile Include="dialogs\AutoUpdateDialog.Designer.cs">
       <DependentUpon>AutoUpdateDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="dialogs\AddOrEditBambooServer.cs">
+    <Compile Include="dialogs\bamboo\AddOrEditBambooServer.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="dialogs\AddOrEditBambooServer.Designer.cs">
+    <Compile Include="dialogs\bamboo\AddOrEditBambooServer.Designer.cs">
       <DependentUpon>AddOrEditBambooServer.cs</DependentUpon>
     </Compile>
     <Compile Include="dialogs\bamboo\TestBambooConnection.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="dialogs\CreateIssue.cs">
+    <Compile Include="dialogs\jira\CreateIssue.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="dialogs\CreateIssue.Designer.cs">
+    <Compile Include="dialogs\jira\CreateIssue.Designer.cs">
       <DependentUpon>CreateIssue.cs</DependentUpon>
     </Compile>
-    <Compile Include="dialogs\EditCustomFilter.cs">
+    <Compile Include="dialogs\jira\EditCustomFilter.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="dialogs\EditCustomFilter.Designer.cs">
+    <Compile Include="dialogs\jira\EditCustomFilter.Designer.cs">
       <DependentUpon>EditCustomFilter.cs</DependentUpon>
     </Compile>
     <Compile Include="dialogs\GlobalSettings.cs">
@@ -133,25 +133,25 @@
     <Compile Include="dialogs\GlobalSettings.Designer.cs">
       <DependentUpon>GlobalSettings.cs</DependentUpon>
     </Compile>
-    <Compile Include="dialogs\IssueWorkflowAction.cs">
+    <Compile Include="dialogs\jira\IssueWorkflowAction.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="dialogs\IssueWorkflowAction.Designer.cs">
+    <Compile Include="dialogs\jira\IssueWorkflowAction.Designer.cs">
       <DependentUpon>IssueWorkflowAction.cs</DependentUpon>
     </Compile>
     <Compile Include="dialogs\jira\TestJiraConnection.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="dialogs\LogWork.cs">
+    <Compile Include="dialogs\jira\LogWork.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="dialogs\LogWork.Designer.cs">
+    <Compile Include="dialogs\jira\LogWork.Designer.cs">
       <DependentUpon>LogWork.cs</DependentUpon>
     </Compile>
-    <Compile Include="dialogs\NewIssueComment.cs">
+    <Compile Include="dialogs\jira\NewIssueComment.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="dialogs\NewIssueComment.Designer.cs">
+    <Compile Include="dialogs\jira\NewIssueComment.Designer.cs">
       <DependentUpon>NewIssueComment.cs</DependentUpon>
     </Compile>
     <Compile Include="dialogs\ProjectConfiguration.cs">
@@ -160,16 +160,16 @@
     <Compile Include="dialogs\ProjectConfiguration.Designer.cs">
       <DependentUpon>ProjectConfiguration.cs</DependentUpon>
     </Compile>
-    <Compile Include="dialogs\SearchIssue.cs">
+    <Compile Include="dialogs\jira\SearchIssue.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="dialogs\SearchIssue.Designer.cs">
+    <Compile Include="dialogs\jira\SearchIssue.Designer.cs">
       <DependentUpon>SearchIssue.cs</DependentUpon>
     </Compile>
-    <Compile Include="dialogs\SelectJiraProject.cs">
+    <Compile Include="dialogs\jira\SelectJiraProject.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="dialogs\SelectJiraProject.Designer.cs">
+    <Compile Include="dialogs\jira\SelectJiraProject.Designer.cs">
       <DependentUpon>SelectJiraProject.cs</DependentUpon>
     </Compile>
     <Compile Include="dialogs\AbstractTestConnection.cs">
@@ -178,10 +178,10 @@
     <Compile Include="dialogs\AbstractTestConnection.Designer.cs">
       <DependentUpon>AbstractTestConnection.cs</DependentUpon>
     </Compile>
-    <Compile Include="dialogs\SetEndTime.cs">
+    <Compile Include="dialogs\jira\SetEndTime.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="dialogs\SetEndTime.Designer.cs">
+    <Compile Include="dialogs\jira\SetEndTime.Designer.cs">
       <DependentUpon>SetEndTime.cs</DependentUpon>
     </Compile>
     <Compile Include="eventsinks\AbstractMarkerClientEventSink.cs" />
@@ -457,7 +457,7 @@
       <DependentUpon>About.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="dialogs\AddOrEditJiraServer.resx">
+    <EmbeddedResource Include="dialogs\jira\AddOrEditJiraServer.resx">
       <DependentUpon>AddOrEditJiraServer.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -465,15 +465,15 @@
       <DependentUpon>AutoUpdateDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="dialogs\AddOrEditBambooServer.resx">
+    <EmbeddedResource Include="dialogs\bamboo\AddOrEditBambooServer.resx">
       <DependentUpon>AddOrEditBambooServer.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="dialogs\CreateIssue.resx">
+    <EmbeddedResource Include="dialogs\jira\CreateIssue.resx">
       <DependentUpon>CreateIssue.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="dialogs\EditCustomFilter.resx">
+    <EmbeddedResource Include="dialogs\jira\EditCustomFilter.resx">
       <DependentUpon>EditCustomFilter.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -481,15 +481,15 @@
       <DependentUpon>GlobalSettings.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="dialogs\IssueWorkflowAction.resx">
+    <EmbeddedResource Include="dialogs\jira\IssueWorkflowAction.resx">
       <DependentUpon>IssueWorkflowAction.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="dialogs\LogWork.resx">
+    <EmbeddedResource Include="dialogs\jira\LogWork.resx">
       <DependentUpon>LogWork.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="dialogs\NewIssueComment.resx">
+    <EmbeddedResource Include="dialogs\jira\NewIssueComment.resx">
       <DependentUpon>NewIssueComment.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -497,11 +497,11 @@
       <DependentUpon>ProjectConfiguration.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="dialogs\SearchIssue.resx">
+    <EmbeddedResource Include="dialogs\jira\SearchIssue.resx">
       <DependentUpon>SearchIssue.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="dialogs\SelectJiraProject.resx">
+    <EmbeddedResource Include="dialogs\jira\SelectJiraProject.resx">
       <DependentUpon>SelectJiraProject.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -509,7 +509,7 @@
       <DependentUpon>AbstractTestConnection.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="dialogs\SetEndTime.resx">
+    <EmbeddedResource Include="dialogs\jira\SetEndTime.resx">
       <DependentUpon>SetEndTime.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>

@@ -8,7 +8,7 @@ using Atlassian.plvs.models;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui.jira;
 
-namespace Atlassian.plvs.dialogs {
+namespace Atlassian.plvs.dialogs.jira {
     public partial class EditCustomFilter : Form {
         private readonly JiraServer server;
         private readonly JiraCustomFilter filter;

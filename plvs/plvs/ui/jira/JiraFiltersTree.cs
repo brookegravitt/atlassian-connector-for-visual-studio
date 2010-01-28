@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
-using Atlassian.plvs.dialogs;
+using Atlassian.plvs.dialogs.jira;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.models.jira.presetFilters;
 using Atlassian.plvs.store;
