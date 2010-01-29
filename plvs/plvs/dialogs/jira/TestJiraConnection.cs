@@ -13,13 +13,15 @@ namespace Atlassian.plvs.dialogs.jira {
         }
 
         public override void testConnection() {
-            var result = "Success!!!";
+            var result = "Connection to server successful";
+            bool error = false;
             try {
                 facade.login(server);
             } catch (SoapSession.LoginException e) {
                 result = e.InnerException.Message;
+                error = true;
             }
-            Invoke(new MethodInvoker(() => stopTest(result)));
+            Invoke(new MethodInvoker(() => stopTest(error, result)));
         }
     }
 }
