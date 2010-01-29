@@ -17,6 +17,7 @@ namespace Atlassian.plvs.dialogs {
         private const string REG_MANUAL_UPDATE_STABLE_ONLY = "ManualUpdateCheckStableOnly";
         private const string REG_REPORT_USAGE = "AutoupdateReportUsage";
         private const string REG_JIRA_SERVER_EXPLORER = "JiraServerExplorer";
+        private const string REG_ANKH_SNV_ENABLED = "AnkhSVNIntegrationEnabled";
 
         private bool isRunningManualUpdateQuery;
 
@@ -33,6 +34,7 @@ namespace Atlassian.plvs.dialogs {
                 CheckStableOnlyNow = (int) root.GetValue(REG_MANUAL_UPDATE_STABLE_ONLY, 1) > 0;
                 BambooPollingInterval = (int) root.GetValue(REG_BAMBOO_POLLING_INTERVAL, DEFAULT_BAMBOO_POLLING_INTERVAL);
                 JiraServerExplorerEnabled = (int)root.GetValue(REG_JIRA_SERVER_EXPLORER, 0) > 0;
+                AnkhSvnIntegrationEnabled = (int) root.GetValue(REG_ANKH_SNV_ENABLED, 0) > 0;
             } catch (Exception) {
                 JiraIssuesBatch = DEFAULT_ISSUE_BATCH_SIZE;
                 AutoupdateEnabled = true;
@@ -41,6 +43,7 @@ namespace Atlassian.plvs.dialogs {
                 CheckStableOnlyNow = true;
                 BambooPollingInterval = DEFAULT_BAMBOO_POLLING_INTERVAL;
                 JiraServerExplorerEnabled = false;
+                AnkhSvnIntegrationEnabled = false;
             }
         }
 
@@ -61,6 +64,7 @@ namespace Atlassian.plvs.dialogs {
         public static bool CheckStableOnlyNow { get; private set; }
         public static int BambooPollingInterval { get; private set; }
         public static bool JiraServerExplorerEnabled { get; private set; }
+        public static bool AnkhSvnIntegrationEnabled { get; private set; } 
 
         private void initializeWidgets() {
             numericJiraBatchSize.Value = Math.Min(Math.Max(JiraIssuesBatch, 10), 1000);
@@ -73,6 +77,7 @@ namespace Atlassian.plvs.dialogs {
             radioStable.Checked = CheckStableOnlyNow;
             radioUnstable.Checked = !CheckStableOnlyNow;
             checkJiraExplorer.Checked = JiraServerExplorerEnabled;
+            checkAnkhSvn.Checked = AnkhSvnIntegrationEnabled;
         }
 
         public static void checkFirstRun() {
@@ -125,6 +130,7 @@ namespace Atlassian.plvs.dialogs {
             CheckStableOnlyNow = radioStable.Checked;
             BambooPollingInterval = (int) numericBambooPollingInterval.Value;
             JiraServerExplorerEnabled = checkJiraExplorer.Checked;
+            AnkhSvnIntegrationEnabled = checkAnkhSvn.Checked;
 
             saveValues();
 
@@ -150,6 +156,7 @@ namespace Atlassian.plvs.dialogs {
                 root.SetValue(REG_MANUAL_UPDATE_STABLE_ONLY, CheckStableOnlyNow ? 1 : 0);
                 root.SetValue(REG_BAMBOO_POLLING_INTERVAL, BambooPollingInterval);
                 root.SetValue(REG_JIRA_SERVER_EXPLORER, JiraServerExplorerEnabled ? 1 : 0);
+                root.SetValue(REG_ANKH_SNV_ENABLED, AnkhSvnIntegrationEnabled ? 1 : 0);
             } catch (Exception e) {
                 MessageBox.Show("Unable to save values to registry: " + e.Message, Constants.ERROR_CAPTION,
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -190,6 +197,7 @@ namespace Atlassian.plvs.dialogs {
             changed |= CheckStableOnlyNow != radioStable.Checked;
             changed |= BambooPollingInterval != (int) numericBambooPollingInterval.Value;
             changed |= JiraServerExplorerEnabled != checkJiraExplorer.Checked;
+            changed |= AnkhSvnIntegrationEnabled != checkAnkhSvn.Checked;
 
             buttonOk.Enabled = changed;
         }
@@ -226,6 +234,10 @@ namespace Atlassian.plvs.dialogs {
         }
 
         private void radioUnstable_CheckedChanged(object sender, EventArgs e) {
+            updateOkButton();
+        }
+
+        private void checkAnkhSvn_CheckedChanged(object sender, EventArgs e) {
             updateOkButton();
         }
     }

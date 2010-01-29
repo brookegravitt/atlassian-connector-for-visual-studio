@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Ankh.ExtensionPoints.IssueTracker;
+using Atlassian.plvs.dialogs;
 using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.scm {
@@ -19,8 +20,10 @@ namespace Atlassian.plvs.scm {
                 foreach (KeyValuePair<string, object> property in value.CustomProperties) {
                     settings.CustomProperties[property.Key] = property.Value;
                 }
+                checkIntegrate.Enabled = GlobalSettings.AnkhSvnIntegrationEnabled;
                 checkIntegrate.Checked =
-                    settings.CustomProperties.ContainsKey(Constants.INTEGRATE_WITH_ANKH)
+                    GlobalSettings.AnkhSvnIntegrationEnabled
+                    && settings.CustomProperties.ContainsKey(Constants.INTEGRATE_WITH_ANKH)
                     && settings.CustomProperties[Constants.INTEGRATE_WITH_ANKH].Equals("1");
             }
         }

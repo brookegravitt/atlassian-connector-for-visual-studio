@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Ankh.ExtensionPoints.IssueTracker;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.dialogs;
 using Atlassian.plvs.util;
 using Atlassian.plvs.windows;
 
@@ -59,10 +60,22 @@ namespace Atlassian.plvs.scm {
             }
 
             public override void PreCommit(PreCommitArgs args) {
+                if (!GlobalSettings.AnkhSvnIntegrationEnabled) return;
+
                 JiraIssue issue = AtlassianPanel.Instance.Jira.SelectedIssue;
-                if (issue != null && (String.IsNullOrEmpty(args.CommitMessage))) {
-                    args.CommitMessage = issue.Key + " - " + issue.Summary;
+                if (issue == null || (!String.IsNullOrEmpty(args.CommitMessage))) {
+                    return;
                 }
+
+                DialogResult res = MessageBox.Show(
+                    "Do you want to set your commit message to\n\n\"" + issue.Key + " - " + issue.Summary + "\"",
+                    Constants.QUESTION_CAPTION, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                
+                if (res != DialogResult.Yes) {
+                    return;
+                }
+
+                args.CommitMessage = issue.Key + " - " + issue.Summary;
             }
         }
 
