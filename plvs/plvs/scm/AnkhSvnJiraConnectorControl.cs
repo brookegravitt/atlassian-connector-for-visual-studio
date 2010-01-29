@@ -21,8 +21,7 @@ namespace Atlassian.plvs.scm {
                     settings.CustomProperties[property.Key] = property.Value;
                 }
                 checkIntegrate.Enabled = GlobalSettings.AnkhSvnIntegrationEnabled;
-                checkIntegrate.Checked =
-                    GlobalSettings.AnkhSvnIntegrationEnabled
+                checkIntegrate.Checked = GlobalSettings.AnkhSvnIntegrationEnabled
                     && settings.CustomProperties.ContainsKey(Constants.INTEGRATE_WITH_ANKH)
                     && settings.CustomProperties[Constants.INTEGRATE_WITH_ANKH].Equals("1");
             }
@@ -54,7 +53,8 @@ namespace Atlassian.plvs.scm {
         }
 
         private void checkIntegrate_CheckedChanged(object sender, EventArgs e) {
-            settings.CustomProperties[Constants.INTEGRATE_WITH_ANKH] = checkIntegrate.Checked ? "1" : "0";
+            settings.CustomProperties[Constants.INTEGRATE_WITH_ANKH] = 
+                GlobalSettings.AnkhSvnIntegrationEnabled && checkIntegrate.Checked ? "1" : "0";
             InvokePageChanged(new ConfigPageEventArgs { IsComplete = true });
         }
     }
