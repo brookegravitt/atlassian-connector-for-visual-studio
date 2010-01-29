@@ -34,7 +34,7 @@ namespace Atlassian.plvs.scm {
                 bool enabled = false;
                 if (properties != null && properties.ContainsKey(Constants.INTEGRATE_WITH_ANKH)) {
                     string val = properties[Constants.INTEGRATE_WITH_ANKH].ToString();
-                    enabled = val.Equals("1");
+                    enabled = val.Equals("1") && GlobalSettings.AnkhSvnIntegrationEnabled;
                     customProperties[Constants.INTEGRATE_WITH_ANKH] = val;
                 }
 
