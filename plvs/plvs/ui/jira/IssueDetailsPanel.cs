@@ -193,6 +193,7 @@ namespace Atlassian.plvs.ui.jira {
         private static readonly Regex STACK_REGEX = new Regex(@"(\s*\w+\S+\(.*\)\s+\w+\s+)(\S+)(:\w+\s+)(\d+)");
         private const int EDITOR_OFFSET = 40;
 
+        private const string SUMMARY_EDIT_TAG = "summary";
         private const string ASSIGNEE_EDIT_TAG = "assignee";
         private const string COMPONENTS_EDIT_TAG = "components";
         private const string FIX_VERSIONS_EDIT_TAG = "fixversions";
@@ -236,17 +237,41 @@ namespace Atlassian.plvs.ui.jira {
             return sb.ToString();
         }
 
+        private void appendPencil(StringBuilder sb, string tag) {
+            sb.Append(" <div id=\"").Append(tag).Append("-edit").Append("\" class=\"pencil\"><a href=\"")
+                .Append(ISSUE_EDIT_URL_TYPE).Append(tag).Append("\"><img src=\"").Append(editImagePath)
+                .Append("\" alt=\"Edit\"  style=\"border-style:none;vertical-align:top;\"></a></div>");
+        }
+
+        private static void appendStartEditable(StringBuilder sb, string tag) {
+            sb.Append("<div onmouseover=\"showInline('").Append(tag).Append("-edit');\" onmouseout=\"hide('").Append(tag).Append("-edit');\" >");    
+        }
+
+        private static void appendEndEditable(StringBuilder sb) {
+            sb.Append("</div>");
+        }
+
         private string createSummaryHtml() {
             StringBuilder sb = new StringBuilder();
 
-            sb.Append("<html>\n<head>\n").Append(Resources.summary_and_description_css)
+            sb.Append("<html>\n<head>\n")
+
+                .Append(Resources.summary_and_description_css)
+                .Append(Resources.toggler_javascript)
+
                 .Append("\n</head>\n<body>\n<table class=\"summary\">\n")
-                .Append("<tr><td class=\"labelcolumn labelsummary\">Summary</td><td class=\"labelsummary\">")
-                .Append(issue.Summary).Append("</td></tr>\n")
-                .Append("<tr><td class=\"labelcolumn\">Type</td><td>")
-                .Append("<img alt=\"\" src=\"").Append(issue.IssueTypeIconUrl).Append("\"/>").Append(issue.IssueType).Append("</td></tr>\n")
-                .Append("<tr><td class=\"labelcolumn\">Status</td><td>")
-                .Append("<img alt=\"\" src=\"").Append(issue.StatusIconUrl).Append("\"/>").Append(issue.Status).Append("</td></tr>\n");
+                .Append("<tr><td class=\"labelcolumn labelsummary\">Summary</td><td class=\"labelsummary\">");
+
+            appendStartEditable(sb, SUMMARY_EDIT_TAG);
+            sb.Append(issue.Summary);
+            appendPencil(sb, SUMMARY_EDIT_TAG);
+            appendEndEditable(sb);
+            sb.Append("</td></tr>\n");
+
+            sb.Append("<tr><td class=\"labelcolumn\">Type</td><td>")
+                 .Append("<img alt=\"\" src=\"").Append(issue.IssueTypeIconUrl).Append("\"/>").Append(issue.IssueType).Append("</td></tr>\n")
+                 .Append("<tr><td class=\"labelcolumn\">Status</td><td>")
+                 .Append("<img alt=\"\" src=\"").Append(issue.StatusIconUrl).Append("\"/>").Append(issue.Status).Append("</td></tr>\n");
 
             if (issue.IsSubtask) {
                 sb.Append("<tr><td class=\"labelcolumn\">Parent Issue</td><td>")
@@ -254,18 +279,20 @@ namespace Atlassian.plvs.ui.jira {
                     .Append(issue.ParentKey).Append("</a></td>");
             }
             
-            sb.Append("<tr><td class=\"labelcolumn\">Priority</td><td>")
-                .Append("<img alt=\"\" src=\"").Append(issue.PriorityIconUrl).Append("\"/>").Append(issue.Priority)
-                .Append(" <a href=\"").Append(ISSUE_EDIT_URL_TYPE).Append(PRIORITY_EDIT_TAG).Append("\"><img src=\"")
-                .Append(editImagePath).Append("\" alt=\"Edit\"  style=\"border-style: none\"></a>")
-                .Append("</td></tr>\n")
+            sb.Append("<tr><td class=\"labelcolumn\">Priority</td><td>");
+            appendStartEditable(sb, PRIORITY_EDIT_TAG);
+            sb.Append("<img alt=\"\" src=\"").Append(issue.PriorityIconUrl).Append("\"/>").Append(issue.Priority);
+            appendPencil(sb, PRIORITY_EDIT_TAG);
+            appendEndEditable(sb);
+            sb.Append("</td></tr>\n")
+
+                .Append("<tr><td class=\"labelcolumn\">Assignee</td><td>");
                 
-                .Append("<tr><td class=\"labelcolumn\">Assignee</td><td>")
-                
-                .Append(JiraServerCache.Instance.getUsers(issue.Server).getUser(issue.Assignee))
-                .Append(" <a href=\"").Append(ISSUE_EDIT_URL_TYPE).Append(ASSIGNEE_EDIT_TAG).Append("\"><img src=\"")
-                .Append(editImagePath).Append("\" alt=\"Edit\"  style=\"border-style: none\"></a>")
-                .Append("</td></tr>\n")
+            appendStartEditable(sb, ASSIGNEE_EDIT_TAG);
+            sb.Append(JiraServerCache.Instance.getUsers(issue.Server).getUser(issue.Assignee));
+            appendPencil(sb, ASSIGNEE_EDIT_TAG);
+            appendEndEditable(sb);
+            sb.Append("</tr>\n")
                 
                 .Append("<tr><td class=\"labelcolumn\">Reporter</td><td>")
                 .Append(JiraServerCache.Instance.getUsers(issue.Server).getUser(issue.Reporter)).Append("</td></tr>\n")
@@ -293,7 +320,7 @@ namespace Atlassian.plvs.ui.jira {
             }
 
             sb.Append(" <a href=\"").Append(ISSUE_EDIT_URL_TYPE).Append(AFFECTS_VERSIONS_EDIT_TAG).Append("\"><img src=\"");
-            sb.Append(editImagePath).Append("\" alt=\"Edit\"  style=\"border-style: none\"></a>");
+            sb.Append(editImagePath).Append("\" alt=\"Edit\"  style=\"border-style: none;vertical-align:top;\"></a>");
             sb.Append("</td></tr>\n");
 
             if (issue.FixVersions.Count > 1)
@@ -313,7 +340,7 @@ namespace Atlassian.plvs.ui.jira {
             }
 
             sb.Append(" <a href=\"").Append(ISSUE_EDIT_URL_TYPE).Append(FIX_VERSIONS_EDIT_TAG).Append("\"><img src=\"");
-            sb.Append(editImagePath).Append("\" alt=\"Edit\"  style=\"border-style: none\"></a>");
+            sb.Append(editImagePath).Append("\" alt=\"Edit\"  style=\"border-style: none;vertical-align:top;\"></a>");
             sb.Append("</td></tr>\n");
 
             if (issue.Components.Count > 1)
@@ -333,7 +360,7 @@ namespace Atlassian.plvs.ui.jira {
             }
 
             sb.Append(" <a href=\"").Append(ISSUE_EDIT_URL_TYPE).Append(COMPONENTS_EDIT_TAG).Append("\"><img src=\"");
-            sb.Append(editImagePath).Append("\" alt=\"Edit\"  style=\"border-style: none\"></a>");
+            sb.Append(editImagePath).Append("\" alt=\"Edit\"  style=\"border-style: none;vertical-align:top;\"></a>");
             sb.Append("</td></tr>\n");
 
             sb.Append("<tr><td class=\"labelcolumn\">Original Estimate</td><td>")
@@ -589,6 +616,10 @@ namespace Atlassian.plvs.ui.jira {
             if (e.Url.ToString().StartsWith(ISSUE_EDIT_URL_TYPE)) {
                 string fieldId = null;
                 switch (e.Url.ToString().Substring(ISSUE_EDIT_URL_TYPE.Length)) {
+                    case SUMMARY_EDIT_TAG:
+                        title = "Edit Summary";
+                        fieldId = "summary";
+                        break;
                     case PRIORITY_EDIT_TAG:
                         title = "Edit Priority";
                         fieldId = "priority";

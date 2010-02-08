@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
@@ -55,6 +56,8 @@ namespace Atlassian.plvs.dialogs.jira {
         private void fillFieldWrap() {
             try {
                 getMetadata();
+            } catch (InvalidOperationException e) {
+                Debug.WriteLine("FieldEditor.fillFieldWrap() - InvalidOperationException: " + e.Message);
             } catch (Exception e) {
                 Invoke(new MethodInvoker(delegate {
                                              MessageBox.Show(
@@ -81,12 +84,15 @@ namespace Atlassian.plvs.dialogs.jira {
             versions.Reverse();
             List<JiraNamedEntity> comps = facade.getComponents(issue.Server, project);
 
-            Invoke(new MethodInvoker(() => createEditoWidget(versions, comps)));
+            Invoke(new MethodInvoker(() => createEditorWidget(versions, comps)));
         }
 
-        private void createEditoWidget(IEnumerable<JiraNamedEntity> versions, IEnumerable<JiraNamedEntity> comps) {
+        private void createEditorWidget(IEnumerable<JiraNamedEntity> versions, IEnumerable<JiraNamedEntity> comps) {
 
             switch (JiraActionFieldType.getFieldTypeForFieldId(fieldId)) {
+                case JiraActionFieldType.WidgetType.SUMMARY:
+                    editorProvider = new TextLineFieldEditorProvider(field, issue.Summary, fieldValid);
+                    break;
                 case JiraActionFieldType.WidgetType.VERSIONS:
                     editorProvider = new NamedEntityListFieldEditorProvider(field, issue.Versions, versions, fieldValid);
                     break;

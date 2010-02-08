@@ -164,7 +164,6 @@ namespace Atlassian.plvs.ui.jira {
             // issueSummary
             // 
             this.issueSummary.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.issueSummary.IsWebBrowserContextMenuEnabled = false;
             this.issueSummary.Location = new System.Drawing.Point(3, 3);
             this.issueSummary.MinimumSize = new System.Drawing.Size(20, 20);
             this.issueSummary.Name = "issueSummary";
