@@ -44,7 +44,9 @@ namespace Atlassian.plvs.api.jira {
 
         private List<string> components = new List<string>();
 
-        private List<JiraAttachment> attachments = new List<JiraAttachment>();
+        private readonly List<JiraAttachment> attachments = new List<JiraAttachment>();
+
+        private readonly List<IssueLinkType> issueLinks = new List<IssueLinkType>();
 
         public JiraIssue() {}
 
@@ -136,6 +138,9 @@ namespace Atlassian.plvs.api.jira {
                     case "environment":
                         Environment = nav.Value;
                         break;
+                    case "issuelinks":
+                        getIssueLinks(nav);
+                        break;
                     default:
                         break;
                 }
@@ -160,6 +165,73 @@ namespace Atlassian.plvs.api.jira {
                 attachments.Add(a);
             }
             nav.MoveToParent();
+        }
+
+        private void getIssueLinks(XPathNavigator nav) {
+            XPathExpression expr = nav.Compile("issuelinktype");
+            XPathNodeIterator it = nav.Select(expr);
+
+            if (!nav.MoveToFirstChild()) return;
+            while (it.MoveNext()) {
+                int id = XPathUtils.getAttributeSafely(it.Current, "id", 0);
+                
+                string linkTypeName = null;
+                string outwardLinksName = null;
+                string inwardLinksName = null;
+                List<JiraNamedEntity> outwardIdsAndKeys = null;
+                List<JiraNamedEntity> inwardIdsAndKeys = null;
+
+                if (it.Current.MoveToFirstChild()) {
+                    do {
+                        switch (it.Current.Name) {
+                            case "name":
+                                linkTypeName = it.Current.Value;
+                                break;
+                            case "outwardlinks":
+                                outwardLinksName = XPathUtils.getAttributeSafely(it.Current, "description", null);
+                                outwardIdsAndKeys = getLinks(it.Current);
+                                break;
+                            case "inwardlinks":
+                                inwardLinksName = XPathUtils.getAttributeSafely(it.Current, "description", null);
+                                inwardIdsAndKeys = getLinks(it.Current);
+                                break;
+                        }
+                    } while (it.Current.MoveToNext());
+
+                    if (id == 0 || linkTypeName == null) continue;
+
+                    IssueLinkType ilt = new IssueLinkType(id, linkTypeName, outwardLinksName, inwardLinksName);
+                    if (outwardIdsAndKeys != null) {
+                        foreach (JiraNamedEntity entity in outwardIdsAndKeys) {
+                            ilt.OutwardLinks.Add(entity.Name);
+                        }
+                    }
+                    if (inwardIdsAndKeys != null) {
+                        foreach (JiraNamedEntity entity in inwardIdsAndKeys) {
+                            ilt.InwardLinks.Add(entity.Name);
+                        }
+                    }
+                    issueLinks.Add(ilt);
+                }
+                it.Current.MoveToParent();
+            }
+            nav.MoveToParent();
+        }
+
+        private static List<JiraNamedEntity> getLinks(XPathNavigator nav) {
+            XPathExpression expr = nav.Compile("issuelink/issuekey");
+            XPathNodeIterator it = nav.Select(expr);
+
+            List<JiraNamedEntity> result = new List<JiraNamedEntity>();
+            if (nav.MoveToFirstChild()) {
+                while (it.MoveNext()) {
+                    int id = XPathUtils.getAttributeSafely(it.Current, "id", 0);
+                    string key = it.Current.Value;
+                    result.Add(new JiraNamedEntity(id, key, null));
+                }
+                nav.MoveToParent();
+            }
+            return result;
         }
 
         private void getComments(XPathNavigator nav) {
@@ -208,6 +280,10 @@ namespace Atlassian.plvs.api.jira {
         public List<JiraAttachment> Attachments { get { return attachments; } }
 
         private readonly List<string> subtaskKeys = new List<string>();
+
+        public bool HasLinks { get { return issueLinks.Count > 0; } }
+
+        public List<IssueLinkType> IssueLinks { get { return issueLinks; } }
 
         public string IssueTypeIconUrl { get; private set; }
 
@@ -311,25 +387,15 @@ namespace Atlassian.plvs.api.jira {
             eq &= other.PriorityIconUrl.Equals(PriorityIconUrl);
             eq &= other.StatusId == StatusId;
             eq &= other.PriorityId == PriorityId;
-            eq &= compareLists(other.comments, comments);
-            eq &= compareLists(other.versions, versions);
-            eq &= compareLists(other.fixVersions, fixVersions);
-            eq &= compareLists(other.components, components);
-            eq &= compareLists(other.SubtaskKeys, SubtaskKeys);
-            eq &= compareLists(other.Attachments, Attachments);
+            eq &= PlvsUtils.compareLists(other.comments, comments);
+            eq &= PlvsUtils.compareLists(other.versions, versions);
+            eq &= PlvsUtils.compareLists(other.fixVersions, fixVersions);
+            eq &= PlvsUtils.compareLists(other.components, components);
+            eq &= PlvsUtils.compareLists(other.SubtaskKeys, SubtaskKeys);
+            eq &= PlvsUtils.compareLists(other.Attachments, Attachments);
+            eq &= PlvsUtils.compareLists(other.IssueLinks, IssueLinks);
 
             return eq;
-        }
-
-        private static bool compareLists<T>(IList<T> lhs, IList<T> rhs) {
-            if (lhs == null && rhs == null) return true;
-            if (lhs == null || rhs == null) return false;
-
-            if (lhs.Count != rhs.Count) return false;
-            for (int i = 0; i < lhs.Count; ++i) {
-                if (!lhs[i].Equals(rhs[i])) return false;
-            }
-            return true;
         }
 
         public override int GetHashCode() {
@@ -338,6 +404,7 @@ namespace Atlassian.plvs.api.jira {
                 result = (result*397) ^ (versions != null ? versions.GetHashCode() : 0);
                 result = (result*397) ^ (fixVersions != null ? fixVersions.GetHashCode() : 0);
                 result = (result*397) ^ (SubtaskKeys.GetHashCode());
+                result = (result*397) ^ (IssueLinks.GetHashCode());
                 result = (result*397) ^ (components != null ? components.GetHashCode() : 0);
                 result = (result*397) ^ (attachments != null ? attachments.GetHashCode() : 0);
                 result = (result*397) ^ (Server != null ? Server.GUID.GetHashCode() : 0);

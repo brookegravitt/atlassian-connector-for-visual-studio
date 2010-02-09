@@ -40,6 +40,7 @@ namespace Atlassian.plvs.ui.jira {
         private bool issueSummaryLoaded;
 
         private bool issueSubtasksLoaded;
+        private bool issueLinksLoaded;
         
         private const int A_LOT = 100000;
 
@@ -95,6 +96,7 @@ namespace Atlassian.plvs.ui.jira {
                                {
                                    Dock = DockStyle.Fill,
                                    IsWebBrowserContextMenuEnabled = false,
+                                   ScriptErrorsSuppressed = true,
                                    Location = new Point(0, 0),
                                    MinimumSize = new Size(20, 20),
                                    Name = "issueDescription",
@@ -184,6 +186,7 @@ namespace Atlassian.plvs.ui.jira {
                                              rebuildDescriptionPanel();
                                              rebuildCommentsPanel(true);
                                              rebuildSubtasksPanel();
+                                             rebuildLinksPanel();
                                              rebuildAttachmentsPanel();
                                              buttonRefresh.Enabled = enableRefresh;
                                          }));
@@ -248,6 +251,7 @@ namespace Atlassian.plvs.ui.jira {
         private const string ISSUE_EDIT_URL_TYPE = "issueedit:";
         private const string PARENT_ISSUE_URL_TYPE = "parentissue:";
         private const string SUBTASK_ISSUE_URL_TYPE = "subtaskkey:";
+        private const string LINKED_ISSUE_URL_TYPE = "linkedissuekey:";
 
         private const string STACKLINE_URL_TYPE = "stackline:";
         private const string STACKLINE_LINE_NUMBER_SEPARATOR = "@";
@@ -470,6 +474,24 @@ namespace Atlassian.plvs.ui.jira {
             }
         }
 
+        private void rebuildLinksPanel() {
+            if (issue.HasLinks) {
+                if (!issueTabs.TabPages.Contains(tabLinks)) {
+                    issueTabs.TabPages.Add(tabLinks);
+                }
+
+                issueLinksLoaded = false;
+
+                Thread t = new Thread(queryLinksAndDisplay);
+                t.Start();
+            } else {
+                if (issueTabs.TabPages.Contains(tabLinks)) {
+                    issueTabs.TabPages.Remove(tabLinks);
+                }
+            }
+            
+        }
+
         private void rebuildSubtasksPanel() {
             if (issue.HasSubtasks) {
                 if (!issueTabs.TabPages.Contains(tabSubtasks)) {
@@ -497,13 +519,57 @@ namespace Atlassian.plvs.ui.jira {
             }
         }
 
-        private void setWebSubtasksText(string txt) {
-            webSubtasks.DocumentText =
+        private static void setWebBrowserWidgetText(WebBrowser widget, string txt) {
+            widget.DocumentText =
                 "<html>\n<head>\n"
                 + Resources.summary_and_description_css
                 + "\n</head>\n<body class=\"summary\">\n"
                 + txt
                 + "\n</body>\n</html>\n";
+        }
+
+        private void queryLinksAndDisplay() {
+            try {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("<html>\n<head>\n").Append(Resources.summary_and_description_css)
+                    .Append("\n</head>\n<body>\n<div class=\"summary\">\n");
+
+                foreach (IssueLinkType linkType in issue.IssueLinks) {
+                    sb.Append("<div class=\"linkcategory\">").Append(linkType.Name).Append("</div>\n");
+                    if (linkType.OutwardLinksName != null && linkType.OutwardLinks != null) {
+                        sb.Append("<div class=\"linkdirection\">").Append(linkType.OutwardLinksName).Append("</div>");
+                        sb.Append("\n<div class=\"linkedissues\"><table class=\"summary\">\n");
+                        foreach (string key in linkType.OutwardLinks) {
+                            JiraIssue linkedIssue = model.getIssue(key, issue.Server) ?? facade.getIssue(issue.Server, key);
+                            if (linkedIssue != null) {
+                                appendIssueHtml(sb, linkedIssue, LINKED_ISSUE_URL_TYPE);
+                            }
+                        }
+                        sb.Append("\n</table></div>");
+                    }
+                    if (linkType.InwardLinksName != null && linkType.InwardLinks != null) {
+                        sb.Append("<div class=\"linkdirection\">").Append(linkType.InwardLinksName).Append("</div>");
+                        sb.Append("\n<div class=\"linkedissues\"><table class=\"summary\">\n");
+                        foreach (string key in linkType.InwardLinks) {
+                            JiraIssue linkedIssue = model.getIssue(key, issue.Server) ?? facade.getIssue(issue.Server, key);
+                            if (linkedIssue != null) {
+                                appendIssueHtml(sb, linkedIssue, LINKED_ISSUE_URL_TYPE);
+                            }
+                        }
+                        sb.Append("\n</table></div>");
+                    }
+                }
+                sb.Append("\n</body>\n</html>\n");
+                Invoke(new MethodInvoker(delegate { webLinkedIssues.DocumentText = sb.ToString(); }));
+
+            } catch (Exception e) {
+                try {
+                    Invoke(new MethodInvoker(() => setWebBrowserWidgetText(webLinkedIssues, "Failed to retrieve issue links")));
+                } catch (InvalidOperationException ex) {
+                    Debug.WriteLine("IssueDetailsPanel.queryLinksAndDisplay(): " + ex.Message);
+                }
+                status.setError("Failed to retrieve issue links", e);
+            }
         }
 
         private void querySubtasksAndDisplay(ICollection<JiraIssue> subsInModel, IEnumerable<string> subsToQuery) {
@@ -518,24 +584,30 @@ namespace Atlassian.plvs.ui.jira {
                     sb.Append("<html>\n<head>\n").Append(Resources.summary_and_description_css)
                         .Append("\n</head>\n<body>\n<table class=\"summary\">\n");
                     foreach (JiraIssue sub in subsInModel) {
-                        // let's pray all issue icons are 16x16 :)
-                        sb.Append("<tr><td width=\"16px\">").Append("<img src=\"" + sub.IssueTypeIconUrl + "\"/>").Append("</td>");
-                        sb.Append("<td>").Append("<a href=\"").Append(SUBTASK_ISSUE_URL_TYPE).Append(sub.Key).Append("\">").Append(sub.Key).Append("</a></td>");
-                        sb.Append("<td width=\"16px\">").Append("<img src=\"" + sub.PriorityIconUrl + "\" alt=\"" + sub.Priority + "\"/>").Append("</td>");
-                        sb.Append("<td width=\"16px\">").Append("<img src=\"" + sub.StatusIconUrl + "\" alt=\"" + sub.Status + "\"/>").Append("</td>");
-                        sb.Append("<td>").Append(sub.Summary).Append("</td></tr>\n");
+                        appendIssueHtml(sb, sub, SUBTASK_ISSUE_URL_TYPE);
                     }
                     sb.Append("\n</table>\n</body>\n</html>\n");
                     webSubtasks.DocumentText = sb.ToString();
                 }));
             } catch (Exception e) {
                 try {
-                    Invoke(new MethodInvoker(() => setWebSubtasksText("Failed to retrieve subtasks")));
+                    Invoke(new MethodInvoker(() => setWebBrowserWidgetText(webSubtasks, "Failed to retrieve subtasks")));
                 } catch (InvalidOperationException ex) {
                     Debug.WriteLine("IssueDetailsPanel.querySubtasksAndDisplay(): " + ex.Message);
                 }
                 status.setError("Failed to retrieve subtasks", e);
             }                
+        }
+
+        private static void appendIssueHtml(StringBuilder sb, JiraIssue jiraIssue, string targetlinktype) {
+            sb.Append("<tr>");
+
+            // let's pray all issue icons are 16x16 :)
+            sb.Append("<td class=\"issueelement\" width=\"16px\">").Append("<img src=\"" + jiraIssue.IssueTypeIconUrl + "\"/>").Append("</td>");
+            sb.Append("<td class=\"issueelement\">").Append("<a href=\"").Append(targetlinktype).Append(jiraIssue.Key).Append("\">").Append(jiraIssue.Key).Append("</a></td>");
+            sb.Append("<td class=\"issueelement\" width=\"16px\">").Append("<img src=\"" + jiraIssue.PriorityIconUrl + "\" alt=\"" + jiraIssue.Priority + "\"/>").Append("</td>");
+            sb.Append("<td class=\"issueelement\" width=\"16px\">").Append("<img src=\"" + jiraIssue.StatusIconUrl + "\" alt=\"" + jiraIssue.Status + "\"/>").Append("</td>");
+            sb.Append("<td class=\"issueelement\">").Append(jiraIssue.Summary).Append("</td></tr>\n");
         }
 
         private void buttonAddComment_Click(object sender, EventArgs e) {
@@ -593,6 +665,10 @@ namespace Atlassian.plvs.ui.jira {
 // ReSharper disable PossibleNullReferenceException
             issueComments.Document.Body.ScrollTop = A_LOT;
 // ReSharper restore PossibleNullReferenceException
+        }
+
+        private void webLinkedIssues_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) {
+            issueLinksLoaded = true;
         }
 
         private void webSubtasks_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) {
@@ -680,7 +756,7 @@ namespace Atlassian.plvs.ui.jira {
             if (!issueSummaryLoaded) return;
             if (e.Url.ToString().StartsWith(PARENT_ISSUE_URL_TYPE)) {
                 AtlassianPanel.Instance.Jira.findAndOpenIssue(
-                    e.Url.ToString().Substring(PARENT_ISSUE_URL_TYPE.Length), openParentOrSubtaskFinished);
+                    e.Url.ToString().Substring(PARENT_ISSUE_URL_TYPE.Length), openIssueFinished);
                 e.Cancel = true;
                 return;
             }
@@ -731,19 +807,27 @@ namespace Atlassian.plvs.ui.jira {
             navigate(e);
         }
 
+        private void webLinkedIssues_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
+            webBrowserNavigating(LINKED_ISSUE_URL_TYPE, e, issueLinksLoaded);
+        }
+
         private void webSubtasks_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
+            webBrowserNavigating(SUBTASK_ISSUE_URL_TYPE, e, issueSubtasksLoaded);
+        }
+
+        private static void webBrowserNavigating(string targetlinktype, WebBrowserNavigatingEventArgs e, bool toTest) {
             if (e.Url.Equals("about:blank")) return;
-            if (!issueSubtasksLoaded) return;
-            if (e.Url.ToString().StartsWith(SUBTASK_ISSUE_URL_TYPE)) {
+            if (!toTest) return;
+            if (e.Url.ToString().StartsWith(targetlinktype)) {
                 AtlassianPanel.Instance.Jira.findAndOpenIssue(
-                    e.Url.ToString().Substring(SUBTASK_ISSUE_URL_TYPE.Length), openParentOrSubtaskFinished);
+                    e.Url.ToString().Substring(targetlinktype.Length), openIssueFinished);
                 e.Cancel = true;
                 return;
             }
             navigate(e);
         }
 
-        private static void openParentOrSubtaskFinished(bool success, string message) {
+        private static void openIssueFinished(bool success, string message) {
             if (!success) {
                 MessageBox.Show(message, AtlassianConstants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }

@@ -47,6 +47,8 @@ namespace Atlassian.plvs.ui.jira {
             this.buttonAddComment = new System.Windows.Forms.ToolStripButton();
             this.buttonExpandAll = new System.Windows.Forms.ToolStripButton();
             this.buttonCollapseAll = new System.Windows.Forms.ToolStripButton();
+            this.tabLinks = new System.Windows.Forms.TabPage();
+            this.webLinkedIssues = new System.Windows.Forms.WebBrowser();
             this.tabSubtasks = new System.Windows.Forms.TabPage();
             this.webSubtasks = new System.Windows.Forms.WebBrowser();
             this.tabAttachments = new System.Windows.Forms.TabPage();
@@ -84,6 +86,7 @@ namespace Atlassian.plvs.ui.jira {
             this.toolStripContainer2.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer2.SuspendLayout();
             this.toolStrip2.SuspendLayout();
+            this.tabLinks.SuspendLayout();
             this.tabSubtasks.SuspendLayout();
             this.tabAttachments.SuspendLayout();
             this.splitContainerAttachments.Panel1.SuspendLayout();
@@ -139,6 +142,7 @@ namespace Atlassian.plvs.ui.jira {
             // 
             this.issueTabs.Controls.Add(this.tabSummary);
             this.issueTabs.Controls.Add(this.tabDescriptionAndComments);
+            this.issueTabs.Controls.Add(this.tabLinks);
             this.issueTabs.Controls.Add(this.tabSubtasks);
             this.issueTabs.Controls.Add(this.tabAttachments);
             this.issueTabs.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -275,6 +279,29 @@ namespace Atlassian.plvs.ui.jira {
             this.buttonCollapseAll.Text = "Collapse All";
             this.buttonCollapseAll.Click += new System.EventHandler(this.buttonCollapseAll_Click);
             // 
+            // tabLinks
+            // 
+            this.tabLinks.Controls.Add(this.webLinkedIssues);
+            this.tabLinks.Location = new System.Drawing.Point(4, 22);
+            this.tabLinks.Name = "tabLinks";
+            this.tabLinks.Size = new System.Drawing.Size(777, 402);
+            this.tabLinks.TabIndex = 4;
+            this.tabLinks.Text = "Linked Issues";
+            this.tabLinks.UseVisualStyleBackColor = true;
+            // 
+            // webLinkedIssues
+            // 
+            this.webLinkedIssues.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webLinkedIssues.IsWebBrowserContextMenuEnabled = false;
+            this.webLinkedIssues.Location = new System.Drawing.Point(0, 0);
+            this.webLinkedIssues.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webLinkedIssues.Name = "webLinkedIssues";
+            this.webLinkedIssues.ScriptErrorsSuppressed = true;
+            this.webLinkedIssues.Size = new System.Drawing.Size(777, 402);
+            this.webLinkedIssues.TabIndex = 0;
+            this.webLinkedIssues.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webLinkedIssues_Navigating);
+            this.webLinkedIssues.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webLinkedIssues_DocumentCompleted);
+            // 
             // tabSubtasks
             // 
             this.tabSubtasks.Controls.Add(this.webSubtasks);
@@ -289,6 +316,7 @@ namespace Atlassian.plvs.ui.jira {
             // webSubtasks
             // 
             this.webSubtasks.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webSubtasks.IsWebBrowserContextMenuEnabled = false;
             this.webSubtasks.Location = new System.Drawing.Point(3, 3);
             this.webSubtasks.MinimumSize = new System.Drawing.Size(20, 20);
             this.webSubtasks.Name = "webSubtasks";
@@ -544,6 +572,7 @@ namespace Atlassian.plvs.ui.jira {
             this.toolStripContainer2.PerformLayout();
             this.toolStrip2.ResumeLayout(false);
             this.toolStrip2.PerformLayout();
+            this.tabLinks.ResumeLayout(false);
             this.tabSubtasks.ResumeLayout(false);
             this.tabAttachments.ResumeLayout(false);
             this.splitContainerAttachments.Panel1.ResumeLayout(false);
@@ -602,5 +631,7 @@ namespace Atlassian.plvs.ui.jira {
         private System.Windows.Forms.ToolStripButton buttonSaveAttachmentAs;
         private System.Windows.Forms.ToolStripButton buttonUploadNew;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
+        private System.Windows.Forms.TabPage tabLinks;
+        private System.Windows.Forms.WebBrowser webLinkedIssues;
     }
 }
