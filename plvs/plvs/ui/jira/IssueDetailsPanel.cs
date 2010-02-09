@@ -243,6 +243,7 @@ namespace Atlassian.plvs.ui.jira {
         private const string FIX_VERSIONS_EDIT_TAG = "fixversions";
         private const string AFFECTS_VERSIONS_EDIT_TAG = "affectsversions";
         private const string PRIORITY_EDIT_TAG = "priority";
+        private const string TIMETRACKING_EDIT_TAG = "timetracking";
 
         private const string ISSUE_EDIT_URL_TYPE = "issueedit:";
         private const string PARENT_ISSUE_URL_TYPE = "parentissue:";
@@ -414,11 +415,31 @@ namespace Atlassian.plvs.ui.jira {
             appendEndEditable(sb);
             sb.Append("</tr>\n");
 
-            sb.Append("<tr><td class=\"labelcolumn\">Original Estimate</td><td>")
-                .Append(issue.OriginalEstimate ?? "None").Append("</td></tr>\n")
-                .Append("<tr><td class=\"labelcolumn\">Remaining Estimate</td><td>")
-                .Append(issue.RemainingEstimate ?? "None").Append("</td></tr>\n")
-                .Append("<tr><td class=\"labelcolumn\">Time Spent</td><td>")
+            sb.Append("<tr><td class=\"labelcolumn\">Original Estimate</td><td>");
+
+            if (issue.TimeSpent == null) {
+                appendStartEditable(sb, TIMETRACKING_EDIT_TAG);
+                sb.Append(issue.OriginalEstimate ?? "None");
+                appendPencil(sb, TIMETRACKING_EDIT_TAG);
+                appendEndEditable(sb);
+            } else {
+                sb.Append(issue.OriginalEstimate ?? "None");
+            }
+            sb.Append("</td></tr>\n");
+            
+            sb.Append("<tr><td class=\"labelcolumn\">Remaining Estimate</td><td>");
+
+            if (issue.TimeSpent != null) {
+                appendStartEditable(sb, TIMETRACKING_EDIT_TAG);
+                sb.Append(issue.RemainingEstimate);
+                appendPencil(sb, TIMETRACKING_EDIT_TAG);
+                appendEndEditable(sb);
+            } else {
+                sb.Append(issue.RemainingEstimate ?? "None");
+            }
+            sb.Append("</td></tr>\n");
+    
+            sb.Append("<tr><td class=\"labelcolumn\">Time Spent</td><td>")
                 .Append(issue.TimeSpent ?? "None").Append("</td></tr>\n")
                 .Append("\n</table>\n</body>\n</html>\n");
 
@@ -690,6 +711,10 @@ namespace Atlassian.plvs.ui.jira {
                     case ASSIGNEE_EDIT_TAG:
                         title = "Edit Assignee";
                         fieldId = "assignee";
+                        break;
+                    case TIMETRACKING_EDIT_TAG:
+                        title = issue.TimeSpent != null ? "Edit Remaining Estimate" : "Edit Original Estimate";
+                        fieldId = "timetracking";
                         break;
                 }
                 if (fieldId != null) {

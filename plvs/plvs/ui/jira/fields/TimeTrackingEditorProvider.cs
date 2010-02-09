@@ -57,9 +57,7 @@ namespace Atlassian.plvs.ui.jira.fields {
             get { return trackingBox.Height; }
         }
 
-        public override void resizeToWidth(int width) {
-            panel.Width = width;
-        }
+        public override void resizeToWidth(int width) {}
 
         public override string getFieldLabel(JiraIssue issue, JiraField field) {
             return issue.TimeSpent == null ? "Original Estimate" : "Remaining Estimate";

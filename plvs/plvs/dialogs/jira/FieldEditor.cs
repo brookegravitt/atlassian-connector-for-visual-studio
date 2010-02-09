@@ -115,6 +115,10 @@ namespace Atlassian.plvs.dialogs.jira {
                                                                 JiraServerCache.Instance.getPriorities(issue.Server),
                                                                 fieldValid);
                     break;
+                case JiraActionFieldType.WidgetType.TIMETRACKING:
+                    List<JiraField> fields = JiraActionFieldType.fillFieldValues(issue, issueSoapObject, new List<JiraField> {field});
+                    editorProvider = new TimeTrackingEditorProvider(field, fields[0].Values[0], fieldValid);
+                    break;
                 default:
                     MessageBox.Show("Unsupported field type selected for editing",
                                     Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
