@@ -1,17 +1,29 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 
 namespace Atlassian.plvs.ui.jira.fields {
     public class UserFieldEditorProvider : FixedHeightFieldEditorProvider {
 
-        private readonly JiraUserPicker picker;
+        private JiraUserPicker picker;
 
         public UserFieldEditorProvider(JiraServer server, JiraField field, string userName, FieldValidListener validListener) 
             : base(field, validListener) {
 
+            init(server, userName, false);
+        }
+
+        public UserFieldEditorProvider(JiraServer server, JiraField field, string userName, FieldValidListener validListener, bool showAssignToMe) 
+            : base(field, validListener) {
+
+            init(server, userName, showAssignToMe);
+
+        }
+
+        private void init(JiraServer server, string userName, bool showAssignToMe) {
             picker = new JiraUserPicker();
-            picker.init(server, userName);
+            picker.init(server, userName, showAssignToMe);
         }
 
         public override Control Widget {
