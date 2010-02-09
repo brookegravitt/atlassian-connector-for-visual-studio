@@ -5,15 +5,15 @@
 }
 
 .labelcolumn {
-	text-align:"right";
+	text-align:"left";
 	padding-right:"1em";
 	font-weight:"bold";
-	height:"24px";
+	height:"18px";
 }
 
 .labelsummary {
-	padding-bottom:"24px";
-	height:"24px";
+	padding-bottom:"18px";
+	height:"18px";
 }
 
 .pencil {

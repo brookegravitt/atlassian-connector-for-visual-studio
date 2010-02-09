@@ -45,6 +45,8 @@ namespace Atlassian.plvs.ui.jira {
 
         private readonly string editImagePath;
 
+        private WebBrowser issueDescription;
+
         public IssueDetailsPanel(JiraIssueListModel model, Solution solution, JiraIssue issue, TabControl tabWindow,
                                  TabPage myTab, ToolWindowStateMonitor toolWindowStateMonitor) {
             this.model = model;
@@ -75,10 +77,52 @@ namespace Atlassian.plvs.ui.jira {
 
             Assembly assembly = Assembly.GetExecutingAssembly();
             string name = assembly.EscapedCodeBase;
+
+            createIssueDescriptionPanel();
+
             if (name != null) {
                 name = name.Substring(0, name.LastIndexOf("/"));
                 editImagePath = name + "/edit.png";
             }
+        }
+
+        /// <summary>
+        /// Sigh. VS 2008 dialog designer is too dumb to be able to 
+        /// figure out how to lay out this part of the panel properly
+        /// </summary>
+        private void createIssueDescriptionPanel() {
+            issueDescription = new WebBrowser
+                               {
+                                   Dock = DockStyle.Fill,
+                                   IsWebBrowserContextMenuEnabled = false,
+                                   Location = new Point(0, 0),
+                                   MinimumSize = new Size(20, 20),
+                                   Name = "issueDescription",
+                                   Size = new Size(126, 124),
+                                   TabIndex = 1
+                               };
+
+            issueDescription.Navigating += issueDescription_Navigating;
+            issueDescription.DocumentCompleted += issueDescription_DocumentCompleted;
+
+            ToolStripContainer tsc = new ToolStripContainer {Dock = DockStyle.Fill};
+
+            ToolStrip ts = new ToolStrip {Dock = DockStyle.None, GripStyle = ToolStripGripStyle.Hidden};
+
+            ToolStripButton buttonEditDescription = new ToolStripButton
+                                                    {
+                                                        Image = Resources.edit,
+                                                        Text = "Edit",
+                                                        DisplayStyle = ToolStripItemDisplayStyle.Image
+                                                    };
+            buttonEditDescription.Click += buttonEditDescription_Click;
+
+            ts.Items.AddRange(new ToolStripItem[] {new ToolStripLabel("Description"), buttonEditDescription});
+
+            tsc.ContentPanel.Controls.Add(issueDescription);
+            tsc.TopToolStripPanel.Controls.Add(ts);
+
+            splitContainer.Panel1.Controls.Add(tsc);
         }
 
         private void init() {
@@ -308,6 +352,8 @@ namespace Atlassian.plvs.ui.jira {
             else
                 sb.Append("<tr><td class=\"labelcolumn\">Affects Version</td><td>");
 
+            appendStartEditable(sb, AFFECTS_VERSIONS_EDIT_TAG);
+
             if (issue.Versions.Count == 0)
                 sb.Append("None");
             else {
@@ -319,14 +365,17 @@ namespace Atlassian.plvs.ui.jira {
                 }
             }
 
-            sb.Append(" <a href=\"").Append(ISSUE_EDIT_URL_TYPE).Append(AFFECTS_VERSIONS_EDIT_TAG).Append("\"><img src=\"");
-            sb.Append(editImagePath).Append("\" alt=\"Edit\"  style=\"border-style: none;vertical-align:top;\"></a>");
-            sb.Append("</td></tr>\n");
+            appendPencil(sb, AFFECTS_VERSIONS_EDIT_TAG);
+            appendEndEditable(sb);
+            
+            sb.Append("</tr>\n");
 
             if (issue.FixVersions.Count > 1)
                 sb.Append("<tr><td class=\"labelcolumn\">Fix Versions</td><td>");
             else
                 sb.Append("<tr><td class=\"labelcolumn\">Fix Version</td><td>");
+
+            appendStartEditable(sb, FIX_VERSIONS_EDIT_TAG);
 
             if (issue.FixVersions.Count == 0)
                 sb.Append("None");
@@ -339,14 +388,16 @@ namespace Atlassian.plvs.ui.jira {
                 }
             }
 
-            sb.Append(" <a href=\"").Append(ISSUE_EDIT_URL_TYPE).Append(FIX_VERSIONS_EDIT_TAG).Append("\"><img src=\"");
-            sb.Append(editImagePath).Append("\" alt=\"Edit\"  style=\"border-style: none;vertical-align:top;\"></a>");
-            sb.Append("</td></tr>\n");
+            appendPencil(sb, FIX_VERSIONS_EDIT_TAG);
+            appendEndEditable(sb);
+            sb.Append("</tr>\n");
 
             if (issue.Components.Count > 1)
                 sb.Append("<tr><td class=\"labelcolumn\">Components</td><td>");
             else
                 sb.Append("<tr><td class=\"labelcolumn\">Component</td><td>");
+
+            appendStartEditable(sb, COMPONENTS_EDIT_TAG);
 
             if (issue.Components.Count == 0)
                 sb.Append("None");
@@ -359,9 +410,9 @@ namespace Atlassian.plvs.ui.jira {
                 }
             }
 
-            sb.Append(" <a href=\"").Append(ISSUE_EDIT_URL_TYPE).Append(COMPONENTS_EDIT_TAG).Append("\"><img src=\"");
-            sb.Append(editImagePath).Append("\" alt=\"Edit\"  style=\"border-style: none;vertical-align:top;\"></a>");
-            sb.Append("</td></tr>\n");
+            appendPencil(sb, COMPONENTS_EDIT_TAG);
+            appendEndEditable(sb);
+            sb.Append("</tr>\n");
 
             sb.Append("<tr><td class=\"labelcolumn\">Original Estimate</td><td>")
                 .Append(issue.OriginalEstimate ?? "None").Append("</td></tr>\n")
@@ -884,6 +935,11 @@ namespace Atlassian.plvs.ui.jira {
             if ((e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy) {
                 e.Effect = DragDropEffects.Copy;
             }
+        }
+
+        private void buttonEditDescription_Click(object sender, EventArgs e) {
+            FieldEditor editor = new FieldEditor("Edit Description", model, facade, issue, "description", Cursor.Position);
+            editor.ShowDialog();
         }
     }
 }

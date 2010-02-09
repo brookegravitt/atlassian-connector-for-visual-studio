@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 
 namespace Atlassian.plvs.ui.jira.fields {
-    public class UserFieldEditorProvider : JiraFieldEditorProvider {
+    public class UserFieldEditorProvider : FixedHeightFieldEditorProvider {
 
         private readonly JiraUserPicker picker;
 

@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.Atlassian.plvs.api.soap.service;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui.jira.fields;
 using Atlassian.plvs.util;
@@ -84,14 +85,17 @@ namespace Atlassian.plvs.dialogs.jira {
             versions.Reverse();
             List<JiraNamedEntity> comps = facade.getComponents(issue.Server, project);
 
-            Invoke(new MethodInvoker(() => createEditorWidget(versions, comps)));
+            Invoke(new MethodInvoker(() => createEditorWidget(versions, comps, issueSoapObject)));
         }
 
-        private void createEditorWidget(IEnumerable<JiraNamedEntity> versions, IEnumerable<JiraNamedEntity> comps) {
+        private void createEditorWidget(IEnumerable<JiraNamedEntity> versions, IEnumerable<JiraNamedEntity> comps, object issueSoapObject) {
 
             switch (JiraActionFieldType.getFieldTypeForFieldId(fieldId)) {
                 case JiraActionFieldType.WidgetType.SUMMARY:
                     editorProvider = new TextLineFieldEditorProvider(field, issue.Summary, fieldValid);
+                    break;
+                case JiraActionFieldType.WidgetType.DESCRIPTION:
+                    editorProvider = new TextAreaFieldEditorProvider(field, ((RemoteIssue) issueSoapObject).description, fieldValid);
                     break;
                 case JiraActionFieldType.WidgetType.VERSIONS:
                     editorProvider = new NamedEntityListFieldEditorProvider(field, issue.Versions, versions, fieldValid);
@@ -131,8 +135,10 @@ namespace Atlassian.plvs.dialogs.jira {
             editorControl.Location = new Point(MARGIN, MARGIN);
             Controls.Add(editorControl);
             editor.resizeToWidth(Width);
-            ClientSize = new Size(editorControl.Width + 2 * MARGIN, 
-                editorControl.Height + 2 * MARGIN + (ClientSize.Height - buttonOk.Location.Y));
+
+            ClientSize = new Size(editorControl.Width + 2 * MARGIN, editorControl.Height + 2 * MARGIN + (ClientSize.Height - buttonOk.Location.Y));
+
+            Resize += fieldEditorResize;
         }
 
         private void FieldEditor_KeyPress(object sender, KeyPressEventArgs e) {
@@ -180,6 +186,22 @@ namespace Atlassian.plvs.dialogs.jira {
                                              Close();
                                          }));
             }
+        }
+
+        private void fieldEditorResize(object sender, EventArgs e) {
+            if (editorProvider == null) {
+                return;
+            }
+            editorProvider.resizeToWidth(getWidgetWidth());
+            editorProvider.resizeToHeight(getWidgetHeight());
+        }
+
+        private int getWidgetHeight() {
+            return ClientSize.Height - buttonOk.Height - 3 * MARGIN;
+        }
+
+        private int getWidgetWidth() {
+            return ClientSize.Width - 2 * MARGIN;
         }
     }
 }

@@ -80,7 +80,7 @@ namespace Atlassian.plvs.ui.jira {
                 issueTreeContainer.ContentPanel.Controls.Remove(issuesTree);
             }
 
-            issuesTree = new JiraIssueTree(jiraSplitter.Panel2, status, searchingModel);
+            issuesTree = new JiraIssueTree(jiraSplitter.Panel2, status, searchingModel, filtersTree.ItemHeight, filtersTree.Font);
 
             issuesTree.addContextMenu(new ToolStripItem[]
                                   {

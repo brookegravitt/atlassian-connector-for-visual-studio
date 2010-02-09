@@ -23,13 +23,14 @@ namespace Atlassian.plvs.ui.jira {
         private readonly TreeColumn colPriority = new TreeColumn();
         private readonly TreeColumn colUpdated = new TreeColumn();
         private readonly NodeIcon controlIcon = new NodeIcon();
-        private readonly NodeTextBox controlName = new BoldableNodeTextBox();
+//        private readonly NodeTextBox controlName = new BoldableNodeTextBox();
+        private readonly NodeTextBox controlName = new NodeTextBox();
         private readonly NodeTextBox controlStatusText = new NodeTextBox();
         private readonly NodeIcon controlStatusIcon = new NodeIcon();
         private readonly NodeIcon controlPriorityIcon = new NodeIcon();
         private readonly NodeTextBox controlUpdated = new NodeTextBox();
 
-        public JiraIssueTree(Control parent, StatusLabel status, JiraIssueListModel model) {
+        public JiraIssueTree(Control parent, StatusLabel status, JiraIssueListModel model, int itemHeight, Font font) {
             this.parent = parent;
             this.status = status;
             this.model = model;
@@ -39,6 +40,8 @@ namespace Atlassian.plvs.ui.jira {
             FullRowSelect = true;
             GridLineStyle = GridLineStyle.None;
             UseColumns = true;
+            RowHeight = itemHeight;
+            Font = font;
 
             colName.Header = "Summary";
             colStatus.Header = "Status";
