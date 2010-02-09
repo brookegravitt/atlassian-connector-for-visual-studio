@@ -15,6 +15,7 @@ namespace Atlassian.plvs.ui.jira.fields {
         public abstract Control Widget { get; }
         public abstract int VerticalSkip { get; }
         public abstract void resizeToWidth(int width);
+        public abstract void resizeToHeight(int height);
 
         public delegate void FieldValidListener(JiraFieldEditorProvider sender, bool valid);
 

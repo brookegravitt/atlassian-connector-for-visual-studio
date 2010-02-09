@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 
 namespace Atlassian.plvs.ui.jira.fields {
-    public class TextLineFieldEditorProvider : JiraFieldEditorProvider {
+    public class TextLineFieldEditorProvider : FixedHeightFieldEditorProvider {
         private readonly Control editor = new TextBox();
 
         public TextLineFieldEditorProvider(JiraField field, string value, FieldValidListener validListener)

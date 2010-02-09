@@ -285,6 +285,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ui\jira\fields\DateFieldEditorProvider.cs" />
+    <Compile Include="ui\jira\fields\FixedHeightFieldEditorProvider.cs" />
     <Compile Include="ui\jira\fields\NamedEntityComboEditorProvider.cs" />
     <Compile Include="ui\jira\fields\JiraFieldEditorProvider.cs" />
     <Compile Include="ui\jira\fields\TextAreaFieldEditorProvider.cs" />

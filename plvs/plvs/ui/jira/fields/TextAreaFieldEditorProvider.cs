@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 
@@ -30,6 +31,10 @@ namespace Atlassian.plvs.ui.jira.fields {
 
         public override void resizeToWidth(int width) {
             editor.Width = width;
+        }
+
+        public override void resizeToHeight(int height) {
+            editor.Height = height;
         }
 
         public override List<string> getValues() {

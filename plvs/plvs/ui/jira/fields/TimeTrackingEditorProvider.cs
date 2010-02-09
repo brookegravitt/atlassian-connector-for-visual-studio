@@ -8,7 +8,7 @@ using Atlassian.plvs.util;
 using Atlassian.plvs.util.jira;
 
 namespace Atlassian.plvs.ui.jira.fields {
-    public class TimeTrackingEditorProvider : JiraFieldEditorProvider {
+    public class TimeTrackingEditorProvider : FixedHeightFieldEditorProvider {
 
         private readonly Panel panel = new Panel();
 

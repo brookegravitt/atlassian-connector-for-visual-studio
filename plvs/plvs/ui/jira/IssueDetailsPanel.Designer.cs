@@ -39,16 +39,14 @@ namespace Atlassian.plvs.ui.jira {
             this.tabSummary = new System.Windows.Forms.TabPage();
             this.issueSummary = new System.Windows.Forms.WebBrowser();
             this.tabDescriptionAndComments = new System.Windows.Forms.TabPage();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.issueDescription = new System.Windows.Forms.WebBrowser();
-            this.label1 = new System.Windows.Forms.Label();
+            this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.toolStripContainer2 = new System.Windows.Forms.ToolStripContainer();
             this.issueComments = new System.Windows.Forms.WebBrowser();
             this.toolStrip2 = new System.Windows.Forms.ToolStrip();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.buttonAddComment = new System.Windows.Forms.ToolStripButton();
             this.buttonExpandAll = new System.Windows.Forms.ToolStripButton();
             this.buttonCollapseAll = new System.Windows.Forms.ToolStripButton();
-            this.label2 = new System.Windows.Forms.Label();
             this.tabSubtasks = new System.Windows.Forms.TabPage();
             this.webSubtasks = new System.Windows.Forms.WebBrowser();
             this.tabAttachments = new System.Windows.Forms.TabPage();
@@ -70,6 +68,7 @@ namespace Atlassian.plvs.ui.jira {
             this.buttonClose = new System.Windows.Forms.ToolStripButton();
             this.buttonLogWork = new System.Windows.Forms.ToolStripButton();
             this.dropDownIssueActions = new System.Windows.Forms.ToolStripDropDownButton();
+            this.label1 = new System.Windows.Forms.Label();
             this.toolTipAttachments = new System.Windows.Forms.ToolTip(this.components);
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
@@ -79,9 +78,8 @@ namespace Atlassian.plvs.ui.jira {
             this.issueTabs.SuspendLayout();
             this.tabSummary.SuspendLayout();
             this.tabDescriptionAndComments.SuspendLayout();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
+            this.splitContainer.Panel2.SuspendLayout();
+            this.splitContainer.SuspendLayout();
             this.toolStripContainer2.ContentPanel.SuspendLayout();
             this.toolStripContainer2.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer2.SuspendLayout();
@@ -164,6 +162,7 @@ namespace Atlassian.plvs.ui.jira {
             // issueSummary
             // 
             this.issueSummary.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.issueSummary.IsWebBrowserContextMenuEnabled = false;
             this.issueSummary.Location = new System.Drawing.Point(3, 3);
             this.issueSummary.MinimumSize = new System.Drawing.Size(20, 20);
             this.issueSummary.Name = "issueSummary";
@@ -174,7 +173,7 @@ namespace Atlassian.plvs.ui.jira {
             // 
             // tabDescriptionAndComments
             // 
-            this.tabDescriptionAndComments.Controls.Add(this.splitContainer1);
+            this.tabDescriptionAndComments.Controls.Add(this.splitContainer);
             this.tabDescriptionAndComments.Location = new System.Drawing.Point(4, 22);
             this.tabDescriptionAndComments.Name = "tabDescriptionAndComments";
             this.tabDescriptionAndComments.Padding = new System.Windows.Forms.Padding(3);
@@ -183,46 +182,18 @@ namespace Atlassian.plvs.ui.jira {
             this.tabDescriptionAndComments.Text = "Description and Comments";
             this.tabDescriptionAndComments.UseVisualStyleBackColor = true;
             // 
-            // splitContainer1
+            // splitContainer
             // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(3, 3);
-            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer.Location = new System.Drawing.Point(3, 3);
+            this.splitContainer.Name = "splitContainer";
             // 
-            // splitContainer1.Panel1
+            // splitContainer.Panel2
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.issueDescription);
-            this.splitContainer1.Panel1.Controls.Add(this.label1);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.toolStripContainer2);
-            this.splitContainer1.Panel2.Controls.Add(this.label2);
-            this.splitContainer1.Size = new System.Drawing.Size(771, 396);
-            this.splitContainer1.SplitterDistance = 273;
-            this.splitContainer1.TabIndex = 0;
-            // 
-            // issueDescription
-            // 
-            this.issueDescription.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.issueDescription.IsWebBrowserContextMenuEnabled = false;
-            this.issueDescription.Location = new System.Drawing.Point(0, 13);
-            this.issueDescription.MinimumSize = new System.Drawing.Size(20, 20);
-            this.issueDescription.Name = "issueDescription";
-            this.issueDescription.Size = new System.Drawing.Size(273, 383);
-            this.issueDescription.TabIndex = 1;
-            this.issueDescription.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.issueDescription_Navigating);
-            this.issueDescription.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.issueDescription_DocumentCompleted);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label1.Location = new System.Drawing.Point(0, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(60, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Description";
+            this.splitContainer.Panel2.Controls.Add(this.toolStripContainer2);
+            this.splitContainer.Size = new System.Drawing.Size(771, 396);
+            this.splitContainer.SplitterDistance = 273;
+            this.splitContainer.TabIndex = 0;
             // 
             // toolStripContainer2
             // 
@@ -230,11 +201,11 @@ namespace Atlassian.plvs.ui.jira {
             // toolStripContainer2.ContentPanel
             // 
             this.toolStripContainer2.ContentPanel.Controls.Add(this.issueComments);
-            this.toolStripContainer2.ContentPanel.Size = new System.Drawing.Size(494, 358);
+            this.toolStripContainer2.ContentPanel.Size = new System.Drawing.Size(494, 371);
             this.toolStripContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.toolStripContainer2.Location = new System.Drawing.Point(0, 13);
+            this.toolStripContainer2.Location = new System.Drawing.Point(0, 0);
             this.toolStripContainer2.Name = "toolStripContainer2";
-            this.toolStripContainer2.Size = new System.Drawing.Size(494, 383);
+            this.toolStripContainer2.Size = new System.Drawing.Size(494, 396);
             this.toolStripContainer2.TabIndex = 1;
             this.toolStripContainer2.Text = "toolStripContainer2";
             // 
@@ -249,7 +220,7 @@ namespace Atlassian.plvs.ui.jira {
             this.issueComments.Location = new System.Drawing.Point(0, 0);
             this.issueComments.MinimumSize = new System.Drawing.Size(20, 20);
             this.issueComments.Name = "issueComments";
-            this.issueComments.Size = new System.Drawing.Size(494, 358);
+            this.issueComments.Size = new System.Drawing.Size(494, 371);
             this.issueComments.TabIndex = 0;
             this.issueComments.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.issueComments_Navigating);
             this.issueComments.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.issueComments_DocumentCompleted);
@@ -259,13 +230,20 @@ namespace Atlassian.plvs.ui.jira {
             this.toolStrip2.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip2.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripLabel1,
             this.buttonAddComment,
             this.buttonExpandAll,
             this.buttonCollapseAll});
             this.toolStrip2.Location = new System.Drawing.Point(3, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(72, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(138, 25);
             this.toolStrip2.TabIndex = 0;
+            // 
+            // toolStripLabel1
+            // 
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            this.toolStripLabel1.Size = new System.Drawing.Size(66, 22);
+            this.toolStripLabel1.Text = "Comments";
             // 
             // buttonAddComment
             // 
@@ -296,16 +274,6 @@ namespace Atlassian.plvs.ui.jira {
             this.buttonCollapseAll.Size = new System.Drawing.Size(23, 22);
             this.buttonCollapseAll.Text = "Collapse All";
             this.buttonCollapseAll.Click += new System.EventHandler(this.buttonCollapseAll_Click);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label2.Location = new System.Drawing.Point(0, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(56, 13);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Comments";
             // 
             // tabSubtasks
             // 
@@ -538,6 +506,16 @@ namespace Atlassian.plvs.ui.jira {
             this.dropDownIssueActions.Text = "Issue Actions";
             this.dropDownIssueActions.DropDownOpened += new System.EventHandler(this.dropDownIssueActions_DropDownOpened);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label1.Location = new System.Drawing.Point(0, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(60, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Description";
+            // 
             // IssueDetailsPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -557,11 +535,8 @@ namespace Atlassian.plvs.ui.jira {
             this.issueTabs.ResumeLayout(false);
             this.tabSummary.ResumeLayout(false);
             this.tabDescriptionAndComments.ResumeLayout(false);
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel1.PerformLayout();
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.Panel2.PerformLayout();
-            this.splitContainer1.ResumeLayout(false);
+            this.splitContainer.Panel2.ResumeLayout(false);
+            this.splitContainer.ResumeLayout(false);
             this.toolStripContainer2.ContentPanel.ResumeLayout(false);
             this.toolStripContainer2.TopToolStripPanel.ResumeLayout(false);
             this.toolStripContainer2.TopToolStripPanel.PerformLayout();
@@ -594,14 +569,12 @@ namespace Atlassian.plvs.ui.jira {
         private System.Windows.Forms.TabControl issueTabs;
         private System.Windows.Forms.TabPage tabSummary;
         private System.Windows.Forms.TabPage tabDescriptionAndComments;
-        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.SplitContainer splitContainer;
         private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.WebBrowser issueDescription;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ToolStripContainer toolStripContainer2;
         private System.Windows.Forms.WebBrowser issueComments;
         private System.Windows.Forms.ToolStrip toolStrip2;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.WebBrowser issueSummary;
         private System.Windows.Forms.ToolStripButton buttonAddComment;
         private System.Windows.Forms.ToolStripButton buttonExpandAll;
@@ -628,5 +601,6 @@ namespace Atlassian.plvs.ui.jira {
         private System.Windows.Forms.ToolStrip toolStrip3;
         private System.Windows.Forms.ToolStripButton buttonSaveAttachmentAs;
         private System.Windows.Forms.ToolStripButton buttonUploadNew;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
     }
 }

@@ -4,7 +4,7 @@ using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models;
 
 namespace Atlassian.plvs.ui.jira.fields {
-    public class NamedEntityComboEditorProvider : JiraFieldEditorProvider {
+    public class NamedEntityComboEditorProvider : FixedHeightFieldEditorProvider {
         private readonly JiraNamedEntityComboBox combo = new JiraNamedEntityComboBox();
 
         public NamedEntityComboEditorProvider(

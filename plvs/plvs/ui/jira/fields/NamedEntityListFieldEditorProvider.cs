@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 
@@ -7,6 +8,7 @@ namespace Atlassian.plvs.ui.jira.fields {
         private readonly ListBox list = new ListBox
                                         {
                                             SelectionMode = SelectionMode.MultiExtended,
+                                            IntegralHeight = false,
                                             Height = MULTI_LINE_EDITOR_HEIGHT
                                         };
 
@@ -39,6 +41,10 @@ namespace Atlassian.plvs.ui.jira.fields {
 
         public override void resizeToWidth(int width) {
             list.Width = width;
+        }
+
+        public override void resizeToHeight(int height) {
+            list.Height = height;
         }
 
         public override List<string> getValues() {

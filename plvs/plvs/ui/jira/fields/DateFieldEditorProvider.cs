@@ -5,7 +5,7 @@ using Atlassian.plvs.api.jira;
 using Atlassian.plvs.util.jira;
 
 namespace Atlassian.plvs.ui.jira.fields {
-    internal class DateFieldEditorProvider : JiraFieldEditorProvider {
+    internal class DateFieldEditorProvider : FixedHeightFieldEditorProvider {
         private readonly DateTimePicker picker = new DateTimePicker
                                                  {
                                                      ShowCheckBox = true
