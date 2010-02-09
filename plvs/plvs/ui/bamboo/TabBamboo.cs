@@ -18,6 +18,10 @@ namespace Atlassian.plvs.ui.bamboo {
 
         private readonly Timer pollTimer;
 
+        private readonly Timer infoTimer;
+
+        private DateTime? lastPollTime;
+
         private BambooBuildTree buildTree;
 
         private readonly StatusLabel status;
@@ -33,6 +37,9 @@ namespace Atlassian.plvs.ui.bamboo {
 
             pollTimer = new Timer();
             pollTimer.Elapsed += pollTimer_Elapsed;
+
+            infoTimer = new Timer();
+            infoTimer.Elapsed += infoTimer_Elapsed;
 
             GlobalSettings.SettingsChanged += globalSettingsChanged;
 
@@ -55,6 +62,10 @@ namespace Atlassian.plvs.ui.bamboo {
             pollTimer.Enabled = false;
             pollTimer.Start();
             notifyBuildStatus.Visible = BambooServerModel.Instance.getAllServers().Count > 0;
+
+            infoTimer.Interval = 10000;
+            infoTimer.AutoReset = true;
+            infoTimer.Start();
 
             Invoke(new MethodInvoker(delegate { initBuildTree(); status.setInfo("Idle"); }));
         }
@@ -116,6 +127,10 @@ namespace Atlassian.plvs.ui.bamboo {
             notifyBuildStatus.Visible = false;
             pollTimer.Stop();
             pollTimer.Enabled = false;
+
+            infoTimer.Stop();
+            infoTimer.Enabled = false;
+
             showPollResults(null, null);
         }
 
@@ -125,8 +140,13 @@ namespace Atlassian.plvs.ui.bamboo {
         }
 
         void pollTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
+            lastPollTime = null;
             Thread t = new Thread(() => pollRunner(true));
             t.Start();
+        }
+
+        void infoTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
+            showLastPollTimeInfo();
         }
 
         private void pollRunner(bool rescheduleTimer) {
@@ -172,7 +192,8 @@ namespace Atlassian.plvs.ui.bamboo {
             if (exceptions != null && exceptions.Count > 0) {
                 status.setError("Failed to poll some of the servers", exceptions);
             } else {
-                status.setInfo("Last poll finished at " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString());
+                lastPollTime = DateTime.Now;
+                showLastPollTimeInfo();
             }
             bool? allpassing = null;
             if (builds != null) {
@@ -198,6 +219,14 @@ namespace Atlassian.plvs.ui.bamboo {
             notifyBuildStatus.BalloonTipIcon = allOk ? ToolTipIcon.Info : ToolTipIcon.Warning;
             notifyBuildStatus.ShowBalloonTip(30000);
             summaryStatusOk = allOk;
+        }
+
+        private void showLastPollTimeInfo() {
+            if (lastPollTime != null) {
+                status.setInfo("Last poll finished at " 
+                    + lastPollTime.Value.ToShortDateString() + " " + lastPollTime.Value.ToLongTimeString()
+                    + " (" + DateTime.Now.Subtract(lastPollTime.Value).Minutes + " minutes ago)");
+            }
         }
 
         private void buttonPoll_Click(object sender, EventArgs e) {
