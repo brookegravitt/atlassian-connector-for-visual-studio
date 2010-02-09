@@ -66,7 +66,7 @@ namespace Atlassian.plvs.dialogs.jira {
 
             StartPosition = FormStartPosition.CenterParent;
 
-            jiraAssigneePicker.init(server, null);
+            jiraAssigneePicker.init(server, null, true);
         }
 
         private void buttonCancel_Click(object sender, EventArgs e) {

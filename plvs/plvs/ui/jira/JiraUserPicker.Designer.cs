@@ -25,6 +25,7 @@
         private void InitializeComponent() {
             this.comboUsers = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.checkAssignToMe = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // comboUsers
@@ -44,14 +45,26 @@
             this.label1.TabIndex = 1;
             this.label1.Text = "Select user from list or type user login name";
             // 
+            // checkAssignToMe
+            // 
+            this.checkAssignToMe.AutoSize = true;
+            this.checkAssignToMe.Location = new System.Drawing.Point(4, 31);
+            this.checkAssignToMe.Name = "checkAssignToMe";
+            this.checkAssignToMe.Size = new System.Drawing.Size(91, 17);
+            this.checkAssignToMe.TabIndex = 2;
+            this.checkAssignToMe.Text = "Assign To Me";
+            this.checkAssignToMe.UseVisualStyleBackColor = true;
+            this.checkAssignToMe.CheckedChanged += new System.EventHandler(this.checkAssignToMe_CheckedChanged);
+            // 
             // JiraUserPicker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.checkAssignToMe);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.comboUsers);
             this.Name = "JiraUserPicker";
-            this.Size = new System.Drawing.Size(458, 30);
+            this.Size = new System.Drawing.Size(458, 54);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -61,5 +74,6 @@
 
         private System.Windows.Forms.ComboBox comboUsers;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.CheckBox checkAssignToMe;
     }
 }

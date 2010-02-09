@@ -105,7 +105,7 @@ namespace Atlassian.plvs.dialogs.jira {
                     break;
                 case JiraActionFieldType.WidgetType.ASSIGNEE:
                     editorProvider = new UserFieldEditorProvider(issue.Server, field,
-                                                         field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
+                                                         field.Values.Count > 0 ? field.Values[0] : "", fieldValid, true);
                     break;
                 case JiraActionFieldType.WidgetType.COMPONENTS:
                     editorProvider = new NamedEntityListFieldEditorProvider(field, issue.Components, comps, fieldValid);

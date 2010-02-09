@@ -47,7 +47,8 @@
             // 
             // buttonCreate
             // 
-            this.buttonCreate.Location = new System.Drawing.Point(405, 574);
+            this.buttonCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCreate.Location = new System.Drawing.Point(405, 593);
             this.buttonCreate.Name = "buttonCreate";
             this.buttonCreate.Size = new System.Drawing.Size(75, 23);
             this.buttonCreate.TabIndex = 9;
@@ -57,7 +58,8 @@
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Location = new System.Drawing.Point(486, 574);
+            this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCancel.Location = new System.Drawing.Point(486, 593);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 10;
@@ -237,14 +239,14 @@
             // 
             this.jiraAssigneePicker.Location = new System.Drawing.Point(97, 531);
             this.jiraAssigneePicker.Name = "jiraAssigneePicker";
-            this.jiraAssigneePicker.Size = new System.Drawing.Size(458, 30);
+            this.jiraAssigneePicker.Size = new System.Drawing.Size(458, 51);
             this.jiraAssigneePicker.TabIndex = 21;
             // 
             // CreateIssue
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(576, 609);
+            this.ClientSize = new System.Drawing.Size(576, 628);
             this.Controls.Add(this.jiraAssigneePicker);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
