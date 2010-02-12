@@ -268,11 +268,13 @@
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonCreate);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "CreateIssue";
             this.Text = "Create JIRA Issue";
             this.TopMost = true;
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CreateIssue_KeyPress);
             this.ResumeLayout(false);
             this.PerformLayout();
 
