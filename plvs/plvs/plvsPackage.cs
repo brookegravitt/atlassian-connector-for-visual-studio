@@ -5,14 +5,12 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Atlassian.plvs.attributes;
-using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.eventsinks;
 using Atlassian.plvs.markers;
 using Atlassian.plvs.scm;
 using Atlassian.plvs.store;
 using Atlassian.plvs.ui.jira;
 using Atlassian.plvs.windows;
-using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -38,14 +36,14 @@ namespace Atlassian.plvs {
     public sealed class PlvsPackage : Package, IVsPersistSolutionOpts, IVsInstalledProduct {
         public const string MINIMUM_VISUAL_STUDIO_EDITION = "Standard";
         public const string PRODUCT_NAME = "Atlassian Connector for Visual Studio";
-        public const string DESCRIPTION = "Blah";
+        public const string DESCRIPTION = "Provides integration of Atlassian products with Visual Studio";
         public const string COMPANY = "Atlassian";
 
         public new object GetService(Type serviceType) {
             return base.GetService(serviceType);
         }
 
-        private ToolWindowPane createJiraWindow() {
+        private ToolWindowPane createAtlassianWindow() {
             // Get the instance number 0 of this tool window. This window is single instance so this instance
             // is actually the only one.
             // The last flag is set to true so that if the tool window does not exists it will be created.
@@ -129,11 +127,23 @@ namespace Atlassian.plvs {
 
             OleMenuCommandService mcs = GetService(typeof (IMenuCommandService)) as OleMenuCommandService;
             if (null != mcs) {
-                CommandID menuCommandId = new CommandID(GuidList.guidplvsCmdSet,
-                                                        (int) PkgCmdIDList.cmdidToggleToolWindow);
-                OleMenuCommand menuItem = new OleMenuCommand(MenuItemCallback, menuCommandId);
-                menuItem.BeforeQueryStatus += menuItem_BeforeQueryStatus;
 
+                // toggle tool window command
+                CommandID menuCommandId = new CommandID(GuidList.guidplvsCmdSet, (int) PkgCmdIDList.cmdidToggleToolWindow);
+                OleMenuCommand menuItem = new OleMenuCommand(toggleToolWindowMenuItemCallback, menuCommandId);
+                menuItem.BeforeQueryStatus += toggleToolWindow_BeforeQueryStatus;
+                mcs.AddCommand(menuItem);
+
+                // find issue command
+                menuCommandId = new CommandID(GuidList.guidplvsCmdSet, (int)PkgCmdIDList.cmdidFindIssue);
+                menuItem = new OleMenuCommand(findIssueMenuItemCallback, menuCommandId);
+                menuItem.BeforeQueryStatus += findIssue_BeforeQueryStatus;
+                mcs.AddCommand(menuItem);
+
+                // create issue command
+                menuCommandId = new CommandID(GuidList.guidplvsCmdSet, (int)PkgCmdIDList.cmdidCreateIssue);
+                menuItem = new OleMenuCommand(createIssueMenuItemCallback, menuCommandId);
+                menuItem.BeforeQueryStatus += createIssue_BeforeQueryStatus;
                 mcs.AddCommand(menuItem);
             }
 
@@ -144,7 +154,7 @@ namespace Atlassian.plvs {
             // able to create marker instances.
             JiraLinkMarkerTypeProvider.InitializeMarkerIds(this);
 
-            SolutionEventSink solutionEventSink = new SolutionEventSink(this, createJiraWindow, createIssueDetailsWindow);
+            SolutionEventSink solutionEventSink = new SolutionEventSink(this, createAtlassianWindow, createIssueDetailsWindow);
             TextManagerEventSink textManagerEventSink = new TextManagerEventSink();
             RunningDocTableEventSink runningDocTableEventSink = new RunningDocTableEventSink();
 
@@ -280,12 +290,32 @@ namespace Atlassian.plvs {
             }
         }
 
-        private static void MenuItemCallback(object sender, EventArgs e) {
+        private static void toggleToolWindowMenuItemCallback(object sender, EventArgs e) {
             ToolWindowManager.Instance.AtlassianWindowVisible = !ToolWindowManager.Instance.AtlassianWindowVisible;
         }
 
-        private static void menuItem_BeforeQueryStatus(object sender, EventArgs e) {
+        private static void toggleToolWindow_BeforeQueryStatus(object sender, EventArgs e) {
             bool enable = ToolWindowManager.Instance.AtlassianWindow != null;
+            var myCommand = sender as OleMenuCommand;
+            if (myCommand != null) myCommand.Enabled = enable;
+        }
+
+        private static void findIssueMenuItemCallback(object sender, EventArgs e) {
+            AtlassianPanel.Instance.Jira.searchIssue();
+        }
+
+        private static void findIssue_BeforeQueryStatus(object sender, EventArgs e) {
+            bool enable = ToolWindowManager.Instance.AtlassianWindow != null && ToolWindowManager.Instance.AtlassianWindowVisible;
+            var myCommand = sender as OleMenuCommand;
+            if (myCommand != null) myCommand.Enabled = enable;
+        }
+
+        private static void createIssueMenuItemCallback(object sender, EventArgs e) {
+            AtlassianPanel.Instance.Jira.createIssue();
+        }
+
+        private static void createIssue_BeforeQueryStatus(object sender, EventArgs e) {
+            bool enable = ToolWindowManager.Instance.AtlassianWindow != null && ToolWindowManager.Instance.AtlassianWindowVisible;
             var myCommand = sender as OleMenuCommand;
             if (myCommand != null) myCommand.Enabled = enable;
         }

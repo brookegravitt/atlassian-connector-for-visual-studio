@@ -8,7 +8,8 @@ using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
 using Atlassian.plvs.ui.bamboo;
 using Atlassian.plvs.ui.jira;
-using Atlassian.plvs.util;
+using EnvDTE;
+using Constants=Atlassian.plvs.util.Constants;
 
 namespace Atlassian.plvs.windows {
     public partial class AtlassianPanel : ToolWindowFrame {
@@ -121,13 +122,13 @@ namespace Atlassian.plvs.windows {
                                          }));
         }
 
-        public void reinitialize() {
-            tabJira.reinitialize();
+        public void reinitialize(DTE dte) {
+            tabJira.reinitialize(dte);
             tabBamboo.reinitialize();
         }
 
         public void shutdown() {
-            tabJira.reinitialize();
+            tabJira.reinitialize(null);
             tabBamboo.shutdown();
         }
     }

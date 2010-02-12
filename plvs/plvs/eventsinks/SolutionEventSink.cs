@@ -19,12 +19,12 @@ namespace Atlassian.plvs.eventsinks {
         public delegate ToolWindowPane CreateToolWindow();
 
         private readonly PlvsPackage package;
-        private readonly CreateToolWindow createJiraWindow;
+        private readonly CreateToolWindow createAtlassianWindow;
         private readonly CreateToolWindow createIssueDetailsWindow;
 
-        public SolutionEventSink(PlvsPackage package, CreateToolWindow createJiraWindow, CreateToolWindow createIssueDetailsWindow) {
+        public SolutionEventSink(PlvsPackage package, CreateToolWindow createAtlassianWindow, CreateToolWindow createIssueDetailsWindow) {
             this.package = package;
-            this.createJiraWindow = createJiraWindow;
+            this.createAtlassianWindow = createAtlassianWindow;
             this.createIssueDetailsWindow = createIssueDetailsWindow;
         }
 
@@ -62,11 +62,14 @@ namespace Atlassian.plvs.eventsinks {
                 BambooServerModel.Instance.load();
                 RecentlyViewedIssuesModel.Instance.load();
                 JiraCustomFilter.load();
-                ToolWindowManager.Instance.AtlassianWindow = createJiraWindow();
-                AtlassianPanel.Instance.reinitialize();
-                ToolWindowManager.Instance.IssueDetailsWindow = createIssueDetailsWindow();
 
-                DTE dte = (DTE) package.GetService(typeof(DTE));
+                DTE dte = (DTE)package.GetService(typeof(DTE));
+
+                ToolWindowManager.Instance.AtlassianWindow = createAtlassianWindow();
+
+                AtlassianPanel.Instance.reinitialize(dte);
+
+                ToolWindowManager.Instance.IssueDetailsWindow = createIssueDetailsWindow();
 
                 IssueDetailsWindow.Instance.Solution = dte.Solution;
 
