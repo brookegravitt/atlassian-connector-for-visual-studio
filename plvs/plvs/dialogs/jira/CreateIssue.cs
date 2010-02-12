@@ -24,7 +24,18 @@ namespace Atlassian.plvs.dialogs.jira {
 
         private bool initialUpdate;
 
-        public CreateIssue(JiraServer server) {
+        private static CreateIssue instance;
+
+        public static void createDialogOrBringToFront(JiraServer server) {
+            if (instance == null) {
+                instance = new CreateIssue(server);
+                instance.Show();
+            } else {
+                instance.BringToFront();
+            }
+        }
+
+        private CreateIssue(JiraServer server) {
             this.server = server;
             InitializeComponent();
 
@@ -224,21 +235,21 @@ namespace Atlassian.plvs.dialogs.jira {
 
         private void saveSelectedValues() {
             ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
-            store.storeParameter(PROJECT + server.GUID, (int) comboProjects.SelectedIndex);
-            store.storeParameter(ISSUE_TYPE + server.GUID, (int) comboTypes.SelectedIndex);
-            store.storeParameter(PRIORITY + server.GUID, (int) comboPriorities.SelectedIndex);
-            store.storeParameter(COMPS_SIZE + server.GUID, (int) listComponents.SelectedIndices.Count);
+            store.storeParameter(PROJECT + server.GUID, comboProjects.SelectedIndex);
+            store.storeParameter(ISSUE_TYPE + server.GUID, comboTypes.SelectedIndex);
+            store.storeParameter(PRIORITY + server.GUID, comboPriorities.SelectedIndex);
+            store.storeParameter(COMPS_SIZE + server.GUID, listComponents.SelectedIndices.Count);
             int i = 0;
             foreach (int index in listComponents.SelectedIndices) {
                 store.storeParameter(COMPS_SEL + (i++) + "_" + server.GUID, index);
             }
 
-            store.storeParameter(AFFECTS_SIZE + server.GUID, (int) listAffectsVersions.SelectedIndices.Count);
+            store.storeParameter(AFFECTS_SIZE + server.GUID, listAffectsVersions.SelectedIndices.Count);
             i = 0;
             foreach (int index in listAffectsVersions.SelectedIndices) {
                 store.storeParameter(AFFECTS_SEL + (i++) + "_" + server.GUID, index);
             }
-            store.storeParameter(FIXES_SIZE + server.GUID, (int) listFixVersions.SelectedIndices.Count);
+            store.storeParameter(FIXES_SIZE + server.GUID, listFixVersions.SelectedIndices.Count);
             i = 0;
             foreach (int index in listFixVersions.SelectedIndices) {
                 store.storeParameter(FIXES_SEL + (i++) + "_" + server.GUID, index);
@@ -308,6 +319,16 @@ namespace Atlassian.plvs.dialogs.jira {
                                              buttonCancel.Enabled = true;
                                          }));
             }
+        }
+
+        private void CreateIssue_KeyPress(object sender, KeyPressEventArgs e) {
+            if (buttonCancel.Enabled && e.KeyChar == (char)Keys.Escape) {
+                Close();
+            }
+        }
+
+        protected override void OnClosed(EventArgs e) {
+            instance = null;
         }
     }
 }
