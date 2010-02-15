@@ -61,9 +61,7 @@ namespace Atlassian.plvs.dialogs.jira {
                 Debug.WriteLine("FieldEditor.fillFieldWrap() - InvalidOperationException: " + e.Message);
             } catch (Exception e) {
                 Invoke(new MethodInvoker(delegate {
-                                             MessageBox.Show(
-                                                 "Unable to initialize field editor component: " + e.Message,
-                                                 Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                             PlvsUtils.showError("Unable to initialize field editor component: " + e.Message);
                                              Close();
                                          }));
             }
@@ -184,9 +182,7 @@ namespace Atlassian.plvs.dialogs.jira {
                                          }));
             } catch (Exception e) {
                 Invoke(new MethodInvoker(delegate {
-                                             MessageBox.Show("Failed to apply changes: " + e.Message,
-                                                             Constants.ERROR_CAPTION, MessageBoxButtons.OK,
-                                                             MessageBoxIcon.Error);
+                                             PlvsUtils.showError("Failed to apply changes: " + e.Message);
                                              Close();
                                          }));
             }

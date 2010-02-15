@@ -7,6 +7,7 @@ using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui.jira;
+using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.dialogs.jira {
     public partial class EditCustomFilter : Form {
@@ -267,7 +268,7 @@ namespace Atlassian.plvs.dialogs.jira {
                     Debug.WriteLine(ex.Message);
                 }
                 else {
-                    MessageBox.Show("Unable to retrieve project-related data: " + ex.Message, "Error");
+                    PlvsUtils.showError("Unable to retrieve project-related data: " + ex.Message);
                 }
             }
         }

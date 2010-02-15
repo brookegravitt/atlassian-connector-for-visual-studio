@@ -101,7 +101,7 @@ namespace Atlassian.plvs.dialogs {
         }
 
         private void addNewBambooServer() {
-            var dialog = new AddOrEditBambooServer(null);
+            var dialog = new AddOrEditBambooServer(null, bambooFacade);
             var result = dialog.ShowDialog();
             if (result != DialogResult.OK) return;
             bambooServerModel.addServer(dialog.Server);
@@ -139,7 +139,7 @@ namespace Atlassian.plvs.dialogs {
                 SomethingChanged = true;
             } else if (serverTree.SelectedNode is BambooServerTreeNode) {
                 var selectedNode = (BambooServerTreeNode)serverTree.SelectedNode;
-                var dialog = new AddOrEditBambooServer(selectedNode.Server);
+                var dialog = new AddOrEditBambooServer(selectedNode.Server, bambooFacade);
                 var result = dialog.ShowDialog();
                 if (result != DialogResult.OK) return;
                 bambooServerModel.removeServer(selectedNode.Server.GUID);
