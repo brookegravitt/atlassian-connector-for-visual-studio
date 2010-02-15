@@ -160,8 +160,13 @@ namespace Atlassian.plvs.ui.bamboo {
 
             foreach (BambooServer server in servers) {
                 try {
-                    ICollection<BambooBuild> builds = Facade.getLatestBuildsForFavouritePlans(server);
-                    allBuilds.AddRange(builds);
+                    if (server.UseFavourites) {
+                        ICollection<BambooBuild> builds = Facade.getLatestBuildsForFavouritePlans(server);
+                        allBuilds.AddRange(builds);
+                    } else if (server.PlanKeys != null && server.PlanKeys.Count > 0) {
+                        ICollection<BambooBuild> builds = Facade.getLatestBuildsForPlanKeys(server, server.PlanKeys);
+                        allBuilds.AddRange(builds);
+                    }
                 } catch (Exception e) {
                     allExceptions.Add(new Exception(server.Name + ": " + e.Message));
                 }

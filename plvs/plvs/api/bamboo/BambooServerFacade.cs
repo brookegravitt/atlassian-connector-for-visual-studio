@@ -77,6 +77,10 @@ namespace Atlassian.plvs.api.bamboo {
             return wrapExceptions(server, () => getSession(server).getLatestBuildsForFavouritePlans());
         }
 
+        public ICollection<BambooBuild> getLatestBuildsForPlanKeys(BambooServer server, ICollection<string> keys) {
+            return wrapExceptions(server, () => getSession(server).getLatestBuildsForPlanKeys(keys));
+        }
+
         public void runBuild(BambooServer server, string planKey) {
             wrapExceptionsVoid(server, () => getSession(server).runBuild(planKey));
         }
