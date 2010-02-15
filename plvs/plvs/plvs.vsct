@@ -83,7 +83,7 @@
 
       <Button guid="guidplvsCmdSet" id="cmdidProjectProperties" priority="0x0100" type="Button">
         <Parent guid="guidplvsCmdSet" id="MyMenuGroup" />
-        <!--<CommandFlag>CommandWellOnly</CommandFlag>-->
+        <CommandFlag>CommandWellOnly</CommandFlag>
         <Strings>
           <CommandName>cmdidProjectProperties</CommandName>
           <ButtonText>Atlassian Project Configuration</ButtonText>
@@ -92,7 +92,7 @@
 
       <Button guid="guidplvsCmdSet" id="cmdidGlobalProperties" priority="0x0100" type="Button">
         <Parent guid="guidplvsCmdSet" id="MyMenuGroup" />
-        <!--<CommandFlag>CommandWellOnly</CommandFlag>-->
+        <CommandFlag>CommandWellOnly</CommandFlag>
         <Strings>
           <CommandName>cmdidGlobalProperties</CommandName>
           <ButtonText>Atlassian Global Configuration</ButtonText>
