@@ -46,7 +46,8 @@ namespace Atlassian.plvs.util {
             if (bindings == null || bindings.Length == 0) return;
 
             string bindingText = bindings[0].ToString();
-            button.Text = button.Text + " (" + bindingText.Substring("Global::".Length) + ")";
+            string text = button.Text.Contains(" (") ? button.Text.Substring(0, button.Text.IndexOf(" (")) : button.Text;
+            button.Text = text + " (" + bindingText.Substring("Global::".Length) + ")";
         }
     }
 }
