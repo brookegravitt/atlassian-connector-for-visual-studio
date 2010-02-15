@@ -21,6 +21,8 @@ namespace Atlassian.plvs.api.bamboo.rest {
         private string cookie;
         private const string LATEST_BUILDS_FOR_FAVOURITE_PLANS_ACTION = "/rest/api/latest/build?favourite&expand=builds.build";
 
+        private const string LATEST_BUILDS_FOR_PLANS_ACTION = "/rest/api/latest/build/{0}?expand=builds[0].build";
+
         private const string ALL_PLANS_ACTION = "/rest/api/latest/plan?expand=plans.plan";
         private const string FAVOURITE_PLANS_ACTION = "/rest/api/latest/plan?favourite&expand=plans.plan";
 
@@ -139,10 +141,23 @@ namespace Atlassian.plvs.api.bamboo.rest {
         }
 
         public ICollection<BambooBuild> getLatestBuildsForFavouritePlans() {
-            String endpoint = server.Url + LATEST_BUILDS_FOR_FAVOURITE_PLANS_ACTION;
+            string endpoint = server.Url + LATEST_BUILDS_FOR_FAVOURITE_PLANS_ACTION;
             return getBuildsFromUrl(endpoint);
         }
     
+        public ICollection<BambooBuild> getLatestBuildsForPlanKeys(ICollection<string> keys) {
+            List<BambooBuild> result = new List<BambooBuild>();
+            foreach (string key in keys) {
+                string buildUrl = string.Format(LATEST_BUILDS_FOR_PLANS_ACTION, key);
+                string endpoint = server.Url + buildUrl;
+                ICollection<BambooBuild> builds = getBuildsFromUrl(endpoint);
+                if (builds != null) {
+                    result.AddRange(builds);
+                }
+            }
+            return result;
+        }
+
         private ICollection<BambooBuild> getBuildsFromUrl(string endpoint) {
             Stream stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint), true);
 
