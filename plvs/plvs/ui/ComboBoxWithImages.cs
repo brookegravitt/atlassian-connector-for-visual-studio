@@ -22,26 +22,21 @@ namespace Atlassian.plvs.ui {
             Size imageSize = imageList != null ? imageList.ImageSize : new Size(0, 0);
             Rectangle bounds = ea.Bounds;
 
-            try {
-                item = (ComboBoxWithImagesItem<T>) Items[ea.Index];
+            if (ea.Index >= 0 && Items.Contains(ea.Index)) {
+                item = (ComboBoxWithImagesItem<T>)Items[ea.Index];
 
                 if (imageList != null && item.ImageIndex != -1) {
                     imageList.Draw(ea.Graphics, bounds.Left, bounds.Top, item.ImageIndex);
                     ea.Graphics.DrawString(item.Value.ToString(), ea.Font, new SolidBrush(ea.ForeColor),
                                            bounds.Left + imageSize.Width, bounds.Top);
-                }
-                else {
+                } else {
                     ea.Graphics.DrawString(item.Value.ToString(), ea.Font, new SolidBrush(ea.ForeColor), bounds.Left, bounds.Top);
                 }
-            }
-            catch {
-                if (ea.Index != -1) {
-                    ea.Graphics.DrawString(Items[ea.Index].ToString(), ea.Font, new SolidBrush(ea.ForeColor),
-                                           bounds.Left, bounds.Top);
-                }
-                else {
-                    ea.Graphics.DrawString(Text, ea.Font, new SolidBrush(ea.ForeColor), bounds.Left, bounds.Top);
-                }
+            } else if (ea.Index != -1) {
+                ea.Graphics.DrawString(Items[ea.Index].ToString(), ea.Font, new SolidBrush(ea.ForeColor),
+                                       bounds.Left, bounds.Top);
+            } else {
+                ea.Graphics.DrawString(Text, ea.Font, new SolidBrush(ea.ForeColor), bounds.Left, bounds.Top);
             }
 
             base.OnDrawItem(ea);
