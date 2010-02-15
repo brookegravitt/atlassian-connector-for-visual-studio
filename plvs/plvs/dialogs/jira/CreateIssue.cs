@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
@@ -104,14 +105,18 @@ namespace Atlassian.plvs.dialogs.jira {
             List<JiraNamedEntity> versions = JiraServerFacade.Instance.getVersions(server, project);
             // newest versions first
             versions.Reverse();
-            Invoke(new MethodInvoker(delegate {
-                                         fillIssueTypes(issueTypes, store);
-                                         fillComponents(comps, store);
-                                         fillVersions(versions, store);
-                                         setAllEnabled(true);
-                                         updateButtons();
-                                         initialUpdate = false;
-                                     }));
+            try {
+                Invoke(new MethodInvoker(delegate {
+                                             fillIssueTypes(issueTypes, store);
+                                             fillComponents(comps, store);
+                                             fillVersions(versions, store);
+                                             setAllEnabled(true);
+                                             updateButtons();
+                                             initialUpdate = false;
+                                         }));
+            } catch (InvalidOperationException e) {
+                Debug.WriteLine("CreateIssue.projectUpdateWorker() - InvalidOperationException: " + e.Message);
+            }
         }
 
         private void fillVersions(IEnumerable<JiraNamedEntity> versions, ParameterStore store) {
