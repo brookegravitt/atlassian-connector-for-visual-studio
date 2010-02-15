@@ -38,7 +38,9 @@ namespace Atlassian.plvs.dialogs.bamboo {
 
                     radioUseFavourites.Checked = server.UseFavourites;
                     radioSelectManually.Checked = !server.UseFavourites;
-//                    planKeys.AddRange(server.PlanKeys);
+                    if (server.PlanKeys != null) {
+                        planKeys.AddRange(server.PlanKeys);
+                    }
 
                     if (!server.UseFavourites) {
                         getPlans();
@@ -76,7 +78,7 @@ namespace Atlassian.plvs.dialogs.bamboo {
                 }
             }
 
-//            server.PlanKeys = planKeys;
+            server.PlanKeys = planKeys;
 
             DialogResult = DialogResult.OK;
             Close();
@@ -183,8 +185,15 @@ namespace Atlassian.plvs.dialogs.bamboo {
                 return;
             }
             checkedListBuilds.Items.Clear();
+            int i = 0;
             foreach (var plan in plans) {
                 checkedListBuilds.Items.Add(plan);
+                foreach (string key in planKeys) {
+                    if (!plan.Key.Equals(key)) continue;
+                    checkedListBuilds.SetItemChecked(i, true);
+                    break;
+                }
+                ++i;
             }
         }
     }
