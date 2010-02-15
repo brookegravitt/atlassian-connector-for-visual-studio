@@ -137,14 +137,27 @@ namespace Atlassian.plvs {
                 // find issue command
                 menuCommandId = new CommandID(GuidList.guidplvsCmdSet, (int)PkgCmdIDList.cmdidFindIssue);
                 menuItem = new OleMenuCommand(findIssueMenuItemCallback, menuCommandId);
-                menuItem.BeforeQueryStatus += findIssue_BeforeQueryStatus;
+                menuItem.BeforeQueryStatus += toolWindowCommand_BeforeQueryStatus;
                 mcs.AddCommand(menuItem);
 
                 // create issue command
                 menuCommandId = new CommandID(GuidList.guidplvsCmdSet, (int)PkgCmdIDList.cmdidCreateIssue);
                 menuItem = new OleMenuCommand(createIssueMenuItemCallback, menuCommandId);
-                menuItem.BeforeQueryStatus += createIssue_BeforeQueryStatus;
+                menuItem.BeforeQueryStatus += toolWindowCommand_BeforeQueryStatus;
                 mcs.AddCommand(menuItem);
+
+                // project properties command
+                menuCommandId = new CommandID(GuidList.guidplvsCmdSet, (int)PkgCmdIDList.cmdidProjectProperties);
+                menuItem = new OleMenuCommand(projectPropertiesMenuItemCallback, menuCommandId);
+                menuItem.BeforeQueryStatus += toolWindowCommand_BeforeQueryStatus;
+                mcs.AddCommand(menuItem);
+
+                // global properties command
+                menuCommandId = new CommandID(GuidList.guidplvsCmdSet, (int)PkgCmdIDList.cmdidGlobalProperties);
+                menuItem = new OleMenuCommand(globalPropertiesMenuItemCallback, menuCommandId);
+                menuItem.BeforeQueryStatus += toolWindowCommand_BeforeQueryStatus;
+                mcs.AddCommand(menuItem);
+
             }
 
             JiraLinkMarkerTypeProvider markerTypeProvider = new JiraLinkMarkerTypeProvider();
@@ -304,7 +317,7 @@ namespace Atlassian.plvs {
             AtlassianPanel.Instance.Jira.searchIssue();
         }
 
-        private static void findIssue_BeforeQueryStatus(object sender, EventArgs e) {
+        private static void toolWindowCommand_BeforeQueryStatus(object sender, EventArgs e) {
             bool enable = ToolWindowManager.Instance.AtlassianWindow != null && ToolWindowManager.Instance.AtlassianWindowVisible;
             var myCommand = sender as OleMenuCommand;
             if (myCommand != null) myCommand.Enabled = enable;
@@ -314,10 +327,12 @@ namespace Atlassian.plvs {
             AtlassianPanel.Instance.Jira.createIssue();
         }
 
-        private static void createIssue_BeforeQueryStatus(object sender, EventArgs e) {
-            bool enable = ToolWindowManager.Instance.AtlassianWindow != null && ToolWindowManager.Instance.AtlassianWindowVisible;
-            var myCommand = sender as OleMenuCommand;
-            if (myCommand != null) myCommand.Enabled = enable;
+        private static void projectPropertiesMenuItemCallback(object sender, EventArgs e) {
+            AtlassianPanel.Instance.openProjectProperties(null);
         }
-    }
+    
+        private static void globalPropertiesMenuItemCallback(object sender, EventArgs e) {
+            AtlassianPanel.Instance.openGlobalProperties();
+        }
+   }
 }
