@@ -34,9 +34,9 @@ namespace Atlassian.plvs.windows {
             this.mainContainer = new System.Windows.Forms.ToolStripContainer();
             this.productTabs = new System.Windows.Forms.TabControl();
             this.tabIssues = new System.Windows.Forms.TabPage();
-            this.tabJira = new TabJira();
+            this.tabJira = new Atlassian.plvs.ui.jira.TabJira();
             this.tabBuilds = new System.Windows.Forms.TabPage();
-            this.tabBamboo = new TabBamboo();
+            this.tabBamboo = new Atlassian.plvs.ui.bamboo.TabBamboo();
             this.globalToolBar = new System.Windows.Forms.ToolStrip();
             this.buttonProjectProperties = new System.Windows.Forms.ToolStripButton();
             this.buttonGlobalProperties = new System.Windows.Forms.ToolStripButton();
@@ -126,13 +126,14 @@ namespace Atlassian.plvs.windows {
             // globalToolBar
             // 
             this.globalToolBar.Dock = System.Windows.Forms.DockStyle.None;
+            this.globalToolBar.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.globalToolBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.buttonProjectProperties,
             this.buttonGlobalProperties,
             this.buttonAbout});
             this.globalToolBar.Location = new System.Drawing.Point(0, 3);
             this.globalToolBar.Name = "globalToolBar";
-            this.globalToolBar.Size = new System.Drawing.Size(24, 80);
+            this.globalToolBar.Size = new System.Drawing.Size(24, 71);
             this.globalToolBar.TabIndex = 0;
             // 
             // buttonProjectProperties
