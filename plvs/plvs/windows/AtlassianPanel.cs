@@ -92,9 +92,7 @@ namespace Atlassian.plvs.windows {
             if (updateAction != null) {
                 updateAction();
             } else if (updateException != null) {
-                MessageBox.Show(
-                    "Unable to retrieve autoupdate information:\n\n" + updateException.Message,
-                    Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                PlvsUtils.showError("Unable to retrieve autoupdate information:\n\n" + updateException.Message);
             }
         }
 

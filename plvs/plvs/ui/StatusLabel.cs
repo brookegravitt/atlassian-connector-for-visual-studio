@@ -54,8 +54,8 @@ namespace Atlassian.plvs.ui {
                 }
                 sb.Append("\n");
             }
-            MessageBox.Show(sb.ToString().Trim() + "\n\nPress Ctrl+C to copy error text to clipboard", 
-                Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            PlvsUtils.showError(sb.ToString().Trim());
+
             lastExceptions = null;
             targetLabel.BackColor = SystemColors.Control;
             statusBar.BackColor = SystemColors.Control;

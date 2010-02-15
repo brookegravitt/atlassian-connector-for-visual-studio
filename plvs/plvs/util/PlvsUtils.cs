@@ -49,5 +49,10 @@ namespace Atlassian.plvs.util {
             string text = button.Text.Contains(" (") ? button.Text.Substring(0, button.Text.IndexOf(" (")) : button.Text;
             button.Text = text + " (" + bindingText.Substring("Global::".Length) + ")";
         }
+
+        public static void showError(string msg) {
+            MessageBox.Show(msg + "\n\nPress Ctrl+C to copy error text to clipboard", 
+                Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
     }
 }

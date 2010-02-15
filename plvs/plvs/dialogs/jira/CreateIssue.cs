@@ -7,6 +7,7 @@ using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models;
 using Atlassian.plvs.store;
 using Atlassian.plvs.ui;
+using Atlassian.plvs.util;
 using Atlassian.plvs.windows;
 
 namespace Atlassian.plvs.dialogs.jira {
@@ -318,8 +319,7 @@ namespace Atlassian.plvs.dialogs.jira {
             }
             catch (Exception e) {
                 Invoke(new MethodInvoker(delegate {
-                                             MessageBox.Show("Unable to create issue: " + e.Message, "Error",
-                                                             MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                             PlvsUtils.showError("Unable to create issue: " + e.Message);
                                              setAllEnabled(true);
                                              buttonCancel.Enabled = true;
                                          }));

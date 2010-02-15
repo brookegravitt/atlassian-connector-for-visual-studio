@@ -88,11 +88,7 @@ namespace Atlassian.plvs.dialogs {
 
         private void linkErrorDetails_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             if (errorText == null) return;
-
-            MessageBox.Show(
-                "Failed to connect to server \"" + server.Name + "\":\n\n" 
-                + errorText + "\n\nPress Ctrl+C to copy error text to clipboard",
-                Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            PlvsUtils.showError("Failed to connect to server \"" + server.Name + "\":\n\n" + errorText);
         }
     }
 }

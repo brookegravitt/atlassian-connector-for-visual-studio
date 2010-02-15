@@ -286,8 +286,7 @@ namespace Atlassian.plvs.dialogs.jira {
         }
 
         private void showErrorAndResumeEditing(Exception ex) {
-            MessageBox.Show("Failed to run action " + action.Name + " on issue " + issue.Key + "\n" + ex.Message, 
-                            Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            PlvsUtils.showError("Failed to run action " + action.Name + " on issue " + issue.Key + "\n" + ex.Message);
             setThrobberVisible(false);
             setAllEnabled(true);
         }
