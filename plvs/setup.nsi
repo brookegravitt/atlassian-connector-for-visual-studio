@@ -173,6 +173,9 @@ Section "Atlassian Connector For Visual Studio (required)"
   WriteRegStr HKLM "Software\Microsoft\VisualStudio\9.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}\Name" "" "#113"
   WriteRegStr HKLM "Software\Microsoft\VisualStudio\9.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}\Name" "Package" "{36FA5F7F-2B5D-4CEC-8C06-10C483683A16}"
 
+  ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\9.0" "InstallDir"
+  ExecWait '"$0\devenv.exe" /setup'
+  
 SectionEnd
 
 ; Optional section (can be disabled by the user)
@@ -226,5 +229,8 @@ Section "Uninstall"
   ; Remove directories used
   RMDir "$SMPROGRAMS\Atlassian Connector For Visual Studio"
   RMDir "$INSTDIR"
+
+  ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\9.0" "InstallDir"
+  ExecWait '"$0\devenv.exe" /setup'
 
 SectionEnd
