@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using Atlassian.plvs.api;
 using Atlassian.plvs.autoupdate;
@@ -8,6 +9,7 @@ using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
 using Atlassian.plvs.ui.bamboo;
 using Atlassian.plvs.ui.jira;
+using Atlassian.plvs.util;
 using EnvDTE;
 using Constants=Atlassian.plvs.util.Constants;
 
@@ -52,7 +54,7 @@ namespace Atlassian.plvs.windows {
             openProjectProperties(null);
         }
 
-        private void openProjectProperties(Guid? serverTypeToCreate) {
+        public void openProjectProperties(Guid? serverTypeToCreate) {
             ProjectConfiguration dialog = 
                 new ProjectConfiguration(serverTypeToCreate, JiraServerModel.Instance, BambooServerModel.Instance, tabJira.Facade, tabBamboo.Facade);
             dialog.ShowDialog(this);
@@ -69,6 +71,10 @@ namespace Atlassian.plvs.windows {
         }
 
         private void buttonGlobalProperties_Click(object sender, EventArgs e) {
+            openGlobalProperties();
+        }
+
+        public void openGlobalProperties() {
             GlobalSettings globals = new GlobalSettings();
             globals.ShowDialog();
         }
@@ -123,6 +129,13 @@ namespace Atlassian.plvs.windows {
         }
 
         public void reinitialize(DTE dte) {
+
+            PlvsUtils.updateKeyBindingsInformation(dte, new Dictionary<string, ToolStripItem>
+                                            {
+                                                { "Tools.AtlassianProjectConfiguration", buttonProjectProperties },
+                                                { "Tools.AtlassianGlobalConfiguration", buttonGlobalProperties }
+                                            });
+
             tabJira.reinitialize(dte);
             tabBamboo.reinitialize();
         }

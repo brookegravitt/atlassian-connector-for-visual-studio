@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -17,6 +16,7 @@ using Atlassian.plvs.store;
 using Atlassian.plvs.ui.jira.issuefilternodes;
 using Atlassian.plvs.ui.jira.issues;
 using Atlassian.plvs.ui.jira.issues.treemodels;
+using Atlassian.plvs.util;
 using EnvDTE;
 using Process=System.Diagnostics.Process;
 using Thread=System.Threading.Thread;
@@ -37,8 +37,6 @@ namespace Atlassian.plvs.ui.jira {
         private readonly StatusLabel status;
 
         private LinkLabel linkAddJiraServer;
-
-        public DTE Dte { get; set; }
 
         public TabJira() {
             InitializeComponent();
@@ -722,40 +720,17 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         public void reinitialize(DTE dte) {
-            Dte = dte;
-            updateKeyBindingsInformation();
+            PlvsUtils.updateKeyBindingsInformation(dte, new Dictionary<string, ToolStripItem>
+                                                        {
+                                                            { "Tools.FindIssue", buttonSearch },
+                                                            { "Tools.CreateIssue", buttonCreate }
+                                                        });
+
             searchingModel.reinit(MODEL);
             registerIssueModelListener();
             Invoke(new MethodInvoker(initIssuesTree));
             reloadKnownJiraServers();
             comboGroupBy.restoreSelectedIndex();
-        }
-
-        // ok, this method officially sucks. I am only updating bindings on toolwindow creation.
-        // Also, command names are hardcoded.
-        // 
-        // If anybody can tell me how to get notified about key bindings change, please let me know
-        private void updateKeyBindingsInformation() {
-            if (Dte == null) return;
-            IEnumerator enumerator = Dte.Commands.GetEnumerator();
-            while (enumerator.MoveNext()) {
-                Command c = (Command) enumerator.Current;
-                switch (c.Name) {
-                    case "Tools.FindIssue":
-                        addBindingToButton(buttonSearch, c.Bindings as object[]);
-                        break;
-                    case "Tools.CreateIssue":
-                        addBindingToButton(buttonCreate, c.Bindings as object[]);
-                        break;
-                }
-            }
-        }
-
-        private static void addBindingToButton(ToolStripItem button, object[] bindings) {
-            if (bindings == null || bindings.Length == 0) return;
-
-            string bindingText = bindings[0].ToString();
-            button.Text = button.Text + " (" + bindingText.Substring("Global::".Length) + ")";
         }
 
         public void shutdown() {}

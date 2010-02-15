@@ -81,6 +81,24 @@
         </Strings>
       </Button>
 
+      <Button guid="guidplvsCmdSet" id="cmdidProjectProperties" priority="0x0100" type="Button">
+        <Parent guid="guidplvsCmdSet" id="MyMenuGroup" />
+        <!--<CommandFlag>CommandWellOnly</CommandFlag>-->
+        <Strings>
+          <CommandName>cmdidProjectProperties</CommandName>
+          <ButtonText>Atlassian Project Configuration</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidplvsCmdSet" id="cmdidGlobalProperties" priority="0x0100" type="Button">
+        <Parent guid="guidplvsCmdSet" id="MyMenuGroup" />
+        <!--<CommandFlag>CommandWellOnly</CommandFlag>-->
+        <Strings>
+          <CommandName>cmdidGlobalProperties</CommandName>
+          <ButtonText>Atlassian Global Configuration</ButtonText>
+        </Strings>
+      </Button>
+
     </Buttons>
 
     <!--The bitmaps section is used to define the bitmaps that are used for the commands.-->
@@ -100,6 +118,8 @@
     <KeyBinding guid="guidplvsCmdSet" id="cmdidToggleToolWindow" mod1="Alt" key1="k" editor="guidVSStd97" />
     <KeyBinding guid="guidplvsCmdSet" id="cmdidFindIssue" mod1="Alt" key1="j" editor="guidVSStd97" />
     <KeyBinding guid="guidplvsCmdSet" id="cmdidCreateIssue" mod1="Alt" key1="n" editor="guidVSStd97" />
+    <KeyBinding guid="guidplvsCmdSet" id="cmdidProjectProperties" mod1="Alt Shift" key1="g" editor="guidVSStd97" />
+    <KeyBinding guid="guidplvsCmdSet" id="cmdidGlobalProperties" mod1="Alt Shift" key1="h" editor="guidVSStd97" />
   </KeyBindings>
 
   <Symbols>
@@ -113,6 +133,8 @@
       <IDSymbol name="cmdidToggleToolWindow" value="0x0100" />
       <IDSymbol name="cmdidFindIssue" value="0x0101" />
       <IDSymbol name="cmdidCreateIssue" value="0x0102" />
+      <IDSymbol name="cmdidProjectProperties" value="0x0103" />
+      <IDSymbol name="cmdidGlobalProperties" value="0x0104" />
 
     </GuidSymbol>
     
