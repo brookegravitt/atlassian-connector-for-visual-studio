@@ -34,9 +34,9 @@ namespace Atlassian.plvs.windows {
             this.mainContainer = new System.Windows.Forms.ToolStripContainer();
             this.productTabs = new System.Windows.Forms.TabControl();
             this.tabIssues = new System.Windows.Forms.TabPage();
-            this.tabJira = new Atlassian.plvs.ui.jira.TabJira();
+            this.tabJira = new ui.jira.TabJira();
             this.tabBuilds = new System.Windows.Forms.TabPage();
-            this.tabBamboo = new Atlassian.plvs.ui.bamboo.TabBamboo();
+            this.tabBamboo = new ui.bamboo.TabBamboo();
             this.globalToolBar = new System.Windows.Forms.ToolStrip();
             this.buttonProjectProperties = new System.Windows.Forms.ToolStripButton();
             this.buttonGlobalProperties = new System.Windows.Forms.ToolStripButton();
