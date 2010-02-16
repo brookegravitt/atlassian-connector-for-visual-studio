@@ -63,6 +63,7 @@
             this.commentText.Location = new System.Drawing.Point(12, 12);
             this.commentText.Multiline = true;
             this.commentText.Name = "commentText";
+            this.commentText.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.commentText.Size = new System.Drawing.Size(531, 152);
             this.commentText.TabIndex = 0;
             this.commentText.TextChanged += new System.EventHandler(this.commentText_TextChanged);
