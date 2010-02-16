@@ -43,13 +43,13 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.checkAnkhSvn = new System.Windows.Forms.CheckBox();
             this.checkJiraExplorer = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.numericJiraBatchSize = new System.Windows.Forms.NumericUpDown();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.numericBambooPollingInterval = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
-            this.checkAnkhSvn = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -229,6 +229,17 @@
             this.tabPage2.Text = "JIRA";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // checkAnkhSvn
+            // 
+            this.checkAnkhSvn.AutoSize = true;
+            this.checkAnkhSvn.Location = new System.Drawing.Point(9, 64);
+            this.checkAnkhSvn.Name = "checkAnkhSvn";
+            this.checkAnkhSvn.Size = new System.Drawing.Size(230, 17);
+            this.checkAnkhSvn.TabIndex = 3;
+            this.checkAnkhSvn.Text = "Enable AnkhSVN Integration (experimental)";
+            this.checkAnkhSvn.UseVisualStyleBackColor = true;
+            this.checkAnkhSvn.CheckedChanged += new System.EventHandler(this.checkAnkhSvn_CheckedChanged);
+            // 
             // checkJiraExplorer
             // 
             this.checkJiraExplorer.AutoSize = true;
@@ -271,6 +282,7 @@
             0,
             0});
             this.numericJiraBatchSize.ValueChanged += new System.EventHandler(this.numericJiraBatchSize_ValueChanged);
+            this.numericJiraBatchSize.KeyUp += new System.Windows.Forms.KeyEventHandler(this.numericJiraBatchSize_KeyUp);
             // 
             // tabPage3
             // 
@@ -306,6 +318,7 @@
             0,
             0});
             this.numericBambooPollingInterval.ValueChanged += new System.EventHandler(this.numericBambooPollingInterval_ValueChanged);
+            this.numericBambooPollingInterval.KeyUp += new System.Windows.Forms.KeyEventHandler(this.numericBambooPollingInterval_KeyUp);
             // 
             // label2
             // 
@@ -315,17 +328,6 @@
             this.label2.Size = new System.Drawing.Size(125, 13);
             this.label2.TabIndex = 0;
             this.label2.Text = "Polling Interval [seconds]";
-            // 
-            // checkAnkhSvn
-            // 
-            this.checkAnkhSvn.AutoSize = true;
-            this.checkAnkhSvn.Location = new System.Drawing.Point(9, 64);
-            this.checkAnkhSvn.Name = "checkAnkhSvn";
-            this.checkAnkhSvn.Size = new System.Drawing.Size(230, 17);
-            this.checkAnkhSvn.TabIndex = 3;
-            this.checkAnkhSvn.Text = "Enable AnkhSVN Integration (experimental)";
-            this.checkAnkhSvn.UseVisualStyleBackColor = true;
-            this.checkAnkhSvn.CheckedChanged += new System.EventHandler(this.checkAnkhSvn_CheckedChanged);
             // 
             // GlobalSettings
             // 
