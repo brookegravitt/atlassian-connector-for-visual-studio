@@ -48,6 +48,10 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
                 nodes.Add(new IssueNode(sub));
             }
 
+            if (TreeAboutToChange != null) {
+                TreeAboutToChange(this, new EventArgs());
+            }
+            
             if (StructureChanged != null) {
                 StructureChanged(this, new TreePathEventArgs(TreePath.Empty));
             }
@@ -84,6 +88,9 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
                         if (subNode.Issue.Id != e.Issue.Id) continue;
 
                         subNode.Issue = e.Issue;
+                        if (TreeAboutToChange != null) {
+                            TreeAboutToChange(this, new EventArgs());
+                        }
                         if (NodesChanged != null) {
                             NodesChanged(this, new TreeModelEventArgs(new TreePath(node), new object[] { subNode }));
                         }
@@ -94,6 +101,10 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
                 if (node.Issue.Id != e.Issue.Id) continue;
 
                 node.Issue = e.Issue;
+
+                if (TreeAboutToChange != null) {
+                    TreeAboutToChange(this, new EventArgs());
+                }
                 if (NodesChanged != null) {
                     NodesChanged(this, new TreeModelEventArgs(TreePath.Empty, new object[] { node }));
                 }
@@ -104,6 +115,8 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
 
         public override event EventHandler<TreeModelEventArgs> NodesChanged;
         public override event EventHandler<TreePathEventArgs> StructureChanged;
+
+        public override event EventHandler<EventArgs> TreeAboutToChange;
 
 #pragma warning disable 67
         public override event EventHandler<TreeModelEventArgs> NodesInserted;
