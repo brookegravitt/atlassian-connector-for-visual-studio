@@ -39,18 +39,18 @@ namespace Atlassian.plvs.models.jira {
 
         private static readonly SortedDictionary<string, WidgetTypeAndFieldFiller> TypeMap = 
             new SortedDictionary<string, WidgetTypeAndFieldFiller> {
-                                                                       { "summary", new WidgetTypeAndFieldFiller(WidgetType.SUMMARY, new SummaryFiller()) },
-                                                                       { "resolution", new WidgetTypeAndFieldFiller(WidgetType.RESOLUTION, new ResolutionFiller()) },
                                                                        { "issuetype", new WidgetTypeAndFieldFiller(WidgetType.ISSUE_TYPE, new IssueTypeFiller()) },
+                                                                       { "summary", new WidgetTypeAndFieldFiller(WidgetType.SUMMARY, new SummaryFiller()) },
+                                                                       { "description", new WidgetTypeAndFieldFiller(WidgetType.DESCRIPTION, new DescriptionFiller()) },
                                                                        { "priority", new WidgetTypeAndFieldFiller(WidgetType.PRIORITY, new PriorityFiller()) },
-                                                                       { "duedate", new WidgetTypeAndFieldFiller(WidgetType.DUE_DATE, new DueDateFiller()) },
+                                                                       { "resolution", new WidgetTypeAndFieldFiller(WidgetType.RESOLUTION, new ResolutionFiller()) },
+                                                                       { "environment", new WidgetTypeAndFieldFiller(WidgetType.ENVIRONMENT, new EnvironmentFiller()) },
                                                                        { "components", new WidgetTypeAndFieldFiller(WidgetType.COMPONENTS, new ComponentsFiller()) },
                                                                        { "versions", new WidgetTypeAndFieldFiller(WidgetType.VERSIONS, new AffectsVersionsFiller()) },
                                                                        { "fixVersions", new WidgetTypeAndFieldFiller(WidgetType.FIX_VERSIONS, new FixVersionsFiller()) },
                                                                        { "assignee", new WidgetTypeAndFieldFiller(WidgetType.ASSIGNEE, new AssigneeFiller()) },
                                                                        { "reporter", new WidgetTypeAndFieldFiller(WidgetType.REPORTER, new ReporterFiller()) },
-                                                                       { "environment", new WidgetTypeAndFieldFiller(WidgetType.ENVIRONMENT, new EnvironmentFiller()) },
-                                                                       { "description", new WidgetTypeAndFieldFiller(WidgetType.DESCRIPTION, new DescriptionFiller()) },
+                                                                       { "duedate", new WidgetTypeAndFieldFiller(WidgetType.DUE_DATE, new DueDateFiller()) },
                                                                        { "timetracking", new WidgetTypeAndFieldFiller(WidgetType.TIMETRACKING, new TimeTrackingFiller()) },
                                                                        { "security", new WidgetTypeAndFieldFiller(WidgetType.SECURITY, new SecurityFiller()) }
                                                                    };

@@ -358,5 +358,11 @@ namespace Atlassian.plvs.dialogs.jira {
         private int calculatedFieldWidth() {
             return ClientSize.Width - FIELD_X_POS - 4*MARGIN;
         }
+
+        private void IssueWorkflowAction_KeyPress(object sender, KeyPressEventArgs e) {
+            if (buttonCancel.Enabled && e.KeyChar == (char)Keys.Escape) {
+                Close();
+            }
+        }
     }
 }
