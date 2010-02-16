@@ -41,8 +41,8 @@ namespace Atlassian.plvs.models.bamboo {
             store.storeParameter(PLAN_KEYS + server.GUID, sb.ToString().Trim());
         }
 
-        protected override BambooServer createServer(Guid guid, string name, string url, string userName, string password) {
-            return new BambooServer(guid, name, url, userName, password);
+        protected override BambooServer createServer(Guid guid, string name, string url, string userName, string password, bool enabled) {
+            return new BambooServer(guid, name, url, userName, password, enabled);
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using Aga.Controls.Tree;
@@ -21,6 +22,8 @@ namespace Atlassian.plvs.ui.bamboo {
         private readonly Timer infoTimer;
 
         private DateTime? lastPollTime;
+
+        private DateTime? nextPollTime;
 
         private BambooBuildTree buildTree;
 
@@ -56,18 +59,21 @@ namespace Atlassian.plvs.ui.bamboo {
         }
 
         public void init() {
-            pollTimer.Interval = 1000 * GlobalSettings.BambooPollingInterval;
+            lastPollTime = null;
+            pollTimer.Interval = 30000; // first poll in 30 seconds, next after a defined poll interval
             pollTimer.AutoReset = false;
 
             pollTimer.Enabled = false;
             pollTimer.Start();
-            notifyBuildStatus.Visible = BambooServerModel.Instance.getAllServers().Count > 0;
+            notifyBuildStatus.Visible = BambooServerModel.Instance.getAllEnabledServers().Count > 0;
+
+            setNextPollTime();
 
             infoTimer.Interval = 10000;
             infoTimer.AutoReset = true;
             infoTimer.Start();
 
-            Invoke(new MethodInvoker(delegate { initBuildTree(); status.setInfo("Idle"); }));
+            Invoke(new MethodInvoker(initBuildTree));
         }
 
         private void initBuildTree() {
@@ -109,6 +115,13 @@ namespace Atlassian.plvs.ui.bamboo {
                 updateBuildListButtons();
 
                 buildTree.SelectionChanged += buildTree_SelectionChanged;
+
+                int count = BambooServerModel.Instance.getAllEnabledServers().Count;
+                if (count == 0) {
+                    status.setInfo("No Bamboo servers enabled");
+                } else {
+                    showPollTimeInfo();
+                }
             }
         }
 
@@ -141,19 +154,20 @@ namespace Atlassian.plvs.ui.bamboo {
 
         void pollTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
             lastPollTime = null;
+            nextPollTime = null;
             Thread t = new Thread(() => pollRunner(true));
             t.Start();
         }
 
         void infoTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
-            showLastPollTimeInfo();
+            showPollTimeInfo();
         }
 
         private void pollRunner(bool rescheduleTimer) {
             List<BambooBuild> allBuilds = new List<BambooBuild>();
             List<Exception> allExceptions = new List<Exception>();
 
-            ICollection<BambooServer> servers = BambooServerModel.Instance.getAllServers();
+            ICollection<BambooServer> servers = BambooServerModel.Instance.getAllEnabledServers();
             if (servers == null || servers.Count == 0) return;
 
             status.setInfo("Polling all servers...");
@@ -174,14 +188,20 @@ namespace Atlassian.plvs.ui.bamboo {
             
             try {
                 Invoke(new MethodInvoker(delegate {
-                                                 showPollResults(allBuilds, allExceptions);
-                                                 if (rescheduleTimer) {
-                                                     pollTimer.Start();
-                                                 }
-                                             }));
+                                             if (rescheduleTimer) {
+                                                 pollTimer.Interval = 1000*GlobalSettings.BambooPollingInterval;
+                                                 setNextPollTime();
+                                                 pollTimer.Start();
+                                             }
+                                             showPollResults(allBuilds, allExceptions);
+                                         }));
             } catch (Exception e) {
                 Debug.WriteLine("Exception while trying to show poll results: " + e.Message);
             }
+        }
+
+        private void setNextPollTime() {
+            nextPollTime = DateTime.Now.AddMilliseconds(pollTimer.Interval);
         }
 
         private void showPollResults(ICollection<BambooBuild> builds, ICollection<Exception> exceptions) {
@@ -198,7 +218,7 @@ namespace Atlassian.plvs.ui.bamboo {
                 status.setError("Failed to poll some of the servers", exceptions);
             } else {
                 lastPollTime = DateTime.Now;
-                showLastPollTimeInfo();
+                showPollTimeInfo();
             }
             bool? allpassing = null;
             if (builds != null) {
@@ -226,12 +246,44 @@ namespace Atlassian.plvs.ui.bamboo {
             summaryStatusOk = allOk;
         }
 
-        private void showLastPollTimeInfo() {
-            if (lastPollTime != null) {
-                status.setInfo("Last poll finished at " 
-                    + lastPollTime.Value.ToShortDateString() + " " + lastPollTime.Value.ToLongTimeString()
-                    + " (" + DateTime.Now.Subtract(lastPollTime.Value).Minutes + " minutes ago)");
+        private void showPollTimeInfo() {
+            if (lastPollTime != null && nextPollTime != null) {
+                status.setInfo("Last poll finished at "
+                               + lastPollTime.Value.ToShortDateString() + " " + lastPollTime.Value.ToLongTimeString()
+                               + " (" + DateTime.Now.Subtract(lastPollTime.Value).Minutes + " minutes ago)" + getNextPollTimeInfo());
+            } else if (nextPollTime != null) {
+                ICollection<BambooServer> servers = BambooServerModel.Instance.getAllEnabledServers();
+                int count = servers != null ? servers.Count : 0;
+                if (count > 0) {
+                    status.setInfo("" + count + " Bamboo " + (count == 1 ? "server" : "servers") + " enabled" + getNextPollTimeInfo());
+                } else {
+                    status.setInfo("No Bamboo servers enabled");
+                }
             }
+        }
+
+        private string getNextPollTimeInfo() {
+            if (nextPollTime == null) {
+                return "";
+            }
+            TimeSpan nextPoll = nextPollTime.Value.Subtract(DateTime.Now);
+            StringBuilder sb = new StringBuilder();
+            if (nextPoll.Hours > 0) {
+                sb.Append(nextPoll.Hours).Append(" hours");
+            }
+            if (nextPoll.Minutes > 0) {
+                if (sb.Length > 0) {
+                    sb.Append(", ");
+                }
+                sb.Append(nextPoll.Minutes).Append(" minutes");
+            }
+            if (nextPoll.Seconds > 0) {
+                if (sb.Length > 0) {
+                    sb.Append(", ");
+                }
+                sb.Append(nextPoll.Seconds).Append(" seconds");
+            }
+            return ", next poll in " + sb;
         }
 
         private void buttonPoll_Click(object sender, EventArgs e) {

@@ -7,19 +7,21 @@ namespace Atlassian.plvs.api {
         private string url;
         private string userName;
         private string password;
+        private bool enabled;
 
         public static Guid JiraServerTypeGuid = new Guid("0C644383-BC4C-406d-B325-CA0AB1815B38");
         public static Guid BambooServerTypeGuid = new Guid("1C7A224E-52C4-4575-9212-7D731C13CFE9");
 
         protected Server(string name, string url, string userName, string password)
-            : this(Guid.NewGuid(), name, url, userName, password) {}
+            : this(Guid.NewGuid(), name, url, userName, password, true) {}
 
-        protected Server(Guid guid, string name, string url, string userName, string password) {
+        protected Server(Guid guid, string name, string url, string userName, string password, bool enabled) {
             this.guid = guid;
             this.name = name;
             this.url = url;
             this.userName = userName;
             this.password = password;
+            this.enabled = enabled;
         }
 
         protected Server(Server other) {
@@ -29,9 +31,11 @@ namespace Atlassian.plvs.api {
                 url = other.url;
                 userName = other.userName;
                 password = other.password;
+                enabled = other.enabled;
             }
             else {
                 guid = Guid.NewGuid();
+                enabled = true;
             }
         }
 
@@ -55,6 +59,11 @@ namespace Atlassian.plvs.api {
         public string Password {
             get { return password; }
             set { password = value; }
+        }
+
+        public bool Enabled {
+            get { return enabled; }
+            set { enabled = value; }
         }
 
 // ReSharper disable InconsistentNaming

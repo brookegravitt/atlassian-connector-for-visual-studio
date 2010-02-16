@@ -17,6 +17,11 @@ namespace Atlassian.plvs.dialogs {
 //        private readonly TreeNode crucibleRoot = new TreeNode("Crucible Servers");
 //        private readonly TreeNode fisheyeRoot = new TreeNode("Fisheye Servers");
 
+        private const int JIRA_ENABLED = 2;
+        private const int JIRA_DISABLED = 3;
+        private const int BAMBOO_ENABLED = 4;
+        private const int BAMBOO_DISABLED = 5;
+
         private readonly JiraServerModel jiraServerModel;
         private readonly BambooServerModel bambooServerModel;
         private readonly JiraServerFacade jiraFacade;
@@ -44,7 +49,9 @@ namespace Atlassian.plvs.dialogs {
             imageList.Images.Add(Resources.folder_jira);
             imageList.Images.Add(Resources.folder_bamboo);
             imageList.Images.Add(Resources.tab_jira);
+            imageList.Images.Add(Resources.tab_jira_grey);
             imageList.Images.Add(Resources.tab_bamboo);
+            imageList.Images.Add(Resources.tab_bamboo_grey);
 
             serverTree.ImageList = imageList;
 
@@ -54,11 +61,11 @@ namespace Atlassian.plvs.dialogs {
 //            serverTree.Nodes.Add(fisheyeRoot);
 
             foreach (var server in jiraServers) {
-                jiraRoot.Nodes.Add(new JiraServerTreeNode(server, 2));
+                jiraRoot.Nodes.Add(new JiraServerTreeNode(server, server.Enabled ? JIRA_ENABLED : JIRA_DISABLED));
             }
 
             foreach (var server in bambooServers) {
-                bambooRoot.Nodes.Add(new BambooServerTreeNode(server, 3));
+                bambooRoot.Nodes.Add(new BambooServerTreeNode(server, server.Enabled ? BAMBOO_ENABLED : BAMBOO_DISABLED));
             }
 
             StartPosition = FormStartPosition.CenterParent;
@@ -116,7 +123,7 @@ namespace Atlassian.plvs.dialogs {
             var result = dialog.ShowDialog();
             if (result != DialogResult.OK) return;
             bambooServerModel.addServer(dialog.Server);
-            var newNode = new BambooServerTreeNode(dialog.Server, 3);
+            var newNode = new BambooServerTreeNode(dialog.Server, dialog.Server.Enabled ? BAMBOO_ENABLED : BAMBOO_DISABLED);
             bambooRoot.Nodes.Add(newNode);
             serverTree.ExpandAll();
             serverTree.SelectedNode = newNode;
@@ -128,7 +135,7 @@ namespace Atlassian.plvs.dialogs {
             var result = dialog.ShowDialog();
             if (result != DialogResult.OK) return;
             jiraServerModel.addServer(dialog.Server);
-            var newNode = new JiraServerTreeNode(dialog.Server, 2);
+            var newNode = new JiraServerTreeNode(dialog.Server, dialog.Server.Enabled ? JIRA_ENABLED : JIRA_DISABLED);
             jiraRoot.Nodes.Add(newNode);
             serverTree.ExpandAll();
             serverTree.SelectedNode = newNode;
@@ -144,6 +151,8 @@ namespace Atlassian.plvs.dialogs {
                 jiraServerModel.removeServer(selectedNode.Server.GUID);
                 jiraServerModel.addServer(dialog.Server);
                 selectedNode.Server = dialog.Server;
+                selectedNode.ImageIndex = dialog.Server.Enabled ? JIRA_ENABLED : JIRA_DISABLED;
+                selectedNode.SelectedImageIndex = dialog.Server.Enabled ? JIRA_ENABLED : JIRA_DISABLED;
                 serverTree.ExpandAll();
                 serverDetails.Text = createServerSummaryText(selectedNode);
                 serverTree.SelectedNode = selectedNode;
@@ -156,6 +165,8 @@ namespace Atlassian.plvs.dialogs {
                 bambooServerModel.removeServer(selectedNode.Server.GUID);
                 bambooServerModel.addServer(dialog.Server);
                 selectedNode.Server = dialog.Server;
+                selectedNode.ImageIndex = dialog.Server.Enabled ? BAMBOO_ENABLED : BAMBOO_DISABLED;
+                selectedNode.SelectedImageIndex = dialog.Server.Enabled ? BAMBOO_ENABLED : BAMBOO_DISABLED;
                 serverTree.ExpandAll();
                 serverDetails.Text = createServerSummaryText(selectedNode);
                 serverTree.SelectedNode = selectedNode;

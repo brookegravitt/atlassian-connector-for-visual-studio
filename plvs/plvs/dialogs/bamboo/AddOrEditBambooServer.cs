@@ -45,6 +45,8 @@ namespace Atlassian.plvs.dialogs.bamboo {
                     if (!server.UseFavourites) {
                         getPlans();
                     }
+
+                    checkEnabled.Checked = server.Enabled;
                 }
             } else {
                 ++invocations;
@@ -54,6 +56,8 @@ namespace Atlassian.plvs.dialogs.bamboo {
                 radioUseFavourites.Checked = true;
                 buttonGetBuilds.Enabled = false;
                 checkedListBuilds.Enabled = false;
+
+                checkEnabled.Checked = true;
             }
 
             StartPosition = FormStartPosition.CenterParent;
@@ -96,6 +100,7 @@ namespace Atlassian.plvs.dialogs.bamboo {
             server.Url = fixedUrl;
             server.UserName = user.Text.Trim();
             server.Password = password.Text;
+            server.Enabled = checkEnabled.Checked;
         }
 
         private void name_TextChanged(object sender, EventArgs e) {
@@ -150,6 +155,7 @@ namespace Atlassian.plvs.dialogs.bamboo {
             url.Enabled = false;
             user.Enabled = false;
             password.Enabled = false;
+            checkEnabled.Enabled = false;
 
             buttonGetBuilds.Enabled = false;
 
@@ -175,6 +181,7 @@ namespace Atlassian.plvs.dialogs.bamboo {
                                              url.Enabled = true;
                                              user.Enabled = true;
                                              password.Enabled = true;
+                                             checkEnabled.Enabled = true;
                                              checkIfValid();
                 }));
             }
@@ -195,6 +202,10 @@ namespace Atlassian.plvs.dialogs.bamboo {
                 }
                 ++i;
             }
+        }
+
+        private void checkEnabled_CheckedChanged(object sender, EventArgs e) {
+            checkIfValid();
         }
     }
 }

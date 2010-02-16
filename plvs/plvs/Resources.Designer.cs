@@ -611,9 +611,23 @@ namespace Atlassian.plvs {
             }
         }
         
+        internal static System.Drawing.Bitmap tab_bamboo_grey {
+            get {
+                object obj = ResourceManager.GetObject("tab_bamboo_grey", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap tab_jira {
             get {
                 object obj = ResourceManager.GetObject("tab_jira", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap tab_jira_grey {
+            get {
+                object obj = ResourceManager.GetObject("tab_jira_grey", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

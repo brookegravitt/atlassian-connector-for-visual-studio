@@ -26,12 +26,14 @@ namespace Atlassian.plvs.dialogs.jira {
                     url.Text = server.Url;
                     user.Text = server.UserName;
                     password.Text = server.Password;
+                    checkEnabled.Checked = server.Enabled;
                 }
             }
             else {
                 ++invocations;
                 name.Text = "JIRA Server #" + invocations;
                 buttonAddOrEdit.Enabled = false;
+                checkEnabled.Checked = true;
             }
 
             StartPosition = FormStartPosition.CenterParent;
@@ -54,6 +56,7 @@ namespace Atlassian.plvs.dialogs.jira {
             server.Url = fixedUrl;
             server.UserName = user.Text.Trim();
             server.Password = password.Text;
+            server.Enabled = checkEnabled.Checked;
 
             DialogResult = DialogResult.OK;
             Close();
@@ -84,6 +87,10 @@ namespace Atlassian.plvs.dialogs.jira {
             if (e.KeyChar != (char) Keys.Escape) return;
             DialogResult = DialogResult.Cancel;
             Close();
+        }
+
+        private void checkEnabled_CheckedChanged(object sender, EventArgs e) {
+            checkIfValid();
         }
     }
 }
