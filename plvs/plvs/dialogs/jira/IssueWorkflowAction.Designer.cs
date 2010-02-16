@@ -23,6 +23,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(IssueWorkflowAction));
             this.buttonOk = new System.Windows.Forms.Button();
             this.panelContent = new System.Windows.Forms.Panel();
             this.buttonCancel = new System.Windows.Forms.Button();
@@ -46,8 +47,8 @@
             // panelContent
             // 
             this.panelContent.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                                                                              | System.Windows.Forms.AnchorStyles.Left)
-                                                                             | System.Windows.Forms.AnchorStyles.Right)));
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.panelContent.AutoScroll = true;
             this.panelContent.Location = new System.Drawing.Point(12, 12);
             this.panelContent.Name = "panelContent";
@@ -68,7 +69,7 @@
             // progressWait
             // 
             this.progressWait.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                                                                             | System.Windows.Forms.AnchorStyles.Right)));
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.progressWait.Location = new System.Drawing.Point(190, 125);
             this.progressWait.Name = "progressWait";
             this.progressWait.Size = new System.Drawing.Size(304, 23);
@@ -89,7 +90,7 @@
             // labelWait
             // 
             this.labelWait.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                                                                          | System.Windows.Forms.AnchorStyles.Right)));
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.labelWait.Location = new System.Drawing.Point(12, 194);
             this.labelWait.Name = "labelWait";
             this.labelWait.Size = new System.Drawing.Size(660, 13);
@@ -102,16 +103,15 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(684, 662);
-            this.ControlBox = false;
             this.Controls.Add(this.buttonOk);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.panelThrobber);
             this.Controls.Add(this.panelContent);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(400, 200);
             this.Name = "IssueWorkflowAction";
-            this.ShowIcon = false;
             this.Text = "IssueWorkflowAction";
             this.Resize += new System.EventHandler(this.IssueWorkflowAction_Resize);
             this.panelThrobber.ResumeLayout(false);

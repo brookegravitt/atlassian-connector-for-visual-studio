@@ -27,6 +27,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditCustomFilter));
             this.buttonClose = new System.Windows.Forms.Button();
             this.listBoxProjects = new System.Windows.Forms.ListBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -363,11 +364,11 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.buttonClose);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "EditCustomFilter";
-            this.ShowIcon = false;
             this.Text = "Edit Custom Filter";
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.EditCustomFilter_KeyPress);
             this.groupBox1.ResumeLayout(false);

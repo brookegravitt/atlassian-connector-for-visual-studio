@@ -27,6 +27,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NewIssueComment));
             this.buttonOk = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.commentText = new System.Windows.Forms.TextBox();
@@ -57,8 +58,8 @@
             // commentText
             // 
             this.commentText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                                                                             | System.Windows.Forms.AnchorStyles.Left)
-                                                                            | System.Windows.Forms.AnchorStyles.Right)));
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.commentText.Location = new System.Drawing.Point(12, 12);
             this.commentText.Multiline = true;
             this.commentText.Name = "commentText";
@@ -71,11 +72,13 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(555, 215);
-            this.ControlBox = false;
             this.Controls.Add(this.commentText);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "NewIssueComment";
             this.Text = "Add Comment";
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.NewIssueComment_KeyPress);

@@ -27,6 +27,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProjectConfiguration));
             this.serverTree = new System.Windows.Forms.TreeView();
             this.buttonClose = new System.Windows.Forms.Button();
             this.serverDetails = new System.Windows.Forms.TextBox();
@@ -128,11 +129,11 @@
             this.Controls.Add(this.serverDetails);
             this.Controls.Add(this.buttonClose);
             this.Controls.Add(this.serverTree);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ProjectConfiguration";
-            this.ShowIcon = false;
             this.Text = "Project Configuration";
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ProjectConfiguration_KeyPress);
             this.ResumeLayout(false);
