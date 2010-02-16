@@ -242,6 +242,7 @@ namespace Atlassian.plvs.dialogs.jira {
             textComment.Multiline = true;
             textComment.Size = new Size(calculatedFieldWidth(), JiraFieldEditorProvider.MULTI_LINE_EDITOR_HEIGHT);
             textComment.TabIndex = tabIndex++;
+            textComment.ScrollBars = ScrollBars.Both;
 
             verticalPosition += JiraFieldEditorProvider.MULTI_LINE_EDITOR_HEIGHT + MARGIN;
 

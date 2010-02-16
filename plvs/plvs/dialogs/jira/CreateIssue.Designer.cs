@@ -143,6 +143,7 @@
             this.textDescription.Location = new System.Drawing.Point(102, 423);
             this.textDescription.Multiline = true;
             this.textDescription.Name = "textDescription";
+            this.textDescription.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.textDescription.Size = new System.Drawing.Size(459, 102);
             this.textDescription.TabIndex = 7;
             // 
