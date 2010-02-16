@@ -96,6 +96,10 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
         }
 
         protected override void model_ModelChanged(object sender, EventArgs e) {
+            if (TreeAboutToChange != null) {
+                TreeAboutToChange(this, new EventArgs());
+            }
+
             fillModel(Model.Issues);
         }
 
@@ -110,6 +114,11 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
                             if (subNode.Issue.Id != e.Issue.Id) continue;
 
                             subNode.Issue = e.Issue;
+
+                            if (TreeAboutToChange != null) {
+                                TreeAboutToChange(this, new EventArgs());
+                            }
+
                             if (NodesChanged != null) {
                                 NodesChanged(this, new TreeModelEventArgs(
                                     new TreePath(new object[] {groupNode, issueNode}), new object[] {subNode}));
@@ -120,6 +129,11 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
                 }
                 foreach (var issueNode in groupNode.IssueNodes) {
                     if (issueNode.Issue.Id != e.Issue.Id) continue;
+
+                    if (TreeAboutToChange != null) {
+                        TreeAboutToChange(this, new EventArgs());
+                    }
+
                     if (findGroupNode(e.Issue) != groupNode) {
                         fillModel(Model.Issues);
                     } else if (NodesChanged != null) {
@@ -133,6 +147,8 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
 
         public override event EventHandler<TreeModelEventArgs> NodesChanged;
         public override event EventHandler<TreePathEventArgs> StructureChanged;
+
+        public override event EventHandler<EventArgs> TreeAboutToChange;
 
 #pragma warning disable 67
         public override event EventHandler<TreeModelEventArgs> NodesInserted;

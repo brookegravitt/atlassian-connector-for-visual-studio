@@ -51,6 +51,8 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
         public abstract event EventHandler<TreeModelEventArgs> NodesRemoved;
         public abstract event EventHandler<TreePathEventArgs> StructureChanged;
 
+        public abstract event EventHandler<EventArgs> TreeAboutToChange;
+
         #endregion
     }
 }

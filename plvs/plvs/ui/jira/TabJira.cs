@@ -38,6 +38,8 @@ namespace Atlassian.plvs.ui.jira {
 
         private LinkLabel linkAddJiraServer;
 
+        private JiraIssue lastSelectedIssue;
+
         public TabJira() {
             InitializeComponent();
             setupGroupByCombo();
@@ -59,7 +61,6 @@ namespace Atlassian.plvs.ui.jira {
 
             GlobalSettings.SettingsChanged += globalSettingsSettingsChanged;
         }
-
 
         public event EventHandler<EventArgs> AddNewServerLinkClicked;
 
@@ -137,6 +138,10 @@ namespace Atlassian.plvs.ui.jira {
             issueTreeModel.shutdown();
             issuesTree.Model = issueTreeModel;
             issueTreeModel.StructureChanged += issuesTree_StructureChanged;
+            issueTreeModel.TreeAboutToChange += issueTreeModel_TreeAboutToChange;
+            issueTreeModel.NodesChanged += issueTreeModel_NodesChanged;
+            issueTreeModel.NodesInserted += issueTreeModel_NodesInserted;
+            issueTreeModel.NodesRemoved += issueTreeModel_NodesRemoved;
             issueTreeModel.init();
         }
 
@@ -236,7 +241,27 @@ namespace Atlassian.plvs.ui.jira {
 
         private void issuesTree_StructureChanged(object sender, TreePathEventArgs e) {
             expandIssuesTree();
+            restoreSelectedIssue(lastSelectedIssue);
             invokeSelectedIssueChanged();
+        }
+
+        private void issueTreeModel_NodesInserted(object sender, TreeModelEventArgs e) {
+            restoreSelectedIssue(lastSelectedIssue);
+            invokeSelectedIssueChanged();
+        }
+
+        private void issueTreeModel_NodesChanged(object sender, TreeModelEventArgs e) {
+            restoreSelectedIssue(lastSelectedIssue);
+            invokeSelectedIssueChanged();
+        }
+
+        private void issueTreeModel_NodesRemoved(object sender, TreeModelEventArgs e) {
+            restoreSelectedIssue(lastSelectedIssue);
+            invokeSelectedIssueChanged();
+        }
+
+        void issueTreeModel_TreeAboutToChange(object sender, EventArgs e) {
+            lastSelectedIssue = SelectedIssue;
         }
 
         public event EventHandler<SelectedIssueEventArgs> SelectedIssueChanged;
