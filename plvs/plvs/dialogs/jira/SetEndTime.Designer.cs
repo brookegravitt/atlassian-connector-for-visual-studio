@@ -23,6 +23,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SetEndTime));
             this.dateEnd = new System.Windows.Forms.DateTimePicker();
             this.buttonOk = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
@@ -66,10 +67,10 @@
             // 
             this.numericHours.Location = new System.Drawing.Point(49, 69);
             this.numericHours.Maximum = new decimal(new int[] {
-                                                                  23,
-                                                                  0,
-                                                                  0,
-                                                                  0});
+            23,
+            0,
+            0,
+            0});
             this.numericHours.Name = "numericHours";
             this.numericHours.Size = new System.Drawing.Size(54, 20);
             this.numericHours.TabIndex = 3;
@@ -78,10 +79,10 @@
             // 
             this.numericMinutes.Location = new System.Drawing.Point(163, 69);
             this.numericMinutes.Maximum = new decimal(new int[] {
-                                                                    59,
-                                                                    0,
-                                                                    0,
-                                                                    0});
+            59,
+            0,
+            0,
+            0});
             this.numericMinutes.Name = "numericMinutes";
             this.numericMinutes.Size = new System.Drawing.Size(53, 20);
             this.numericMinutes.TabIndex = 4;
@@ -118,7 +119,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(229, 153);
-            this.ControlBox = false;
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -128,9 +128,11 @@
             this.Controls.Add(this.buttonOk);
             this.Controls.Add(this.dateEnd);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "SetEndTime";
-            this.ShowIcon = false;
             this.Text = "Set End Time";
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.SetEndTime_KeyPress);
             ((System.ComponentModel.ISupportInitialize)(this.numericHours)).EndInit();

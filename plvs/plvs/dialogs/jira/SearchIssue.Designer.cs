@@ -27,6 +27,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SearchIssue));
             this.buttonOk = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.textQueryString = new System.Windows.Forms.TextBox();
@@ -81,12 +82,11 @@
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SearchIssue";
-            this.ShowIcon = false;
-            this.ShowInTaskbar = false;
             this.Text = "Find Issue";
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.SearchIssue_KeyPress);
             this.ResumeLayout(false);

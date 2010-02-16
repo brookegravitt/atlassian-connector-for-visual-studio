@@ -27,6 +27,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddOrEditJiraServer));
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonAddOrEdit = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -132,7 +133,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(464, 178);
-            this.ControlBox = false;
             this.Controls.Add(this.password);
             this.Controls.Add(this.user);
             this.Controls.Add(this.url);
@@ -144,7 +144,10 @@
             this.Controls.Add(this.buttonAddOrEdit);
             this.Controls.Add(this.buttonCancel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "AddOrEditJiraServer";
             this.Text = "AddOrEditJiraServer";
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.AddOrEditJiraServer_KeyPress);
