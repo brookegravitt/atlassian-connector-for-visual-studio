@@ -145,7 +145,7 @@ namespace Atlassian.plvs.ui.jira {
                 return;
             }
             JiraCustomFilter newFilter = new JiraCustomFilter(node.Server);
-            EditCustomFilter ecf = new EditCustomFilter(node.Server, newFilter);
+            EditCustomFilter ecf = new EditCustomFilter(node.Server, newFilter, false);
             ecf.ShowDialog();
             if (!ecf.Changed) return;
             JiraCustomFilter.add(newFilter);
@@ -251,7 +251,7 @@ namespace Atlassian.plvs.ui.jira {
                 return;
             }
             DialogResult result =
-                MessageBox.Show("Do you really want to remove this custom filter?", 
+                MessageBox.Show("Do you really want to remove this local filter?", 
                 Constants.QUESTION_CAPTION, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (DialogResult.Yes != result) return;
 
@@ -269,7 +269,7 @@ namespace Atlassian.plvs.ui.jira {
                 return;
             }
 
-            EditCustomFilter ecf = new EditCustomFilter(node.Server, node.Filter);
+            EditCustomFilter ecf = new EditCustomFilter(node.Server, node.Filter, true);
             ecf.ShowDialog();
             if (!ecf.Changed) return;
 

@@ -10,7 +10,7 @@ using Atlassian.plvs.ui.jira;
 using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.dialogs.jira {
-    public partial class EditCustomFilter : Form {
+    public sealed partial class EditCustomFilter : Form {
         private readonly JiraServer server;
         private readonly JiraCustomFilter filter;
         
@@ -18,12 +18,14 @@ namespace Atlassian.plvs.dialogs.jira {
 
         public bool Changed { get; private set; }
 
-        public EditCustomFilter(JiraServer server, JiraCustomFilter filter) {
+        public EditCustomFilter(JiraServer server, JiraCustomFilter filter, bool editMode) {
 
             this.server = server;
             this.filter = filter;
 
             InitializeComponent();
+
+            Text = editMode ? "Edit Local Filter" : "Add Local Filter";
 
             listViewIssueTypes.Columns.Add(NAME_COLUMN, listViewIssueTypes.Width - 10, HorizontalAlignment.Left);
             listViewPriorities.Columns.Add(NAME_COLUMN, listViewPriorities.Width - 10, HorizontalAlignment.Left);
