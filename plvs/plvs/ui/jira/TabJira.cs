@@ -425,6 +425,23 @@ namespace Atlassian.plvs.ui.jira {
             filtersTree.rememberLastSelectedFilterItem();
         }
 
+        private void restoreSelectedIssue(JiraIssue issue) {
+            if (issue == null) {
+                return;
+            }
+
+            IEnumerable<TreeNodeAdv> nodes = issuesTree.AllNodes;
+            foreach (TreeNodeAdv node in nodes) {
+                IssueNode tag = node.Tag as IssueNode;
+                if (tag == null || !tag.Issue.Key.Equals(issue.Key) || !tag.Issue.Server.GUID.Equals(issue.Server.GUID)) {
+                    continue;
+                }
+
+                issuesTree.SelectedNode = node;
+                break;
+            }
+        }
+
         private void reloadIssues() {
             JiraSavedFilterTreeNode savedFilterNode;
             RecentlyOpenIssuesTreeNode recentIssuesNode;
@@ -435,14 +452,16 @@ namespace Atlassian.plvs.ui.jira {
 
             Thread issueLoadThread = null;
 
+            JiraIssue selectedIssue = SelectedIssue;
+
             if (savedFilterNode != null) {
-                issueLoadThread = reloadIssuesWithSavedFilter(savedFilterNode);
+                issueLoadThread = reloadIssuesWithSavedFilter(savedFilterNode, () => restoreSelectedIssue(selectedIssue));
             } else if (customFilterNode != null && !customFilterNode.Filter.Empty) {
-                issueLoadThread = reloadIssuesWithCustomFilter(customFilterNode);
+                issueLoadThread = reloadIssuesWithCustomFilter(customFilterNode, () => restoreSelectedIssue(selectedIssue));
             } else if (presetFilterNode != null) {
-                issueLoadThread = reloadIssuesWithPresetFilter(presetFilterNode);
+                issueLoadThread = reloadIssuesWithPresetFilter(presetFilterNode, () => restoreSelectedIssue(selectedIssue));
             } else if (recentIssuesNode != null) {
-                issueLoadThread = reloadIssuesWithRecentlyViewedIssues();
+                issueLoadThread = reloadIssuesWithRecentlyViewedIssues(() => restoreSelectedIssue(selectedIssue));
             }
 
             loadIssuesInThread(issueLoadThread);
@@ -459,79 +478,93 @@ namespace Atlassian.plvs.ui.jira {
             issueLoadThread.Start();
         }
 
-        private Thread reloadIssuesWithRecentlyViewedIssues() {
+        private Thread reloadIssuesWithRecentlyViewedIssues(Action reloadCompleted) {
             return new Thread(new ThreadStart(delegate
                                                   {
                                                       try {
                                                           builder.rebuildModelWithRecentlyViewedIssues(MODEL);
                                                       } catch (Exception ex) {
                                                           status.setError(RETRIEVING_ISSUES_FAILED, ex);
+                                                      } finally {
+                                                          reloadCompleted();
                                                       }
                                                   }));
         }
 
-        private Thread reloadIssuesWithSavedFilter(JiraSavedFilterTreeNode node) {
+        private Thread reloadIssuesWithSavedFilter(JiraSavedFilterTreeNode node, Action reloadCompleted) {
             return new Thread(new ThreadStart(delegate
                                                   {
                                                       try {
                                                           builder.rebuildModelWithSavedFilter(MODEL, node.Server, node.Filter);
                                                       } catch (Exception ex) {
                                                           status.setError(RETRIEVING_ISSUES_FAILED, ex);
+                                                      } finally {
+                                                          reloadCompleted();
                                                       }
                                                   }));
         }
 
-        private Thread updateIssuesWithSavedFilter(JiraSavedFilterTreeNode node) {
+        private Thread updateIssuesWithSavedFilter(JiraSavedFilterTreeNode node, Action reloadCompleted) {
             return new Thread(new ThreadStart(delegate
                                                   {
                                                       try {
                                                           builder.updateModelWithSavedFilter(MODEL, node.Server, node.Filter);
                                                       } catch (Exception ex) {
                                                           status.setError(RETRIEVING_ISSUES_FAILED, ex);
+                                                      } finally {
+                                                          reloadCompleted();
                                                       }
                                                   }));
         }
 
-        private Thread reloadIssuesWithPresetFilter(JiraPresetFilterTreeNode node) {
+        private Thread reloadIssuesWithPresetFilter(JiraPresetFilterTreeNode node, Action reloadCompleted) {
             return new Thread(new ThreadStart(delegate
                                                   {
                                                       try {
                                                           builder.rebuildModelWithPresetFilter(MODEL, node.Server, node.Filter);
                                                       } catch (Exception ex) {
                                                           status.setError(RETRIEVING_ISSUES_FAILED, ex);
+                                                      } finally {
+                                                          reloadCompleted();
                                                       }
                                                   }));
         }
 
-        private Thread updateIssuesWithPresetFilter(JiraPresetFilterTreeNode node) {
+        private Thread updateIssuesWithPresetFilter(JiraPresetFilterTreeNode node, Action reloadCompleted) {
             return new Thread(new ThreadStart(delegate
                                                   {
                                                       try {
                                                           builder.updateModelWithPresetFilter(MODEL, node.Server, node.Filter);
                                                       } catch (Exception ex) {
                                                           status.setError(RETRIEVING_ISSUES_FAILED, ex);
+                                                      } finally {
+                                                          reloadCompleted();
                                                       }
                                                   }));
         }
 
-        private Thread reloadIssuesWithCustomFilter(JiraCustomFilterTreeNode node) {
+        private Thread reloadIssuesWithCustomFilter(JiraCustomFilterTreeNode node, Action reloadCompleted) {
             return new Thread(new ThreadStart(delegate
                                                   {
                                                       try {
                                                           builder.rebuildModelWithCustomFilter(MODEL, node.Server, node.Filter);
                                                       } catch (Exception ex) {
                                                           status.setError(RETRIEVING_ISSUES_FAILED, ex);
+                                                      } finally {
+                                                          reloadCompleted();
                                                       }
                                                   }));
         }
 
-        private Thread updateIssuesWithCustomFilter(JiraCustomFilterTreeNode node) {
+        private Thread updateIssuesWithCustomFilter(JiraCustomFilterTreeNode node, Action reloadCompleted) {
             return new Thread(new ThreadStart(delegate
                                                   {
                                                       try {
                                                           builder.updateModelWithCustomFilter(MODEL, node.Server, node.Filter);
                                                       } catch (Exception ex) {
                                                           status.setError(RETRIEVING_ISSUES_FAILED, ex);
+                                                      } finally {
+                                                          reloadCompleted();
                                                       }
                                                   }));
         }
@@ -546,12 +579,14 @@ namespace Atlassian.plvs.ui.jira {
 
             Thread issueLoadThread = null;
 
+            JiraIssue selectedIssue = SelectedIssue;
+
             if (savedFilterNode != null) {
-                issueLoadThread = updateIssuesWithSavedFilter(savedFilterNode);
+                issueLoadThread = updateIssuesWithSavedFilter(savedFilterNode, () => restoreSelectedIssue(selectedIssue));
             } else if (customFilterNode != null && !customFilterNode.Filter.Empty) {
-                issueLoadThread = updateIssuesWithCustomFilter(customFilterNode);
+                issueLoadThread = updateIssuesWithCustomFilter(customFilterNode, () => restoreSelectedIssue(selectedIssue));
             } else if (presetFilterNode != null) {
-                issueLoadThread = updateIssuesWithPresetFilter(presetFilterNode);
+                issueLoadThread = updateIssuesWithPresetFilter(presetFilterNode, () => restoreSelectedIssue(selectedIssue));
             }
 
             loadIssuesInThread(issueLoadThread);
