@@ -70,6 +70,11 @@ Function CheckVS
 		Abort
 FunctionEnd
 
+Function LaunchVS
+  ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\9.0" "InstallDir"
+  Exec "$0\devenv.exe"
+FunctionEnd
+
 ; Pages
 
 !define MUI_ICON plvs\Resources\icons\ide_plugin_32.ico
@@ -81,6 +86,10 @@ FunctionEnd
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
  
+!define MUI_FINISHPAGE_RUN
+!define MUI_FINISHPAGE_RUN_CHECKED
+!define MUI_FINISHPAGE_RUN_TEXT "Start Visual Studio"
+!define MUI_FINISHPAGE_RUN_FUNCTION "LaunchVS"
 !define MUI_FINISHPAGE_NOAUTOCLOSE
 !insertmacro MUI_PAGE_FINISH
 
