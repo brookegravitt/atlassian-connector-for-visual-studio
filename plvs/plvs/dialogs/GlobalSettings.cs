@@ -240,5 +240,13 @@ namespace Atlassian.plvs.dialogs {
         private void checkAnkhSvn_CheckedChanged(object sender, EventArgs e) {
             updateOkButton();
         }
+
+        private void numericJiraBatchSize_KeyUp(object sender, KeyEventArgs e) {
+            updateOkButton();
+        }
+
+        private void numericBambooPollingInterval_KeyUp(object sender, KeyEventArgs e) {
+            updateOkButton();
+        }
     }
 }
