@@ -52,7 +52,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
             Stream stream = getQueryResultStream(endpoint, false);
 
-            XPathDocument doc = XPathUtils.getDocument(stream);
+            XPathDocument doc = XPathUtils.getXmlDocument(stream);
 
             string exceptions = getRemoteExceptionMessages(doc);
             if (exceptions != null) {
@@ -103,7 +103,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
             Stream stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint), true);
 
-            XPathDocument doc = XPathUtils.getDocument(stream);
+            XPathDocument doc = XPathUtils.getXmlDocument(stream);
 
             string code = getRestErrorStatusCode(doc);
             if (code != null) {
@@ -161,7 +161,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
         private ICollection<BambooBuild> getBuildsFromUrl(string endpoint) {
             Stream stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint), true);
 
-            XPathDocument doc = XPathUtils.getDocument(stream);
+            XPathDocument doc = XPathUtils.getXmlDocument(stream);
 
             string code = getRestErrorStatusCode(doc);
             if (code != null) {
@@ -231,7 +231,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
             Stream stream = getQueryResultStream(endpoint, false);
 
-            XPathDocument doc = XPathUtils.getDocument(stream);
+            XPathDocument doc = XPathUtils.getXmlDocument(stream);
 
             string code = getRemoteExceptionMessages(doc);
             if (code != null) {

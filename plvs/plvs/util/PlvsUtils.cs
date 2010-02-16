@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 using Atlassian.plvs.attributes;
 using EnvDTE;
@@ -53,6 +55,67 @@ namespace Atlassian.plvs.util {
         public static void showError(string msg) {
             MessageBox.Show(msg + "\n\nPress Ctrl+C to copy error text to clipboard", 
                 Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        public static string getTextDocument(Stream stream) {
+            StringBuilder sb = new StringBuilder();
+
+            byte[] buf = new byte[8192];
+
+            int count;
+
+            do {
+                count = stream.Read(buf, 0, buf.Length);
+                if (count == 0) continue;
+                string tempString = Encoding.ASCII.GetString(buf, 0, count);
+                sb.Append(tempString);
+            } while (count > 0);
+
+            return sb.ToString();
+        }
+
+        ///  FUNCTION Enquote Public Domain 2002 JSON.org 
+        ///  @author JSON.org 
+        ///  @version 0.1 
+        ///  Ported to C# by Are Bjolseth, teleplan.no 
+        public static string JsonEncode(string s) {
+            if (string.IsNullOrEmpty(s)) {
+                return "\"\"";
+            }
+            int i;
+            int len = s.Length;
+            StringBuilder sb = new StringBuilder(len + 4);
+            string t;
+
+            sb.Append('"');
+            for (i = 0; i < len; i += 1) {
+                char c = s[i];
+                if ((c == '\\') || (c == '"') || (c == '>')) {
+                    sb.Append('\\');
+                    sb.Append(c);
+                } else if (c == '\b')
+                    sb.Append("\\b");
+                else if (c == '\t')
+                    sb.Append("\\t");
+                else if (c == '\n')
+                    sb.Append("\\n");
+                else if (c == '\f')
+                    sb.Append("\\f");
+                else if (c == '\r')
+                    sb.Append("\\r");
+                else {
+                    if (c < ' ') {
+                        //t = "000" + Integer.toHexString(c); 
+                        string tmp = new string(c, 1);
+                        t = "000" + int.Parse(tmp, System.Globalization.NumberStyles.HexNumber);
+                        sb.Append("\\u" + t.Substring(t.Length - 4));
+                    } else {
+                        sb.Append(c);
+                    }
+                }
+            }
+            sb.Append('"');
+            return sb.ToString();
         }
     }
 }

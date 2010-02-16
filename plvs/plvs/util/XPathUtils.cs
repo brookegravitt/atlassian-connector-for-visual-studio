@@ -31,7 +31,7 @@ namespace Atlassian.plvs.util {
             return defaultValue;
         }
 
-        public static XPathDocument getDocument(Stream stream) {
+        public static XPathDocument getXmlDocument(Stream stream) {
 #if true
             StringBuilder sb = new StringBuilder();
 

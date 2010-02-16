@@ -43,8 +43,6 @@ namespace Atlassian.plvs.api.jira {
             }
         }
 
-        #region rss methods
-
         public List<JiraIssue> getSavedFilterIssues(JiraServer server, JiraSavedFilter filter, int start, int count) {
             RssClient rss = new RssClient(server);
             return rss.getSavedFilterIssues(filter.Id, "priority", "DESC", start, count);
@@ -60,9 +58,10 @@ namespace Atlassian.plvs.api.jira {
             return rss.getIssue(key);
         }
 
-        #endregion
-
-        #region soap methods
+        public string getRenderedContent(JiraIssue issue, string markup) {
+            RestClient rest = new RestClient(issue.Server);
+            return rest.getRenderedContent(issue.Key, markup);
+        }
 
         public List<JiraProject> getProjects(JiraServer server) {
             return wrapExceptions(server, () => getSoapSession(server).getProjects());
@@ -159,10 +158,6 @@ namespace Atlassian.plvs.api.jira {
             wrapExceptionsVoid(issue.Server, () => getSoapSession(issue.Server).uploadAttachment(issue.Key, name, attachment));    
         }
 
-        #endregion
-
-        #region private parts
-
         private delegate T Wrapped<T>();
         private T wrapExceptions<T>(JiraServer server, Wrapped<T> wrapped) {
             lock (this) {
@@ -194,7 +189,5 @@ namespace Atlassian.plvs.api.jira {
                 }
             }
         }
-
-        #endregion
     }
 }

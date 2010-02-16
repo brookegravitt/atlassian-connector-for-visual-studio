@@ -63,6 +63,7 @@
     <Compile Include="api\bamboo\BambooPlan.cs" />
     <Compile Include="api\bamboo\BambooServerFacade.cs" />
     <Compile Include="api\bamboo\rest\RestSession.cs" />
+    <Compile Include="api\jira\RestClient.cs" />
     <Compile Include="api\jira\IssueLinkType.cs" />
     <Compile Include="api\jira\JiraAttachment.cs" />
     <Compile Include="api\jira\JiraField.cs" />
