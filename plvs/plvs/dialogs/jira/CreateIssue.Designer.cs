@@ -94,7 +94,7 @@
             // listComponents
             // 
             this.listComponents.FormattingEnabled = true;
-            this.listComponents.Location = new System.Drawing.Point(102, 92);
+            this.listComponents.Location = new System.Drawing.Point(102, 228);
             this.listComponents.Name = "listComponents";
             this.listComponents.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.listComponents.Size = new System.Drawing.Size(459, 95);
@@ -103,7 +103,7 @@
             // listAffectsVersions
             // 
             this.listAffectsVersions.FormattingEnabled = true;
-            this.listAffectsVersions.Location = new System.Drawing.Point(102, 193);
+            this.listAffectsVersions.Location = new System.Drawing.Point(102, 329);
             this.listAffectsVersions.Name = "listAffectsVersions";
             this.listAffectsVersions.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.listAffectsVersions.Size = new System.Drawing.Size(459, 95);
@@ -112,7 +112,7 @@
             // listFixVersions
             // 
             this.listFixVersions.FormattingEnabled = true;
-            this.listFixVersions.Location = new System.Drawing.Point(102, 294);
+            this.listFixVersions.Location = new System.Drawing.Point(102, 430);
             this.listFixVersions.Name = "listFixVersions";
             this.listFixVersions.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.listFixVersions.Size = new System.Drawing.Size(459, 95);
@@ -125,7 +125,7 @@
             this.comboPriorities.FormattingEnabled = true;
             this.comboPriorities.ImageList = null;
             this.comboPriorities.ItemHeight = 16;
-            this.comboPriorities.Location = new System.Drawing.Point(102, 395);
+            this.comboPriorities.Location = new System.Drawing.Point(102, 200);
             this.comboPriorities.Name = "comboPriorities";
             this.comboPriorities.Size = new System.Drawing.Size(459, 22);
             this.comboPriorities.TabIndex = 5;
@@ -140,7 +140,7 @@
             // 
             // textDescription
             // 
-            this.textDescription.Location = new System.Drawing.Point(102, 423);
+            this.textDescription.Location = new System.Drawing.Point(102, 93);
             this.textDescription.Multiline = true;
             this.textDescription.Name = "textDescription";
             this.textDescription.ScrollBars = System.Windows.Forms.ScrollBars.Both;
@@ -170,7 +170,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(25, 92);
+            this.label4.Location = new System.Drawing.Point(25, 228);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(71, 13);
             this.label4.TabIndex = 14;
@@ -180,7 +180,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(8, 193);
+            this.label5.Location = new System.Drawing.Point(12, 329);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(88, 13);
             this.label5.TabIndex = 15;
@@ -190,7 +190,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(28, 294);
+            this.label6.Location = new System.Drawing.Point(28, 430);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(68, 13);
             this.label6.TabIndex = 16;
@@ -200,7 +200,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(58, 398);
+            this.label7.Location = new System.Drawing.Point(58, 203);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(38, 13);
             this.label7.TabIndex = 17;
@@ -220,7 +220,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(36, 426);
+            this.label9.Location = new System.Drawing.Point(36, 96);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(60, 13);
             this.label9.TabIndex = 19;
