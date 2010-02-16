@@ -22,7 +22,7 @@ namespace Atlassian.plvs.ui {
             Size imageSize = imageList != null ? imageList.ImageSize : new Size(0, 0);
             Rectangle bounds = ea.Bounds;
 
-            if (ea.Index >= 0 && Items.Contains(ea.Index)) {
+            if (ea.Index >= 0 && Items.Count > ea.Index) {
                 item = (ComboBoxWithImagesItem<T>)Items[ea.Index];
 
                 if (imageList != null && item.ImageIndex != -1) {
