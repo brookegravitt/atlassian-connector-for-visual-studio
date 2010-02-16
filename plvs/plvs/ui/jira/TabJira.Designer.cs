@@ -177,7 +177,7 @@
             this.buttonEditFilter});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(118, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(149, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonRefreshAll
@@ -207,7 +207,7 @@
             this.buttonAddFilter.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonAddFilter.Name = "buttonAddFilter";
             this.buttonAddFilter.Size = new System.Drawing.Size(23, 22);
-            this.buttonAddFilter.Text = "Add Custom Filter";
+            this.buttonAddFilter.Text = "Add Local Filter";
             this.buttonAddFilter.Click += new System.EventHandler(this.buttonAddFilter_Click);
             // 
             // buttonRemoveFilter
@@ -217,7 +217,7 @@
             this.buttonRemoveFilter.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonRemoveFilter.Name = "buttonRemoveFilter";
             this.buttonRemoveFilter.Size = new System.Drawing.Size(23, 22);
-            this.buttonRemoveFilter.Text = "Remove Custom Filter";
+            this.buttonRemoveFilter.Text = "Remove Local Filter";
             this.buttonRemoveFilter.Click += new System.EventHandler(this.buttonRemoveFilter_Click);
             // 
             // buttonEditFilter
@@ -267,7 +267,7 @@
             this.buttonRefresh});
             this.toolStrip2.Location = new System.Drawing.Point(3, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(602, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(571, 25);
             this.toolStrip2.TabIndex = 0;
             // 
             // labelNarrow

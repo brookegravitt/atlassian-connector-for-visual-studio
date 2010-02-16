@@ -1,5 +1,5 @@
 ﻿namespace Atlassian.plvs.dialogs.jira {
-    partial class EditCustomFilter
+    sealed partial class EditCustomFilter
     {
         /// <summary>
         /// Required designer variable.
@@ -369,7 +369,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "EditCustomFilter";
-            this.Text = "Edit Custom Filter";
+            this.Text = "Edit Local Filter";
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.EditCustomFilter_KeyPress);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

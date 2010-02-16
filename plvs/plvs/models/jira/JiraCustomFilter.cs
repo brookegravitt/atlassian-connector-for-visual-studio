@@ -58,7 +58,7 @@ namespace Atlassian.plvs.models.jira {
 
         private const string FILTER_NAME = "_jiraCustomFilterName_";
 
-        private const string CUSTOM_FILTER_DEFAULT_NAME = "Custom Filter";
+        private const string CUSTOM_FILTER_DEFAULT_NAME = "Local Filter";
 
         public enum UserType {
             [StringValue("")]
@@ -260,7 +260,7 @@ namespace Atlassian.plvs.models.jira {
                     sb.Append(priority.Name).Append(" ");
             }
  
-            sb.Append("\n\nRight-click to edit filter definition");
+            sb.Append("\n\nRight-click for filter operations");
 
             return sb.ToString();
         }

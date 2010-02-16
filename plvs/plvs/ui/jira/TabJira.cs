@@ -167,8 +167,8 @@ namespace Atlassian.plvs.ui.jira {
             buttonCollapseAll.Enabled = groupingControlsEnabled && notNone;
             buttonEditFilter.Enabled = filtersTree.SelectedNode is JiraCustomFilterTreeNode;
             buttonRemoveFilter.Enabled = filtersTree.SelectedNode is JiraCustomFilterTreeNode;
-            buttonAddFilter.Enabled = filtersTree.SelectedNode is JiraCustomFiltersGroupTreeNode;
-            buttonServerExplorer.Enabled = filtersTree.SelectedNode is TreeNodeWithJiraServer;
+            buttonAddFilter.Enabled = filtersTree.NodeWithServerSelected;
+            buttonServerExplorer.Enabled = filtersTree.NodeWithServerSelected;
         }
 
         private delegate void IssueAction(JiraIssue issue);
