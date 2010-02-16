@@ -62,7 +62,7 @@ namespace Atlassian.plvs.models.jira {
         public void rebuildModelWithRecentlyViewedIssues(JiraIssueListModel model) {
             lock (this) {
                 ICollection<RecentlyViewedIssue> issues = RecentlyViewedIssuesModel.Instance.Issues;
-                ICollection<JiraServer> servers = JiraServerModel.Instance.getAllServers();
+                ICollection<JiraServer> servers = JiraServerModel.Instance.getAllEnabledServers();
 
                 List<JiraIssue> list = new List<JiraIssue>(issues.Count);
                 foreach (RecentlyViewedIssue issue in issues) {

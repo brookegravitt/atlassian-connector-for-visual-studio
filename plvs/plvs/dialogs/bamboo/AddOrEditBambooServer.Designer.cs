@@ -42,13 +42,14 @@
             this.radioSelectManually = new System.Windows.Forms.RadioButton();
             this.checkedListBuilds = new System.Windows.Forms.CheckedListBox();
             this.buttonGetBuilds = new System.Windows.Forms.Button();
+            this.checkEnabled = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // buttonCancel
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(377, 398);
+            this.buttonCancel.Location = new System.Drawing.Point(377, 452);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 0;
@@ -58,7 +59,7 @@
             // buttonAddOrEdit
             // 
             this.buttonAddOrEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonAddOrEdit.Location = new System.Drawing.Point(296, 398);
+            this.buttonAddOrEdit.Location = new System.Drawing.Point(296, 452);
             this.buttonAddOrEdit.Name = "buttonAddOrEdit";
             this.buttonAddOrEdit.Size = new System.Drawing.Size(75, 23);
             this.buttonAddOrEdit.TabIndex = 1;
@@ -69,7 +70,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 23);
+            this.label1.Location = new System.Drawing.Point(13, 23);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(69, 13);
             this.label1.TabIndex = 2;
@@ -78,7 +79,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(28, 98);
+            this.label2.Location = new System.Drawing.Point(13, 124);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(53, 13);
             this.label2.TabIndex = 3;
@@ -87,7 +88,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(21, 75);
+            this.label3.Location = new System.Drawing.Point(13, 98);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(60, 13);
             this.label3.TabIndex = 4;
@@ -96,7 +97,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(18, 49);
+            this.label4.Location = new System.Drawing.Point(13, 72);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(63, 13);
             this.label4.TabIndex = 5;
@@ -116,7 +117,7 @@
             // 
             this.url.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.url.Location = new System.Drawing.Point(97, 46);
+            this.url.Location = new System.Drawing.Point(97, 69);
             this.url.Name = "url";
             this.url.Size = new System.Drawing.Size(355, 20);
             this.url.TabIndex = 7;
@@ -126,7 +127,7 @@
             // 
             this.user.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.user.Location = new System.Drawing.Point(97, 72);
+            this.user.Location = new System.Drawing.Point(96, 95);
             this.user.Name = "user";
             this.user.Size = new System.Drawing.Size(355, 20);
             this.user.TabIndex = 8;
@@ -136,7 +137,7 @@
             // 
             this.password.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.password.Location = new System.Drawing.Point(97, 98);
+            this.password.Location = new System.Drawing.Point(97, 121);
             this.password.Name = "password";
             this.password.PasswordChar = '*';
             this.password.Size = new System.Drawing.Size(355, 20);
@@ -145,7 +146,7 @@
             // radioUseFavourites
             // 
             this.radioUseFavourites.AutoSize = true;
-            this.radioUseFavourites.Location = new System.Drawing.Point(97, 125);
+            this.radioUseFavourites.Location = new System.Drawing.Point(95, 147);
             this.radioUseFavourites.Name = "radioUseFavourites";
             this.radioUseFavourites.Size = new System.Drawing.Size(138, 17);
             this.radioUseFavourites.TabIndex = 10;
@@ -157,7 +158,7 @@
             // radioSelectManually
             // 
             this.radioSelectManually.AutoSize = true;
-            this.radioSelectManually.Location = new System.Drawing.Point(97, 149);
+            this.radioSelectManually.Location = new System.Drawing.Point(95, 170);
             this.radioSelectManually.Name = "radioSelectManually";
             this.radioSelectManually.Size = new System.Drawing.Size(136, 17);
             this.radioSelectManually.TabIndex = 11;
@@ -172,16 +173,16 @@
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.checkedListBuilds.FormattingEnabled = true;
-            this.checkedListBuilds.Location = new System.Drawing.Point(97, 173);
+            this.checkedListBuilds.Location = new System.Drawing.Point(97, 196);
             this.checkedListBuilds.Name = "checkedListBuilds";
-            this.checkedListBuilds.Size = new System.Drawing.Size(355, 214);
+            this.checkedListBuilds.Size = new System.Drawing.Size(355, 244);
             this.checkedListBuilds.TabIndex = 12;
             // 
             // buttonGetBuilds
             // 
             this.buttonGetBuilds.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonGetBuilds.Location = new System.Drawing.Point(334, 144);
+            this.buttonGetBuilds.Location = new System.Drawing.Point(334, 167);
             this.buttonGetBuilds.Name = "buttonGetBuilds";
             this.buttonGetBuilds.Size = new System.Drawing.Size(117, 23);
             this.buttonGetBuilds.TabIndex = 13;
@@ -189,11 +190,24 @@
             this.buttonGetBuilds.UseVisualStyleBackColor = true;
             this.buttonGetBuilds.Click += new System.EventHandler(this.buttonGetBuilds_Click);
             // 
+            // checkEnabled
+            // 
+            this.checkEnabled.AutoSize = true;
+            this.checkEnabled.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkEnabled.Location = new System.Drawing.Point(12, 46);
+            this.checkEnabled.Name = "checkEnabled";
+            this.checkEnabled.Size = new System.Drawing.Size(99, 17);
+            this.checkEnabled.TabIndex = 14;
+            this.checkEnabled.Text = "Server Enabled";
+            this.checkEnabled.UseVisualStyleBackColor = true;
+            this.checkEnabled.CheckedChanged += new System.EventHandler(this.checkEnabled_CheckedChanged);
+            // 
             // AddOrEditBambooServer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(464, 430);
+            this.ClientSize = new System.Drawing.Size(464, 484);
+            this.Controls.Add(this.checkEnabled);
             this.Controls.Add(this.buttonGetBuilds);
             this.Controls.Add(this.checkedListBuilds);
             this.Controls.Add(this.radioSelectManually);
@@ -236,5 +250,6 @@
         private System.Windows.Forms.RadioButton radioSelectManually;
         private System.Windows.Forms.CheckedListBox checkedListBuilds;
         private System.Windows.Forms.Button buttonGetBuilds;
+        private System.Windows.Forms.CheckBox checkEnabled;
     }
 }

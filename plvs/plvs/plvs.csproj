@@ -727,7 +727,9 @@
     <Content Include="Resources\icons\status_plugin.gif" />
     <Content Include="Resources\icons\status_plugin.ico" />
     <Content Include="Resources\icons\status_plugin.png" />
+    <Content Include="Resources\icons\tab_bamboo-grey.png" />
     <Content Include="Resources\icons\tab_bamboo.png" />
+    <Content Include="Resources\icons\tab_jira-grey.png" />
     <Content Include="Resources\icons\tab_jira.png" />
     <Content Include="Resources\icons\unknown.png" />
     <Content Include="Resources\icons\update_unavailable.ico" />

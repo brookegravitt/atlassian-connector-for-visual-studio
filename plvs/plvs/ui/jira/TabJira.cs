@@ -321,9 +321,9 @@ namespace Atlassian.plvs.ui.jira {
                 getMoreIssues.Visible = false;
 
                 // copy to local list so that we can reuse in our threads
-                List<JiraServer> servers = new List<JiraServer>(JiraServerModel.Instance.getAllServers());
+                List<JiraServer> servers = new List<JiraServer>(JiraServerModel.Instance.getAllEnabledServers());
                 if (servers.Count == 0) {
-                    status.setInfo("No JIRA servers defined");
+                    status.setInfo("No JIRA servers enabled");
                     return;
                 }
 
@@ -406,7 +406,7 @@ namespace Atlassian.plvs.ui.jira {
                                                  filtersTree.restoreLastSelectedFilterItem();
                                              }));
             } catch (Exception e) {
-                status.setError("Failed to load server metadata", e);
+                status.setError("Failed to load JIRA server information", e);
             }
         }
 

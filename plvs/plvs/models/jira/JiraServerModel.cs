@@ -19,8 +19,8 @@ namespace Atlassian.plvs.models.jira {
         protected override void loadCustomServerParameters(ParameterStore store, JiraServer server) {}
         protected override void saveCustomServerParameters(ParameterStore store, JiraServer server) {}
 
-        protected override JiraServer createServer(Guid guid, string name, string url, string userName, string password) {
-            return new JiraServer(guid, name, url, userName, password);
+        protected override JiraServer createServer(Guid guid, string name, string url, string userName, string password, bool enabled) {
+            return new JiraServer(guid, name, url, userName, password, enabled);
         }
     }
 }
