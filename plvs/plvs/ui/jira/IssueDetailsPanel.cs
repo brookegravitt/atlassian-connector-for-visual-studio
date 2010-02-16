@@ -611,7 +611,7 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void buttonAddComment_Click(object sender, EventArgs e) {
-            NewIssueComment dlg = new NewIssueComment();
+            NewIssueComment dlg = new NewIssueComment(issue, facade);
             dlg.ShowDialog();
             if (dlg.DialogResult != DialogResult.OK) return;
 

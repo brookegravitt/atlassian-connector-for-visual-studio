@@ -102,7 +102,7 @@ namespace Atlassian.plvs.api.jira {
         }
 
         private List<JiraIssue> createIssueList(Stream s) {
-            XPathDocument doc = XPathUtils.getDocument(s);
+            XPathDocument doc = XPathUtils.getXmlDocument(s);
 
             XPathNavigator nav = doc.CreateNavigator();
             XPathExpression expr = nav.Compile("/rss/channel/item");
