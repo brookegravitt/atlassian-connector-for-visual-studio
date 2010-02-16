@@ -116,8 +116,7 @@ namespace Atlassian.plvs {
         ///&lt;div style=&quot;font-family:{0};font-size:12px;&quot;&gt;
         ///
         ///&lt;center&gt;Unable to view attachment&lt;/center&gt;
-        ///&lt;br&gt;
-        ///&lt;center&gt;&lt;a href=&quot;{1}&quot;&gt;Click hereto download it&lt;/a&gt;&lt;/center&gt;
+        ///&lt;center&gt;&lt;a href=&quot;{1}&quot;&gt;Click here to download it&lt;/a&gt;&lt;/center&gt;
         ///
         ///&lt;/div&gt;
         ///&lt;/body&gt;.
@@ -303,6 +302,20 @@ namespace Atlassian.plvs {
         internal static System.Drawing.Bitmap find_jira {
             get {
                 object obj = ResourceManager.GetObject("find_jira", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap folder_bamboo {
+            get {
+                object obj = ResourceManager.GetObject("folder_bamboo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap folder_jira {
+            get {
+                object obj = ResourceManager.GetObject("folder_jira", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -555,18 +568,35 @@ namespace Atlassian.plvs {
         ///}
         ///
         ///.labelcolumn {
-        ///	text-align:&quot;right&quot;;
+        ///	text-align:&quot;left&quot;;
         ///	padding-right:&quot;1em&quot;;
         ///	font-weight:&quot;bold&quot;;
-        ///	vertical-align:&quot;top&quot;;
+        ///	height:&quot;18px&quot;;
         ///}
         ///
         ///.labelsummary {
+        ///	padding-bottom:&quot;18px&quot;;
+        ///	height:&quot;18px&quot;;
+        ///}
+        ///
+        ///.linkcategory {
+        ///	width:100%;
+        ///	background:&quot;lightgrey&quot;;
+        ///	padding:&quot;0.5em&quot;;
+        ///	font-weight:bold;
+        ///}
+        ///
+        ///.linkdirection {
+        ///	padding-left:&quot;2em&quot;;
+        ///	padding-top:&quot;0.5em&quot;;
+        ///}
+        ///
+        ///.linkedissues {
+        ///	padding-left:&quot;10em&quot;;
         ///	padding-bottom:&quot;1em&quot;;
         ///}
         ///
-        ///&lt;/style&gt;
-        ///.
+        ///.issu [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string summary_and_description_css {
             get {
@@ -601,9 +631,10 @@ namespace Atlassian.plvs {
         ///			document.getElementById(controlid).innerHTML=&quot;collapse&quot;;
         ///		}
         ///	}
-        ///&lt;/script&gt;
-        ///
-        ///.
+        ///	
+        ///	function showInline(id) {
+        ///		document.getElementById(id).style.display = &apos;inline&apos;;
+        ///	} [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string toggler_javascript {
             get {

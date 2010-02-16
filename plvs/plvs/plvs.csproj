@@ -689,6 +689,8 @@
     <Content Include="Resources\icons\edit_in_browser.png" />
     <Content Include="Resources\icons\expand_all.png" />
     <Content Include="Resources\icons\find-jira.png" />
+    <Content Include="Resources\icons\folder-bamboo.png" />
+    <Content Include="Resources\icons\folder-jira.png" />
     <Content Include="Resources\icons\global_properties.png" />
     <Content Include="Resources\icons\group-subtasks.png" />
     <Content Include="Resources\icons\icn_plan_disabled.gif" />

@@ -12,8 +12,8 @@ using Atlassian.plvs.ui.jira.issuefilternodes;
 
 namespace Atlassian.plvs.dialogs {
     public partial class ProjectConfiguration : Form {
-        private readonly TreeNode jiraRoot = new TreeNode("JIRA Servers");
-        private readonly TreeNode bambooRoot = new TreeNode("Bamboo Servers");
+        private readonly TreeNode jiraRoot = new TreeNode("JIRA Servers", 0, 0);
+        private readonly TreeNode bambooRoot = new TreeNode("Bamboo Servers", 1, 1);
 //        private readonly TreeNode crucibleRoot = new TreeNode("Crucible Servers");
 //        private readonly TreeNode fisheyeRoot = new TreeNode("Fisheye Servers");
 
@@ -22,9 +22,12 @@ namespace Atlassian.plvs.dialogs {
         private readonly JiraServerFacade jiraFacade;
         private readonly BambooServerFacade bambooFacade;
 
+        private readonly ImageList imageList;
+
         public bool SomethingChanged { get; private set; }
 
-        public ProjectConfiguration(Guid? serverTypeToCreate, JiraServerModel jiraServerModel, BambooServerModel bambooServerModel, 
+        public ProjectConfiguration(
+            Guid? serverTypeToCreate, JiraServerModel jiraServerModel, BambooServerModel bambooServerModel, 
             JiraServerFacade jiraFacade, BambooServerFacade bambooFacade) {
 
             InitializeComponent();
@@ -37,17 +40,25 @@ namespace Atlassian.plvs.dialogs {
             var jiraServers = jiraServerModel.getAllServers();
             var bambooServers = bambooServerModel.getAllServers();
 
+            imageList = new ImageList();
+            imageList.Images.Add(Resources.folder_jira);
+            imageList.Images.Add(Resources.folder_bamboo);
+            imageList.Images.Add(Resources.tab_jira);
+            imageList.Images.Add(Resources.tab_bamboo);
+
+            serverTree.ImageList = imageList;
+
             serverTree.Nodes.Add(jiraRoot);
             serverTree.Nodes.Add(bambooRoot);
 //            serverTree.Nodes.Add(crucibleRoot);
 //            serverTree.Nodes.Add(fisheyeRoot);
 
             foreach (var server in jiraServers) {
-                jiraRoot.Nodes.Add(new JiraServerTreeNode(server, 0));
+                jiraRoot.Nodes.Add(new JiraServerTreeNode(server, 2));
             }
 
             foreach (var server in bambooServers) {
-                bambooRoot.Nodes.Add(new BambooServerTreeNode(server, 0));
+                bambooRoot.Nodes.Add(new BambooServerTreeNode(server, 3));
             }
 
             StartPosition = FormStartPosition.CenterParent;
@@ -105,7 +116,7 @@ namespace Atlassian.plvs.dialogs {
             var result = dialog.ShowDialog();
             if (result != DialogResult.OK) return;
             bambooServerModel.addServer(dialog.Server);
-            var newNode = new BambooServerTreeNode(dialog.Server, 0);
+            var newNode = new BambooServerTreeNode(dialog.Server, 3);
             bambooRoot.Nodes.Add(newNode);
             serverTree.ExpandAll();
             serverTree.SelectedNode = newNode;
@@ -117,7 +128,7 @@ namespace Atlassian.plvs.dialogs {
             var result = dialog.ShowDialog();
             if (result != DialogResult.OK) return;
             jiraServerModel.addServer(dialog.Server);
-            var newNode = new JiraServerTreeNode(dialog.Server, 0);
+            var newNode = new JiraServerTreeNode(dialog.Server, 2);
             jiraRoot.Nodes.Add(newNode);
             serverTree.ExpandAll();
             serverTree.SelectedNode = newNode;
