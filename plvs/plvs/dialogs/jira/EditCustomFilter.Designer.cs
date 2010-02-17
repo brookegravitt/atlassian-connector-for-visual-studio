@@ -31,19 +31,19 @@ namespace Atlassian.plvs.dialogs.jira {
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditCustomFilter));
             this.buttonClose = new System.Windows.Forms.Button();
-            this.listBoxProjects = new OwnerDrawListBox();
+            this.listBoxProjects = new ui.OwnerDrawListBox();
             this.listViewIssueTypes = new System.Windows.Forms.ListView();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.listBoxFixForVersions = new OwnerDrawListBox();
-            this.listBoxAffectsVersions = new OwnerDrawListBox();
-            this.listBoxComponents = new OwnerDrawListBox();
+            this.listBoxFixForVersions = new ui.OwnerDrawListBox();
+            this.listBoxAffectsVersions = new ui.OwnerDrawListBox();
+            this.listBoxComponents = new ui.OwnerDrawListBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.listViewPriorities = new System.Windows.Forms.ListView();
             this.listViewStatuses = new System.Windows.Forms.ListView();
-            this.listBoxResolutions = new OwnerDrawListBox();
+            this.listBoxResolutions = new ui.OwnerDrawListBox();
             this.comboBoxAssignee = new System.Windows.Forms.ComboBox();
             this.comboBoxReporter = new System.Windows.Forms.ComboBox();
             this.label10 = new System.Windows.Forms.Label();
@@ -84,7 +84,7 @@ namespace Atlassian.plvs.dialogs.jira {
             this.listBoxProjects.Location = new System.Drawing.Point(6, 27);
             this.listBoxProjects.Name = "listBoxProjects";
             this.listBoxProjects.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBoxProjects.Size = new System.Drawing.Size(369, 292);
+            this.listBoxProjects.Size = new System.Drawing.Size(407, 292);
             this.listBoxProjects.TabIndex = 0;
             // 
             // listViewIssueTypes
@@ -92,9 +92,9 @@ namespace Atlassian.plvs.dialogs.jira {
             this.listViewIssueTypes.FullRowSelect = true;
             this.listViewIssueTypes.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.listViewIssueTypes.HideSelection = false;
-            this.listViewIssueTypes.Location = new System.Drawing.Point(381, 27);
+            this.listViewIssueTypes.Location = new System.Drawing.Point(419, 27);
             this.listViewIssueTypes.Name = "listViewIssueTypes";
-            this.listViewIssueTypes.Size = new System.Drawing.Size(234, 292);
+            this.listViewIssueTypes.Size = new System.Drawing.Size(201, 292);
             this.listViewIssueTypes.TabIndex = 1;
             this.listViewIssueTypes.UseCompatibleStateImageBehavior = false;
             this.listViewIssueTypes.View = System.Windows.Forms.View.Details;
@@ -102,7 +102,7 @@ namespace Atlassian.plvs.dialogs.jira {
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(378, 13);
+            this.label2.Location = new System.Drawing.Point(416, 13);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(59, 13);
             this.label2.TabIndex = 4;
@@ -111,7 +111,7 @@ namespace Atlassian.plvs.dialogs.jira {
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(8, 13);
+            this.label1.Location = new System.Drawing.Point(3, 13);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(40, 13);
             this.label1.TabIndex = 3;
@@ -417,15 +417,11 @@ namespace Atlassian.plvs.dialogs.jira {
         #endregion
 
         private System.Windows.Forms.Button buttonClose;
-        private System.Windows.Forms.ListBox listBoxProjects;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ListBox listBoxAffectsVersions;
-        private System.Windows.Forms.ListBox listBoxComponents;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ListBox listBoxResolutions;
         private System.Windows.Forms.ComboBox comboBoxAssignee;
         private System.Windows.Forms.ComboBox comboBoxReporter;
         private System.Windows.Forms.Label label10;
@@ -436,7 +432,6 @@ namespace Atlassian.plvs.dialogs.jira {
         private System.Windows.Forms.Button buttonOk;
         private System.Windows.Forms.Button buttonClear;
         private System.Windows.Forms.ListView listViewIssueTypes;
-        private System.Windows.Forms.ListBox listBoxFixForVersions;
         private System.Windows.Forms.ListView listViewPriorities;
         private System.Windows.Forms.ListView listViewStatuses;
         private System.Windows.Forms.TextBox textBoxFilterName;
@@ -445,5 +440,10 @@ namespace Atlassian.plvs.dialogs.jira {
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TabPage tabPage3;
+        private OwnerDrawListBox listBoxProjects;
+        private OwnerDrawListBox listBoxAffectsVersions;
+        private OwnerDrawListBox listBoxComponents;
+        private OwnerDrawListBox listBoxResolutions;
+        private OwnerDrawListBox listBoxFixForVersions;
     }
 }
