@@ -41,8 +41,8 @@ namespace Atlassian.plvs.models.jira {
             new SortedDictionary<string, WidgetTypeAndFieldFiller> {
                                                                        { "issuetype", new WidgetTypeAndFieldFiller(WidgetType.ISSUE_TYPE, new IssueTypeFiller()) },
                                                                        { "summary", new WidgetTypeAndFieldFiller(WidgetType.SUMMARY, new SummaryFiller()) },
-                                                                       { "description", new WidgetTypeAndFieldFiller(WidgetType.DESCRIPTION, new DescriptionFiller()) },
                                                                        { "priority", new WidgetTypeAndFieldFiller(WidgetType.PRIORITY, new PriorityFiller()) },
+                                                                       { "description", new WidgetTypeAndFieldFiller(WidgetType.DESCRIPTION, new DescriptionFiller()) },
                                                                        { "resolution", new WidgetTypeAndFieldFiller(WidgetType.RESOLUTION, new ResolutionFiller()) },
                                                                        { "environment", new WidgetTypeAndFieldFiller(WidgetType.ENVIRONMENT, new EnvironmentFiller()) },
                                                                        { "components", new WidgetTypeAndFieldFiller(WidgetType.COMPONENTS, new ComponentsFiller()) },

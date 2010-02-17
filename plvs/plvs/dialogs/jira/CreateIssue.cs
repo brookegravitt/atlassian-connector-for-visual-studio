@@ -80,6 +80,9 @@ namespace Atlassian.plvs.dialogs.jira {
             StartPosition = FormStartPosition.CenterParent;
 
             jiraAssigneePicker.init(server, null, true);
+
+            textDescription.Server = server;
+            textDescription.Facade = JiraServerFacade.Instance;
         }
 
         private void buttonCancel_Click(object sender, EventArgs e) {
@@ -88,6 +91,7 @@ namespace Atlassian.plvs.dialogs.jira {
 
         private void comboProjects_SelectedIndexChanged(object sender, EventArgs e) {
             setAllEnabled(false);
+            textDescription.Project = (JiraProject)comboProjects.SelectedItem;
             startProjectUpdateThread();
         }
 
@@ -191,6 +195,8 @@ namespace Atlassian.plvs.dialogs.jira {
             }
             comboTypes.ImageList = imageList;
 
+            textDescription.IssueType = -1;
+
             if (initialUpdate) {
                 if (issueTypes.Count > 0) {
                     int idx = store.loadParameter(ISSUE_TYPE + server.GUID, -1);
@@ -227,6 +233,12 @@ namespace Atlassian.plvs.dialogs.jira {
         }
 
         private void comboTypes_SelectedIndexChanged(object sender, EventArgs e) {
+            object selectedItem = comboTypes.SelectedItem;
+            if (selectedItem != null) {
+                textDescription.IssueType = ((ComboBoxWithImagesItem<JiraNamedEntity>)selectedItem).Value.Id;
+            } else {
+                textDescription.IssueType = -1;
+            }
             updateButtons();
         }
 
