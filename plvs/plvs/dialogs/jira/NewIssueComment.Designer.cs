@@ -62,8 +62,8 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.textComment.Facade = null;
             this.textComment.IssueType = -1;
-            this.textComment.JiraIssue = null;
-            this.textComment.JiraProject = null;
+            this.textComment.Issue = null;
+            this.textComment.Project = null;
             this.textComment.Location = new System.Drawing.Point(12, 12);
             this.textComment.Name = "textComment";
             this.textComment.Server = null;

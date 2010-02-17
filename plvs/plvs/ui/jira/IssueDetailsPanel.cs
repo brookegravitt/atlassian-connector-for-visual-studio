@@ -247,6 +247,7 @@ namespace Atlassian.plvs.ui.jira {
         private const string AFFECTS_VERSIONS_EDIT_TAG = "affectsversions";
         private const string PRIORITY_EDIT_TAG = "priority";
         private const string TIMETRACKING_EDIT_TAG = "timetracking";
+        private const string ENVIRONMENT_EDIT_TAG = "environment";
 
         private const string ISSUE_EDIT_URL_TYPE = "issueedit:";
         private const string PARENT_ISSUE_URL_TYPE = "parentissue:";
@@ -334,6 +335,22 @@ namespace Atlassian.plvs.ui.jira {
             appendPencil(sb, PRIORITY_EDIT_TAG);
             appendEndEditable(sb);
             sb.Append("</td></tr>\n")
+
+
+                .Append("<tr><td class=\"labelcolumn\">Environment</td><td>");
+
+            appendStartEditable(sb, ENVIRONMENT_EDIT_TAG);
+            string env = String.IsNullOrEmpty(issue.Environment) ? "None" : issue.Environment;
+            if (env.StartsWith("<p>")) {
+                env = env.Substring(3);
+            }
+            if (env.EndsWith("</p>")) {
+                env = env.Substring(0, env.LastIndexOf("</p>"));
+            }
+            sb.Append(env);
+            appendPencil(sb, ENVIRONMENT_EDIT_TAG);
+            appendEndEditable(sb);
+            sb.Append("</tr>\n")
 
                 .Append("<tr><td class=\"labelcolumn\">Assignee</td><td>");
                 
@@ -788,6 +805,10 @@ namespace Atlassian.plvs.ui.jira {
                         title = "Edit Assignee";
                         fieldId = "assignee";
                         break;
+                    case ENVIRONMENT_EDIT_TAG:
+                        title = "Edit Environment";
+                        fieldId = "environment";
+                        break;
                     case TIMETRACKING_EDIT_TAG:
                         title = issue.TimeSpent != null ? "Edit Remaining Estimate" : "Edit Original Estimate";
                         fieldId = "timetracking";
@@ -1048,6 +1069,7 @@ namespace Atlassian.plvs.ui.jira {
 
         private void buttonEditDescription_Click(object sender, EventArgs e) {
             FieldEditor editor = new FieldEditor("Edit Description", model, facade, issue, "description", Cursor.Position);
+            editor.setCustomSize(new Size(400, 300));
             editor.ShowDialog();
         }
     }

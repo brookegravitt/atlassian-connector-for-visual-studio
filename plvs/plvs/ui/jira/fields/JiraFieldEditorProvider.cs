@@ -10,7 +10,7 @@ namespace Atlassian.plvs.ui.jira.fields {
         private bool fieldValid = true;
 
         public static int SINGLE_LINE_EDITOR_HEIGHT = 16;
-        public static int MULTI_LINE_EDITOR_HEIGHT = 80;
+        public static int MULTI_LINE_EDITOR_HEIGHT = 100;
 
         public abstract Control Widget { get; }
         public abstract int VerticalSkip { get; }

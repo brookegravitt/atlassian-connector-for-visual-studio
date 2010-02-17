@@ -23,6 +23,9 @@ namespace Atlassian.plvs.dialogs.jira {
 
         private const int MARGIN = 8;
 
+        private int customWidth = -1;
+        private int customHeight = -1;
+
         public FieldEditor(string title, JiraIssueListModel model, JiraServerFacade facade, JiraIssue issue, string fieldId, Point location) {
             this.model = model;
             this.facade = facade;
@@ -52,6 +55,11 @@ namespace Atlassian.plvs.dialogs.jira {
 
         public void fieldValid(JiraFieldEditorProvider sender, bool valid) {
             Invoke(new MethodInvoker(delegate { buttonOk.Enabled = valid; }));
+        }
+
+        public void setCustomSize(Size size) {
+            customWidth = size.Width;
+            customHeight = size.Height;
         }
 
         private void fillFieldWrap() {
@@ -93,7 +101,10 @@ namespace Atlassian.plvs.dialogs.jira {
                     editorProvider = new TextLineFieldEditorProvider(field, issue.Summary, fieldValid);
                     break;
                 case JiraActionFieldType.WidgetType.DESCRIPTION:
-                    editorProvider = new TextAreaFieldEditorProvider(field, ((RemoteIssue) issueSoapObject).description, fieldValid);
+                    editorProvider = new TextAreaFieldEditorProvider(facade, issue, field, ((RemoteIssue) issueSoapObject).description, fieldValid);
+                    break;
+                case JiraActionFieldType.WidgetType.ENVIRONMENT:
+                    editorProvider = new TextAreaFieldEditorProvider(facade, issue, field, ((RemoteIssue)issueSoapObject).environment, fieldValid);
                     break;
                 case JiraActionFieldType.WidgetType.VERSIONS:
                     editorProvider = new NamedEntityListFieldEditorProvider(field, issue.Versions, versions, fieldValid);
@@ -141,6 +152,10 @@ namespace Atlassian.plvs.dialogs.jira {
             ClientSize = new Size(editorControl.Width + 2 * MARGIN, editorControl.Height + 2 * MARGIN + (ClientSize.Height - buttonOk.Location.Y));
 
             Resize += fieldEditorResize;
+
+            if (customWidth != -1 && customHeight != -1) {
+                Size = new Size(customWidth, customHeight);
+            }
         }
 
         private void FieldEditor_KeyPress(object sender, KeyPressEventArgs e) {
