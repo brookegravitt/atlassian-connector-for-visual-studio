@@ -33,7 +33,6 @@
             this.listFixVersions = new System.Windows.Forms.ListBox();
             this.comboPriorities = new ui.jira.JiraNamedEntityComboBox();
             this.textSummary = new System.Windows.Forms.TextBox();
-            this.textDescription = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -44,12 +43,14 @@
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.jiraAssigneePicker = new ui.jira.JiraUserPicker();
+            this.textDescription = new ui.jira.JiraTextAreaWithWikiPreview();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // buttonCreate
             // 
             this.buttonCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCreate.Location = new System.Drawing.Point(405, 593);
+            this.buttonCreate.Location = new System.Drawing.Point(405, 632);
             this.buttonCreate.Name = "buttonCreate";
             this.buttonCreate.Size = new System.Drawing.Size(75, 23);
             this.buttonCreate.TabIndex = 9;
@@ -60,7 +61,7 @@
             // buttonCancel
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCancel.Location = new System.Drawing.Point(486, 593);
+            this.buttonCancel.Location = new System.Drawing.Point(486, 632);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 10;
@@ -94,7 +95,7 @@
             // listComponents
             // 
             this.listComponents.FormattingEnabled = true;
-            this.listComponents.Location = new System.Drawing.Point(102, 228);
+            this.listComponents.Location = new System.Drawing.Point(102, 255);
             this.listComponents.Name = "listComponents";
             this.listComponents.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.listComponents.Size = new System.Drawing.Size(459, 95);
@@ -103,7 +104,7 @@
             // listAffectsVersions
             // 
             this.listAffectsVersions.FormattingEnabled = true;
-            this.listAffectsVersions.Location = new System.Drawing.Point(102, 329);
+            this.listAffectsVersions.Location = new System.Drawing.Point(102, 356);
             this.listAffectsVersions.Name = "listAffectsVersions";
             this.listAffectsVersions.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.listAffectsVersions.Size = new System.Drawing.Size(459, 95);
@@ -112,7 +113,7 @@
             // listFixVersions
             // 
             this.listFixVersions.FormattingEnabled = true;
-            this.listFixVersions.Location = new System.Drawing.Point(102, 430);
+            this.listFixVersions.Location = new System.Drawing.Point(102, 457);
             this.listFixVersions.Name = "listFixVersions";
             this.listFixVersions.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.listFixVersions.Size = new System.Drawing.Size(459, 95);
@@ -125,7 +126,7 @@
             this.comboPriorities.FormattingEnabled = true;
             this.comboPriorities.ImageList = null;
             this.comboPriorities.ItemHeight = 16;
-            this.comboPriorities.Location = new System.Drawing.Point(102, 200);
+            this.comboPriorities.Location = new System.Drawing.Point(102, 93);
             this.comboPriorities.Name = "comboPriorities";
             this.comboPriorities.Size = new System.Drawing.Size(459, 22);
             this.comboPriorities.TabIndex = 5;
@@ -138,23 +139,14 @@
             this.textSummary.TabIndex = 6;
             this.textSummary.TextChanged += new System.EventHandler(this.textSummary_TextChanged);
             // 
-            // textDescription
-            // 
-            this.textDescription.Location = new System.Drawing.Point(102, 93);
-            this.textDescription.Multiline = true;
-            this.textDescription.Name = "textDescription";
-            this.textDescription.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textDescription.Size = new System.Drawing.Size(459, 102);
-            this.textDescription.TabIndex = 7;
-            // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(56, 15);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(40, 13);
+            this.label2.Size = new System.Drawing.Size(44, 13);
             this.label2.TabIndex = 12;
-            this.label2.Text = "Project";
+            this.label2.Text = "Project*";
             this.label2.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // label3
@@ -162,15 +154,15 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(65, 43);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(31, 13);
+            this.label3.Size = new System.Drawing.Size(35, 13);
             this.label3.TabIndex = 13;
-            this.label3.Text = "Type";
+            this.label3.Text = "Type*";
             this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(25, 228);
+            this.label4.Location = new System.Drawing.Point(25, 255);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(71, 13);
             this.label4.TabIndex = 14;
@@ -180,7 +172,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(12, 329);
+            this.label5.Location = new System.Drawing.Point(12, 356);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(88, 13);
             this.label5.TabIndex = 15;
@@ -190,7 +182,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(28, 430);
+            this.label6.Location = new System.Drawing.Point(28, 457);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(68, 13);
             this.label6.TabIndex = 16;
@@ -200,11 +192,11 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(58, 203);
+            this.label7.Location = new System.Drawing.Point(56, 96);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(38, 13);
+            this.label7.Size = new System.Drawing.Size(42, 13);
             this.label7.TabIndex = 17;
-            this.label7.Text = "Priority";
+            this.label7.Text = "Priority*";
             this.label7.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // label8
@@ -212,15 +204,15 @@
             this.label8.AutoSize = true;
             this.label8.Location = new System.Drawing.Point(46, 70);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(50, 13);
+            this.label8.Size = new System.Drawing.Size(54, 13);
             this.label8.TabIndex = 18;
-            this.label8.Text = "Summary";
+            this.label8.Text = "Summary*";
             this.label8.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(36, 96);
+            this.label9.Location = new System.Drawing.Point(40, 143);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(60, 13);
             this.label9.TabIndex = 19;
@@ -230,7 +222,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(46, 537);
+            this.label10.Location = new System.Drawing.Point(46, 564);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(50, 13);
             this.label10.TabIndex = 20;
@@ -239,16 +231,39 @@
             // 
             // jiraAssigneePicker
             // 
-            this.jiraAssigneePicker.Location = new System.Drawing.Point(97, 531);
+            this.jiraAssigneePicker.Location = new System.Drawing.Point(97, 558);
             this.jiraAssigneePicker.Name = "jiraAssigneePicker";
             this.jiraAssigneePicker.Size = new System.Drawing.Size(458, 51);
             this.jiraAssigneePicker.TabIndex = 21;
+            // 
+            // textDescription
+            // 
+            this.textDescription.Facade = null;
+            this.textDescription.Issue = null;
+            this.textDescription.IssueType = -1;
+            this.textDescription.Location = new System.Drawing.Point(102, 121);
+            this.textDescription.Name = "textDescription";
+            this.textDescription.Project = null;
+            this.textDescription.Server = null;
+            this.textDescription.Size = new System.Drawing.Size(458, 128);
+            this.textDescription.TabIndex = 22;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 637);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(172, 13);
+            this.label1.TabIndex = 23;
+            this.label1.Text = "(*) - Asterisk denotes required fields";
             // 
             // CreateIssue
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(576, 628);
+            this.ClientSize = new System.Drawing.Size(576, 667);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.textDescription);
             this.Controls.Add(this.jiraAssigneePicker);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
@@ -259,7 +274,6 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.textDescription);
             this.Controls.Add(this.textSummary);
             this.Controls.Add(this.comboPriorities);
             this.Controls.Add(this.listFixVersions);
@@ -294,7 +308,6 @@
         private System.Windows.Forms.ListBox listFixVersions;
         private ui.jira.JiraNamedEntityComboBox comboPriorities;
         private System.Windows.Forms.TextBox textSummary;
-        private System.Windows.Forms.TextBox textDescription;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
@@ -305,5 +318,7 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
         private ui.jira.JiraUserPicker jiraAssigneePicker;
+        private global::Atlassian.plvs.ui.jira.JiraTextAreaWithWikiPreview textDescription;
+        private System.Windows.Forms.Label label1;
     }
 }
