@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.api.jira.soap;
 
@@ -13,15 +14,15 @@ namespace Atlassian.plvs.dialogs.jira {
         }
 
         public override void testConnection() {
-            var result = "Connection to server successful";
-            bool error = false;
+            string result = "Connection to server successful";
+            Exception ex = null;
             try {
                 facade.login(server);
             } catch (SoapSession.LoginException e) {
-                result = e.InnerException.Message;
-                error = true;
+                ex = e; 
+                result = "Failed to connec to to server";
             }
-            Invoke(new MethodInvoker(() => stopTest(error, result)));
+            Invoke(new MethodInvoker(() => stopTest(result, ex)));
         }
     }
 }

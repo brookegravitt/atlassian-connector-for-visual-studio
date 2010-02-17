@@ -139,7 +139,7 @@ namespace Atlassian.plvs.explorer {
         }
 
         private void showErrorAndReset(Exception e) {
-            PlvsUtils.showError("Failed to perform drop action: " + e.Message);
+            PlvsUtils.showError("Failed to perform drop action", e);
             updateModelAndResetToInitialState(null, false);
         }
 

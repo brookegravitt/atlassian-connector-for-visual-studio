@@ -13,7 +13,8 @@ namespace Atlassian.plvs.dialogs {
 
         public abstract void testConnection();
 
-        private string errorText;
+        private Exception exception;
+
         private const string CONNECTION_ERROR = "Connection error. Click here for details";
 
         protected AbstractTestConnection(Server server) {
@@ -49,14 +50,15 @@ namespace Atlassian.plvs.dialogs {
             } else {
                 // too brutal?
                 worker.Abort();
-                stopTest(false, "Test aborted");
+                stopTest("Test aborted", null);
             }
         }
 
-        protected void stopTest(bool isError, string text) {
+        protected void stopTest(string text, Exception e) {
             testInProgress = false;
-            if (isError) {
-                errorText = text;
+            if (e != null) {
+                exception = e;
+                labelStatus.Text = text;
                 linkErrorDetails.Text = CONNECTION_ERROR;
                 linkErrorDetails.Visible = true;
                 linkErrorDetails.Enabled = true;
@@ -87,8 +89,8 @@ namespace Atlassian.plvs.dialogs {
         }
 
         private void linkErrorDetails_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-            if (errorText == null) return;
-            PlvsUtils.showError("Failed to connect to server \"" + server.Name + "\":\n\n" + errorText);
+            if (exception == null) return;
+            PlvsUtils.showError("Failed to connect to server \"" + server.Name + "\"", exception);
         }
     }
 }
