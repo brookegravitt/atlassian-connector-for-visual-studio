@@ -248,10 +248,12 @@ namespace Atlassian.plvs.ui.bamboo {
 
         private void showPollTimeInfo() {
             if (lastPollTime != null && nextPollTime != null) {
+                int minutes = DateTime.Now.Subtract(lastPollTime.Value).Minutes;
                 status.setInfo("Last poll finished at "
                                + lastPollTime.Value.ToShortDateString() + " " + lastPollTime.Value.ToLongTimeString()
-                               + " (" + DateTime.Now.Subtract(lastPollTime.Value).Minutes + " minutes ago)" + getNextPollTimeInfo());
-            } else if (nextPollTime != null) {
+                               + " (" + minutes + (minutes == 1 ? " minute" : " minutes") + " ago)" + getNextPollTimeInfo());
+            }
+            else if (nextPollTime != null) {
                 ICollection<BambooServer> servers = BambooServerModel.Instance.getAllEnabledServers();
                 int count = servers != null ? servers.Count : 0;
                 if (count > 0) {
@@ -269,19 +271,19 @@ namespace Atlassian.plvs.ui.bamboo {
             TimeSpan nextPoll = nextPollTime.Value.Subtract(DateTime.Now);
             StringBuilder sb = new StringBuilder();
             if (nextPoll.Hours > 0) {
-                sb.Append(nextPoll.Hours).Append(" hours");
+                sb.Append(nextPoll.Hours).Append(nextPoll.Hours == 1 ? " hour" : " hours");
             }
             if (nextPoll.Minutes > 0) {
                 if (sb.Length > 0) {
                     sb.Append(", ");
                 }
-                sb.Append(nextPoll.Minutes).Append(" minutes");
+                sb.Append(nextPoll.Minutes).Append(nextPoll.Minutes == 1 ? " minute" : " minutes");
             }
             if (nextPoll.Seconds > 0) {
                 if (sb.Length > 0) {
                     sb.Append(", ");
                 }
-                sb.Append(nextPoll.Seconds).Append(" seconds");
+                sb.Append(nextPoll.Seconds).Append(nextPoll.Seconds == 1 ? " second" : " seconds");
             }
             return ", next poll in " + sb;
         }
