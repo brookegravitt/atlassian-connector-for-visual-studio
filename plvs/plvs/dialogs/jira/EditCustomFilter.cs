@@ -268,9 +268,8 @@ namespace Atlassian.plvs.dialogs.jira {
                 if (ex is InvalidOperationException) {
                     // probably the window got closed while we were fetching data
                     Debug.WriteLine(ex.Message);
-                }
-                else {
-                    PlvsUtils.showError("Unable to retrieve project-related data: " + ex.Message);
+                } else {
+                    PlvsUtils.showError("Unable to retrieve project-related data", ex);
                 }
             }
         }

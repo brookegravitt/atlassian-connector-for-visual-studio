@@ -331,7 +331,7 @@ namespace Atlassian.plvs.dialogs.jira {
             }
             catch (Exception e) {
                 Invoke(new MethodInvoker(delegate {
-                                             PlvsUtils.showError("Unable to create issue: " + e.Message);
+                                             PlvsUtils.showError("Unable to create issue", e);
                                              setAllEnabled(true);
                                              buttonCancel.Enabled = true;
                                          }));

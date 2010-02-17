@@ -45,16 +45,7 @@ namespace Atlassian.plvs.ui {
             if (lastExceptions == null || lastExceptions.Count == 0) {
                 return;
             }
-            StringBuilder sb = new StringBuilder();
-            foreach (Exception ex in lastExceptions) {
-                if (ex.InnerException != null) {
-                    sb.Append(ex.InnerException.Message);
-                } else {
-                    sb.Append(ex.Message);
-                }
-                sb.Append("\n");
-            }
-            PlvsUtils.showError(sb.ToString().Trim());
+            PlvsUtils.showErrors(null, lastExceptions);
 
             lastExceptions = null;
             targetLabel.BackColor = SystemColors.Control;

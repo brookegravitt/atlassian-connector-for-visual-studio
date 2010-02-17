@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Atlassian.plvs.attributes;
 using EnvDTE;
@@ -52,9 +53,52 @@ namespace Atlassian.plvs.util {
             button.Text = text + " (" + bindingText.Substring("Global::".Length) + ")";
         }
 
-        public static void showError(string msg) {
-            MessageBox.Show(msg + "\n\nPress Ctrl+C to copy error text to clipboard", 
+        public static void showErrors(string msg, IEnumerable<Exception> exceptions) {
+            StringBuilder sb = new StringBuilder();
+            foreach (Exception exception in exceptions) {
+                sb.Append(getExceptionMessage(exception)).Append("\n");
+            }
+            MessageBox.Show((msg != null ? msg + "\n\n" : "") + sb + "\n\nPress Ctrl+C to copy error text to clipboard",
                 Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        public static void showError(string msg, Exception e) {
+            string exceptionMessage = getExceptionMessage(e);
+            MessageBox.Show((msg != null ? msg + "\n\n" : "") + exceptionMessage + "\n\nPress Ctrl+C to copy error text to clipboard", 
+                Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private const string RAE = "com.atlassian.jira.rpc.exception.RemoteAuthenticationException: ";
+        private const string RVE = "com.atlassian.jira.rpc.exception.RemoteValidationException: ";
+
+        private static string getExceptionMessage(Exception e) {
+            if (e == null) {
+                return "";
+            }
+            if (e.InnerException != null) {
+                string message = e.InnerException.Message;
+                if (message.Contains(RAE)) {
+                    return message.Substring(message.LastIndexOf(RAE) + RAE.Length);
+                }
+                return message;
+            }
+            if (e.Message.Contains(RVE)) {
+                return getJiraValidationErrorMessage(e);
+            }
+            return e.Message;
+        }
+
+        private static readonly Regex errorRegex = new Regex(@"Errors: \{(.+)\}");
+        private static readonly Regex errorMsgRegex = new Regex(@"Error Messages: \[(.+)\]");
+
+        private static string getJiraValidationErrorMessage(Exception e) {
+            if (errorRegex.IsMatch(e.Message)) {
+                return errorRegex.Match(e.Message).Groups[1].Value;
+            }
+            if (errorMsgRegex.IsMatch(e.Message)) {
+                return errorMsgRegex.Match(e.Message).Groups[1].Value;
+            }
+            return e.Message;
         }
 
         public static string getTextDocument(Stream stream) {

@@ -92,7 +92,7 @@ namespace Atlassian.plvs.windows {
             if (updateAction != null) {
                 updateAction();
             } else if (updateException != null) {
-                PlvsUtils.showError("Unable to retrieve autoupdate information:\n\n" + updateException.Message);
+                PlvsUtils.showError("Unable to retrieve autoupdate information", updateException);
             }
         }
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using Atlassian.plvs.Atlassian.plvs.api.soap.service;
 
 namespace Atlassian.plvs.api.jira.soap {

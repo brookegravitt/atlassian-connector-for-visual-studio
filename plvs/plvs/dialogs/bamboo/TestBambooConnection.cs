@@ -14,15 +14,15 @@ namespace Atlassian.plvs.dialogs.bamboo {
 
         public override void testConnection() {
             var result = "Connection to server successful";
-            bool error = false;
+            Exception ex = null;
             try {
                 facade.login(server);
                 facade.logout(server);
             } catch (Exception e) {
-                result = e.Message;
-                error = true;
+                result = "Failed to connec to to server";
+                ex = e;
             }
-            Invoke(new MethodInvoker(() => stopTest(error, result)));
+            Invoke(new MethodInvoker(() => stopTest(result, ex)));
         }
     }
 }
