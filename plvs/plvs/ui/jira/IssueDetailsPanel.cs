@@ -341,6 +341,7 @@ namespace Atlassian.plvs.ui.jira {
 
             appendStartEditable(sb, ENVIRONMENT_EDIT_TAG);
             string env = String.IsNullOrEmpty(issue.Environment) ? "None" : issue.Environment;
+            // strip <p> tags - with them the pencil makes th ewhole panel shake and tremble
             if (env.StartsWith("<p>")) {
                 env = env.Substring(3);
             }
