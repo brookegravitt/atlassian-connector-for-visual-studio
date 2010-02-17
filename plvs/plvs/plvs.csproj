@@ -312,6 +312,9 @@
     <Compile Include="ui\jira\JiraUserPicker.Designer.cs">
       <DependentUpon>JiraUserPicker.cs</DependentUpon>
     </Compile>
+    <Compile Include="ui\OwnerDrawListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ui\ToolWindowFrame.cs">
       <SubType>UserControl</SubType>
     </Compile>
