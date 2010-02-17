@@ -32,9 +32,9 @@ namespace Atlassian.plvs.ui.jira {
 
         public JiraServer Server { get; set; }
 
-        public JiraIssue JiraIssue { get; set; }
+        public JiraIssue Issue { get; set; }
 
-        public JiraProject JiraProject { get; set; }
+        public JiraProject Project { get; set; }
 
         public int IssueType { get; set; }
 
@@ -50,18 +50,22 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void getMarkup(string text) {
-            if (Facade == null || JiraIssue == null && !(Server != null && JiraProject != null && IssueType > -1)) {
+            if (Facade == null || Issue == null && !(Server != null && Project != null && IssueType > -1)) {
                 Invoke(new MethodInvoker(delegate {
-                    webPreview.DocumentText = "Unable to render preview";
-                }));
+                                             webPreview.DocumentText =
+                                                 "<html><head>" + Resources.summary_and_description_css
+                                                 + "</head><body class=\"summary\">Unable to render preview</body></html>";
+                                         }));
                 return;
             }
             try {
-                string renderedContent = JiraIssue != null 
-                    ? Facade.getRenderedContent(JiraIssue, text) 
-                    : Facade.getRenderedContent(Server, IssueType, JiraProject, text);
+                string renderedContent = Issue != null 
+                    ? Facade.getRenderedContent(Issue, text) 
+                    : Facade.getRenderedContent(Server, IssueType, Project, text);
                 Invoke(new MethodInvoker(delegate {
-                                             webPreview.DocumentText = renderedContent;
+                                             webPreview.DocumentText = 
+                                                 "<html><head>" + Resources.summary_and_description_css
+                                                 + "</head><body class=\"summary\">" + renderedContent + "</body></html>";
                                          }));
             } catch (Exception e) {
                 // just log the problem. This is an informational functionality only, 
@@ -72,7 +76,7 @@ namespace Atlassian.plvs.ui.jira {
 
         private string getThrobberHtml() {
             if (throbberPath == null) {
-                return "<html><head>" + Resources.summary_and_description_css + "</head><body>Fetching preview...</body></html>";
+                return "<html><head>" + Resources.summary_and_description_css + "</head><body class=\"summary\">Fetching preview...</body></html>";
             }
             return string.Format(Resources.throbber_html, throbberPath);
         }

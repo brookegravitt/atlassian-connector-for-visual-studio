@@ -1,20 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 
 namespace Atlassian.plvs.ui.jira.fields {
     public class TextAreaFieldEditorProvider : JiraFieldEditorProvider {
-        private readonly Control editor = new TextBox
+        private readonly JiraTextAreaWithWikiPreview editor = new JiraTextAreaWithWikiPreview
                                           {
-                                              Multiline = true,
-                                              ScrollBars = ScrollBars.Both,
-                                              AcceptsReturn = true,
                                               Height = MULTI_LINE_EDITOR_HEIGHT
                                           };
 
-        public TextAreaFieldEditorProvider(JiraField field, string value, FieldValidListener validListener)
+        public TextAreaFieldEditorProvider(
+            JiraServerFacade facade, JiraIssue issue, JiraField field, string value, FieldValidListener validListener)
             : base(field, validListener) {
+
+            editor.Issue = issue;
+            editor.Facade = facade;
+
             if (value == null) return;
 
             string fixedValue = value.Replace("\r\n", "\n").Replace("\n", "\r\n");
@@ -26,7 +27,7 @@ namespace Atlassian.plvs.ui.jira.fields {
         }
 
         public override int VerticalSkip {
-            get { return 80; }
+            get { return MULTI_LINE_EDITOR_HEIGHT; }
         }
 
         public override void resizeToWidth(int width) {

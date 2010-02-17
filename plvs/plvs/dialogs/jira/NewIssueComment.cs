@@ -10,7 +10,7 @@ namespace Atlassian.plvs.dialogs.jira {
             buttonOk.Enabled = false;
 
             textComment.Facade = facade;
-            textComment.JiraIssue = issue;
+            textComment.Issue = issue;
 
             StartPosition = FormStartPosition.CenterParent;
         }

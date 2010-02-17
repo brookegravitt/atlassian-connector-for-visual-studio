@@ -8,6 +8,7 @@ using Atlassian.plvs.api.jira;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
+using Atlassian.plvs.ui.jira;
 using Atlassian.plvs.ui.jira.fields;
 using Atlassian.plvs.util;
 using Atlassian.plvs.util.jira;
@@ -23,7 +24,7 @@ namespace Atlassian.plvs.dialogs.jira {
         private int verticalPosition;
         private int tabIndex;
 
-        private readonly TextBox textComment = new TextBox();
+        private readonly JiraTextAreaWithWikiPreview textComment = new JiraTextAreaWithWikiPreview();
         private TextBox textUnsupported;
         private readonly List<JiraFieldEditorProvider> editors = new List<JiraFieldEditorProvider>();
 
@@ -157,10 +158,10 @@ namespace Atlassian.plvs.dialogs.jira {
                         editor = new TextLineFieldEditorProvider(field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.DESCRIPTION:
-                        editor = new TextAreaFieldEditorProvider(field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
+                        editor = new TextAreaFieldEditorProvider(JiraServerFacade.Instance, issue, field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.ENVIRONMENT:
-                        editor = new TextAreaFieldEditorProvider(field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
+                        editor = new TextAreaFieldEditorProvider(JiraServerFacade.Instance, issue, field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.ISSUE_TYPE:
                         editor = new NamedEntityComboEditorProvider(field, issue.IssueTypeId, issueTypes, fieldValid);
@@ -239,10 +240,10 @@ namespace Atlassian.plvs.dialogs.jira {
             addLabel("Comment");
 
             textComment.Location = new Point(FIELD_X_POS, verticalPosition);
-            textComment.Multiline = true;
             textComment.Size = new Size(calculatedFieldWidth(), JiraFieldEditorProvider.MULTI_LINE_EDITOR_HEIGHT);
             textComment.TabIndex = tabIndex++;
-            textComment.ScrollBars = ScrollBars.Both;
+            textComment.Facade = JiraServerFacade.Instance;
+            textComment.Issue = issue;
 
             verticalPosition += JiraFieldEditorProvider.MULTI_LINE_EDITOR_HEIGHT + MARGIN;
 
