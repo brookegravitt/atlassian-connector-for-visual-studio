@@ -40,6 +40,8 @@ namespace Atlassian.plvs.ui.jira {
 
         private JiraIssue lastSelectedIssue;
 
+        private int currentGeneration;
+
         public TabJira() {
             InitializeComponent();
             setupGroupByCombo();
@@ -329,7 +331,9 @@ namespace Atlassian.plvs.ui.jira {
 
                 filtersTree.addServerNodes(servers);
 
-                Thread metadataThread = new Thread(() => reloadKnownServersWorker(servers));
+                ++currentGeneration;
+
+                Thread metadataThread = new Thread(() => reloadKnownServersWorker(servers, currentGeneration));
                 metadataThread.Start();
             }
         }
@@ -340,7 +344,7 @@ namespace Atlassian.plvs.ui.jira {
             }
         }
 
-        private void reloadKnownServersWorker(IEnumerable<JiraServer> servers) {
+        private void reloadKnownServersWorker(IEnumerable<JiraServer> servers, int myGeneration) {
             try {
                 JiraServerCache.Instance.clearProjects();
                 JiraServerCache.Instance.clearIssueTypes();
@@ -392,6 +396,10 @@ namespace Atlassian.plvs.ui.jira {
                     JiraServer jiraServer = server;
                     Invoke(new MethodInvoker(delegate
                                                  {
+                                                     // PLVS-59
+                                                     if (myGeneration != currentGeneration) {
+                                                         return;
+                                                     }
                                                      filtersTree.addFilterGroupNodes(jiraServer);
                                                      filtersTree.addPresetFilterNodes(jiraServer);
                                                      filtersTree.addSavedFilterNodes(jiraServer, filters);
@@ -401,6 +409,10 @@ namespace Atlassian.plvs.ui.jira {
                 }
                 Invoke(new MethodInvoker(delegate
                                              {
+                                                 // PLVS-59
+                                                 if (myGeneration != currentGeneration) {
+                                                     return;
+                                                 }
                                                  filtersTree.addRecentlyViewedNode();
                                                  filtersTree.ExpandAll();
                                                  filtersTree.restoreLastSelectedFilterItem();
