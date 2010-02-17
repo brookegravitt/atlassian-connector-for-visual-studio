@@ -341,7 +341,7 @@ namespace Atlassian.plvs.ui.jira {
 
             appendStartEditable(sb, ENVIRONMENT_EDIT_TAG);
             string env = String.IsNullOrEmpty(issue.Environment) ? "None" : issue.Environment;
-            // strip <p> tags - with them the pencil makes th ewhole panel shake and tremble
+            // strip <p> tags - with them the pencil makes the whole panel shake and tremble
             if (env.StartsWith("<p>")) {
                 env = env.Substring(3);
             }
@@ -857,7 +857,12 @@ namespace Atlassian.plvs.ui.jira {
 
         private static void navigate(WebBrowserNavigatingEventArgs e) {
             string url = e.Url.ToString();
-            Process.Start(url);
+            try {
+                Process.Start(url);
+// ReSharper disable EmptyGeneralCatchClause
+            } catch (Exception) {
+// ReSharper restore EmptyGeneralCatchClause
+            }
             e.Cancel = true;
         }
 

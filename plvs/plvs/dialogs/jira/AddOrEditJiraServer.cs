@@ -4,13 +4,15 @@ using Atlassian.plvs.api.jira;
 
 namespace Atlassian.plvs.dialogs.jira {
     public partial class AddOrEditJiraServer : Form {
+        private readonly JiraServerFacade facade;
         private static int invocations;
 
         private readonly bool editing;
 
         private readonly JiraServer server;
 
-        public AddOrEditJiraServer(JiraServer server) {
+        public AddOrEditJiraServer(JiraServer server, JiraServerFacade facade) {
+            this.facade = facade;
             InitializeComponent();
 
             editing = server != null;
@@ -45,6 +47,13 @@ namespace Atlassian.plvs.dialogs.jira {
         }
 
         private void buttonAddOrEdit_Click(object sender, EventArgs e) {
+            fillServerData();
+
+            DialogResult = DialogResult.OK;
+            Close();
+        }
+
+        private void fillServerData() {
             server.Name = name.Text.Trim();
             string fixedUrl = url.Text.Trim();
             if (!(fixedUrl.StartsWith("http://") || fixedUrl.StartsWith("https://"))) {
@@ -57,9 +66,6 @@ namespace Atlassian.plvs.dialogs.jira {
             server.UserName = user.Text.Trim();
             server.Password = password.Text;
             server.Enabled = checkEnabled.Checked;
-
-            DialogResult = DialogResult.OK;
-            Close();
         }
 
         private void name_TextChanged(object sender, EventArgs e) {
@@ -77,6 +83,7 @@ namespace Atlassian.plvs.dialogs.jira {
         private void checkIfValid() {
             buttonAddOrEdit.Enabled = name.Text.Trim().Length > 0 && url.Text.Trim().Length > 0 &&
                                       user.Text.Trim().Length > 0;
+            buttonTestConnection.Enabled = buttonAddOrEdit.Enabled;
         }
 
         public JiraServer Server {
@@ -91,6 +98,11 @@ namespace Atlassian.plvs.dialogs.jira {
 
         private void checkEnabled_CheckedChanged(object sender, EventArgs e) {
             checkIfValid();
+        }
+
+        private void buttonTestConnection_Click(object sender, EventArgs e) {
+            fillServerData();
+            new TestJiraConnection(facade, server).ShowDialog();
         }
     }
 }

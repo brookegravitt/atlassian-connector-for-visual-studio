@@ -39,12 +39,13 @@
             this.user = new System.Windows.Forms.TextBox();
             this.password = new System.Windows.Forms.TextBox();
             this.checkEnabled = new System.Windows.Forms.CheckBox();
+            this.buttonTestConnection = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // buttonCancel
             // 
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(377, 147);
+            this.buttonCancel.Location = new System.Drawing.Point(377, 151);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 0;
@@ -53,7 +54,7 @@
             // 
             // buttonAddOrEdit
             // 
-            this.buttonAddOrEdit.Location = new System.Drawing.Point(296, 147);
+            this.buttonAddOrEdit.Location = new System.Drawing.Point(296, 151);
             this.buttonAddOrEdit.Name = "buttonAddOrEdit";
             this.buttonAddOrEdit.Size = new System.Drawing.Size(75, 23);
             this.buttonAddOrEdit.TabIndex = 1;
@@ -141,11 +142,22 @@
             this.checkEnabled.UseVisualStyleBackColor = true;
             this.checkEnabled.CheckedChanged += new System.EventHandler(this.checkEnabled_CheckedChanged);
             // 
+            // buttonTestConnection
+            // 
+            this.buttonTestConnection.Location = new System.Drawing.Point(97, 151);
+            this.buttonTestConnection.Name = "buttonTestConnection";
+            this.buttonTestConnection.Size = new System.Drawing.Size(112, 23);
+            this.buttonTestConnection.TabIndex = 11;
+            this.buttonTestConnection.Text = "Test Connection";
+            this.buttonTestConnection.UseVisualStyleBackColor = true;
+            this.buttonTestConnection.Click += new System.EventHandler(this.buttonTestConnection_Click);
+            // 
             // AddOrEditJiraServer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(464, 182);
+            this.ClientSize = new System.Drawing.Size(464, 186);
+            this.Controls.Add(this.buttonTestConnection);
             this.Controls.Add(this.checkEnabled);
             this.Controls.Add(this.password);
             this.Controls.Add(this.user);
@@ -183,5 +195,6 @@
         private System.Windows.Forms.TextBox user;
         private System.Windows.Forms.TextBox password;
         private System.Windows.Forms.CheckBox checkEnabled;
+        private System.Windows.Forms.Button buttonTestConnection;
     }
 }

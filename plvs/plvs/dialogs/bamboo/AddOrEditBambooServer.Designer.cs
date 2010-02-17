@@ -43,13 +43,14 @@
             this.checkedListBuilds = new System.Windows.Forms.CheckedListBox();
             this.buttonGetBuilds = new System.Windows.Forms.Button();
             this.checkEnabled = new System.Windows.Forms.CheckBox();
+            this.buttonTestConnection = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // buttonCancel
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(377, 452);
+            this.buttonCancel.Location = new System.Drawing.Point(377, 456);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 0;
@@ -59,7 +60,7 @@
             // buttonAddOrEdit
             // 
             this.buttonAddOrEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonAddOrEdit.Location = new System.Drawing.Point(296, 452);
+            this.buttonAddOrEdit.Location = new System.Drawing.Point(296, 456);
             this.buttonAddOrEdit.Name = "buttonAddOrEdit";
             this.buttonAddOrEdit.Size = new System.Drawing.Size(75, 23);
             this.buttonAddOrEdit.TabIndex = 1;
@@ -148,10 +149,10 @@
             this.radioUseFavourites.AutoSize = true;
             this.radioUseFavourites.Location = new System.Drawing.Point(95, 147);
             this.radioUseFavourites.Name = "radioUseFavourites";
-            this.radioUseFavourites.Size = new System.Drawing.Size(138, 17);
+            this.radioUseFavourites.Size = new System.Drawing.Size(136, 17);
             this.radioUseFavourites.TabIndex = 10;
             this.radioUseFavourites.TabStop = true;
-            this.radioUseFavourites.Text = "Monitor Favourite Builds";
+            this.radioUseFavourites.Text = "Monitor Favourite Plans";
             this.radioUseFavourites.UseVisualStyleBackColor = true;
             this.radioUseFavourites.CheckedChanged += new System.EventHandler(this.radioUseFavourites_CheckedChanged);
             // 
@@ -160,10 +161,10 @@
             this.radioSelectManually.AutoSize = true;
             this.radioSelectManually.Location = new System.Drawing.Point(95, 170);
             this.radioSelectManually.Name = "radioSelectManually";
-            this.radioSelectManually.Size = new System.Drawing.Size(136, 17);
+            this.radioSelectManually.Size = new System.Drawing.Size(134, 17);
             this.radioSelectManually.TabIndex = 11;
             this.radioSelectManually.TabStop = true;
-            this.radioSelectManually.Text = "Select Builds to Monitor";
+            this.radioSelectManually.Text = "Select Plans to Monitor";
             this.radioSelectManually.UseVisualStyleBackColor = true;
             this.radioSelectManually.CheckedChanged += new System.EventHandler(this.radioSelectManually_CheckedChanged);
             // 
@@ -186,7 +187,7 @@
             this.buttonGetBuilds.Name = "buttonGetBuilds";
             this.buttonGetBuilds.Size = new System.Drawing.Size(117, 23);
             this.buttonGetBuilds.TabIndex = 13;
-            this.buttonGetBuilds.Text = "Get Build List";
+            this.buttonGetBuilds.Text = "Get Plan List";
             this.buttonGetBuilds.UseVisualStyleBackColor = true;
             this.buttonGetBuilds.Click += new System.EventHandler(this.buttonGetBuilds_Click);
             // 
@@ -202,11 +203,23 @@
             this.checkEnabled.UseVisualStyleBackColor = true;
             this.checkEnabled.CheckedChanged += new System.EventHandler(this.checkEnabled_CheckedChanged);
             // 
+            // buttonTestConnection
+            // 
+            this.buttonTestConnection.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonTestConnection.Location = new System.Drawing.Point(95, 456);
+            this.buttonTestConnection.Name = "buttonTestConnection";
+            this.buttonTestConnection.Size = new System.Drawing.Size(112, 23);
+            this.buttonTestConnection.TabIndex = 15;
+            this.buttonTestConnection.Text = "Test Connection";
+            this.buttonTestConnection.UseVisualStyleBackColor = true;
+            this.buttonTestConnection.Click += new System.EventHandler(this.buttonTestConnection_Click);
+            // 
             // AddOrEditBambooServer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(464, 484);
+            this.ClientSize = new System.Drawing.Size(464, 491);
+            this.Controls.Add(this.buttonTestConnection);
             this.Controls.Add(this.checkEnabled);
             this.Controls.Add(this.buttonGetBuilds);
             this.Controls.Add(this.checkedListBuilds);
@@ -226,6 +239,7 @@
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(450, 380);
             this.Name = "AddOrEditBambooServer";
             this.Text = "AddOrEditBambooServer";
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.AddOrEditJiraServer_KeyPress);
@@ -251,5 +265,6 @@
         private System.Windows.Forms.CheckedListBox checkedListBuilds;
         private System.Windows.Forms.Button buttonGetBuilds;
         private System.Windows.Forms.CheckBox checkEnabled;
+        private System.Windows.Forms.Button buttonTestConnection;
     }
 }

@@ -9,14 +9,5 @@ namespace Atlassian.plvs.api.jira {
         public JiraServer(Server other) : base(other) {}
         
         public override Guid Type { get { return JiraServerTypeGuid; } }
-
-        public override string displayDetails() {
-            var sb = new StringBuilder();
-            sb.Append("Name: ").Append(Name).Append("\r\n");
-            sb.Append("Enabled: ").Append(Enabled ? "Yes" : "No").Append("\r\n");
-            sb.Append("URL: ").Append(Url).Append("\r\n");
-            sb.Append("User Name: ").Append(UserName);
-            return sb.ToString();
-        }
     }
 }

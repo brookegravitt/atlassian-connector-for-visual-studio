@@ -118,6 +118,7 @@ namespace Atlassian.plvs.dialogs.bamboo {
         private void checkIfValid() {
             buttonAddOrEdit.Enabled = name.Text.Trim().Length > 0 && url.Text.Trim().Length > 0 &&
                                       user.Text.Trim().Length > 0;
+            buttonTestConnection.Enabled = buttonAddOrEdit.Enabled;
             buttonGetBuilds.Enabled = buttonAddOrEdit.Enabled && radioSelectManually.Checked;
             checkedListBuilds.Enabled = buttonAddOrEdit.Enabled && radioSelectManually.Checked;
         }
@@ -206,6 +207,11 @@ namespace Atlassian.plvs.dialogs.bamboo {
 
         private void checkEnabled_CheckedChanged(object sender, EventArgs e) {
             checkIfValid();
+        }
+
+        private void buttonTestConnection_Click(object sender, EventArgs e) {
+            fillServerData();
+            new TestBambooConnection(facade, server).ShowDialog();
         }
     }
 }
