@@ -1,30 +1,22 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
-using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.dialogs.jira {
     public partial class NewIssueComment : Form {
-        private readonly JiraIssue issue;
-        private readonly JiraServerFacade facade;
 
         public NewIssueComment(JiraIssue issue, JiraServerFacade facade) {
-            this.issue = issue;
-            this.facade = facade;
             InitializeComponent();
             buttonOk.Enabled = false;
+
+            textComment.Facade = facade;
+            textComment.JiraIssue = issue;
 
             StartPosition = FormStartPosition.CenterParent;
         }
 
         public string CommentBody {
-            get { return commentText.Text; }
-        }
-
-        private void commentText_TextChanged(object sender, EventArgs e) {
-            buttonOk.Enabled = commentText.Text.Trim().Length > 0;
+            get { return textComment.Text; }
         }
 
         private void NewIssueComment_KeyPress(object sender, KeyPressEventArgs e) {
@@ -33,21 +25,8 @@ namespace Atlassian.plvs.dialogs.jira {
             Close();
         }
 
-        private void getPreview() {
-            try {
-                string content = facade.getRenderedContent(issue, commentText.Text);
-                Invoke(new MethodInvoker(delegate {
-                                             webPreview.DocumentText = content;
-                                         }));
-            } catch (Exception ex) {
-                Debug.WriteLine("NewIssueComment.getPreview() - exception: " + ex.Message);
-            }
-        }
-
-        private void tabCommentText_Selected(object sender, TabControlEventArgs e) {
-            if (e.TabPage != tabPreview) return;
-            Thread t = new Thread(getPreview);
-            t.Start();
+        private void textComment_MarkupTextChanged(object sender, EventArgs e) {
+            buttonOk.Enabled = textComment.Text.Trim().Length > 0;
         }
     }
 }

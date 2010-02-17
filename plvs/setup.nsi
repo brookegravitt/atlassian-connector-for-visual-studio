@@ -113,6 +113,7 @@ Section "Atlassian Connector For Visual Studio (required)"
   File "plvs\bin\Release\Ankh.ExtensionPoints.dll"
   File "plvs\bin\Release\Aga.Controls.dll"
   File "plvs\bin\Release\edit.png"
+  File "plvs\bin\Release\ajax-loader.gif"
 
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\Atlassian\Plvs "Install_Dir" "$INSTDIR"
@@ -229,6 +230,7 @@ Section "Uninstall"
   Delete $INSTDIR\Ankh.ExtensionPoints.dll
   Delete $INSTDIR\Aga.Controls.dll
   Delete $INSTDIR\edit.png
+  Delete $INSTDIR\ajax-loader.gif
 
   Delete $INSTDIR\uninstall.exe
 

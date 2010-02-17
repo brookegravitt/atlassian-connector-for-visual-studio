@@ -60,7 +60,12 @@ namespace Atlassian.plvs.api.jira {
 
         public string getRenderedContent(JiraIssue issue, string markup) {
             RestClient rest = new RestClient(issue.Server);
-            return rest.getRenderedContent(issue.Key, markup);
+            return rest.getRenderedContent(issue.Key, -1, -1, markup);
+        }
+
+        public string getRenderedContent(JiraServer server, int issueTypeId, JiraProject project, string markup) {
+            RestClient rest = new RestClient(server);
+            return rest.getRenderedContent(null, issueTypeId, project.Id, markup);
         }
 
         public List<JiraProject> getProjects(JiraServer server) {

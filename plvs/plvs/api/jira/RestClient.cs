@@ -23,7 +23,7 @@ namespace Atlassian.plvs.api.jira {
             this.password = password;
         }
 
-        public string getRenderedContent(string issueKey, string markup) {
+        public string getRenderedContent(string issueKey, int issueType, int projectId, string markup) {
             StringBuilder url = new StringBuilder(baseUrl + "/rest/api/1.0/render");
 
             url.Append(appendAuthentication(true));
@@ -41,8 +41,17 @@ namespace Atlassian.plvs.api.jira {
                 query.Append("{\"rendererType\":\"atlassian-wiki-renderer\",\"unrenderedMarkup\":");
                 query.Append(PlvsUtils.JsonEncode(markup));
                 query.Append(",\"issueKey\":\"");
-                query.Append(issueKey);
-                query.Append("\"}");
+                if (issueKey != null) {
+                    query.Append(issueKey);
+                }
+                query.Append("\"");
+                if (issueType > -1) {
+                    query.Append(",\"issueType\":\"").Append(issueType).Append("\"");
+                }
+                if (projectId > -1) {
+                    query.Append(",\"projectId\":\"").Append(projectId).Append("\"");
+                }
+                query.Append("}");
                 byte[] buffer = encoding.GetBytes(query.ToString());
                 requestStream.Write(buffer, 0, buffer.Length);
                 requestStream.Flush();

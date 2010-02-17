@@ -633,6 +633,23 @@ namespace Atlassian.plvs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;body&gt;
+        ///&lt;div style=&quot;font-family:Arial;font-size:12px;&quot;&gt;
+        ///
+        ///&lt;div style=&quot;position:abolute;top:50%;left:50%;margin-left:-16px;margin-top:-16px;&quot;&gt;
+        ///&lt;img src=&quot;{0}&quot; alt=&quot;Fetching preview...&quot;&gt;
+        ///&lt;/div&gt;
+        ///
+        ///&lt;/div&gt;
+        ///&lt;/body&gt;.
+        /// </summary>
+        internal static string throbber_html {
+            get {
+                return ResourceManager.GetString("throbber_html", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;script language=&quot;javascript&quot;&gt;
         ///	function toggle(id, controlid) {
         ///		var el = document.getElementById(id);
