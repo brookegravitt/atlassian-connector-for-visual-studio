@@ -9,6 +9,8 @@ namespace Atlassian.plvs.ui {
         }
 
         private void listBoxWithProgrammableHeightDrawItem(object sender, DrawItemEventArgs e) {
+            if (Items.Count <= e.Index) return;
+
             e.DrawBackground();
             e.Graphics.DrawString(Items[e.Index].ToString(), e.Font, new SolidBrush(e.ForeColor), e.Bounds);
             e.DrawFocusRectangle();
