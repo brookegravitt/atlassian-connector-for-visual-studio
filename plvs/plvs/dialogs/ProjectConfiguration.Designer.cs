@@ -30,11 +30,19 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProjectConfiguration));
             this.serverTree = new System.Windows.Forms.TreeView();
             this.buttonClose = new System.Windows.Forms.Button();
-            this.serverDetails = new System.Windows.Forms.TextBox();
             this.buttonEdit = new System.Windows.Forms.Button();
-            this.buttonAdd = new System.Windows.Forms.Button();
             this.buttonDelete = new System.Windows.Forms.Button();
             this.buttonTest = new System.Windows.Forms.Button();
+            this.webServerDetails = new System.Windows.Forms.WebBrowser();
+            this.menuJira = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuBamboo = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.addNewServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.jIRAToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bambooToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // serverTree
@@ -42,16 +50,16 @@
             this.serverTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)));
             this.serverTree.HideSelection = false;
-            this.serverTree.Location = new System.Drawing.Point(12, 41);
+            this.serverTree.Location = new System.Drawing.Point(12, 12);
             this.serverTree.Name = "serverTree";
-            this.serverTree.Size = new System.Drawing.Size(224, 438);
+            this.serverTree.Size = new System.Drawing.Size(224, 219);
             this.serverTree.TabIndex = 0;
             this.serverTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.serverTree_AfterSelect);
             // 
             // buttonClose
             // 
             this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonClose.Location = new System.Drawing.Point(590, 501);
+            this.buttonClose.Location = new System.Drawing.Point(643, 277);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(75, 23);
             this.buttonClose.TabIndex = 1;
@@ -59,48 +67,25 @@
             this.buttonClose.UseVisualStyleBackColor = true;
             this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
             // 
-            // serverDetails
-            // 
-            this.serverDetails.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.serverDetails.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.serverDetails.Location = new System.Drawing.Point(242, 41);
-            this.serverDetails.Multiline = true;
-            this.serverDetails.Name = "serverDetails";
-            this.serverDetails.ReadOnly = true;
-            this.serverDetails.Size = new System.Drawing.Size(423, 190);
-            this.serverDetails.TabIndex = 2;
-            // 
             // buttonEdit
             // 
-            this.buttonEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonEdit.Enabled = false;
-            this.buttonEdit.Location = new System.Drawing.Point(509, 237);
+            this.buttonEdit.Location = new System.Drawing.Point(492, 208);
             this.buttonEdit.Name = "buttonEdit";
-            this.buttonEdit.Size = new System.Drawing.Size(75, 23);
+            this.buttonEdit.Size = new System.Drawing.Size(110, 23);
             this.buttonEdit.TabIndex = 3;
             this.buttonEdit.Text = "Edit...";
             this.buttonEdit.UseVisualStyleBackColor = true;
             this.buttonEdit.Click += new System.EventHandler(this.buttonEdit_Click);
             // 
-            // buttonAdd
-            // 
-            this.buttonAdd.Enabled = false;
-            this.buttonAdd.Location = new System.Drawing.Point(12, 12);
-            this.buttonAdd.Name = "buttonAdd";
-            this.buttonAdd.Size = new System.Drawing.Size(135, 23);
-            this.buttonAdd.TabIndex = 4;
-            this.buttonAdd.Text = "Add New Server";
-            this.buttonAdd.UseVisualStyleBackColor = true;
-            this.buttonAdd.Click += new System.EventHandler(this.buttonAdd_Click);
-            // 
             // buttonDelete
             // 
-            this.buttonDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonDelete.Enabled = false;
-            this.buttonDelete.Location = new System.Drawing.Point(590, 237);
+            this.buttonDelete.Location = new System.Drawing.Point(608, 208);
             this.buttonDelete.Name = "buttonDelete";
-            this.buttonDelete.Size = new System.Drawing.Size(75, 23);
+            this.buttonDelete.Size = new System.Drawing.Size(110, 23);
             this.buttonDelete.TabIndex = 5;
             this.buttonDelete.Text = "Delete";
             this.buttonDelete.UseVisualStyleBackColor = true;
@@ -108,8 +93,9 @@
             // 
             // buttonTest
             // 
+            this.buttonTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonTest.Enabled = false;
-            this.buttonTest.Location = new System.Drawing.Point(242, 237);
+            this.buttonTest.Location = new System.Drawing.Point(376, 208);
             this.buttonTest.Name = "buttonTest";
             this.buttonTest.Size = new System.Drawing.Size(110, 23);
             this.buttonTest.TabIndex = 6;
@@ -117,25 +103,108 @@
             this.buttonTest.UseVisualStyleBackColor = true;
             this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
             // 
+            // webServerDetails
+            // 
+            this.webServerDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.webServerDetails.IsWebBrowserContextMenuEnabled = false;
+            this.webServerDetails.Location = new System.Drawing.Point(242, 12);
+            this.webServerDetails.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webServerDetails.Name = "webServerDetails";
+            this.webServerDetails.ScriptErrorsSuppressed = true;
+            this.webServerDetails.Size = new System.Drawing.Size(476, 190);
+            this.webServerDetails.TabIndex = 7;
+            this.webServerDetails.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webServerDetails_Navigating);
+            // 
+            // menuJira
+            // 
+            this.menuJira.Image = global::Atlassian.plvs.Resources.tab_jira;
+            this.menuJira.Name = "menuJira";
+            this.menuJira.Size = new System.Drawing.Size(119, 22);
+            this.menuJira.Text = "JIRA";
+            // 
+            // menuBamboo
+            // 
+            this.menuBamboo.Image = global::Atlassian.plvs.Resources.tab_bamboo;
+            this.menuBamboo.Name = "menuBamboo";
+            this.menuBamboo.Size = new System.Drawing.Size(119, 22);
+            this.menuBamboo.Text = "Bamboo";
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Image = global::Atlassian.plvs.Resources.tab_jira;
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(119, 22);
+            this.toolStripMenuItem1.Text = "JIRA";
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Image = global::Atlassian.plvs.Resources.tab_bamboo;
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(119, 22);
+            this.toolStripMenuItem2.Text = "Bamboo";
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.menuStrip1.Dock = System.Windows.Forms.DockStyle.None;
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addNewServerToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(12, 238);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(127, 24);
+            this.menuStrip1.TabIndex = 8;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // addNewServerToolStripMenuItem
+            // 
+            this.addNewServerToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.jIRAToolStripMenuItem,
+            this.bambooToolStripMenuItem});
+            this.addNewServerToolStripMenuItem.Image = global::Atlassian.plvs.Resources.plus;
+            this.addNewServerToolStripMenuItem.Name = "addNewServerToolStripMenuItem";
+            this.addNewServerToolStripMenuItem.Size = new System.Drawing.Size(119, 20);
+            this.addNewServerToolStripMenuItem.Text = "Add New Server";
+            // 
+            // jIRAToolStripMenuItem
+            // 
+            this.jIRAToolStripMenuItem.Image = global::Atlassian.plvs.Resources.tab_jira;
+            this.jIRAToolStripMenuItem.Name = "jIRAToolStripMenuItem";
+            this.jIRAToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.jIRAToolStripMenuItem.Text = "JIRA";
+            this.jIRAToolStripMenuItem.Click += new System.EventHandler(this.menuJira_Click);
+            // 
+            // bambooToolStripMenuItem
+            // 
+            this.bambooToolStripMenuItem.Image = global::Atlassian.plvs.Resources.tab_bamboo;
+            this.bambooToolStripMenuItem.Name = "bambooToolStripMenuItem";
+            this.bambooToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.bambooToolStripMenuItem.Text = "Bamboo";
+            this.bambooToolStripMenuItem.Click += new System.EventHandler(this.menuBamboo_Click);
+            // 
             // ProjectConfiguration
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(677, 536);
+            this.ClientSize = new System.Drawing.Size(730, 312);
+            this.Controls.Add(this.webServerDetails);
             this.Controls.Add(this.buttonTest);
             this.Controls.Add(this.buttonDelete);
-            this.Controls.Add(this.buttonAdd);
             this.Controls.Add(this.buttonEdit);
-            this.Controls.Add(this.serverDetails);
             this.Controls.Add(this.buttonClose);
             this.Controls.Add(this.serverTree);
+            this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(700, 350);
             this.Name = "ProjectConfiguration";
             this.Text = "Project Configuration";
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ProjectConfiguration_KeyPress);
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -145,10 +214,17 @@
 
         private System.Windows.Forms.TreeView serverTree;
         private System.Windows.Forms.Button buttonClose;
-        private System.Windows.Forms.TextBox serverDetails;
         private System.Windows.Forms.Button buttonEdit;
-        private System.Windows.Forms.Button buttonAdd;
         private System.Windows.Forms.Button buttonDelete;
         private System.Windows.Forms.Button buttonTest;
+        private System.Windows.Forms.WebBrowser webServerDetails;
+        private System.Windows.Forms.ToolStripMenuItem menuJira;
+        private System.Windows.Forms.ToolStripMenuItem menuBamboo;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem addNewServerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem jIRAToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem bambooToolStripMenuItem;
     }
 }

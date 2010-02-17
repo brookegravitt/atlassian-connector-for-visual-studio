@@ -27,16 +27,16 @@ namespace Atlassian.plvs.api.bamboo {
 
         public override Guid Type { get { return BambooServerTypeGuid; } }
 
-        public override string displayDetails() {
+        public override string serverDetailsHtmlTable() {
             var sb = new StringBuilder();
-            sb.Append("Name: ").Append(Name).Append("\r\n");
-            sb.Append("Enabled: ").Append(Enabled ? "Yes" : "No").Append("\r\n");
-            sb.Append("URL: ").Append(Url).Append("\r\n");
-            sb.Append("User Name: ").Append(UserName).Append("\r\n");
-            sb.Append("Use Favourite Builds: ").Append(UseFavourites ? "Yes" : "No").Append("\r\n");
+
+            sb.Append(serverdetailsHtmlTableStart());
+            sb.Append(serverBaseDetailsHtml());
+
+            sb.Append("<tr VALIGN=TOP><td width=\"150\">Monitor Favourite Plans</td><td>").Append(UseFavourites ? "Yes" : "No").Append("</td></tr>\r\n");
             if (!UseFavourites) {
                 if (PlanKeys != null && PlanKeys.Count > 0) {
-                    sb.Append("Plans monitored: ");
+                    sb.Append("<tr VALIGN=TOP><td width=\"150\">Monitored Plans</td><td>");
                     int i = 1;
                     foreach (var key in PlanKeys) {
                         sb.Append(key);
@@ -45,10 +45,13 @@ namespace Atlassian.plvs.api.bamboo {
                         }
                         ++i;
                     }
+                    sb.Append("</td></tr>");
                 } else {
-                    sb.Append("No plans monitored");
+                    sb.Append("<tr VALIGN=TOP><td colspan=2>No plans monitored</td></tr>");
                 }
             }
+
+            sb.Append(serverDetailsHtmlTableEnd());
             return sb.ToString();
         }
     }

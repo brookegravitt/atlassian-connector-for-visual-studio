@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace Atlassian.plvs.api {
     public abstract class Server {
@@ -74,6 +75,25 @@ namespace Atlassian.plvs.api {
             set { guid = value; }
         }
 
-        public abstract string displayDetails();
+        public virtual string serverDetailsHtmlTable() {
+            return serverdetailsHtmlTableStart() + serverBaseDetailsHtml() + serverDetailsHtmlTableEnd();
+        }
+
+        protected string serverBaseDetailsHtml() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("<tr valign=top><td width=\"150\">Name</td><td>").Append(Name).Append("</td></tr>\r\n");
+            sb.Append("<tr valign=top><td width=\"150\">Enabled</td><td>").Append(Enabled ? "Yes" : "No").Append("</td></tr>\r\n");
+            sb.Append("<tr valign=top><td width=\"150\">URL</td><td><a href=\"").Append(Url).Append("\">").Append(Url).Append("</a></td></tr>\r\n");
+            sb.Append("<tr valign=top><td width=\"150\">User Name</td><td>").Append(UserName).Append("</td></tr>\r\n");
+            return sb.ToString();
+        }
+
+        protected string serverdetailsHtmlTableStart() {
+            return "<table width=\"100%\" class=\"summary\">";
+        }
+
+        protected string serverDetailsHtmlTableEnd() {
+            return "</table>";
+        }
     }
 }

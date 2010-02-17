@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 using Atlassian.plvs.api;
 using Atlassian.plvs.api.bamboo;
@@ -9,6 +11,7 @@ using Atlassian.plvs.models.bamboo;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui.bamboo.bamboonodes;
 using Atlassian.plvs.ui.jira.issuefilternodes;
+using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.dialogs {
     public partial class ProjectConfiguration : Form {
@@ -90,32 +93,28 @@ namespace Atlassian.plvs.dialogs {
         }
 
         private void serverTree_AfterSelect(object sender, TreeViewEventArgs e) {
-            bool jiraRootSelected = serverTree.SelectedNode.Equals(jiraRoot);
             bool jiraServerSelected = serverTree.SelectedNode is JiraServerTreeNode;
-            bool bambooRootSelected = serverTree.SelectedNode.Equals(bambooRoot);
             bool bambooServerSelected = serverTree.SelectedNode is BambooServerTreeNode;
-            buttonAdd.Enabled = jiraRootSelected || bambooRootSelected;
             buttonEdit.Enabled = jiraServerSelected || bambooServerSelected;
             buttonDelete.Enabled = jiraServerSelected || bambooServerSelected;
             buttonTest.Enabled = jiraServerSelected || bambooServerSelected;
 
-            serverDetails.Text = createServerSummaryText(serverTree.SelectedNode);
+            webServerDetails.DocumentText = createServerSummaryText(serverTree.SelectedNode);
         }
 
         private static string createServerSummaryText(TreeNode node) {
             var jiraServerNode = node as TreeNodeWithJiraServer;
             var bambooServerNode = node as TreeNodeWithBambooServer;
-            if (jiraServerNode != null) return jiraServerNode.Server.displayDetails();
-            if (bambooServerNode != null) return bambooServerNode.Server.displayDetails();
-            return "No server selected";
+            if (jiraServerNode != null) return wrapInHtml(jiraServerNode.Server.serverDetailsHtmlTable());
+            if (bambooServerNode != null) return wrapInHtml(bambooServerNode.Server.serverDetailsHtmlTable());
+            return wrapInHtml("No server selected");
         }
 
-        private void buttonAdd_Click(object sender, EventArgs e) {
-            if (serverTree.SelectedNode.Equals(jiraRoot)) {
-                addNewJiraServer();
-            } else if (serverTree.SelectedNode.Equals(bambooRoot)) {
-                addNewBambooServer();
-            }
+        private static string wrapInHtml(string text) {
+            string color = ColorTranslator.ToHtml(SystemColors.Control);
+            return 
+                "<html><head>" + Resources.summary_and_description_css 
+                + "</head><body class=\"summary\" style=\"background:" + color + "\">" + text + "</body></html>";
         }
 
         private void addNewBambooServer() {
@@ -131,7 +130,7 @@ namespace Atlassian.plvs.dialogs {
         }
 
         private void addNewJiraServer() {
-            var dialog = new AddOrEditJiraServer(null);
+            var dialog = new AddOrEditJiraServer(null, jiraFacade);
             var result = dialog.ShowDialog();
             if (result != DialogResult.OK) return;
             jiraServerModel.addServer(dialog.Server);
@@ -145,7 +144,7 @@ namespace Atlassian.plvs.dialogs {
         private void buttonEdit_Click(object sender, EventArgs e) {
             if (serverTree.SelectedNode is JiraServerTreeNode) {
                 var selectedNode = (JiraServerTreeNode)serverTree.SelectedNode;
-                var dialog = new AddOrEditJiraServer(selectedNode.Server);
+                var dialog = new AddOrEditJiraServer(selectedNode.Server, jiraFacade);
                 var result = dialog.ShowDialog();
                 if (result != DialogResult.OK) return;
                 jiraServerModel.removeServer(selectedNode.Server.GUID);
@@ -154,7 +153,7 @@ namespace Atlassian.plvs.dialogs {
                 selectedNode.ImageIndex = dialog.Server.Enabled ? JIRA_ENABLED : JIRA_DISABLED;
                 selectedNode.SelectedImageIndex = dialog.Server.Enabled ? JIRA_ENABLED : JIRA_DISABLED;
                 serverTree.ExpandAll();
-                serverDetails.Text = createServerSummaryText(selectedNode);
+                webServerDetails.DocumentText = createServerSummaryText(selectedNode);
                 serverTree.SelectedNode = selectedNode;
                 SomethingChanged = true;
             } else if (serverTree.SelectedNode is BambooServerTreeNode) {
@@ -168,7 +167,7 @@ namespace Atlassian.plvs.dialogs {
                 selectedNode.ImageIndex = dialog.Server.Enabled ? BAMBOO_ENABLED : BAMBOO_DISABLED;
                 selectedNode.SelectedImageIndex = dialog.Server.Enabled ? BAMBOO_ENABLED : BAMBOO_DISABLED;
                 serverTree.ExpandAll();
-                serverDetails.Text = createServerSummaryText(selectedNode);
+                webServerDetails.DocumentText = createServerSummaryText(selectedNode);
                 serverTree.SelectedNode = selectedNode;
                 SomethingChanged = true;
             }
@@ -177,19 +176,28 @@ namespace Atlassian.plvs.dialogs {
         private void buttonDelete_Click(object sender, EventArgs e) {
             if (serverTree.SelectedNode is JiraServerTreeNode) {
                 var selectedNode = (JiraServerTreeNode)serverTree.SelectedNode;
-                jiraServerModel.removeServer(selectedNode.Server.GUID);
+                if (!confirmDelete(selectedNode.Server)) return;
+
                 selectedNode.Remove();
-                serverTree.ExpandAll();
-                serverDetails.Text = "";
-                SomethingChanged = true;
+                jiraServerModel.removeServer(selectedNode.Server.GUID);
             } else if (serverTree.SelectedNode is BambooServerTreeNode) {
                 var selectedNode = (BambooServerTreeNode)serverTree.SelectedNode;
-                bambooServerModel.removeServer(selectedNode.Server.GUID);
+                if (!confirmDelete(selectedNode.Server)) return;
+
                 selectedNode.Remove();
-                serverTree.ExpandAll();
-                serverDetails.Text = "";
-                SomethingChanged = true;
+                bambooServerModel.removeServer(selectedNode.Server.GUID);
             }
+            serverTree.ExpandAll();
+            webServerDetails.DocumentText = "";
+            SomethingChanged = true;
+        }
+
+        private static bool confirmDelete(Server server) {
+            if (server == null) return false;
+
+            DialogResult result = MessageBox.Show("Do you really want to delete server \"" + server.Name + "\"?",
+                                                  Constants.QUESTION_CAPTION, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            return result.Equals(DialogResult.Yes);
         }
 
         private void buttonTest_Click(object sender, EventArgs e) {
@@ -205,6 +213,26 @@ namespace Atlassian.plvs.dialogs {
         private void ProjectConfiguration_KeyPress(object sender, KeyPressEventArgs e) {
             if (e.KeyChar == (char) Keys.Escape) {
                 Close();
+            }
+        }
+
+        private void menuJira_Click(object sender, EventArgs e) {
+            addNewJiraServer();
+        }
+
+        private void menuBamboo_Click(object sender, EventArgs e) {
+            addNewBambooServer();
+        }
+
+        private void webServerDetails_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
+            if (e.Url.Equals("about:blank")) return;
+            e.Cancel = true;
+            try {
+                string url = e.Url.ToString();
+                Process.Start(url);
+// ReSharper disable EmptyGeneralCatchClause
+            } catch (Exception) {
+// ReSharper restore EmptyGeneralCatchClause
             }
         }
     }
