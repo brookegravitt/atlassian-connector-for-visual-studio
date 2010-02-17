@@ -300,6 +300,12 @@
     <Compile Include="ui\jira\JiraNamedEntityComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ui\jira\JiraTextAreaWithWikiPreview.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\jira\JiraTextAreaWithWikiPreview.Designer.cs">
+      <DependentUpon>JiraTextAreaWithWikiPreview.cs</DependentUpon>
+    </Compile>
     <Compile Include="ui\jira\JiraUserPicker.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -540,6 +546,10 @@
       <DependentUpon>TabBamboo.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="ui\jira\JiraTextAreaWithWikiPreview.resx">
+      <DependentUpon>JiraTextAreaWithWikiPreview.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="ui\jira\JiraUserPicker.resx">
       <DependentUpon>JiraUserPicker.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -671,6 +681,7 @@
   <ItemGroup>
     <Content Include="Resources\icons\about.png" />
     <Content Include="Resources\icons\add_jira.png" />
+    <Content Include="Resources\icons\ajax-loader.gif" />
     <Content Include="Resources\icons\atlassian-538x235.png" />
     <Content Include="Resources\icons\atlassian-installer.bmp" />
     <Content Include="Resources\icons\Atlassian.png" />
@@ -743,6 +754,7 @@
     <None Include="third party\ankh\LICENSE.rtf" />
     <Content Include="Resources\texts\attachment_download_html.txt" />
     <Content Include="Resources\texts\autoupdate_html.txt" />
+    <Content Include="Resources\texts\throbber_html.txt" />
     <Content Include="third party\ankh\Ankh.ExtensionPoints.dll" />
     <Content Include="third party\treeviewadv\Aga.Controls.dll" />
     <Content Include="third party\treeviewadv\license.txt" />
@@ -785,6 +797,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>copy $(ProjectDir)\Resources\icons\edit.png $(ProjectDir)\$(OutDir)</PostBuildEvent>
+    <PostBuildEvent>copy $(ProjectDir)\Resources\icons\edit.png $(ProjectDir)\$(OutDir)
+copy $(ProjectDir)\Resources\icons\ajax-loader.gif $(ProjectDir)\$(OutDir)</PostBuildEvent>
   </PropertyGroup>
 </Project>
