@@ -22,7 +22,9 @@ using Microsoft.Win32;
 namespace Atlassian.plvs {
     [ProvideLoadKey(MINIMUM_VISUAL_STUDIO_EDITION, "1.0", PRODUCT_NAME, COMPANY, 1)]
     [PackageRegistration(UseManagedResourcesOnly = true)]
+#if !VS2010
     [DefaultRegistryRoot("Software\\Microsoft\\VisualStudio\\9.0")]
+#endif
     [InstalledProductRegistration(true, null, null, null)]
     [ProvideMenuResource(1000, 1)]
     [ProvideToolWindow(typeof (AtlassianToolWindow), Transient = true, Style = VsDockStyle.Tabbed,
