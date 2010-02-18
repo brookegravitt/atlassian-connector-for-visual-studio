@@ -20,7 +20,6 @@
   
   <!--  read-only properties-->
   <property name="main.project" value="plvs" />
-  <property name="setup.project" value="plvs_Setup" />
   <property name="setup.base.file.name" value="atlassian-vs-connector-setup" />
 
   <target name="version.update">
@@ -40,12 +39,11 @@
 
   <target name="clean">
     <delete dir="${main.project}/bin/${configuration}" />
-    <delete dir="${setup.project}/bin/${configuration}" />
   </target>
 
   <target name="build.setup" depends="clean,version.update" >
     <loadtasks assembly="${nantcontrib-home}/bin/NAnt.Contrib.Tasks.dll" />
-    <msbuild project="${main.project}/${main.project}.csproj">
+    <msbuild project="${main.project}/${main.project}2008.csproj">
       <property name="Configuration" value="${configuration}" />
     </msbuild>
     <exec program="${nsis}">
@@ -87,12 +85,12 @@
     <echo>
       Targets:
           clean           - cleans up the current configuration
-          build.setup     - creates ${setup.project}.msi file
+          build.setup     - creates ${main.project}.msi file
           make.setup.file - creates setup file with a target file name
           upload.snapshot - builds a setup file and uploads to DAC
       
       Build artifacts are stored in the
-      ${setup.project}/bin/$${configuration} directory
+      ${main.project}/bin/$${configuration} directory
 
       Overridable properties:
 
