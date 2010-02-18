@@ -159,6 +159,7 @@ namespace Atlassian.plvs.dialogs.bamboo {
             checkEnabled.Enabled = false;
 
             buttonGetBuilds.Enabled = false;
+            buttonTestConnection.Enabled = false;
 
             Thread t = new Thread(getPlansWorker);
             t.Start();
