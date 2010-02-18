@@ -242,8 +242,8 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
         private Stream getQueryResultStream(string endpoint, bool setBasicAuth) {
             var req = (HttpWebRequest)WebRequest.Create(endpoint);
-            req.Timeout = 10000;
-            req.ReadWriteTimeout = 20000;
+            req.Timeout = 20000;
+            req.ReadWriteTimeout = 40000;
             if (setBasicAuth) {
                 setBasicAuthHeader(req);
             } else {
