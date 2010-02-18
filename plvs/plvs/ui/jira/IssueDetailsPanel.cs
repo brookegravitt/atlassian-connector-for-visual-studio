@@ -720,10 +720,10 @@ namespace Atlassian.plvs.ui.jira {
                     matchProjectItemChildren(file, files, project.ProjectItems);
                 }
                 if (files.Count == 0) {
-                    MessageBox.Show("No matching files found for " + file, "Error");
+                    MessageBox.Show("No matching files found for " + file, AtlassianConstants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     Debug.WriteLine("No matching files found for " + file);
                 } else if (files.Count > 1) {
-                    MessageBox.Show("Multiple matching files found for " + file, "Error");
+                    MessageBox.Show("Multiple matching files found for " + file, AtlassianConstants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     Debug.WriteLine("Multiple matching files found for " + file);
                 } else {
                     string lineNoStr = line.Substring(line.LastIndexOf(STACKLINE_LINE_NUMBER_SEPARATOR) + 1);
