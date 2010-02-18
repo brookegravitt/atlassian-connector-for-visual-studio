@@ -24,8 +24,10 @@ namespace Atlassian.plvs {
     [PackageRegistration(UseManagedResourcesOnly = true)]
 #if !VS2010
     [DefaultRegistryRoot("Software\\Microsoft\\VisualStudio\\9.0")]
-#endif
     [InstalledProductRegistration(true, null, null, null)]
+#else
+    [InstalledProductRegistration(PRODUCT_NAME, DESCRIPTION, PlvsVersionInfo.VersionAndStamp)]
+#endif
     [ProvideMenuResource(1000, 1)]
     [ProvideToolWindow(typeof (AtlassianToolWindow), Transient = true, Style = VsDockStyle.Tabbed,
         Orientation = ToolWindowOrientation.Bottom)]
@@ -96,7 +98,7 @@ namespace Atlassian.plvs {
         }
 
         public int ProductID(out string str) {
-            str = PlvsVersionInfo.Version + "-" + PlvsVersionInfo.Stamp;
+            str = PlvsVersionInfo.VersionAndStamp;
             return VSConstants.S_OK;
         }
 

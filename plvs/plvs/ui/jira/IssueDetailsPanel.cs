@@ -16,6 +16,7 @@ using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui.jira.issues;
 using Atlassian.plvs.util.jira;
 using Atlassian.plvs.windows;
+using Atlassian.plvs.util;
 using EnvDTE;
 using AtlassianConstants=Atlassian.plvs.util.Constants;
 using Constants=EnvDTE.Constants;
@@ -695,6 +696,11 @@ namespace Atlassian.plvs.ui.jira {
 
         private void issueComments_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
             if (!issueCommentsLoaded) return;
+            if (e.Url.ToString().Equals("about:blank")) {
+                e.Cancel = true;
+                return;
+            }
+
             if (e.Url.ToString().StartsWith("javascript:toggle(")) return;
             if (handleStackUrl(e)) return;
             navigate(e);
@@ -740,7 +746,7 @@ namespace Atlassian.plvs.ui.jira {
                             throw new Exception("Cannot get text selection for the document");
                         }
                     } catch (Exception ex) {
-                        MessageBox.Show("Unable to open the specified file: " + ex.Message, "Error");
+                        PlvsUtils.showError("Unable to open the specified file", ex);
                         Debug.WriteLine(ex);
                     }
                 }
@@ -767,11 +773,19 @@ namespace Atlassian.plvs.ui.jira {
         private void issueDescription_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
             if (!issueDescriptionLoaded) return;
             if (handleStackUrl(e)) return;
+            if (e.Url.Equals("about:blank")) {
+                e.Cancel = true;
+                return;
+            }
             navigate(e);
         }
 
         private void issueSummary_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
             if (!issueSummaryLoaded) return;
+            if (e.Url.Equals("about:blank")) {
+                e.Cancel = true;
+                return;
+            }
             if (e.Url.ToString().StartsWith(PARENT_ISSUE_URL_TYPE)) {
                 AtlassianPanel.Instance.Jira.findAndOpenIssue(
                     e.Url.ToString().Substring(PARENT_ISSUE_URL_TYPE.Length), openIssueFinished);
