@@ -109,7 +109,7 @@ Section "Atlassian Connector For Visual Studio (required)"
   SetOutPath $INSTDIR
   
   ; Put file there
-  File "plvs\bin\Release\plvs.dll"
+  File "plvs\bin\Release\plvs2008.dll"
   File "plvs\bin\Release\Ankh.ExtensionPoints.dll"
   File "plvs\bin\Release\Aga.Controls.dll"
   File "plvs\bin\Release\edit.png"
@@ -137,7 +137,7 @@ Section "Atlassian Connector For Visual Studio (required)"
   WriteRegStr HKLM "Software\Microsoft\VisualStudio\9.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "" "Atlassian.plvs.PlvsPackage, plvs, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
   WriteRegStr HKLM "Software\Microsoft\VisualStudio\9.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "InprocServer32" "$SYSDIR\mscoree.dll"
   WriteRegStr HKLM "Software\Microsoft\VisualStudio\9.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "Class" "Atlassian.plvs.PlvsPackage"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\9.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "CodeBase" "$INSTDIR\plvs.dll"
+  WriteRegStr HKLM "Software\Microsoft\VisualStudio\9.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "CodeBase" "$INSTDIR\plvs2008.dll"
   WriteRegDWORD HKLM "Software\Microsoft\VisualStudio\9.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "ID" 1
   WriteRegStr HKLM "Software\Microsoft\VisualStudio\9.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "MinEdition" "Standard"
   WriteRegStr HKLM "Software\Microsoft\VisualStudio\9.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "ProductVersion" "1.0"
@@ -226,7 +226,7 @@ Section "Uninstall"
   DeleteRegKey HKLM "Software\Microsoft\VisualStudio\9.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}"
   
   ; Remove files and uninstaller
-  Delete $INSTDIR\plvs.dll
+  Delete $INSTDIR\plvs2008.dll
   Delete $INSTDIR\Ankh.ExtensionPoints.dll
   Delete $INSTDIR\Aga.Controls.dll
   Delete $INSTDIR\edit.png
