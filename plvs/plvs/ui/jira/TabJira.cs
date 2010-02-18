@@ -41,6 +41,7 @@ namespace Atlassian.plvs.ui.jira {
         private JiraIssue lastSelectedIssue;
 
         private int currentGeneration;
+        private bool metadataFetched;
 
         public TabJira() {
             InitializeComponent();
@@ -154,7 +155,7 @@ namespace Atlassian.plvs.ui.jira {
             buttonOpen.Enabled = issueSelected;
             buttonRefresh.Enabled = filtersTree.FilterOrRecentlyViewedSelected;
             buttonSearch.Enabled = filtersTree.NodeWithServerSelected;
-            buttonCreate.Enabled = filtersTree.NodeWithServerSelected;
+            buttonCreate.Enabled = filtersTree.NodeWithServerSelected && metadataFetched;
 
             bool groupingControlsEnabled = !(filtersTree.RecentlyViewedSelected);
             comboGroupBy.Enabled = groupingControlsEnabled;
@@ -333,6 +334,7 @@ namespace Atlassian.plvs.ui.jira {
 
                 ++currentGeneration;
 
+                metadataFetched = false;
                 Thread metadataThread = new Thread(() => reloadKnownServersWorker(servers, currentGeneration));
                 metadataThread.Start();
             }
@@ -413,6 +415,7 @@ namespace Atlassian.plvs.ui.jira {
                                                  if (myGeneration != currentGeneration) {
                                                      return;
                                                  }
+                                                 metadataFetched = true;
                                                  filtersTree.addRecentlyViewedNode();
                                                  filtersTree.ExpandAll();
                                                  filtersTree.restoreLastSelectedFilterItem();
@@ -652,7 +655,7 @@ namespace Atlassian.plvs.ui.jira {
 
         public void createIssue() {
             JiraServer server = filtersTree.getCurrentlySelectedServer();
-            if (server == null) {
+            if (server == null || !metadataFetched) {
                 return;
             }
             CreateIssue.createDialogOrBringToFront(server);

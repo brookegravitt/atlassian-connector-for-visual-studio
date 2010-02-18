@@ -46,34 +46,38 @@ namespace Atlassian.plvs.dialogs.jira {
             buttonCreate.Enabled = false;
 
             SortedDictionary<string, JiraProject> projects = JiraServerCache.Instance.getProjects(server);
-            foreach (var project in projects.Values) {
-                comboProjects.Items.Add(project);
-            }
-
-            List<JiraNamedEntity> priorities = JiraServerCache.Instance.getPriorities(server);
-            ImageList imageList = new ImageList();
-            int i = 0;
-            foreach (var priority in priorities) {
-                imageList.Images.Add(ImageCache.Instance.getImage(priority.IconUrl));
-                comboPriorities.Items.Add(new ComboBoxWithImagesItem<JiraNamedEntity>(priority, i));
-                ++i;
-            }
-            comboPriorities.ImageList = imageList;
-
-            if (priorities.Count > 0) {
-                int idx = store.loadParameter(PRIORITY + server.GUID, -1);
-                if (idx != -1 && comboPriorities.Items.Count > idx) {
-                    comboPriorities.SelectedIndex = idx;
-                } else {
-                    comboPriorities.SelectedIndex = priorities.Count/2;
+            if (projects != null) {
+                foreach (var project in projects.Values) {
+                    comboProjects.Items.Add(project);
                 }
-            }
 
-            if (projects.Count > 0) {
-                int idx = store.loadParameter(PROJECT + server.GUID, -1);
-                if (idx != -1 && comboProjects.Items.Count > idx) {
-                    initialUpdate = true;
-                    comboProjects.SelectedIndex = idx;
+                List<JiraNamedEntity> priorities = JiraServerCache.Instance.getPriorities(server);
+                if (priorities != null) {
+                    ImageList imageList = new ImageList();
+                    int i = 0;
+                    foreach (var priority in priorities) {
+                        imageList.Images.Add(ImageCache.Instance.getImage(priority.IconUrl));
+                        comboPriorities.Items.Add(new ComboBoxWithImagesItem<JiraNamedEntity>(priority, i));
+                        ++i;
+                    }
+                    comboPriorities.ImageList = imageList;
+
+                    if (priorities.Count > 0) {
+                        int idx = store.loadParameter(PRIORITY + server.GUID, -1);
+                        if (idx != -1 && comboPriorities.Items.Count > idx) {
+                            comboPriorities.SelectedIndex = idx;
+                        } else {
+                            comboPriorities.SelectedIndex = priorities.Count / 2;
+                        }
+                    }
+
+                    if (projects.Count > 0) {
+                        int idx = store.loadParameter(PROJECT + server.GUID, -1);
+                        if (idx != -1 && comboProjects.Items.Count > idx) {
+                            initialUpdate = true;
+                            comboProjects.SelectedIndex = idx;
+                        }
+                    }
                 }
             }
 
