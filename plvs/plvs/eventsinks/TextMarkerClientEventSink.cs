@@ -7,6 +7,7 @@ using Atlassian.plvs.windows;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.TextManager.Interop;
+using AtlassianConstants = Atlassian.plvs.util.Constants;
 
 namespace Atlassian.plvs.eventsinks {
     public sealed class TextMarkerClientEventSink : AbstractMarkerClientEventSink {
@@ -93,7 +94,7 @@ namespace Atlassian.plvs.eventsinks {
 
         private static void findFinished(bool success, string message) {
             if (!success) {
-                MessageBox.Show(message, "Error");
+                MessageBox.Show(message, AtlassianConstants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -106,7 +107,7 @@ namespace Atlassian.plvs.eventsinks {
                 if (server != null) {
                     Process.Start(server.Url + "/browse/" + issueKey);
                 } else {
-                    MessageBox.Show("No JIRA server selected", "Error");
+                    MessageBox.Show("No JIRA server selected", AtlassianConstants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
 // ReSharper disable EmptyGeneralCatchClause
