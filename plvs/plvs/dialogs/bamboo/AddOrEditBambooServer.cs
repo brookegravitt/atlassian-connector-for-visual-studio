@@ -117,8 +117,8 @@ namespace Atlassian.plvs.dialogs.bamboo {
 
         private void checkIfValid() {
             buttonAddOrEdit.Enabled = name.Text.Trim().Length > 0 && url.Text.Trim().Length > 0 &&
-                                      user.Text.Trim().Length > 0;
-            buttonTestConnection.Enabled = buttonAddOrEdit.Enabled;
+                                      user.Text.Trim().Length > 0 && buttonCancel.Enabled;
+            buttonTestConnection.Enabled = buttonAddOrEdit.Enabled && buttonCancel.Enabled;
             buttonGetBuilds.Enabled = buttonAddOrEdit.Enabled && radioSelectManually.Checked;
             checkedListBuilds.Enabled = buttonAddOrEdit.Enabled && radioSelectManually.Checked;
         }

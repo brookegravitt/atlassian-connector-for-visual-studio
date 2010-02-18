@@ -244,6 +244,8 @@ namespace Atlassian.plvs.api.bamboo.rest {
             var req = (HttpWebRequest)WebRequest.Create(endpoint);
             req.Timeout = 10000;
             req.ReadWriteTimeout = 20000;
+            req.ContentType = "application/xml";
+            req.Method = "GET";
             if (setBasicAuth) {
                 setBasicAuthHeader(req);
             } else {

@@ -32,7 +32,7 @@ namespace Atlassian.plvs.api.jira {
                     return projectCache[server.GUID];
                 }
             }
-            return null;
+            return new SortedDictionary<string, JiraProject>();
         }
 
         public void addProject(JiraServer server, JiraProject project) {
@@ -56,7 +56,7 @@ namespace Atlassian.plvs.api.jira {
                     return issueTypeCache[server.GUID];
                 }
             }
-            return null;
+            return new SortedDictionary<int, JiraNamedEntity>();
         }
 
         public void addIssueType(JiraServer server, JiraNamedEntity issueType) {
@@ -80,7 +80,7 @@ namespace Atlassian.plvs.api.jira {
                     return priorityCache[server.GUID];
                 }
             }
-            return null;
+            return new List<JiraNamedEntity>();
         }
 
         public void addPriority(JiraServer server, JiraNamedEntity priority) {
@@ -104,7 +104,7 @@ namespace Atlassian.plvs.api.jira {
                     return statusCache[server.GUID];
                 }
             }
-            return null;
+            return new SortedDictionary<int, JiraNamedEntity>();
         }
 
         public void addStatus(JiraServer server, JiraNamedEntity status) {
@@ -128,7 +128,7 @@ namespace Atlassian.plvs.api.jira {
                     return resolutionCache[server.GUID];
                 }
             }
-            return null;
+            return new SortedDictionary<int, JiraNamedEntity>();
         }
 
         public void addResolution(JiraServer server, JiraNamedEntity resolution) {

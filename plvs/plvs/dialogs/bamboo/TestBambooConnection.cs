@@ -17,7 +17,6 @@ namespace Atlassian.plvs.dialogs.bamboo {
             Exception ex = null;
             try {
                 facade.login(server);
-                facade.logout(server);
             } catch (Exception e) {
                 result = "Failed to connec to to server";
                 ex = e;
