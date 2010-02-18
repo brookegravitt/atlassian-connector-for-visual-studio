@@ -322,7 +322,7 @@ namespace Atlassian.plvs.dialogs.jira {
 
             buttonClear.Enabled = enabled;
             textBoxFilterName.Enabled = enabled;
-            buttonOk.Enabled = textBoxFilterName.Text.Length > 0;
+            buttonOk.Enabled = enabled && textBoxFilterName.Text.Length > 0;
         }
 
         private void buttonClear_Click(object sender, EventArgs e) {
