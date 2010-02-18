@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.TextManager.Interop;
 using System.Runtime.InteropServices;
@@ -30,14 +31,18 @@ namespace Atlassian.plvs.markers {
             // Retrieve the Text Marker IDs. We need them to be able to create instances.
             IVsTextManager textManager = (IVsTextManager) package.GetService(typeof (SVsTextManager));
 
-            int markerId;
-            Guid markerGuid = GuidList.JiraLinkMarginMarker;
-            ErrorHandler.ThrowOnFailure(textManager.GetRegisteredMarkerTypeID(ref markerGuid, out markerId));
-            JiraLinkMarginMarkerType.Id = markerId;
+            try {
+                int markerId;
+                Guid markerGuid = GuidList.JiraLinkMarginMarker;
+                textManager.GetRegisteredMarkerTypeID(ref markerGuid, out markerId);
+                JiraLinkMarginMarkerType.Id = markerId;
 
-            markerGuid = GuidList.JiraLinkTextMarker;
-            ErrorHandler.ThrowOnFailure(textManager.GetRegisteredMarkerTypeID(ref markerGuid, out markerId));
-            JiraLinkTextMarkerType.Id = markerId;
+                markerGuid = GuidList.JiraLinkTextMarker;
+                textManager.GetRegisteredMarkerTypeID(ref markerGuid, out markerId);
+                JiraLinkTextMarkerType.Id = markerId;
+            } catch (COMException e) {
+                Debug.WriteLine("JiraLinkMarkerTypeProvider.InitializeMarkerids() - COMException: " + e.Message);
+            }
         }
     }
 }
