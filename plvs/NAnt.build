@@ -16,7 +16,7 @@
   <property name="scp.opts" value="-i ${scp.key} -noagent -q -batch" overwrite="false" />
   <property name="scp.login" value="jgorycki" overwrite="false" />
   <property name="nsis" value="c:/progra~1/nsis/makensis.exe" />
-  <property name="msbuild" value="C:/Windows/Microsoft.NET/Framework/v4.0.21006/MSBuild.exe" overwrite="false" />
+  <property name="msbuild" value="C:/Windows/Microsoft.NET/Framework/v4.0.30128/MSBuild.exe" overwrite="false" />
   
   <!--  read-only properties-->
   <property name="main.project" value="plvs" />
