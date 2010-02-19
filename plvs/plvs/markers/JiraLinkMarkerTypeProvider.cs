@@ -28,6 +28,7 @@ namespace Atlassian.plvs.markers {
         }
 
         internal static void InitializeMarkerIds(PlvsPackage package) {
+#if !VS2010
             // Retrieve the Text Marker IDs. We need them to be able to create instances.
             IVsTextManager textManager = (IVsTextManager) package.GetService(typeof (SVsTextManager));
 
@@ -43,6 +44,7 @@ namespace Atlassian.plvs.markers {
             } catch (COMException e) {
                 Debug.WriteLine("JiraLinkMarkerTypeProvider.InitializeMarkerids() - COMException: " + e.Message);
             }
+#endif
         }
     }
 }
