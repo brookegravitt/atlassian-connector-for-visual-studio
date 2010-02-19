@@ -324,6 +324,7 @@ Section "Uninstall"
   RMDir "$SMPROGRAMS\Atlassian Connector For Visual Studio"
   RMDir "$INSTDIR"
 
+  ClearErrors
   ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\9.0" "InstallDir"
   IfErrors +3 0
     Call un.Unregister2008
