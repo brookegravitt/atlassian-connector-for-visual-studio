@@ -16,7 +16,8 @@
   <property name="scp.opts" value="-i ${scp.key} -noagent -q -batch" overwrite="false" />
   <property name="scp.login" value="jgorycki" overwrite="false" />
   <property name="nsis" value="c:/progra~1/nsis/makensis.exe" />
-  <property name="msbuild" value="C:/Windows/Microsoft.NET/Framework/v4.0.30128/MSBuild.exe" overwrite="false" />
+  <property name="msbuild35" value="C:/Windows/Microsoft.NET/Framework/v3.5/MSBuild.exe" overwrite="false" />
+  <property name="msbuild40" value="C:/Windows/Microsoft.NET/Framework/v4.0.30128/MSBuild.exe" overwrite="false" />
   
   <!--  read-only properties-->
   <property name="main.project" value="plvs" />
@@ -43,14 +44,12 @@
   </target>
 
   <target name="build.setup" depends="clean,version.update" >
-    <exec program="${msbuild}">
+    <exec program="${msbuild35}">
       <arg value="${main.project}/${main.project}2008.csproj" />
-      <arg value="/ToolsVersion:3.5" />
       <arg value="/p:Configuration=${configuration}" />
     </exec>
-    <exec program="${msbuild}">
+    <exec program="${msbuild40}">
       <arg value="${main.project}/${main.project}2010.csproj" />
-      <arg value="/ToolsVersion:4.0" />
       <arg value="/p:Configuration=${configuration}" />
     </exec>
     <exec program="${nsis}">
