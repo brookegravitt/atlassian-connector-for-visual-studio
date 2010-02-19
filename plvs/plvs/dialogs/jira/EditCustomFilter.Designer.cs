@@ -31,19 +31,19 @@ namespace Atlassian.plvs.dialogs.jira {
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditCustomFilter));
             this.buttonClose = new System.Windows.Forms.Button();
-            this.listBoxProjects = new ui.OwnerDrawListBox();
+            this.listViewProjects = new System.Windows.Forms.ListView();
             this.listViewIssueTypes = new System.Windows.Forms.ListView();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.listBoxFixForVersions = new ui.OwnerDrawListBox();
-            this.listBoxAffectsVersions = new ui.OwnerDrawListBox();
-            this.listBoxComponents = new ui.OwnerDrawListBox();
+            this.listViewFixForVersions = new System.Windows.Forms.ListView();
+            this.listViewAffectsVersions = new System.Windows.Forms.ListView();
+            this.listViewComponents = new System.Windows.Forms.ListView();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.listViewPriorities = new System.Windows.Forms.ListView();
             this.listViewStatuses = new System.Windows.Forms.ListView();
-            this.listBoxResolutions = new ui.OwnerDrawListBox();
+            this.listViewResolutions = new System.Windows.Forms.ListView();
             this.comboBoxAssignee = new System.Windows.Forms.ComboBox();
             this.comboBoxReporter = new System.Windows.Forms.ComboBox();
             this.label10 = new System.Windows.Forms.Label();
@@ -76,16 +76,17 @@ namespace Atlassian.plvs.dialogs.jira {
             this.buttonClose.UseVisualStyleBackColor = true;
             this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
             // 
-            // listBoxProjects
+            // listViewProjects
             // 
-            this.listBoxProjects.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.listBoxProjects.FormattingEnabled = true;
-            this.listBoxProjects.ItemHeight = 16;
-            this.listBoxProjects.Location = new System.Drawing.Point(6, 27);
-            this.listBoxProjects.Name = "listBoxProjects";
-            this.listBoxProjects.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBoxProjects.Size = new System.Drawing.Size(407, 292);
-            this.listBoxProjects.TabIndex = 0;
+            this.listViewProjects.FullRowSelect = true;
+            this.listViewProjects.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.listViewProjects.HideSelection = false;
+            this.listViewProjects.Location = new System.Drawing.Point(6, 27);
+            this.listViewProjects.Name = "listViewProjects";
+            this.listViewProjects.Size = new System.Drawing.Size(407, 290);
+            this.listViewProjects.TabIndex = 0;
+            this.listViewProjects.UseCompatibleStateImageBehavior = false;
+            this.listViewProjects.View = System.Windows.Forms.View.Details;
             // 
             // listViewIssueTypes
             // 
@@ -94,7 +95,7 @@ namespace Atlassian.plvs.dialogs.jira {
             this.listViewIssueTypes.HideSelection = false;
             this.listViewIssueTypes.Location = new System.Drawing.Point(419, 27);
             this.listViewIssueTypes.Name = "listViewIssueTypes";
-            this.listViewIssueTypes.Size = new System.Drawing.Size(201, 292);
+            this.listViewIssueTypes.Size = new System.Drawing.Size(201, 290);
             this.listViewIssueTypes.TabIndex = 1;
             this.listViewIssueTypes.UseCompatibleStateImageBehavior = false;
             this.listViewIssueTypes.View = System.Windows.Forms.View.Details;
@@ -117,38 +118,41 @@ namespace Atlassian.plvs.dialogs.jira {
             this.label1.TabIndex = 3;
             this.label1.Text = "Project";
             // 
-            // listBoxFixForVersions
+            // listViewFixForVersions
             // 
-            this.listBoxFixForVersions.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.listBoxFixForVersions.FormattingEnabled = true;
-            this.listBoxFixForVersions.ItemHeight = 16;
-            this.listBoxFixForVersions.Location = new System.Drawing.Point(6, 27);
-            this.listBoxFixForVersions.Name = "listBoxFixForVersions";
-            this.listBoxFixForVersions.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBoxFixForVersions.Size = new System.Drawing.Size(201, 292);
-            this.listBoxFixForVersions.TabIndex = 0;
+            this.listViewFixForVersions.FullRowSelect = true;
+            this.listViewFixForVersions.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.listViewFixForVersions.HideSelection = false;
+            this.listViewFixForVersions.Location = new System.Drawing.Point(6, 27);
+            this.listViewFixForVersions.Name = "listViewFixForVersions";
+            this.listViewFixForVersions.Size = new System.Drawing.Size(201, 290);
+            this.listViewFixForVersions.TabIndex = 0;
+            this.listViewFixForVersions.UseCompatibleStateImageBehavior = false;
+            this.listViewFixForVersions.View = System.Windows.Forms.View.Details;
             // 
-            // listBoxAffectsVersions
+            // listViewAffectsVersions
             // 
-            this.listBoxAffectsVersions.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.listBoxAffectsVersions.FormattingEnabled = true;
-            this.listBoxAffectsVersions.ItemHeight = 16;
-            this.listBoxAffectsVersions.Location = new System.Drawing.Point(212, 27);
-            this.listBoxAffectsVersions.Name = "listBoxAffectsVersions";
-            this.listBoxAffectsVersions.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBoxAffectsVersions.Size = new System.Drawing.Size(201, 292);
-            this.listBoxAffectsVersions.TabIndex = 2;
+            this.listViewAffectsVersions.FullRowSelect = true;
+            this.listViewAffectsVersions.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.listViewAffectsVersions.HideSelection = false;
+            this.listViewAffectsVersions.Location = new System.Drawing.Point(212, 27);
+            this.listViewAffectsVersions.Name = "listViewAffectsVersions";
+            this.listViewAffectsVersions.Size = new System.Drawing.Size(201, 290);
+            this.listViewAffectsVersions.TabIndex = 2;
+            this.listViewAffectsVersions.UseCompatibleStateImageBehavior = false;
+            this.listViewAffectsVersions.View = System.Windows.Forms.View.Details;
             // 
-            // listBoxComponents
+            // listViewComponents
             // 
-            this.listBoxComponents.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.listBoxComponents.FormattingEnabled = true;
-            this.listBoxComponents.ItemHeight = 16;
-            this.listBoxComponents.Location = new System.Drawing.Point(419, 27);
-            this.listBoxComponents.Name = "listBoxComponents";
-            this.listBoxComponents.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBoxComponents.Size = new System.Drawing.Size(201, 292);
-            this.listBoxComponents.TabIndex = 1;
+            this.listViewComponents.FullRowSelect = true;
+            this.listViewComponents.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.listViewComponents.HideSelection = false;
+            this.listViewComponents.Location = new System.Drawing.Point(419, 27);
+            this.listViewComponents.Name = "listViewComponents";
+            this.listViewComponents.Size = new System.Drawing.Size(201, 290);
+            this.listViewComponents.TabIndex = 1;
+            this.listViewComponents.UseCompatibleStateImageBehavior = false;
+            this.listViewComponents.View = System.Windows.Forms.View.Details;
             // 
             // label5
             // 
@@ -184,7 +188,7 @@ namespace Atlassian.plvs.dialogs.jira {
             this.listViewPriorities.HideSelection = false;
             this.listViewPriorities.Location = new System.Drawing.Point(419, 27);
             this.listViewPriorities.Name = "listViewPriorities";
-            this.listViewPriorities.Size = new System.Drawing.Size(201, 260);
+            this.listViewPriorities.Size = new System.Drawing.Size(201, 251);
             this.listViewPriorities.TabIndex = 4;
             this.listViewPriorities.UseCompatibleStateImageBehavior = false;
             this.listViewPriorities.View = System.Windows.Forms.View.Details;
@@ -196,22 +200,23 @@ namespace Atlassian.plvs.dialogs.jira {
             this.listViewStatuses.HideSelection = false;
             this.listViewStatuses.Location = new System.Drawing.Point(6, 27);
             this.listViewStatuses.Name = "listViewStatuses";
-            this.listViewStatuses.Size = new System.Drawing.Size(201, 260);
+            this.listViewStatuses.Size = new System.Drawing.Size(201, 251);
             this.listViewStatuses.TabIndex = 2;
             this.listViewStatuses.UseCompatibleStateImageBehavior = false;
             this.listViewStatuses.View = System.Windows.Forms.View.Details;
             // 
-            // listBoxResolutions
+            // listViewResolutions
             // 
-            this.listBoxResolutions.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.listBoxResolutions.Enabled = false;
-            this.listBoxResolutions.FormattingEnabled = true;
-            this.listBoxResolutions.ItemHeight = 16;
-            this.listBoxResolutions.Location = new System.Drawing.Point(212, 27);
-            this.listBoxResolutions.Name = "listBoxResolutions";
-            this.listBoxResolutions.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBoxResolutions.Size = new System.Drawing.Size(201, 260);
-            this.listBoxResolutions.TabIndex = 3;
+            this.listViewResolutions.Enabled = false;
+            this.listViewResolutions.FullRowSelect = true;
+            this.listViewResolutions.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.listViewResolutions.HideSelection = false;
+            this.listViewResolutions.Location = new System.Drawing.Point(212, 27);
+            this.listViewResolutions.Name = "listViewResolutions";
+            this.listViewResolutions.Size = new System.Drawing.Size(201, 251);
+            this.listViewResolutions.TabIndex = 3;
+            this.listViewResolutions.UseCompatibleStateImageBehavior = false;
+            this.listViewResolutions.View = System.Windows.Forms.View.Details;
             // 
             // comboBoxAssignee
             // 
@@ -338,7 +343,7 @@ namespace Atlassian.plvs.dialogs.jira {
             // 
             this.tabPage1.Controls.Add(this.label1);
             this.tabPage1.Controls.Add(this.label2);
-            this.tabPage1.Controls.Add(this.listBoxProjects);
+            this.tabPage1.Controls.Add(this.listViewProjects);
             this.tabPage1.Controls.Add(this.listViewIssueTypes);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
@@ -351,10 +356,10 @@ namespace Atlassian.plvs.dialogs.jira {
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.label3);
-            this.tabPage2.Controls.Add(this.listBoxFixForVersions);
-            this.tabPage2.Controls.Add(this.listBoxAffectsVersions);
+            this.tabPage2.Controls.Add(this.listViewFixForVersions);
+            this.tabPage2.Controls.Add(this.listViewAffectsVersions);
             this.tabPage2.Controls.Add(this.label4);
-            this.tabPage2.Controls.Add(this.listBoxComponents);
+            this.tabPage2.Controls.Add(this.listViewComponents);
             this.tabPage2.Controls.Add(this.label5);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
@@ -373,7 +378,7 @@ namespace Atlassian.plvs.dialogs.jira {
             this.tabPage3.Controls.Add(this.listViewStatuses);
             this.tabPage3.Controls.Add(this.listViewPriorities);
             this.tabPage3.Controls.Add(this.label8);
-            this.tabPage3.Controls.Add(this.listBoxResolutions);
+            this.tabPage3.Controls.Add(this.listViewResolutions);
             this.tabPage3.Controls.Add(this.label10);
             this.tabPage3.Controls.Add(this.label9);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
@@ -440,10 +445,10 @@ namespace Atlassian.plvs.dialogs.jira {
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TabPage tabPage3;
-        private OwnerDrawListBox listBoxProjects;
-        private OwnerDrawListBox listBoxAffectsVersions;
-        private OwnerDrawListBox listBoxComponents;
-        private OwnerDrawListBox listBoxResolutions;
-        private OwnerDrawListBox listBoxFixForVersions;
+        private System.Windows.Forms.ListView listViewProjects;
+        private System.Windows.Forms.ListView listViewAffectsVersions;
+        private System.Windows.Forms.ListView listViewComponents;
+        private System.Windows.Forms.ListView listViewResolutions;
+        private System.Windows.Forms.ListView listViewFixForVersions;
     }
 }
