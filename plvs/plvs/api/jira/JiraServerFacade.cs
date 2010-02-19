@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Atlassian.plvs.api.jira.soap;
-using Atlassian.plvs.models.jira;
 
 namespace Atlassian.plvs.api.jira {
     public class JiraServerFacade : ServerFacade {
@@ -41,6 +40,11 @@ namespace Atlassian.plvs.api.jira {
             lock(this) {
                 sessionMap.Clear();
             }
+        }
+
+        public string getSoapToken(JiraServer server) {
+            SoapSession session = getSoapSession(server);
+            return session != null ? session.Token : null;
         }
 
         public List<JiraIssue> getSavedFilterIssues(JiraServer server, JiraSavedFilter filter, int start, int count) {
