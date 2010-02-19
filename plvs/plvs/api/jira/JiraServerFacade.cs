@@ -84,6 +84,10 @@ namespace Atlassian.plvs.api.jira {
             return wrapExceptions(server, () => getSoapSession(server).getSubtaskIssueTypes());
         }
 
+        public List<JiraNamedEntity> getSubtaskIssueTypes(JiraServer server, JiraProject project) {
+            return wrapExceptions(server, () => getSoapSession(server).getSubtaskIssueTypes(project));
+        }
+
         public List<JiraNamedEntity> getIssueTypes(JiraServer server, JiraProject project) {
             return wrapExceptions(server, () => getSoapSession(server).getIssueTypes(project));
         }

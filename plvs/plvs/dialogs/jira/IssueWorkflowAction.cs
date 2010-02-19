@@ -39,6 +39,7 @@ namespace Atlassian.plvs.dialogs.jira {
         private const int INITIAL_HEIGHT = 500;
 
         private List<JiraNamedEntity> issueTypes = new List<JiraNamedEntity>();
+        private List<JiraNamedEntity> subtaskIssueTypes = new List<JiraNamedEntity>();
         private List<JiraNamedEntity> versions = new List<JiraNamedEntity>();
         private List<JiraNamedEntity> comps = new List<JiraNamedEntity>();
 
@@ -82,6 +83,7 @@ namespace Atlassian.plvs.dialogs.jira {
                 status.setInfo("Retrieving issue field data...");
                 JiraProject project = projects[issue.ProjectKey];
                 issueTypes = JiraServerFacade.Instance.getIssueTypes(issue.Server, project);
+                subtaskIssueTypes = JiraServerFacade.Instance.getSubtaskIssueTypes(issue.Server, project);
                 versions = JiraServerFacade.Instance.getVersions(issue.Server, project);
                 comps = JiraServerFacade.Instance.getComponents(issue.Server, project);
 
@@ -164,7 +166,7 @@ namespace Atlassian.plvs.dialogs.jira {
                         editor = new TextAreaFieldEditorProvider(JiraServerFacade.Instance, issue, field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.ISSUE_TYPE:
-                        editor = new NamedEntityComboEditorProvider(field, issue.IssueTypeId, issueTypes, fieldValid);
+                        editor = new NamedEntityComboEditorProvider(field, issue.IssueTypeId, issue.IsSubtask ? subtaskIssueTypes : issueTypes, fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.VERSIONS:
                         editor = new NamedEntityListFieldEditorProvider(field, issue.Versions, versions, fieldValid);
