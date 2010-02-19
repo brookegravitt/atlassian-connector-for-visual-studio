@@ -41,6 +41,7 @@
 
   <target name="clean">
     <delete dir="${main.project}/bin/${configuration}" />
+    <delete dir="${main.project}/obj/${configuration}" />
   </target>
 
   <target name="build.setup" depends="clean,version.update" >
