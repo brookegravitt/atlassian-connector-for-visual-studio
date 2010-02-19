@@ -170,7 +170,7 @@ namespace Atlassian.plvs.ui.jira {
             buttonCollapseAll.Enabled = groupingControlsEnabled && notNone;
             buttonEditFilter.Enabled = filtersTree.SelectedNode is JiraCustomFilterTreeNode;
             buttonRemoveFilter.Enabled = filtersTree.SelectedNode is JiraCustomFilterTreeNode;
-            buttonAddFilter.Enabled = filtersTree.NodeWithServerSelected;
+            buttonAddFilter.Enabled = filtersTree.NodeWithServerSelected && metadataFetched;
             buttonServerExplorer.Enabled = filtersTree.NodeWithServerSelected;
         }
 
@@ -419,6 +419,7 @@ namespace Atlassian.plvs.ui.jira {
                                                  filtersTree.addRecentlyViewedNode();
                                                  filtersTree.ExpandAll();
                                                  filtersTree.restoreLastSelectedFilterItem();
+                                                 updateIssueListButtons();
                                              }));
             } catch (Exception e) {
                 status.setError("Failed to load JIRA server information", e);

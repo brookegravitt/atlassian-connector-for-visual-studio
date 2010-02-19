@@ -27,9 +27,14 @@ namespace Atlassian.plvs.dialogs.jira {
 
             Text = editMode ? "Edit Local Filter" : "Add Local Filter";
 
-            listViewIssueTypes.Columns.Add(NAME_COLUMN, listViewIssueTypes.Width - 10, HorizontalAlignment.Left);
-            listViewPriorities.Columns.Add(NAME_COLUMN, listViewPriorities.Width - 10, HorizontalAlignment.Left);
-            listViewStatuses.Columns.Add(NAME_COLUMN, listViewStatuses.Width - 10, HorizontalAlignment.Left);
+            listViewProjects.Columns.Add(NAME_COLUMN, listViewProjects.Width - 30, HorizontalAlignment.Left);
+            listViewAffectsVersions.Columns.Add(NAME_COLUMN, listViewAffectsVersions.Width - 30, HorizontalAlignment.Left);
+            listViewFixForVersions.Columns.Add(NAME_COLUMN, listViewFixForVersions.Width - 30, HorizontalAlignment.Left);
+            listViewComponents.Columns.Add(NAME_COLUMN, listViewComponents.Width - 30, HorizontalAlignment.Left);
+            listViewResolutions.Columns.Add(NAME_COLUMN, listViewResolutions.Width - 30, HorizontalAlignment.Left);
+            listViewIssueTypes.Columns.Add(NAME_COLUMN, listViewIssueTypes.Width - 30, HorizontalAlignment.Left);
+            listViewPriorities.Columns.Add(NAME_COLUMN, listViewPriorities.Width - 30, HorizontalAlignment.Left);
+            listViewStatuses.Columns.Add(NAME_COLUMN, listViewStatuses.Width - 30, HorizontalAlignment.Left);
 
             StartPosition = FormStartPosition.CenterParent;
 
@@ -54,14 +59,14 @@ namespace Atlassian.plvs.dialogs.jira {
 
             manageSelections();
 
-            listBoxProjects.SelectedValueChanged += listBoxProjects_SelectedValueChanged;
+            listViewProjects.SelectedIndexChanged += listViewProjects_SelectedValueChanged;
         }
 
         private void manageSelections() {
             foreach (JiraProject project in filter.Projects) {
-                foreach (var item in listBoxProjects.Items) {
-                    if (!project.Key.Equals(((JiraProject) item).Key)) continue;
-                    listBoxProjects.SelectedItems.Add(item);
+                foreach (ListViewItem item in listViewProjects.Items) {
+                    if (!project.Key.Equals(((JiraProjectListViewItem) item).Project.Key)) continue;
+                    item.Selected = true;
                     break;
                 }
             }
@@ -80,9 +85,9 @@ namespace Atlassian.plvs.dialogs.jira {
                 }
             }
             foreach (JiraNamedEntity resolution in filter.Resolutions) {
-                foreach (var item in listBoxResolutions.Items) {
-                    if (resolution.Id != (((JiraNamedEntity)item).Id)) continue;
-                    listBoxResolutions.SelectedItems.Add(item);
+                foreach (ListViewItem item in listViewResolutions.Items) {
+                    if (resolution.Id != (((JiraNamedEntityListViewItem)item).Entity.Id)) continue;
+                    item.Selected = true;
                     break;
                 }
             }
@@ -107,10 +112,10 @@ namespace Atlassian.plvs.dialogs.jira {
         }
 
         private void refillProjects(SortedDictionary<string, JiraProject> projects) {
-            listBoxProjects.Items.Clear();
+            listViewProjects.Items.Clear();
             if (projects == null) return;
             foreach (string projectKey in projects.Keys) {
-                listBoxProjects.Items.Add(projects[projectKey]);
+                listViewProjects.Items.Add(new JiraProjectListViewItem(projects[projectKey]));
             }
         }
 
@@ -164,10 +169,10 @@ namespace Atlassian.plvs.dialogs.jira {
         }
 
         private void refillResolutions(SortedDictionary<int, JiraNamedEntity> resolutions) {
-            listBoxResolutions.Items.Clear();
+            listViewResolutions.Items.Clear();
             if (resolutions == null) return;
             foreach (int key in resolutions.Keys) {
-                listBoxResolutions.Items.Add(resolutions[key]);
+                listViewResolutions.Items.Add(new JiraNamedEntityListViewItem(resolutions[key], 0));
             }
         }
 
@@ -191,46 +196,45 @@ namespace Atlassian.plvs.dialogs.jira {
         }
 
         private void refillFixFor(IEnumerable<JiraNamedEntity> fixFors) {
-            listBoxFixForVersions.Items.Clear();
+            listViewFixForVersions.Items.Clear();
 
             if (fixFors == null)
                 return;
             foreach (JiraNamedEntity fixFor in fixFors)
-                listBoxFixForVersions.Items.Add(fixFor);
+                listViewFixForVersions.Items.Add(new JiraNamedEntityListViewItem(fixFor, 0));
         }
 
         private void refillComponents(IEnumerable<JiraNamedEntity> comps) {
-            listBoxComponents.Items.Clear();
+            listViewComponents.Items.Clear();
 
             if (comps == null)
                 return;
             foreach (JiraNamedEntity component in comps)
-                listBoxComponents.Items.Add(component);
+                listViewComponents.Items.Add(new JiraNamedEntityListViewItem(component, 0));
         }
 
         private void refillAffectsVersions(IEnumerable<JiraNamedEntity> versions) {
-            listBoxAffectsVersions.Items.Clear();
+            listViewAffectsVersions.Items.Clear();
 
             if (versions == null)
                 return;
             foreach (JiraNamedEntity version in versions)
-                listBoxAffectsVersions.Items.Add(version);
+                listViewAffectsVersions.Items.Add(new JiraNamedEntityListViewItem(version, 0));
         }
 
         private void buttonClose_Click(object sender, EventArgs e) {
             Close();
         }
 
-        private void listBoxProjects_SelectedValueChanged(object sender, EventArgs e) {
+        private void listViewProjects_SelectedValueChanged(object sender, EventArgs e) {
             setProjectRelatedValues(false);
         }
 
         private void setProjectRelatedValues(bool initial) {
-            if (listBoxProjects.SelectedItems.Count == 1) {
+            if (listViewProjects.SelectedItems.Count == 1) {
                 setAllEnabled(false);
-                JiraProject project = listBoxProjects.SelectedItems[0] as JiraProject;
-
-                Thread runner = new Thread(() => setProjectRelatedValuesRunner(project, initial));
+                JiraProjectListViewItem project = listViewProjects.SelectedItems[0] as JiraProjectListViewItem;
+                Thread runner = new Thread(() => setProjectRelatedValuesRunner(project != null ? project.Project : null, initial));
                 runner.Start();
             }
             else {
@@ -284,40 +288,40 @@ namespace Atlassian.plvs.dialogs.jira {
             }
 
             foreach (JiraNamedEntity fixFor in filter.FixForVersions) {
-                foreach (var item in listBoxFixForVersions.Items) {
-                    if (fixFor.Id != (((JiraNamedEntity) item).Id)) continue;
-                    listBoxFixForVersions.SelectedItems.Add(item);
+                foreach (ListViewItem item in listViewFixForVersions.Items) {
+                    if (fixFor.Id != (((JiraNamedEntityListViewItem)item).Entity.Id)) continue;
+                    item.Selected = true;
                     break;
                 }
             }
 
             foreach (JiraNamedEntity comp in filter.Components) {
-                foreach (var item in listBoxComponents.Items) {
-                    if (comp.Id != (((JiraNamedEntity) item).Id)) continue;
-                    listBoxComponents.SelectedItems.Add(item);
+                foreach (ListViewItem item in listViewComponents.Items) {
+                    if (comp.Id != (((JiraNamedEntityListViewItem)item).Entity.Id)) continue;
+                    item.Selected = true;
                     break;
                 }
             }
 
             foreach (JiraNamedEntity affectVersion in filter.AffectsVersions) {
-                foreach (var item in listBoxAffectsVersions.Items) {
-                    if (affectVersion.Id != (((JiraNamedEntity) item).Id)) continue;
-                    listBoxAffectsVersions.SelectedItems.Add(item);
+                foreach (ListViewItem item in listViewAffectsVersions.Items) {
+                    if (affectVersion.Id != (((JiraNamedEntityListViewItem)item).Entity.Id)) continue;
+                    item.Selected = true;
                     break;
                 }
             }
         }
 
         private void setAllEnabled(bool enabled) {
-            listBoxProjects.Enabled = enabled;
+            listViewProjects.Enabled = enabled;
             listViewIssueTypes.Enabled = enabled;
-            listBoxFixForVersions.Enabled = enabled;
-            listBoxComponents.Enabled = enabled;
-            listBoxAffectsVersions.Enabled = enabled;
+            listViewFixForVersions.Enabled = enabled;
+            listViewComponents.Enabled = enabled;
+            listViewAffectsVersions.Enabled = enabled;
             comboBoxReporter.Enabled = enabled;
             comboBoxAssignee.Enabled = enabled;
             listViewStatuses.Enabled = enabled;
-            listBoxResolutions.Enabled = enabled;
+            listViewResolutions.Enabled = enabled;
             listViewPriorities.Enabled = enabled;
 
             buttonClear.Enabled = enabled;
@@ -336,30 +340,30 @@ namespace Atlassian.plvs.dialogs.jira {
             
             filter.Name = textBoxFilterName.Text.Trim();
 
-            foreach (var item in listBoxProjects.SelectedItems) {
-                JiraProject proj = item as JiraProject;
+            foreach (var item in listViewProjects.SelectedItems) {
+                JiraProjectListViewItem proj = item as JiraProjectListViewItem;
                 if (proj != null)
-                    filter.Projects.Add(proj);
+                    filter.Projects.Add(proj.Project);
             }
             foreach (var item in listViewIssueTypes.SelectedItems) {
                 JiraNamedEntityListViewItem itlvi = item as JiraNamedEntityListViewItem;
                 if (itlvi != null)
                     filter.IssueTypes.Add(itlvi.Entity);
             }
-            foreach (var item in listBoxFixForVersions.SelectedItems) {
-                JiraNamedEntity version = item as JiraNamedEntity;
+            foreach (var item in listViewFixForVersions.SelectedItems) {
+                JiraNamedEntityListViewItem version = item as JiraNamedEntityListViewItem;
                 if (version != null)
-                    filter.FixForVersions.Add(version);
+                    filter.FixForVersions.Add(version.Entity);
             }
-            foreach (var item in listBoxAffectsVersions.SelectedItems) {
-                JiraNamedEntity version = item as JiraNamedEntity;
+            foreach (var item in listViewAffectsVersions.SelectedItems) {
+                JiraNamedEntityListViewItem version = item as JiraNamedEntityListViewItem;
                 if (version != null)
-                    filter.AffectsVersions.Add(version);
+                    filter.AffectsVersions.Add(version.Entity);
             }
-            foreach (var item in listBoxComponents.SelectedItems) {
-                JiraNamedEntity comp = item as JiraNamedEntity;
+            foreach (var item in listViewComponents.SelectedItems) {
+                JiraNamedEntityListViewItem comp = item as JiraNamedEntityListViewItem;
                 if (comp != null)
-                    filter.Components.Add(comp);
+                    filter.Components.Add(comp.Entity);
             }
             foreach (var item in listViewPriorities.SelectedItems) {
                 JiraNamedEntityListViewItem itlvi = item as JiraNamedEntityListViewItem;
@@ -371,10 +375,10 @@ namespace Atlassian.plvs.dialogs.jira {
                 if (itlvi != null)
                     filter.Statuses.Add(itlvi.Entity);
             }
-            foreach (var item in listBoxResolutions.SelectedItems) {
-                JiraNamedEntity resolution = item as JiraNamedEntity;
+            foreach (var item in listViewResolutions.SelectedItems) {
+                JiraNamedEntityListViewItem resolution = item as JiraNamedEntityListViewItem;
                 if (resolution != null)
-                    filter.Resolutions.Add(resolution);
+                    filter.Resolutions.Add(resolution.Entity);
             }
             var reporter = comboBoxReporter.SelectedItem;
             if (reporter != null) {
@@ -402,16 +406,16 @@ namespace Atlassian.plvs.dialogs.jira {
 
         private void clearSelections() {
             listViewIssueTypes.SelectedItems.Clear();
-            listBoxFixForVersions.SelectedItems.Clear();
-            listBoxComponents.SelectedItems.Clear();
-            listBoxAffectsVersions.SelectedItems.Clear();
-            listBoxResolutions.SelectedItems.Clear();
+            listViewFixForVersions.SelectedItems.Clear();
+            listViewComponents.SelectedItems.Clear();
+            listViewAffectsVersions.SelectedItems.Clear();
+            listViewResolutions.SelectedItems.Clear();
             listViewStatuses.SelectedItems.Clear();
             listViewPriorities.SelectedItems.Clear();
             comboBoxReporter.SelectedItem = comboBoxReporter.Items[0];
             comboBoxAssignee.SelectedItem = comboBoxAssignee.Items[0];
             // make it last, so that project-related updates are not triggered too early
-            listBoxProjects.SelectedItems.Clear();
+            listViewProjects.SelectedItems.Clear();
         }
 
         private void clearFilterValues() {
