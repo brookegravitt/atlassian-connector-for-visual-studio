@@ -326,6 +326,7 @@
     <Compile Include="ui\jira\JiraNamedEntityComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ui\jira\JiraProjectListViewItem.cs" />
     <Compile Include="ui\jira\JiraTextAreaWithWikiPreview.cs">
       <SubType>UserControl</SubType>
     </Compile>
