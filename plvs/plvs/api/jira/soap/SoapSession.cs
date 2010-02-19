@@ -136,6 +136,10 @@ namespace Atlassian.plvs.api.jira.soap {
             return createEntityListFromConstants(service.getSubTaskIssueTypes(Token));
         }
 
+        public List<JiraNamedEntity> getSubtaskIssueTypes(JiraProject project) {
+            return createEntityListFromConstants(service.getSubTaskIssueTypesForProject(Token, project.Id.ToString()));
+        }
+
         public List<JiraNamedEntity> getIssueTypes(JiraProject project) {
             return createEntityListFromConstants(service.getIssueTypesForProject(Token, project.Id.ToString()));
         }
