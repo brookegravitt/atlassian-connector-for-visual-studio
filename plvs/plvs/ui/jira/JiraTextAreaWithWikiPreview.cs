@@ -88,5 +88,17 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         public event EventHandler<EventArgs> MarkupTextChanged;
+
+        private void webPreview_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
+            if (e.Url.Equals("about:blank")) {
+                return;
+            }
+            try {
+                e.Cancel = true;
+                Process.Start(e.Url.ToString());
+            } catch (Exception ex) {
+                Debug.WriteLine("JiraTextAreaWithWikiPreview.webPreview_Navigating() - exception: " + ex.Message);
+            }
+        }
     }
 }
