@@ -138,7 +138,7 @@ namespace Atlassian.plvs.dialogs.jira {
             this.listViewAffectsVersions.Location = new System.Drawing.Point(212, 27);
             this.listViewAffectsVersions.Name = "listViewAffectsVersions";
             this.listViewAffectsVersions.Size = new System.Drawing.Size(201, 290);
-            this.listViewAffectsVersions.TabIndex = 2;
+            this.listViewAffectsVersions.TabIndex = 1;
             this.listViewAffectsVersions.UseCompatibleStateImageBehavior = false;
             this.listViewAffectsVersions.View = System.Windows.Forms.View.Details;
             // 
@@ -150,7 +150,7 @@ namespace Atlassian.plvs.dialogs.jira {
             this.listViewComponents.Location = new System.Drawing.Point(419, 27);
             this.listViewComponents.Name = "listViewComponents";
             this.listViewComponents.Size = new System.Drawing.Size(201, 290);
-            this.listViewComponents.TabIndex = 1;
+            this.listViewComponents.TabIndex = 2;
             this.listViewComponents.UseCompatibleStateImageBehavior = false;
             this.listViewComponents.View = System.Windows.Forms.View.Details;
             // 
@@ -189,7 +189,7 @@ namespace Atlassian.plvs.dialogs.jira {
             this.listViewPriorities.Location = new System.Drawing.Point(419, 27);
             this.listViewPriorities.Name = "listViewPriorities";
             this.listViewPriorities.Size = new System.Drawing.Size(201, 251);
-            this.listViewPriorities.TabIndex = 4;
+            this.listViewPriorities.TabIndex = 2;
             this.listViewPriorities.UseCompatibleStateImageBehavior = false;
             this.listViewPriorities.View = System.Windows.Forms.View.Details;
             // 
@@ -201,7 +201,7 @@ namespace Atlassian.plvs.dialogs.jira {
             this.listViewStatuses.Location = new System.Drawing.Point(6, 27);
             this.listViewStatuses.Name = "listViewStatuses";
             this.listViewStatuses.Size = new System.Drawing.Size(201, 251);
-            this.listViewStatuses.TabIndex = 2;
+            this.listViewStatuses.TabIndex = 0;
             this.listViewStatuses.UseCompatibleStateImageBehavior = false;
             this.listViewStatuses.View = System.Windows.Forms.View.Details;
             // 
@@ -214,7 +214,7 @@ namespace Atlassian.plvs.dialogs.jira {
             this.listViewResolutions.Location = new System.Drawing.Point(212, 27);
             this.listViewResolutions.Name = "listViewResolutions";
             this.listViewResolutions.Size = new System.Drawing.Size(201, 251);
-            this.listViewResolutions.TabIndex = 3;
+            this.listViewResolutions.TabIndex = 1;
             this.listViewResolutions.UseCompatibleStateImageBehavior = false;
             this.listViewResolutions.View = System.Windows.Forms.View.Details;
             // 
@@ -226,7 +226,7 @@ namespace Atlassian.plvs.dialogs.jira {
             this.comboBoxAssignee.Location = new System.Drawing.Point(419, 303);
             this.comboBoxAssignee.Name = "comboBoxAssignee";
             this.comboBoxAssignee.Size = new System.Drawing.Size(201, 21);
-            this.comboBoxAssignee.TabIndex = 1;
+            this.comboBoxAssignee.TabIndex = 4;
             // 
             // comboBoxReporter
             // 
@@ -236,7 +236,7 @@ namespace Atlassian.plvs.dialogs.jira {
             this.comboBoxReporter.Location = new System.Drawing.Point(57, 303);
             this.comboBoxReporter.Name = "comboBoxReporter";
             this.comboBoxReporter.Size = new System.Drawing.Size(201, 21);
-            this.comboBoxReporter.TabIndex = 0;
+            this.comboBoxReporter.TabIndex = 3;
             // 
             // label10
             // 
@@ -312,7 +312,7 @@ namespace Atlassian.plvs.dialogs.jira {
             this.textBoxFilterName.Location = new System.Drawing.Point(70, 387);
             this.textBoxFilterName.Name = "textBoxFilterName";
             this.textBoxFilterName.Size = new System.Drawing.Size(575, 20);
-            this.textBoxFilterName.TabIndex = 3;
+            this.textBoxFilterName.TabIndex = 0;
             this.textBoxFilterName.TextChanged += new System.EventHandler(this.textBoxFilterName_TextChanged);
             // 
             // label11
@@ -337,7 +337,7 @@ namespace Atlassian.plvs.dialogs.jira {
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(634, 360);
-            this.tabControl1.TabIndex = 5;
+            this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
             // 
@@ -406,6 +406,7 @@ namespace Atlassian.plvs.dialogs.jira {
             this.MinimizeBox = false;
             this.Name = "EditCustomFilter";
             this.Text = "Edit Local Filter";
+            this.Shown += new System.EventHandler(this.EditCustomFilter_Shown);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.EditCustomFilter_KeyPress);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);

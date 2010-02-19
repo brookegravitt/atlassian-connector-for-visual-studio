@@ -38,12 +38,16 @@ namespace Atlassian.plvs.dialogs.jira {
 
             StartPosition = FormStartPosition.CenterParent;
 
+            textBoxFilterName.Text = filter.Name;
+
+            listViewProjects.SelectedIndexChanged += listViewProjects_SelectedValueChanged;
+        }
+
+        private void EditCustomFilter_Shown(object sender, EventArgs e) {
             SortedDictionary<string, JiraProject> projects = JiraServerCache.Instance.getProjects(server);
             SortedDictionary<int, JiraNamedEntity> statuses = JiraServerCache.Instance.getStatues(server);
             SortedDictionary<int, JiraNamedEntity> resolutions = JiraServerCache.Instance.getResolutions(server);
             List<JiraNamedEntity> priorities = JiraServerCache.Instance.getPriorities(server);
-
-            textBoxFilterName.Text = filter.Name;
 
             refillProjects(projects);
             refillStatuses(statuses);
@@ -59,7 +63,7 @@ namespace Atlassian.plvs.dialogs.jira {
 
             manageSelections();
 
-            listViewProjects.SelectedIndexChanged += listViewProjects_SelectedValueChanged;
+            listViewProjects.Focus();
         }
 
         private void manageSelections() {
@@ -67,6 +71,7 @@ namespace Atlassian.plvs.dialogs.jira {
                 foreach (ListViewItem item in listViewProjects.Items) {
                     if (!project.Key.Equals(((JiraProjectListViewItem) item).Project.Key)) continue;
                     item.Selected = true;
+                    item.EnsureVisible();
                     break;
                 }
             }
@@ -74,6 +79,7 @@ namespace Atlassian.plvs.dialogs.jira {
                 foreach (ListViewItem item in listViewPriorities.Items) {
                     if (priority.Id != (((JiraNamedEntityListViewItem)item).Entity.Id)) continue;
                     item.Selected = true;
+                    item.EnsureVisible();
                     break;
                 }
             }
@@ -81,6 +87,7 @@ namespace Atlassian.plvs.dialogs.jira {
                 foreach (ListViewItem item in listViewStatuses.Items) {
                     if (status.Id != (((JiraNamedEntityListViewItem)item).Entity.Id)) continue;
                     item.Selected = true;
+                    item.EnsureVisible();
                     break;
                 }
             }
@@ -88,6 +95,7 @@ namespace Atlassian.plvs.dialogs.jira {
                 foreach (ListViewItem item in listViewResolutions.Items) {
                     if (resolution.Id != (((JiraNamedEntityListViewItem)item).Entity.Id)) continue;
                     item.Selected = true;
+                    item.EnsureVisible();
                     break;
                 }
             }
@@ -108,7 +116,7 @@ namespace Atlassian.plvs.dialogs.jira {
                 break;
             }
 
-            setProjectRelatedValues(true);
+            setProjectRelatedValues();
         }
 
         private void refillProjects(SortedDictionary<string, JiraProject> projects) {
@@ -227,29 +235,32 @@ namespace Atlassian.plvs.dialogs.jira {
         }
 
         private void listViewProjects_SelectedValueChanged(object sender, EventArgs e) {
-            setProjectRelatedValues(false);
+            setProjectRelatedValues();
         }
 
-        private void setProjectRelatedValues(bool initial) {
+        private JiraProjectListViewItem lastSelected;
+
+        private void setProjectRelatedValues() {
             if (listViewProjects.SelectedItems.Count == 1) {
                 setAllEnabled(false);
                 JiraProjectListViewItem project = listViewProjects.SelectedItems[0] as JiraProjectListViewItem;
-                Thread runner = new Thread(() => setProjectRelatedValuesRunner(project != null ? project.Project : null, initial));
-                runner.Start();
-            }
-            else {
+                if (project != lastSelected) {
+                    lastSelected = project;
+                    Thread runner = new Thread(() => setProjectRelatedValuesRunner(project != null ? project.Project : null));
+                    runner.Start();
+                }
+            } else {
+                lastSelected = null;
                 refillIssueTypes(null);
                 refillComponents(null);
                 refillFixFor(null);
                 refillAffectsVersions(null);
 
-                if (initial) {
-                    setProjectRelatedSelections();
-                }
+                setProjectRelatedSelections();
             }
         }
 
-        private void setProjectRelatedValuesRunner(JiraProject project, bool initial) {
+        private void setProjectRelatedValuesRunner(JiraProject project) {
             try {
                 List<JiraNamedEntity> issueTypes = JiraServerFacade.Instance.getIssueTypes(server, project);
                 List<JiraNamedEntity> comps = JiraServerFacade.Instance.getComponents(server, project);
@@ -262,8 +273,7 @@ namespace Atlassian.plvs.dialogs.jira {
                                              refillFixFor(versions);
                                              refillAffectsVersions(versions);
 
-                                             if (initial)
-                                                 setProjectRelatedSelections();
+                                             setProjectRelatedSelections();
 
                                              setAllEnabled(true);
                                          }));
@@ -283,6 +293,7 @@ namespace Atlassian.plvs.dialogs.jira {
                 foreach (ListViewItem item in listViewIssueTypes.Items) {
                     if (issueType.Id != (((JiraNamedEntityListViewItem) item).Entity.Id)) continue;
                     item.Selected = true;
+                    item.EnsureVisible();
                     break;
                 }
             }
@@ -291,6 +302,7 @@ namespace Atlassian.plvs.dialogs.jira {
                 foreach (ListViewItem item in listViewFixForVersions.Items) {
                     if (fixFor.Id != (((JiraNamedEntityListViewItem)item).Entity.Id)) continue;
                     item.Selected = true;
+                    item.EnsureVisible();
                     break;
                 }
             }
@@ -299,6 +311,7 @@ namespace Atlassian.plvs.dialogs.jira {
                 foreach (ListViewItem item in listViewComponents.Items) {
                     if (comp.Id != (((JiraNamedEntityListViewItem)item).Entity.Id)) continue;
                     item.Selected = true;
+                    item.EnsureVisible();
                     break;
                 }
             }
@@ -307,9 +320,12 @@ namespace Atlassian.plvs.dialogs.jira {
                 foreach (ListViewItem item in listViewAffectsVersions.Items) {
                     if (affectVersion.Id != (((JiraNamedEntityListViewItem)item).Entity.Id)) continue;
                     item.Selected = true;
+                    item.EnsureVisible();
                     break;
                 }
             }
+
+            listViewProjects.Focus();
         }
 
         private void setAllEnabled(bool enabled) {
@@ -327,6 +343,10 @@ namespace Atlassian.plvs.dialogs.jira {
             buttonClear.Enabled = enabled;
             textBoxFilterName.Enabled = enabled;
             buttonOk.Enabled = enabled && textBoxFilterName.Text.Length > 0;
+
+            // crude as hell, but that's what people will mostly 
+            // want to see - focused projects listview
+            listViewProjects.Focus();
         }
 
         private void buttonClear_Click(object sender, EventArgs e) {
