@@ -275,12 +275,15 @@ Section "Atlassian Connector For Visual Studio (required)"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Plvs" "NoRepair" 1
   WriteUninstaller "uninstall.exe"
   
+  ClearErrors
+  
   ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\9.0" "InstallDir"
   IfErrors +3 0
     Call Register2008
 	ExecWait '"$0\devenv.exe" /setup'
+  
   ClearErrors
-
+  
   ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\10.0" "InstallDir"
   IfErrors +3 0
     Call Register2010
