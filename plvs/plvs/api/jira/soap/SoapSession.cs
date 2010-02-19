@@ -5,7 +5,7 @@ using Atlassian.plvs.Atlassian.plvs.api.soap.service;
 namespace Atlassian.plvs.api.jira.soap {
     public class SoapSession {
         private readonly string url;
-        private string token;
+        public string Token { get; private set; }
         private readonly JiraSoapServiceService service = new JiraSoapServiceService();
 
         public SoapSession(string u) {
@@ -15,7 +15,7 @@ namespace Atlassian.plvs.api.jira.soap {
 
         public void login(string userName, string password) {
             try {
-                token = service.login(userName, password);
+                Token = service.login(userName, password);
             }
             catch (Exception e) {
                 throw new LoginException(e);
@@ -23,7 +23,7 @@ namespace Atlassian.plvs.api.jira.soap {
         }
 
         public List<JiraProject> getProjects() {
-            RemoteProject[] pTable = service.getProjectsNoSchemes(token);
+            RemoteProject[] pTable = service.getProjectsNoSchemes(Token);
             List<JiraProject> list = new List<JiraProject>();
             foreach (RemoteProject p in pTable) {
                 list.Add(new JiraProject(int.Parse(p.id), p.key, p.name));
@@ -32,7 +32,7 @@ namespace Atlassian.plvs.api.jira.soap {
         }
 
         public List<JiraSavedFilter> getSavedFilters() {
-            RemoteFilter[] fTable = service.getSavedFilters(token);
+            RemoteFilter[] fTable = service.getSavedFilters(Token);
             List<JiraSavedFilter> list = new List<JiraSavedFilter>();
             foreach (RemoteFilter f in fTable) {
                 list.Add(new JiraSavedFilter(int.Parse(f.id), f.name));
@@ -54,7 +54,7 @@ namespace Atlassian.plvs.api.jira.soap {
             }
 
             if (issue.Components != null && issue.Components.Count > 0) {
-                RemoteComponent[] components = service.getComponents(token, issue.ProjectKey);
+                RemoteComponent[] components = service.getComponents(Token, issue.ProjectKey);
                 List<RemoteComponent> comps = new List<RemoteComponent>();
                 for (int i = 0; i < issue.Components.Count; ++i) {
                     foreach (RemoteComponent component in components) {
@@ -71,7 +71,7 @@ namespace Atlassian.plvs.api.jira.soap {
                 ri.components = comps.ToArray();
             }
 
-            RemoteVersion[] versions = service.getVersions(token, issue.ProjectKey);
+            RemoteVersion[] versions = service.getVersions(Token, issue.ProjectKey);
             
             if (issue.Versions != null && issue.Versions.Count > 0) {
                 List<RemoteVersion> vers = new List<RemoteVersion>();
@@ -103,12 +103,12 @@ namespace Atlassian.plvs.api.jira.soap {
                 ri.fixVersions = vers.ToArray();
             }
 
-            RemoteIssue createdIssue = service.createIssue(token, ri);
+            RemoteIssue createdIssue = service.createIssue(Token, ri);
             return createdIssue.key;
         }
 
         public void addComment(JiraIssue issue, string comment) {
-            service.addComment(token, issue.Key, new RemoteComment {body = comment});
+            service.addComment(Token, issue.Key, new RemoteComment {body = comment});
         }
 
         public class LoginException : Exception {
@@ -116,12 +116,12 @@ namespace Atlassian.plvs.api.jira.soap {
         }
 
         public object getIssueSoapObject(string key) {
-            return service.getIssue(token, key);
+            return service.getIssue(Token, key);
         }
 
         public JiraNamedEntity getSecurityLevel(string key) {
             try {
-                RemoteSecurityLevel securityLevel = service.getSecurityLevel(token, key);
+                RemoteSecurityLevel securityLevel = service.getSecurityLevel(Token, key);
                 return securityLevel == null ? null : new JiraNamedEntity(int.Parse(securityLevel.id), securityLevel.name, null);
             } catch (Exception) {
                 return null;
@@ -129,39 +129,39 @@ namespace Atlassian.plvs.api.jira.soap {
         }
 
         public List<JiraNamedEntity> getIssueTypes() {
-            return createEntityListFromConstants(service.getIssueTypes(token));
+            return createEntityListFromConstants(service.getIssueTypes(Token));
         }
 
         public List<JiraNamedEntity> getSubtaskIssueTypes() {
-            return createEntityListFromConstants(service.getSubTaskIssueTypes(token));
+            return createEntityListFromConstants(service.getSubTaskIssueTypes(Token));
         }
 
         public List<JiraNamedEntity> getIssueTypes(JiraProject project) {
-            return createEntityListFromConstants(service.getIssueTypesForProject(token, project.Id.ToString()));
+            return createEntityListFromConstants(service.getIssueTypesForProject(Token, project.Id.ToString()));
         }
 
         public List<JiraNamedEntity> getPriorities() {
-            return createEntityListFromConstants(service.getPriorities(token));
+            return createEntityListFromConstants(service.getPriorities(Token));
         }
 
         public List<JiraNamedEntity> getStatuses() {
-            return createEntityListFromConstants(service.getStatuses(token));
+            return createEntityListFromConstants(service.getStatuses(Token));
         }
 
         public List<JiraNamedEntity> getComponents(JiraProject project) {
-            return createEntityList(service.getComponents(token, project.Key));
+            return createEntityList(service.getComponents(Token, project.Key));
         }
 
         public List<JiraNamedEntity> getVersions(JiraProject project) {
-            return createEntityList(service.getVersions(token, project.Key));
+            return createEntityList(service.getVersions(Token, project.Key));
         }
 
         public List<JiraNamedEntity> getResolutions() {
-            return createEntityListFromConstants(service.getResolutions(token));
+            return createEntityListFromConstants(service.getResolutions(Token));
         }
 
         public List<JiraNamedEntity> getActionsForIssue(JiraIssue issue) {
-            RemoteNamedObject[] actions = service.getAvailableActions(token, issue.Key);
+            RemoteNamedObject[] actions = service.getAvailableActions(Token, issue.Key);
             List<JiraNamedEntity> list = new List<JiraNamedEntity>();
             foreach (RemoteNamedObject action in actions) {
                 list.Add(new JiraNamedEntity(int.Parse(action.id), action.name, null));
@@ -170,7 +170,7 @@ namespace Atlassian.plvs.api.jira.soap {
         }
 
         public List<JiraField> getFieldsForAction(JiraIssue issue, int id) {
-            RemoteField[] fields = service.getFieldsForAction(token, issue.Key, id.ToString());
+            RemoteField[] fields = service.getFieldsForAction(Token, issue.Key, id.ToString());
             List<JiraField> list = new List<JiraField>();
             foreach (RemoteField field in fields) {
                 list.Add(new JiraField(field.id, field.name));
@@ -179,7 +179,7 @@ namespace Atlassian.plvs.api.jira.soap {
         }
 
         public void runIssueActionWithoutParams(JiraIssue issue, int id) {
-            service.progressWorkflowAction(token, issue.Key, id.ToString(), null);
+            service.progressWorkflowAction(Token, issue.Key, id.ToString(), null);
         }
 
         public void runIssueActionWithParams(JiraIssue issue, int id, ICollection<JiraField> fields, string comment) {
@@ -193,25 +193,25 @@ namespace Atlassian.plvs.api.jira.soap {
                 RemoteFieldValue fv = new RemoteFieldValue {id = field.Id, values = field.Values.ToArray()};
                 fieldValues.Add(fv);
             }
-            service.progressWorkflowAction(token, issue.Key, id.ToString(), fieldValues.ToArray());
+            service.progressWorkflowAction(Token, issue.Key, id.ToString(), fieldValues.ToArray());
             if (!string.IsNullOrEmpty(comment)) {
-                service.addComment(token, issue.Key, new RemoteComment { body = comment });
+                service.addComment(Token, issue.Key, new RemoteComment { body = comment });
             }
         }
 
         public void logWorkAndAutoUpdateRemaining(string key, string timeSpent, DateTime startDate) {
             RemoteWorklog worklog = new RemoteWorklog { timeSpent = timeSpent, startDate = startDate };
-            service.addWorklogAndAutoAdjustRemainingEstimate(token, key, worklog);
+            service.addWorklogAndAutoAdjustRemainingEstimate(Token, key, worklog);
         }
 
         public void logWorkAndLeaveRemainingUnchanged(string key, string timeSpent, DateTime startDate) {
             RemoteWorklog worklog = new RemoteWorklog { timeSpent = timeSpent, startDate = startDate };
-            service.addWorklogAndRetainRemainingEstimate(token, key, worklog);
+            service.addWorklogAndRetainRemainingEstimate(Token, key, worklog);
         }
 
         public void logWorkAndUpdateRemainingManually(string key, string timeSpent, DateTime startDate, string remainingEstimate) {
             RemoteWorklog worklog = new RemoteWorklog { timeSpent = timeSpent, startDate = startDate };
-            service.addWorklogWithNewRemainingEstimate(token, key, worklog, remainingEstimate);
+            service.addWorklogWithNewRemainingEstimate(Token, key, worklog, remainingEstimate);
         }
 
         public void updateIssue(string key, ICollection<JiraField> fields) {
@@ -220,11 +220,11 @@ namespace Atlassian.plvs.api.jira.soap {
                 RemoteFieldValue fv = new RemoteFieldValue {id = field.Id, values = field.Values.ToArray()};
                 fieldValues.Add(fv);
             }
-            service.updateIssue(token, key, fieldValues.ToArray());
+            service.updateIssue(Token, key, fieldValues.ToArray());
         }
 
         public void uploadAttachment(string key, string name, byte[] attachment) {
-            service.addBase64EncodedAttachmentsToIssue(token, key, new[] {name}, new[] {Convert.ToBase64String(attachment)});
+            service.addBase64EncodedAttachmentsToIssue(Token, key, new[] {name}, new[] {Convert.ToBase64String(attachment)});
         }
 
         #region private parts

@@ -59,7 +59,7 @@ namespace Atlassian.plvs.ui.jira {
             this.columnAuthor = new System.Windows.Forms.ColumnHeader();
             this.columnSize = new System.Windows.Forms.ColumnHeader();
             this.columnDate = new System.Windows.Forms.ColumnHeader();
-            this.toolStrip3 = new System.Windows.Forms.ToolStrip();
+            this.toolStripAttachmentsMenu = new System.Windows.Forms.ToolStrip();
             this.buttonSaveAttachmentAs = new System.Windows.Forms.ToolStripButton();
             this.buttonUploadNew = new System.Windows.Forms.ToolStripButton();
             this.webAttachmentView = new System.Windows.Forms.WebBrowser();
@@ -95,7 +95,7 @@ namespace Atlassian.plvs.ui.jira {
             this.toolStripContainer3.ContentPanel.SuspendLayout();
             this.toolStripContainer3.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer3.SuspendLayout();
-            this.toolStrip3.SuspendLayout();
+            this.toolStripAttachmentsMenu.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -369,7 +369,7 @@ namespace Atlassian.plvs.ui.jira {
             // 
             // toolStripContainer3.TopToolStripPanel
             // 
-            this.toolStripContainer3.TopToolStripPanel.Controls.Add(this.toolStrip3);
+            this.toolStripContainer3.TopToolStripPanel.Controls.Add(this.toolStripAttachmentsMenu);
             // 
             // listViewAttachments
             // 
@@ -417,17 +417,17 @@ namespace Atlassian.plvs.ui.jira {
             this.columnDate.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.columnDate.Width = 66;
             // 
-            // toolStrip3
+            // toolStripAttachmentsMenu
             // 
-            this.toolStrip3.Dock = System.Windows.Forms.DockStyle.None;
-            this.toolStrip3.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip3.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripAttachmentsMenu.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStripAttachmentsMenu.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStripAttachmentsMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.buttonSaveAttachmentAs,
             this.buttonUploadNew});
-            this.toolStrip3.Location = new System.Drawing.Point(3, 0);
-            this.toolStrip3.Name = "toolStrip3";
-            this.toolStrip3.Size = new System.Drawing.Size(148, 25);
-            this.toolStrip3.TabIndex = 0;
+            this.toolStripAttachmentsMenu.Location = new System.Drawing.Point(3, 0);
+            this.toolStripAttachmentsMenu.Name = "toolStripAttachmentsMenu";
+            this.toolStripAttachmentsMenu.Size = new System.Drawing.Size(179, 25);
+            this.toolStripAttachmentsMenu.TabIndex = 0;
             // 
             // buttonSaveAttachmentAs
             // 
@@ -583,8 +583,8 @@ namespace Atlassian.plvs.ui.jira {
             this.toolStripContainer3.TopToolStripPanel.PerformLayout();
             this.toolStripContainer3.ResumeLayout(false);
             this.toolStripContainer3.PerformLayout();
-            this.toolStrip3.ResumeLayout(false);
-            this.toolStrip3.PerformLayout();
+            this.toolStripAttachmentsMenu.ResumeLayout(false);
+            this.toolStripAttachmentsMenu.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -627,7 +627,7 @@ namespace Atlassian.plvs.ui.jira {
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ToolTip toolTipAttachments;
         private System.Windows.Forms.ToolStripContainer toolStripContainer3;
-        private System.Windows.Forms.ToolStrip toolStrip3;
+        private System.Windows.Forms.ToolStrip toolStripAttachmentsMenu;
         private System.Windows.Forms.ToolStripButton buttonSaveAttachmentAs;
         private System.Windows.Forms.ToolStripButton buttonUploadNew;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;

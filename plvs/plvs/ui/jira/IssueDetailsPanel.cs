@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -18,6 +19,7 @@ using Atlassian.plvs.util.jira;
 using Atlassian.plvs.windows;
 using Atlassian.plvs.util;
 using EnvDTE;
+using Microsoft.Win32;
 using AtlassianConstants=Atlassian.plvs.util.Constants;
 using Constants=EnvDTE.Constants;
 using Process=System.Diagnostics.Process;
@@ -85,6 +87,45 @@ namespace Atlassian.plvs.ui.jira {
             if (name != null) {
                 name = name.Substring(0, name.LastIndexOf("/"));
                 editImagePath = name + "/edit.png";
+            }
+
+            maybeAddMazioMenu();
+        }
+
+        [DllImport("shell32.dll", CharSet = CharSet.Auto)]
+        static extern uint ExtractIconEx(string szFileName, int nIconIndex,
+           IntPtr[] phiconLarge, IntPtr[] phiconSmall, uint nIcons);
+
+        private void maybeAddMazioMenu() {
+            RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Kalamon\Mazio");
+            if (key == null) return;
+
+            string mazioDir = key.GetValue("Install_Dir") as string;
+            if (mazioDir == null) return;
+
+            string token = facade.getSoapToken(issue.Server);
+            if (token == null) return;
+
+            IntPtr[] hLarge = new[] { IntPtr.Zero };
+            IntPtr[] hSmall = new[] { IntPtr.Zero };
+
+            Image mazioImage = null;
+
+            uint iconCount = ExtractIconEx(mazioDir + "\\mazio.exe", 0, hLarge, hSmall, 1);
+            if (iconCount > 0) {
+                Icon extractedIcon = (Icon) Icon.FromHandle(hSmall[0]).Clone();
+                mazioImage = extractedIcon.ToBitmap();
+            }
+
+            toolStripAttachmentsMenu.Items.Add("Attach Mazio Screenshot...", mazioImage, delegate { runMazio(token); });
+        }
+
+        private void runMazio(string token) {
+            try {
+                Process.Start("mazio:jira:" + issue.Server.UserName + "@" + issue.Server.Url + ":" + issue.Key + "?soaptoken=" + token);
+// ReSharper disable EmptyGeneralCatchClause
+            } catch (Exception) {
+// ReSharper restore EmptyGeneralCatchClause
             }
         }
 
