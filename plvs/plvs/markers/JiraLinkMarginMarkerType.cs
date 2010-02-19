@@ -7,8 +7,7 @@ using Microsoft.VisualStudio.TextManager.Interop;
 
 
 namespace Atlassian.plvs.markers {
-    public sealed class JiraLinkMarginMarkerType : IVsPackageDefinedTextMarkerType, IVsMergeableUIItem,
-                                                       IVsHiColorItem {
+    public sealed class JiraLinkMarginMarkerType : IVsPackageDefinedTextMarkerType, IVsMergeableUIItem, IVsHiColorItem {
         private const string JIRA_LINK_MARGIN = "JIRA Link (Margin)";
 
         public static int Id { get; internal set; }
@@ -80,28 +79,29 @@ namespace Atlassian.plvs.markers {
         public int DrawGlyphWithColors(IntPtr hdc, RECT[] pRect, int iMarkerType,
                                        IVsTextMarkerColorSet pMarkerColors, uint dwGlyphDrawFlags, int iLineHeight) {
             RECT rect = pRect[0];
-//            int rectWidth = rect.right - rect.left;
-//            int lineWidth = 8; // 2 + rectWidth / 20;
-
-            uint clrFore;
-            uint clrBack;
-            ErrorHandler.ThrowOnFailure(pMarkerColors.GetMarkerColors(JiraLinkTextMarkerType.Id, out clrFore,
-                                                                      out clrBack));
-
-//            int drawColorref = (int) clrFore;
-//            Color color = Color.FromArgb(
-//                drawColorref & 0x0000FF,
-//                (drawColorref & 0x00FF00) >> 8,
-//                (drawColorref & 0xFF0000) >> 16
-//                );
 
             using (Graphics graphics = Graphics.FromHdc(hdc)) {
-//            using (SolidBrush brush = new SolidBrush(color)) {
-                graphics.DrawImage(jiraGlyph, rect.left, rect.top);
-//                graphics.FillRectangle(brush, rect.left + (rectWidth - lineWidth)/2, rect.top, lineWidth,
-//                                       rect.bottom - rect.top);
-            }
+#if VS2010
+#if false
+                int rectWidth = rect.right - rect.left;
+                int lineWidth = 20; // 2 + rectWidth / 20;
 
+                uint clrFore;
+                uint clrBack;
+                ErrorHandler.ThrowOnFailure(pMarkerColors.GetMarkerColors(JiraLinkTextMarkerType.Id, out clrFore, out clrBack));
+
+                int drawColorref = (int)clrFore;
+                Color color = Color.FromArgb(drawColorref & 0x0000FF, (drawColorref & 0x00FF00) >> 8, (drawColorref & 0xFF0000) >> 16);
+
+                using (SolidBrush brush = new SolidBrush(color)) {
+                    graphics.FillRectangle(brush, rect.left + (rectWidth - lineWidth) / 2, rect.top, lineWidth, rect.bottom - rect.top);
+                }
+#endif
+                graphics.DrawImage(jiraGlyph, new Rectangle(rect.top, rect.left, rect.bottom - rect.top, rect.right - rect.left), 0, 0, 16, 16, GraphicsUnit.Pixel);
+#else 
+                graphics.DrawImage(jiraGlyph, rect.left, rect.top);
+#endif
+            }
             return VSConstants.S_OK;
         }
 

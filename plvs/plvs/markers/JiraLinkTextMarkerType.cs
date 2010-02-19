@@ -15,8 +15,11 @@ namespace Atlassian.plvs.markers {
         public int GetVisualStyle(out uint pdwVisualFlags) {
             //pdwVisualFlags = (uint)MARKERVISUAL.MV_COLOR_ALWAYS;
 
-            pdwVisualFlags = (uint) MARKERVISUAL.MV_LINE | (uint) MARKERVISUAL.MV_TIP_FOR_BODY |
-                             (uint) MARKERVISUAL.MV_COLOR_ALWAYS;
+            pdwVisualFlags = (uint)MARKERVISUAL.MV_BORDER | (uint)MARKERVISUAL.MV_TIP_FOR_BODY |
+                 (uint)MARKERVISUAL.MV_COLOR_ALWAYS;
+
+//            pdwVisualFlags = (uint) MARKERVISUAL.MV_LINE | (uint) MARKERVISUAL.MV_TIP_FOR_BODY |
+//                             (uint) MARKERVISUAL.MV_COLOR_ALWAYS;
 //            pdwVisualFlags = (uint)MARKERVISUAL.MV_TIP_FOR_BODY | (uint)MARKERVISUAL.MV_COLOR_ALWAYS;
 
             return VSConstants.S_OK;

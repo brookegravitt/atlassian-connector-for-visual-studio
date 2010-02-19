@@ -18,9 +18,14 @@ namespace Atlassian.plvs.eventsinks {
         }
 
         public override int GetTipText(IVsTextMarker pMarker, string[] pbstrText) {
-            if (issueKey != null)
+            if (issueKey != null) {
+#if VS2010
+                pbstrText[0] = "Right click for actions available on issue " + issueKey;
+#else 
                 pbstrText[0] = "Double click to try open " + issueKey +
                                "\non the currently selected server,\nRight click for more options";
+#endif
+            }
 
             return VSConstants.S_OK;
         }
