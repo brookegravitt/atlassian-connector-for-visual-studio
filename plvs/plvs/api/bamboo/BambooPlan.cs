@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Atlassian.plvs.api.bamboo {
+﻿namespace Atlassian.plvs.api.bamboo {
     public class BambooPlan {
         public BambooPlan(string key, string name, bool enabled, bool favourite) {
             Key = key;

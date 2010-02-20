@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Atlassian.plvs.api.jira {
     public class JiraUserCache {

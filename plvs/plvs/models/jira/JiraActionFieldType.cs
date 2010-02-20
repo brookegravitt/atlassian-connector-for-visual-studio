@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models.jira.fields;
 
@@ -26,14 +27,14 @@ namespace Atlassian.plvs.models.jira {
         public sealed class WidgetTypeAndFieldFiller {
             public int SortOrder { get; private set; }
             public FieldFiller Filler { get; private set; }
-            public WidgetType WidgetType { get; private set; }
+            public WidgetType TypeOfWidget { get; private set; }
 
             private static int sortOrderCounter;
 
             public WidgetTypeAndFieldFiller(WidgetType widgetType, FieldFiller filler) {
                 SortOrder = sortOrderCounter++;
                 Filler = filler;
-                WidgetType = widgetType;
+                TypeOfWidget = widgetType;
             }
         }
 
@@ -68,7 +69,7 @@ namespace Atlassian.plvs.models.jira {
         }
 
         public static WidgetType getFieldTypeForFieldId(string fieldId) {
-            return TypeMap.ContainsKey(fieldId) ? TypeMap[fieldId].WidgetType : WidgetType.UNSUPPORTED;
+            return TypeMap.ContainsKey(fieldId) ? TypeMap[fieldId].TypeOfWidget : WidgetType.UNSUPPORTED;
         }
 
         public static List<JiraField> fillFieldValues(JiraIssue issue, object soapIssueObject, List<JiraField> fields) {
@@ -78,12 +79,7 @@ namespace Atlassian.plvs.models.jira {
                 return result;
             }
 
-            foreach (JiraField field in fields) {
-                JiraField filledField = fillField(issue, soapIssueObject, field);
-                if (filledField != null) {
-                    result.Add(filledField);
-                }
-            }
+            result.AddRange(fields.Select(field => fillField(issue, soapIssueObject, field)).Where(filledField => filledField != null));
 
             addTimeFields(issue, result);
 

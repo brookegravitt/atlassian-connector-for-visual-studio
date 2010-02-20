@@ -22,8 +22,7 @@ namespace Atlassian.plvs.store {
             try {
                 RegistryKey key = Registry.CurrentUser.OpenSubKey(Constants.PAZU_REG_KEY + "\\" + PAZU_KEY);
                 if (key != null) return (string) key.GetValue(USER_NAME + server.GUID, "");
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 Debug.WriteLine(e.Message);
             }
             return "";
@@ -36,8 +35,7 @@ namespace Atlassian.plvs.store {
                     string password = DPApi.decrypt((string) key.GetValue(USER_PASSWORD + server.GUID, ""), server.GUID.ToString());
                     return password;
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 Debug.WriteLine(e.Message);
             }
             return "";

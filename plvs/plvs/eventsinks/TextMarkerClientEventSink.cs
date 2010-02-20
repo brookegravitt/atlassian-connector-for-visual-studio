@@ -33,7 +33,9 @@ namespace Atlassian.plvs.eventsinks {
         public override int GetMarkerCommandInfo(IVsTextMarker pMarker, int iItem, string[] pbstrText, uint[] pcmdf) {
             // For each command we add we have to specify that we support it.
             // Furthermore it should always be enabled.
+// ReSharper disable BitwiseOperatorOnEnumWihtoutFlags
             const uint menuItemFlags = (uint) (OLECMDF.OLECMDF_SUPPORTED | OLECMDF.OLECMDF_ENABLED);
+// ReSharper restore BitwiseOperatorOnEnumWihtoutFlags
 
             if (pcmdf == null) {
                 return VSConstants.S_FALSE;
