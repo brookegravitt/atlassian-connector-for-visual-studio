@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.Atlassian.plvs.api.soap.service;
+using System.Linq;
 
 namespace Atlassian.plvs.models.jira.fields {
     public class AffectsVersionsFiller : FieldFiller {
@@ -10,14 +11,7 @@ namespace Atlassian.plvs.models.jira.fields {
                 return null;
             }
             RemoteVersion[] rv = ri.affectsVersions;
-            List<string> result = new List<string>();
-            if (rv == null) {
-                return null;
-            }
-            foreach (RemoteVersion version in rv) {
-                result.Add(version.id);
-            }
-            return result;
+            return rv == null ? null : rv.Select(version => version.id).ToList();
         }
     }
 }

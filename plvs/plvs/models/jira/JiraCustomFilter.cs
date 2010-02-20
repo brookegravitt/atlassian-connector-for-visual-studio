@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.attributes;
@@ -120,13 +121,7 @@ namespace Atlassian.plvs.models.jira {
         }
 
         public static List<JiraCustomFilter> getAll(JiraServer server) {
-            List<JiraCustomFilter> list = new List<JiraCustomFilter>();
-            foreach (JiraCustomFilter filter in FILTERS.Values) {
-                if (filter.server.GUID.Equals(server.GUID)) {
-                    list.Add(filter);
-                }
-            }
-            return list;
+            return FILTERS.Values.Where(filter => filter.server.GUID.Equals(server.GUID)).ToList();
         }
 
         public static void add(JiraCustomFilter filter) {
@@ -278,17 +273,13 @@ namespace Atlassian.plvs.models.jira {
                 Guid filterGuid = new Guid(filterGuidStr);
                 string filterServerGuidStr = store.loadParameter(getParamKey(filterGuid, FILTER_SERVER_GUID + filterGuidStr), null);
                 Guid serverGuid = new Guid(filterServerGuidStr);
-                JiraServer server = null;
-                foreach (JiraServer s in servers) {
-                    if (!s.GUID.Equals(serverGuid)) continue;
-                    server = s;
-                    break;
-                }
+                JiraServer server = servers.FirstOrDefault(s => s.GUID.Equals(serverGuid));
                 if (server == null) continue;
 
-                JiraCustomFilter filter = new JiraCustomFilter(server, filterGuid);
-
-                filter.Name = store.loadParameter(getParamKey(filterGuid, FILTER_NAME + filterGuidStr), CUSTOM_FILTER_DEFAULT_NAME);
+                JiraCustomFilter filter = new JiraCustomFilter(server, filterGuid)
+                                          {
+                                              Name = store.loadParameter(getParamKey(filterGuid, FILTER_NAME + filterGuidStr), CUSTOM_FILTER_DEFAULT_NAME)
+                                          };
 
                 loadProjects(store, filterGuid, filter);
                 loadIssueTypes(store, filterGuid, filter);

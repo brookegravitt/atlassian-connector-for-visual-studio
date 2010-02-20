@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.Atlassian.plvs.api.soap.service;
 
@@ -10,14 +11,7 @@ namespace Atlassian.plvs.models.jira.fields {
                 return null;
             }
             RemoteComponent[] components = ri.components;
-            List<string> result = new List<string>();
-            if (components == null) {
-                return null;
-            }
-            foreach (RemoteComponent component in components) {
-                result.Add(component.id);
-            }
-            return result;
+            return components == null ? null : components.Select(component => component.id).ToList();
         }
     }
 }

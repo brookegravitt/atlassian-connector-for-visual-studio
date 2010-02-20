@@ -12,7 +12,7 @@ namespace Atlassian.plvs.markers {
 
         public static int Id { get; internal set; }
 
-        private Image jiraGlyph;
+        private readonly Image jiraGlyph;
 
         public JiraLinkMarginMarkerType() {
             jiraGlyph = Resources.tab_jira;
@@ -26,7 +26,9 @@ namespace Atlassian.plvs.markers {
             // visualized in the margin using a glyph that might span multiple lines.
             pdwVisualFlags =
                 (uint)
+// ReSharper disable BitwiseOperatorOnEnumWihtoutFlags
                 (MARKERVISUAL.MV_COLOR_LINE_IF_NO_MARGIN | MARKERVISUAL.MV_GLYPH | MARKERVISUAL.MV_MULTILINE_GLYPH |
+// ReSharper restore BitwiseOperatorOnEnumWihtoutFlags
                  MARKERVISUAL.MV_TIP_FOR_GLYPH);
 
             return VSConstants.S_OK;

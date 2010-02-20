@@ -105,7 +105,7 @@ namespace Atlassian.plvs.markers {
                         scanCommentedLine(textLines, lineNumber, matches[0].Value, matches[0].Index, ref issueCount);
                     }
                 } else {
-                    if (isInBlockComment || commentMarkers.Line == null) {
+                    if (commentMarkers.Line == null) {
                         maybeAddMarginMarker(textLines, lineNumber, lineLength, issueCount);
                         continue;
                     }

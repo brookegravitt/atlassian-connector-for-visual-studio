@@ -12,12 +12,7 @@ namespace Atlassian.plvs.models.jira.fields {
                 return null;
             }
             RemoteCustomFieldValue[] customFields = ri.customFieldValues;
-            foreach (RemoteCustomFieldValue customField in customFields) {
-                if (customField.customfieldId.Equals(field)) {
-                    return customField.values.ToList();
-                }
-            }
-            return null;
+            return (from customField in customFields where customField.customfieldId.Equals(field) select customField.values.ToList()).FirstOrDefault();
         }
     }
 }

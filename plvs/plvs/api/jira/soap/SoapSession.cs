@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Atlassian.plvs.Atlassian.plvs.api.soap.service;
 
 namespace Atlassian.plvs.api.jira.soap {
@@ -24,20 +25,12 @@ namespace Atlassian.plvs.api.jira.soap {
 
         public List<JiraProject> getProjects() {
             RemoteProject[] pTable = service.getProjectsNoSchemes(Token);
-            List<JiraProject> list = new List<JiraProject>();
-            foreach (RemoteProject p in pTable) {
-                list.Add(new JiraProject(int.Parse(p.id), p.key, p.name));
-            }
-            return list;
+            return pTable.Select(p => new JiraProject(int.Parse(p.id), p.key, p.name)).ToList();
         }
 
         public List<JiraSavedFilter> getSavedFilters() {
             RemoteFilter[] fTable = service.getSavedFilters(Token);
-            List<JiraSavedFilter> list = new List<JiraSavedFilter>();
-            foreach (RemoteFilter f in fTable) {
-                list.Add(new JiraSavedFilter(int.Parse(f.id), f.name));
-            }
-            return list;
+            return fTable.Select(f => new JiraSavedFilter(int.Parse(f.id), f.name)).ToList();
         }
 
         public string createIssue(JiraIssue issue) {
@@ -56,14 +49,12 @@ namespace Atlassian.plvs.api.jira.soap {
             if (issue.Components != null && issue.Components.Count > 0) {
                 RemoteComponent[] components = service.getComponents(Token, issue.ProjectKey);
                 List<RemoteComponent> comps = new List<RemoteComponent>();
-                for (int i = 0; i < issue.Components.Count; ++i) {
-                    foreach (RemoteComponent component in components) {
-                        // fixme: a bit problematic part. What if two components have the same name?
-                        // I suppose JiraIssue class has to be fixed, but that would require more problematic
-                        // construction of it during server query
-                        if (!component.name.Equals(issue.Components[i])) {
-                            continue;
-                        }
+                foreach (string t in issue.Components) {
+                    // fixme: a bit problematic part. What if two components have the same name?
+                    // I suppose JiraIssue class has to be fixed, but that would require more problematic
+                    // construction of it during server query
+                    string tCopy = t;
+                    foreach (RemoteComponent component in components.Where(component => component.name.Equals(tCopy))) {
                         comps.Add(component);
                         break;
                     }
@@ -75,12 +66,10 @@ namespace Atlassian.plvs.api.jira.soap {
             
             if (issue.Versions != null && issue.Versions.Count > 0) {
                 List<RemoteVersion> vers = new List<RemoteVersion>();
-                for (int i = 0; i < issue.Versions.Count; ++i) {
-                    foreach (RemoteVersion version in versions) {
-                        // fixme: a bit problematic part. same as for components
-                        if (!version.name.Equals(issue.Versions[i])) {
-                            continue;
-                        }
+                foreach (string t in issue.Versions) {
+                    // fixme: a bit problematic part. same as for components
+                    string tCopy = t;
+                    foreach (RemoteVersion version in versions.Where(version => version.name.Equals(tCopy))) {
                         vers.Add(version);
                         break;
                     }
@@ -90,12 +79,10 @@ namespace Atlassian.plvs.api.jira.soap {
 
             if (issue.FixVersions != null && issue.FixVersions.Count > 0) {
                 List<RemoteVersion> vers = new List<RemoteVersion>();
-                for (int i = 0; i < issue.FixVersions.Count; ++i) {
-                    foreach (RemoteVersion version in versions) {
-                        // fixme: a bit problematic part. same as for components
-                        if (!version.name.Equals(issue.FixVersions[i])) {
-                            continue;
-                        }
+                foreach (string t in issue.FixVersions) {
+                    // fixme: a bit problematic part. same as for components
+                    string tCopy = t;
+                    foreach (RemoteVersion version in versions.Where(version => version.name.Equals(tCopy))) {
                         vers.Add(version);
                         break;
                     }
@@ -166,20 +153,12 @@ namespace Atlassian.plvs.api.jira.soap {
 
         public List<JiraNamedEntity> getActionsForIssue(JiraIssue issue) {
             RemoteNamedObject[] actions = service.getAvailableActions(Token, issue.Key);
-            List<JiraNamedEntity> list = new List<JiraNamedEntity>();
-            foreach (RemoteNamedObject action in actions) {
-                list.Add(new JiraNamedEntity(int.Parse(action.id), action.name, null));
-            }
-            return list;
+            return actions.Select(action => new JiraNamedEntity(int.Parse(action.id), action.name, null)).ToList();
         }
 
         public List<JiraField> getFieldsForAction(JiraIssue issue, int id) {
             RemoteField[] fields = service.getFieldsForAction(Token, issue.Key, id.ToString());
-            List<JiraField> list = new List<JiraField>();
-            foreach (RemoteField field in fields) {
-                list.Add(new JiraField(field.id, field.name));
-            }
-            return list;
+            return fields.Select(field => new JiraField(field.id, field.name)).ToList();
         }
 
         public void runIssueActionWithoutParams(JiraIssue issue, int id) {
@@ -190,14 +169,8 @@ namespace Atlassian.plvs.api.jira.soap {
             if (fields == null || fields.Count == 0) {
                 throw new Exception("Field values must not be empty");
             }
-            List<RemoteFieldValue> fieldValues = new List<RemoteFieldValue>();
-            foreach (JiraField field in fields) {
-                if (field.Values == null) continue;
-
-                RemoteFieldValue fv = new RemoteFieldValue {id = field.Id, values = field.Values.ToArray()};
-                fieldValues.Add(fv);
-            }
-            service.progressWorkflowAction(Token, issue.Key, id.ToString(), fieldValues.ToArray());
+            service.progressWorkflowAction(Token, issue.Key, id.ToString(), 
+                (from field in fields where field.Values != null select new RemoteFieldValue {id = field.Id, values = field.Values.ToArray()}).ToArray());
             if (!string.IsNullOrEmpty(comment)) {
                 service.addComment(Token, issue.Key, new RemoteComment { body = comment });
             }
@@ -219,12 +192,7 @@ namespace Atlassian.plvs.api.jira.soap {
         }
 
         public void updateIssue(string key, ICollection<JiraField> fields) {
-            List<RemoteFieldValue> fieldValues = new List<RemoteFieldValue>();
-            foreach (JiraField field in fields) {
-                RemoteFieldValue fv = new RemoteFieldValue {id = field.Id, values = field.Values.ToArray()};
-                fieldValues.Add(fv);
-            }
-            service.updateIssue(Token, key, fieldValues.ToArray());
+            service.updateIssue(Token, key, fields.Select(field => new RemoteFieldValue {id = field.Id, values = field.Values.ToArray()}).ToArray());
         }
 
         public void uploadAttachment(string key, string name, byte[] attachment) {
@@ -234,19 +202,11 @@ namespace Atlassian.plvs.api.jira.soap {
         #region private parts
 
         private static List<JiraNamedEntity> createEntityList(IEnumerable<AbstractNamedRemoteEntity> entities) {
-            List<JiraNamedEntity> list = new List<JiraNamedEntity>();
-            foreach (AbstractNamedRemoteEntity val in entities) {
-                list.Add(new JiraNamedEntity(int.Parse(val.id), val.name, null));
-            }
-            return list;
+            return entities.Select(val => new JiraNamedEntity(int.Parse(val.id), val.name, null)).ToList();
         }
 
         private static List<JiraNamedEntity> createEntityListFromConstants(IEnumerable<AbstractRemoteConstant> vals) {
-            List<JiraNamedEntity> list = new List<JiraNamedEntity>();
-            foreach (AbstractRemoteConstant val in vals) {
-                list.Add(new JiraNamedEntity(int.Parse(val.id), val.name, val.icon));
-            }
-            return list;
+            return vals.Select(val => new JiraNamedEntity(int.Parse(val.id), val.name, val.icon)).ToList();
         }
 
         #endregion

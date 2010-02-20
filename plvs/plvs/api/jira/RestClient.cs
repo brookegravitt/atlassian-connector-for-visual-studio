@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Web;
 using System.Net;
 using System.IO;
 using System.Diagnostics;
-using System.Xml.XPath;
 using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.api.jira {

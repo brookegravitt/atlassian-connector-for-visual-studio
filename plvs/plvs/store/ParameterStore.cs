@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Atlassian.plvs.store {
@@ -28,9 +28,7 @@ namespace Atlassian.plvs.store {
             using (BinaryReader bReader = new BinaryReader(stream)) {
                 string allParameters = bReader.ReadString();
                 string[] splitParameters = allParameters.Split('\n');
-                foreach (string splitParameter in splitParameters) {
-                    string[] strings = splitParameter.Split('=');
-                    if (strings.Length != 2) continue;
+                foreach (string[] strings in splitParameters.Select(splitParameter => splitParameter.Split('=')).Where(strings => strings.Length == 2)) {
                     parameterMap[strings[0]] = strings[1];
                 }
             }
@@ -38,8 +36,7 @@ namespace Atlassian.plvs.store {
 
         public void writeOptions(Stream stream) {
             StringBuilder sb = new StringBuilder();
-            foreach (KeyValuePair<string, string> pair in parameterMap) {
-                if (pair.Value == null) continue;
+            foreach (KeyValuePair<string, string> pair in parameterMap.Where(pair => pair.Value != null)) {
                 sb.Append(pair.Key).Append("=").Append(pair.Value).Append('\n');
             }
             using (BinaryWriter bw = new BinaryWriter(stream)) {
