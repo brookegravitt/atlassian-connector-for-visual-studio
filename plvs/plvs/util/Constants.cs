@@ -1,4 +1,6 @@
-﻿namespace Atlassian.plvs.util {
+﻿using System.Text.RegularExpressions;
+
+namespace Atlassian.plvs.util {
     public static class Constants {
         public const string INFO_CAPTION = "Atlassian Connector for Visual Studio - Information";
         public const string ERROR_CAPTION = "Atlassian Connector for Visual Studio - Error";
@@ -11,5 +13,7 @@
         public const string INTEGRATE_WITH_ANKH = "integrate.with.ankh";
 
         public const string PAZU_REG_KEY = @"Software\Atlassian\Atlassian Connector for Visual Studio";
+
+        public static readonly Regex ISSUE_KEY_REGEX = new Regex(@"([A-Z]+-[0-9]+)");
     }
 }

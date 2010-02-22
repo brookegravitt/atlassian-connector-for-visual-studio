@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.TextManager.Interop;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace Atlassian.plvs.markers {
     [Guid(GuidList.GUID_JIRA_LINK_MARKER_SERVICE_STRING)]
