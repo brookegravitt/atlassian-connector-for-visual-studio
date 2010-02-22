@@ -1,12 +1,8 @@
 ﻿using System;
 using System.ComponentModel.Design;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using Atlassian.plvs.attributes;
 using Atlassian.plvs.eventsinks;
-using Atlassian.plvs.markers;
 using Atlassian.plvs.scm;
 using Atlassian.plvs.store;
 using Atlassian.plvs.ui.jira;
@@ -15,8 +11,15 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell;
+
+#if !VS2010
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Reflection;
 using Microsoft.VisualStudio.TextManager.Interop;
+using Atlassian.plvs.markers;
 using Microsoft.Win32;
+#endif
 
 namespace Atlassian.plvs {
     [ProvideLoadKey(MINIMUM_VISUAL_STUDIO_EDITION, "1.0", PRODUCT_NAME, COMPANY, 1)]
@@ -76,9 +79,12 @@ namespace Atlassian.plvs {
         }
 
         private uint solutionEventCookie;
+
+#if !VS2010
         private IConnectionPoint tmConnectionPoint;
         private uint tmConnectionCookie;
         private uint rdtEventCookie;
+#endif
 
         // this method is no longer used
         public int IdBmpSplash(out uint pIdBmp) {
@@ -164,6 +170,12 @@ namespace Atlassian.plvs {
 
             }
 
+            SolutionEventSink solutionEventSink = new SolutionEventSink(this, createAtlassianWindow, createIssueDetailsWindow);
+
+            IVsSolution solution = (IVsSolution)GetService(typeof(SVsSolution));
+            ErrorHandler.ThrowOnFailure(solution.AdviseSolutionEvents(solutionEventSink, out solutionEventCookie));
+
+#if !VS2010
             JiraLinkMarkerTypeProvider markerTypeProvider = new JiraLinkMarkerTypeProvider();
             ((IServiceContainer) this).AddService(markerTypeProvider.GetType(), markerTypeProvider, true);
 
@@ -171,14 +183,10 @@ namespace Atlassian.plvs {
             // able to create marker instances.
             JiraLinkMarkerTypeProvider.InitializeMarkerIds(this);
 
-            SolutionEventSink solutionEventSink = new SolutionEventSink(this, createAtlassianWindow, createIssueDetailsWindow);
-            TextManagerEventSink textManagerEventSink = new TextManagerEventSink();
             RunningDocTableEventSink runningDocTableEventSink = new RunningDocTableEventSink();
-
-            IVsSolution solution = (IVsSolution) GetService(typeof (SVsSolution));
-            ErrorHandler.ThrowOnFailure(solution.AdviseSolutionEvents(solutionEventSink, out solutionEventCookie));
-
-            IConnectionPointContainer textManager = (IConnectionPointContainer) GetService(typeof (SVsTextManager));
+            TextManagerEventSink textManagerEventSink = new TextManagerEventSink();
+            
+            IConnectionPointContainer textManager = (IConnectionPointContainer)GetService(typeof(SVsTextManager));
             Guid interfaceGuid = typeof (IVsTextManagerEvents).GUID;
             try {
                 textManager.FindConnectionPoint(ref interfaceGuid, out tmConnectionPoint);
@@ -194,6 +202,7 @@ namespace Atlassian.plvs {
             // Since we register custom text markers we have to ensure the font and color
             // cache is up-to-date.
             ValidateFontAndColorCacheManagerIsUpToDate();
+#endif
 
             ((IServiceContainer)this).AddService(typeof(AnkhSvnJiraConnector), new ServiceCreatorCallback(CreateAnkhSvnConnector), true);
         }
@@ -211,6 +220,7 @@ namespace Atlassian.plvs {
             return null;
         }
 
+#if !VS2010
         // 
         // no idea what this does really :) - resets some sort of cache. Apparently this is needed
         // for text markers to work properly. Taken from http://www.codeplex.com/CloneDetectiveVS
@@ -282,6 +292,7 @@ namespace Atlassian.plvs {
                 } catch (Exception) {}
             }
         }
+#endif
 
         private bool? inCommandLineMode;
 

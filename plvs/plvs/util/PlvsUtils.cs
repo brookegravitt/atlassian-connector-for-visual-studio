@@ -6,6 +6,9 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+#if VS2010
+using System.Windows.Media.Imaging;
+#endif
 using Atlassian.plvs.attributes;
 using EnvDTE;
 
@@ -161,5 +164,15 @@ namespace Atlassian.plvs.util {
             sb.Append('"');
             return sb.ToString();
         }
+
+#if VS2010
+        // from http://social.msdn.microsoft.com/Forums/en-US/wpf/thread/16bce8a4-1ee7-4be9-bd7f-0cc2b0f80cf0/
+        public static BitmapSource bitmapSourceFromPngImage(System.Drawing.Image img) {
+            MemoryStream memStream = new MemoryStream();
+            img.Save(memStream, System.Drawing.Imaging.ImageFormat.Png);
+            PngBitmapDecoder decoder = new PngBitmapDecoder(memStream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
+            return decoder.Frames[0];
+        }
+#endif
     }
 }

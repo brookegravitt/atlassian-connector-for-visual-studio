@@ -40,11 +40,6 @@ namespace Atlassian.plvs.eventsinks {
             textBufferDataEventSink.ConnectionPoint = connectionPointBufferDataEvents;
             textBufferDataEventSink.Cookie = cookie;
 
-            // it seems that VS2010 RC does things differently when it opens files
-#if VS2010
-            textBufferDataEventSink.OnLoadCompleted(0);
-#endif
-
             Guid eventsGuid = typeof(IVsTextLinesEvents).GUID;
             container.FindConnectionPoint(ref eventsGuid, out connectionPointTextLinesEvents); 
             TextLinesEventSink textLinesEventSink = new TextLinesEventSink();

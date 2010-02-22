@@ -22,7 +22,9 @@ using EnvDTE;
 using Microsoft.Win32;
 using AtlassianConstants=Atlassian.plvs.util.Constants;
 using Constants=EnvDTE.Constants;
+using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 using Process=System.Diagnostics.Process;
+using SaveFileDialog = System.Windows.Forms.SaveFileDialog;
 using Thread=System.Threading.Thread;
 
 namespace Atlassian.plvs.ui.jira {
@@ -412,10 +414,9 @@ namespace Atlassian.plvs.ui.jira {
                 .Append("<tr><td class=\"labelcolumn\">Updated</td><td>")
                 .Append(JiraIssueUtils.getTimeStringFromIssueDateTime(issue.UpdateDate)).Append("</td></tr>\n");
 
-            if (issue.Versions.Count > 1)
-                sb.Append("<tr><td class=\"labelcolumn\">Affects Versions</td><td>");
-            else
-                sb.Append("<tr><td class=\"labelcolumn\">Affects Version</td><td>");
+            sb.Append(issue.Versions.Count > 1
+                          ? "<tr><td class=\"labelcolumn\">Affects Versions</td><td>"
+                          : "<tr><td class=\"labelcolumn\">Affects Version</td><td>");
 
             appendStartEditable(sb, AFFECTS_VERSIONS_EDIT_TAG);
 
@@ -435,10 +436,9 @@ namespace Atlassian.plvs.ui.jira {
             
             sb.Append("</tr>\n");
 
-            if (issue.FixVersions.Count > 1)
-                sb.Append("<tr><td class=\"labelcolumn\">Fix Versions</td><td>");
-            else
-                sb.Append("<tr><td class=\"labelcolumn\">Fix Version</td><td>");
+            sb.Append(issue.FixVersions.Count > 1
+                          ? "<tr><td class=\"labelcolumn\">Fix Versions</td><td>"
+                          : "<tr><td class=\"labelcolumn\">Fix Version</td><td>");
 
             appendStartEditable(sb, FIX_VERSIONS_EDIT_TAG);
 
@@ -457,10 +457,9 @@ namespace Atlassian.plvs.ui.jira {
             appendEndEditable(sb);
             sb.Append("</tr>\n");
 
-            if (issue.Components.Count > 1)
-                sb.Append("<tr><td class=\"labelcolumn\">Components</td><td>");
-            else
-                sb.Append("<tr><td class=\"labelcolumn\">Component</td><td>");
+            sb.Append(issue.Components.Count > 1
+                          ? "<tr><td class=\"labelcolumn\">Components</td><td>"
+                          : "<tr><td class=\"labelcolumn\">Component</td><td>");
 
             appendStartEditable(sb, COMPONENTS_EDIT_TAG);
 
