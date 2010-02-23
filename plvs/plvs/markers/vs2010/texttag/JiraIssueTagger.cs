@@ -2,49 +2,40 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Atlassian.plvs.api.jira;
 using Atlassian.plvs.util;
+using Atlassian.plvs.windows;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
 
 namespace Atlassian.plvs.markers.vs2010.texttag {
     internal class JiraIssueTagger : ITagger<JiraIssueTag> {
-//        private readonly ITextView view;
+        private readonly ITextBuffer buffer;
         private readonly IClassifier classifier;
+        private bool disposed;
 
-        internal JiraIssueTagger(IClassifier classifier) {
-//            this.view = view;
+        internal JiraIssueTagger(ITextBuffer buffer, IClassifier classifier) {
+            this.buffer = buffer;
             this.classifier = classifier;
 
-//            AtlassianPanel.Instance.Jira.SelectedServerChanged += jiraSelectedServerChanged;
+            AtlassianPanel.Instance.Jira.SelectedServerChanged += jiraSelectedServerChanged;
         }
 
-#if false
         private void jiraSelectedServerChanged(object sender, EventArgs e) {
-            if (view == null) {
-                return;
-            }
-            ITextSnapshot snapshot = view.TextSnapshot;
-            SnapshotSpan requestSpan = new SnapshotSpan(snapshot, new Span(0, snapshot.Length));
-
-            var startLine = requestSpan.Start.GetContainingLine();
-            var endLine = (startLine.End >= requestSpan.End) ? startLine : requestSpan.End.GetContainingLine();
-            SnapshotSpan span = new SnapshotSpan(startLine.Start, endLine.End);
+            var snapshot = buffer.CurrentSnapshot;
 
             EventHandler<SnapshotSpanEventArgs> handler = TagsChanged;
             if (handler != null) {
-                handler(this, new SnapshotSpanEventArgs(span));
+                handler(this, new SnapshotSpanEventArgs(new SnapshotSpan(snapshot, 0, snapshot.Length)));
             }
         }
-#endif 
 
         IEnumerable<ITagSpan<JiraIssueTag>> ITagger<JiraIssueTag>.GetTags(NormalizedSnapshotSpanCollection spans) {
-#if false
             JiraServer selectedServer = AtlassianPanel.Instance.Jira.getCurrentlySelectedServer();
             if (selectedServer == null) {
                 yield break;
             }
-#endif
 
             foreach (SnapshotSpan requestSpan in spans) {
 
@@ -65,6 +56,21 @@ namespace Atlassian.plvs.markers.vs2010.texttag {
         }
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
+
+        public void Dispose() {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing) {
+            if (disposed) return;
+
+            if (disposing) {
+                AtlassianPanel.Instance.Jira.SelectedServerChanged -= jiraSelectedServerChanged;
+            }
+
+            disposed = true;
+        }
     }
 }
 
