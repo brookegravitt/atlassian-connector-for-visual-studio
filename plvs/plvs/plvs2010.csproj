@@ -648,6 +648,10 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="Key.snk" />
+    <Content Include="LICENSE">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -775,7 +779,14 @@
     <Content Include="Resources\icons\ide_plugin_16.bmp" />
     <Content Include="Resources\icons\ide_plugin_16.ico" />
     <Content Include="Resources\icons\ide_plugin_300.png" />
-    <Content Include="Resources\icons\ide_plugin_32.ico" />
+    <Content Include="Resources\icons\ide_plugin_32.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Resources\icons\ide_plugin_32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="Resources\icons\Images.bmp" />
     <Content Include="Resources\icons\jira-blue-16-with-padding.png" />
     <Content Include="Resources\icons\jira-blue-16.ico" />

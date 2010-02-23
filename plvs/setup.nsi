@@ -125,64 +125,64 @@ Function Register2008
 
 FunctionEnd
 
-Function Register2010
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\InstalledProducts\PlvsPackage" "" "#110"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\InstalledProducts\PlvsPackage" "Package" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\InstalledProducts\PlvsPackage" "ProductDetails" "#112"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\InstalledProducts\PlvsPackage" "PID" "1.0"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\InstalledProducts\PlvsPackage" "LogoID" "#600"
-  WriteRegDWORD HKLM "Software\Microsoft\VisualStudio\10.0\InstalledProducts\PlvsPackage" "UseInterface" 1
-  
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "" "Atlassian.plvs.PlvsPackage, plvs, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "InprocServer32" "$SYSDIR\mscoree.dll"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "Class" "Atlassian.plvs.PlvsPackage"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "CodeBase" "$INSTDIR\plvs2010.dll"
-  WriteRegDWORD HKLM "Software\Microsoft\VisualStudio\10.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "ID" 1
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "MinEdition" "Standard"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "ProductVersion" "1.0"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "ProductName" "Atlassian Connector for Visual Studio"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "CompanyName" "Atlassian"
-
-  WriteRegDWORD HKLM "Software\Microsoft\VisualStudio\10.0\AutoLoadPackages\{ADFC4E64-0397-11D1-9F4E-00A0C911004F}" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" 0
-
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Menus" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" ", 1000, 1"
-
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{06c81945-10ef-4d72-8daf-32d29f7e9573}" "" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{06c81945-10ef-4d72-8daf-32d29f7e9573}" "Name" "Atlassian.plvs.AtlassianToolWindow"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{06c81945-10ef-4d72-8daf-32d29f7e9573}" "Orientation" "Bottom"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{06c81945-10ef-4d72-8daf-32d29f7e9573}" "Style" "Tabbed"
-  WriteRegDWORD HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{06c81945-10ef-4d72-8daf-32d29f7e9573}" "DontForceCreate" 1
-
-  WriteRegDWORD HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{06c81945-10ef-4d72-8daf-32d29f7e9573}\Visibility" "{f1536ef8-92ec-443c-9ed7-fdadf150da82}" 0
-
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}" "" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}" "Name" "Atlassian.plvs.IssueDetailsToolWindow"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}" "Orientation" "Bottom"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}" "Style" "Tabbed"
-  WriteRegDWORD HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}" "DontForceCreate" 1
-
-  WriteRegDWORD HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}\Visibility" "{f1536ef8-92ec-443c-9ed7-fdadf150da82}" 0
-
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Services\{34D3D2C5-60CD-4d79-8BD8-7759EBB3C27A}" "" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Services\{34D3D2C5-60CD-4d79-8BD8-7759EBB3C27A}" "Name" "JIRA Link Service"
-
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Text Editor\External Markers\{658DDF58-FC14-4db9-8110-B52A6845B6CF}" "" "JIRA Links (Margin)"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Text Editor\External Markers\{658DDF58-FC14-4db9-8110-B52A6845B6CF}" "DisplayName" "JIRA Links (Margin)"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Text Editor\External Markers\{658DDF58-FC14-4db9-8110-B52A6845B6CF}" "Package" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Text Editor\External Markers\{658DDF58-FC14-4db9-8110-B52A6845B6CF}" "Service" "{34D3D2C5-60CD-4d79-8BD8-7759EBB3C27A}"
-
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Text Editor\External Markers\{D7F03136-206D-4674-ADC7-DA0E9EE38869}" "" "JIRA Links (Text)"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Text Editor\External Markers\{D7F03136-206D-4674-ADC7-DA0E9EE38869}" "DisplayName" "JIRA Links (Text)"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Text Editor\External Markers\{D7F03136-206D-4674-ADC7-DA0E9EE38869}" "Package" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Text Editor\External Markers\{D7F03136-206D-4674-ADC7-DA0E9EE38869}" "Service" "{34D3D2C5-60CD-4d79-8BD8-7759EBB3C27A}"
-
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}" "" "Atlassian JIRA Connector"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}" "Service" "{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}"
-
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}\Name" "" "#113"
-  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}\Name" "Package" "{36FA5F7F-2B5D-4CEC-8C06-10C483683A16}"
-
-FunctionEnd
+;Function Register2010
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\InstalledProducts\PlvsPackage" "" "#110"
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\InstalledProducts\PlvsPackage" "Package" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\InstalledProducts\PlvsPackage" "ProductDetails" "#112"
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\InstalledProducts\PlvsPackage" "PID" "1.0"
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\InstalledProducts\PlvsPackage" "LogoID" "#600"
+;  WriteRegDWORD HKLM "Software\Microsoft\VisualStudio\10.0\InstalledProducts\PlvsPackage" "UseInterface" 1
+;  
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "" "Atlassian.plvs.PlvsPackage, plvs, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "InprocServer32" "$SYSDIR\mscoree.dll"
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "Class" "Atlassian.plvs.PlvsPackage"
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "CodeBase" "$INSTDIR\plvs2010.dll"
+;  WriteRegDWORD HKLM "Software\Microsoft\VisualStudio\10.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "ID" 1
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "MinEdition" "Standard"
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "ProductVersion" "1.0"
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "ProductName" "Atlassian Connector for Visual Studio"
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" "CompanyName" "Atlassian"
+;
+;  WriteRegDWORD HKLM "Software\Microsoft\VisualStudio\10.0\AutoLoadPackages\{ADFC4E64-0397-11D1-9F4E-00A0C911004F}" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" 0
+;
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Menus" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" ", 1000, 1"
+;
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{06c81945-10ef-4d72-8daf-32d29f7e9573}" "" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{06c81945-10ef-4d72-8daf-32d29f7e9573}" "Name" "Atlassian.plvs.AtlassianToolWindow"
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{06c81945-10ef-4d72-8daf-32d29f7e9573}" "Orientation" "Bottom"
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{06c81945-10ef-4d72-8daf-32d29f7e9573}" "Style" "Tabbed"
+;  WriteRegDWORD HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{06c81945-10ef-4d72-8daf-32d29f7e9573}" "DontForceCreate" 1
+;
+;  WriteRegDWORD HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{06c81945-10ef-4d72-8daf-32d29f7e9573}\Visibility" "{f1536ef8-92ec-443c-9ed7-fdadf150da82}" 0
+;
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}" "" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}" "Name" "Atlassian.plvs.IssueDetailsToolWindow"
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}" "Orientation" "Bottom"
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}" "Style" "Tabbed"
+;  WriteRegDWORD HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}" "DontForceCreate" 1
+;
+;  WriteRegDWORD HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}\Visibility" "{f1536ef8-92ec-443c-9ed7-fdadf150da82}" 0
+;
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Services\{34D3D2C5-60CD-4d79-8BD8-7759EBB3C27A}" "" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Services\{34D3D2C5-60CD-4d79-8BD8-7759EBB3C27A}" "Name" "JIRA Link Service"
+;
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Text Editor\External Markers\{658DDF58-FC14-4db9-8110-B52A6845B6CF}" "" "JIRA Links (Margin)"
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Text Editor\External Markers\{658DDF58-FC14-4db9-8110-B52A6845B6CF}" "DisplayName" "JIRA Links (Margin)"
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Text Editor\External Markers\{658DDF58-FC14-4db9-8110-B52A6845B6CF}" "Package" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Text Editor\External Markers\{658DDF58-FC14-4db9-8110-B52A6845B6CF}" "Service" "{34D3D2C5-60CD-4d79-8BD8-7759EBB3C27A}"
+;
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Text Editor\External Markers\{D7F03136-206D-4674-ADC7-DA0E9EE38869}" "" "JIRA Links (Text)"
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Text Editor\External Markers\{D7F03136-206D-4674-ADC7-DA0E9EE38869}" "DisplayName" "JIRA Links (Text)"
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Text Editor\External Markers\{D7F03136-206D-4674-ADC7-DA0E9EE38869}" "Package" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\Text Editor\External Markers\{D7F03136-206D-4674-ADC7-DA0E9EE38869}" "Service" "{34D3D2C5-60CD-4d79-8BD8-7759EBB3C27A}"
+;
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}" "" "Atlassian JIRA Connector"
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}" "Service" "{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}"
+;
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}\Name" "" "#113"
+;  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}\Name" "Package" "{36FA5F7F-2B5D-4CEC-8C06-10C483683A16}"
+;
+;FunctionEnd
 
 Function AddVs2010Files
 
@@ -197,16 +197,18 @@ Function AddVs2010Files
   File "plvs\bin\Release\ajax-loader.gif"
   File "plvs\bin\Release\plvs2010.pkgdef"
   File "plvs\bin\Release\extension.vsixmanifest"
+  File "plvs\Resources\icons\ide_plugin_32.png"
+  File "plvs\LICENSE"
 
   SetOutPath $INSTDIR  
   
-  ;CopyFiles $INSTDIR\plvs2010.dll $0\Extensions\Atlassian\Atlass~1\1.0
-  ;CopyFiles $INSTDIR\Ankh.ExtensionPoints.dll $0\Extensions\Atlassian\Atlass~1\1.0
-  ;CopyFiles $INSTDIR\Aga.Controls.dll $0\Extensions\Atlassian\Atlass~1\1.0
-  ;CopyFiles $INSTDIR\edit.png $0\Extensions\Atlassian\Atlass~1\1.0
-  ;CopyFiles $INSTDIR\ajax-loader.gif $0\Extensions\Atlassian\Atlass~1\1.0
-  ;CopyFiles $INSTDIR\plvs2010.pkgdef $0\Extensions\Atlassian\Atlass~1\1.0
-  ;CopyFiles $INSTDIR\extension.vsixmanifest $0\Extensions\Atlassian\Atlass~1\1.0
+  ;; seems to be needed regardless of the vsixmanifest. Without this, logo does not show up in the VS About box
+  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\InstalledProducts\PlvsPackage" "" "#110"
+  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\InstalledProducts\PlvsPackage" "Package" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
+  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\InstalledProducts\PlvsPackage" "ProductDetails" "#112"
+  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\InstalledProducts\PlvsPackage" "PID" "1.0"
+  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\InstalledProducts\PlvsPackage" "LogoID" "#600"
+  WriteRegDWORD HKLM "Software\Microsoft\VisualStudio\10.0\InstalledProducts\PlvsPackage" "UseInterface" 1
 
   ;; still required for AnkhSVN integration?
   WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}" "" "Atlassian JIRA Connector"
@@ -227,9 +229,13 @@ Function un.RemoveVs2010Files
   Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\ajax-loader.gif"
   Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\plvs2010.pkgdef"
   Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\extension.vsixmanifest"
+  Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\ide_plugin_32.png"
+  Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\LICENSE"
 
   RMDir "$0\Extensions\Atlassian\Atlassian Connector"
   
+  DeleteRegKey HKLM "Software\Microsoft\VisualStudio\10.0\InstalledProducts\PlvsPackage"
+
   ;; still required for AnkhSVN integration?
   DeleteRegKey HKLM "Software\Microsoft\VisualStudio\10.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}"
 FunctionEnd
@@ -247,18 +253,18 @@ Function un.Unregister2008
   DeleteRegKey HKLM "Software\Microsoft\VisualStudio\9.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}"
 FunctionEnd
 
-Function un.Unregister2010
-  DeleteRegKey HKLM "Software\Microsoft\VisualStudio\10.0\InstalledProducts\PlvsPackage"
-  DeleteRegKey HKLM "Software\Microsoft\VisualStudio\10.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
-  DeleteRegValue HKLM "Software\Microsoft\VisualStudio\10.0\AutoLoadPackages\{ADFC4E64-0397-11D1-9F4E-00A0C911004F}" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" 
-  DeleteRegValue HKLM "Software\Microsoft\VisualStudio\10.0\Menus" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
-  DeleteRegKey HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{06c81945-10ef-4d72-8daf-32d29f7e9573}"
-  DeleteRegKey HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}"
-  DeleteRegKey HKLM "Software\Microsoft\VisualStudio\10.0\Services\{34D3D2C5-60CD-4d79-8BD8-7759EBB3C27A}"
-  DeleteRegKey HKLM "Software\Microsoft\VisualStudio\10.0\Text Editor\External Markers\{658DDF58-FC14-4db9-8110-B52A6845B6CF}"
-  DeleteRegKey HKLM "Software\Microsoft\VisualStudio\10.0\Text Editor\External Markers\{D7F03136-206D-4674-ADC7-DA0E9EE38869}"
-  DeleteRegKey HKLM "Software\Microsoft\VisualStudio\10.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}"
-FunctionEnd
+;Function un.Unregister2010
+;  DeleteRegKey HKLM "Software\Microsoft\VisualStudio\10.0\InstalledProducts\PlvsPackage"
+;  DeleteRegKey HKLM "Software\Microsoft\VisualStudio\10.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
+;  DeleteRegValue HKLM "Software\Microsoft\VisualStudio\10.0\AutoLoadPackages\{ADFC4E64-0397-11D1-9F4E-00A0C911004F}" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}" 
+;  DeleteRegValue HKLM "Software\Microsoft\VisualStudio\10.0\Menus" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
+;  DeleteRegKey HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{06c81945-10ef-4d72-8daf-32d29f7e9573}"
+;  DeleteRegKey HKLM "Software\Microsoft\VisualStudio\10.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}"
+;  DeleteRegKey HKLM "Software\Microsoft\VisualStudio\10.0\Services\{34D3D2C5-60CD-4d79-8BD8-7759EBB3C27A}"
+;  DeleteRegKey HKLM "Software\Microsoft\VisualStudio\10.0\Text Editor\External Markers\{658DDF58-FC14-4db9-8110-B52A6845B6CF}"
+;  DeleteRegKey HKLM "Software\Microsoft\VisualStudio\10.0\Text Editor\External Markers\{D7F03136-206D-4674-ADC7-DA0E9EE38869}"
+;  DeleteRegKey HKLM "Software\Microsoft\VisualStudio\10.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}"
+;FunctionEnd
 
 Function LaunchVS
   ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\10.0" "InstallDir"
@@ -314,7 +320,9 @@ Section "Atlassian Connector For Visual Studio (required)"
   File "plvs\bin\Release\ajax-loader.gif"
   File "plvs\bin\Release\plvs2010.pkgdef"
   File "plvs\bin\Release\extension.vsixmanifest"
-
+  File "plvs\Resources\icons\ide_plugin_32.png"
+  File "plvs\LICENSE"
+  
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\Atlassian\Plvs "Install_Dir" "$INSTDIR"
   
@@ -372,7 +380,8 @@ Section "Uninstall"
   Delete $INSTDIR\ajax-loader.gif
   Delete $INSTDIR\plvs2010.pkgdef
   Delete $INSTDIR\extension.vsixmanifest
-
+  Delete $INSTDIR\LICENSE
+  
   Delete $INSTDIR\uninstall.exe
 
   ; Remove shortcuts, if any
