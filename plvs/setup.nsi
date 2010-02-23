@@ -184,6 +184,56 @@ Function Register2010
 
 FunctionEnd
 
+Function AddVs2010Files
+
+  ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\10.0" "InstallDir"
+  
+  SetOutPath "$0\Extensions\Atlassian\Atlassian Connector\1.0"
+ 
+  File "plvs\bin\Release\plvs2010.dll"
+  File "plvs\bin\Release\Ankh.ExtensionPoints.dll"
+  File "plvs\bin\Release\Aga.Controls.dll"
+  File "plvs\bin\Release\edit.png"
+  File "plvs\bin\Release\ajax-loader.gif"
+  File "plvs\bin\Release\plvs2010.pkgdef"
+  File "plvs\bin\Release\extension.vsixmanifest"
+
+  SetOutPath $INSTDIR  
+  
+  ;CopyFiles $INSTDIR\plvs2010.dll $0\Extensions\Atlassian\Atlass~1\1.0
+  ;CopyFiles $INSTDIR\Ankh.ExtensionPoints.dll $0\Extensions\Atlassian\Atlass~1\1.0
+  ;CopyFiles $INSTDIR\Aga.Controls.dll $0\Extensions\Atlassian\Atlass~1\1.0
+  ;CopyFiles $INSTDIR\edit.png $0\Extensions\Atlassian\Atlass~1\1.0
+  ;CopyFiles $INSTDIR\ajax-loader.gif $0\Extensions\Atlassian\Atlass~1\1.0
+  ;CopyFiles $INSTDIR\plvs2010.pkgdef $0\Extensions\Atlassian\Atlass~1\1.0
+  ;CopyFiles $INSTDIR\extension.vsixmanifest $0\Extensions\Atlassian\Atlass~1\1.0
+
+  ;; still required for AnkhSVN integration?
+  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}" "" "Atlassian JIRA Connector"
+  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}" "Service" "{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}"
+
+  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}\Name" "" "#113"
+  WriteRegStr HKLM "Software\Microsoft\VisualStudio\10.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}\Name" "Package" "{36FA5F7F-2B5D-4CEC-8C06-10C483683A16}"
+FunctionEnd
+
+Function un.RemoveVs2010Files
+
+  ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\10.0" "InstallDir"
+ 
+  Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\plvs2010.dll"
+  Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\Ankh.ExtensionPoints.dll"
+  Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\Aga.Controls.dll"
+  Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\edit.png"
+  Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\ajax-loader.gif"
+  Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\plvs2010.pkgdef"
+  Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\extension.vsixmanifest"
+
+  RMDir "$0\Extensions\Atlassian\Atlassian Connector"
+  
+  ;; still required for AnkhSVN integration?
+  DeleteRegKey HKLM "Software\Microsoft\VisualStudio\10.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}"
+FunctionEnd
+
 Function un.Unregister2008
   DeleteRegKey HKLM "Software\Microsoft\VisualStudio\9.0\InstalledProducts\PlvsPackage"
   DeleteRegKey HKLM "Software\Microsoft\VisualStudio\9.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
@@ -262,6 +312,8 @@ Section "Atlassian Connector For Visual Studio (required)"
   File "plvs\bin\Release\Aga.Controls.dll"
   File "plvs\bin\Release\edit.png"
   File "plvs\bin\Release\ajax-loader.gif"
+  File "plvs\bin\Release\plvs2010.pkgdef"
+  File "plvs\bin\Release\extension.vsixmanifest"
 
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\Atlassian\Plvs "Install_Dir" "$INSTDIR"
@@ -286,7 +338,8 @@ Section "Atlassian Connector For Visual Studio (required)"
   
   ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\10.0" "InstallDir"
   IfErrors +3 0
-    Call Register2010
+    Call AddVs2010Files
+    ;Call Register2010
 	ExecWait '"$0\devenv.exe" /setup'
   ClearErrors
   
@@ -317,6 +370,8 @@ Section "Uninstall"
   Delete $INSTDIR\Aga.Controls.dll
   Delete $INSTDIR\edit.png
   Delete $INSTDIR\ajax-loader.gif
+  Delete $INSTDIR\plvs2010.pkgdef
+  Delete $INSTDIR\extension.vsixmanifest
 
   Delete $INSTDIR\uninstall.exe
 
@@ -336,7 +391,8 @@ Section "Uninstall"
 
   ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\10.0" "InstallDir"
   IfErrors +3 0
-    Call un.Unregister2010
+    Call un.RemoveVs2010Files
+    ; Call un.Unregister2010
 	ExecWait '"$0\devenv.exe" /setup'
   ClearErrors
 
