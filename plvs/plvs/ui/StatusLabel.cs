@@ -19,24 +19,27 @@ namespace Atlassian.plvs.ui {
         private ICollection<Exception> lastExceptions;
 
         public void setError(string txt, Exception e) {
-            setError(txt, new List<Exception> { e });
+            setError(txt, new List<Exception> {e});
+        }
+
+        public bool HaveErrors {
+            get { return lastExceptions != null; }
         }
 
         public void setError(string txt, ICollection<Exception> exceptions) {
-
             try {
-                statusBar.Invoke(new MethodInvoker(delegate
-                                                       {
-                                                           targetLabel.BackColor = Color.LightPink;
-                                                           statusBar.BackColor = Color.LightPink;
-                                                           targetLabel.Text = txt;
-                                                           lastExceptions = exceptions;
-                                                           targetLabel.Visible = true;
-                                                           targetLabel.IsLink = true;
-                                                           targetLabel.Click += targetLabel_Click;
-                                                           targetLabel.Image = SystemIcons.Error.ToBitmap();
-                                                       }));
-            } catch (InvalidOperationException ex) {
+                statusBar.Invoke(new MethodInvoker(delegate {
+                                                       targetLabel.BackColor = Color.LightPink;
+                                                       statusBar.BackColor = Color.LightPink;
+                                                       targetLabel.Text = txt;
+                                                       lastExceptions = exceptions;
+                                                       targetLabel.Visible = true;
+                                                       targetLabel.IsLink = true;
+                                                       targetLabel.Click += targetLabel_Click;
+                                                       targetLabel.Image = SystemIcons.Error.ToBitmap();
+                                                   }));
+            }
+            catch (InvalidOperationException ex) {
                 Debug.WriteLine("StatusLabel.setInfo(): " + ex.Message);
             }
         }
@@ -57,16 +60,17 @@ namespace Atlassian.plvs.ui {
 
         public void setInfo(string txt) {
             try {
-                statusBar.Invoke(new MethodInvoker(delegate
-                                                       {
-                                                           targetLabel.BackColor = SystemColors.Control;
-                                                           statusBar.BackColor = SystemColors.Control;
-                                                           targetLabel.Text = txt;
-                                                           targetLabel.Visible = true;
-                                                           targetLabel.IsLink = false;
-                                                           targetLabel.Image = null;
-                                                       }));
-            } catch (InvalidOperationException e) {
+                statusBar.Invoke(new MethodInvoker(delegate {
+                                                       lastExceptions = null;
+                                                       targetLabel.BackColor = SystemColors.Control;
+                                                       statusBar.BackColor = SystemColors.Control;
+                                                       targetLabel.Text = txt;
+                                                       targetLabel.Visible = true;
+                                                       targetLabel.IsLink = false;
+                                                       targetLabel.Image = null;
+                                                   }));
+            }
+            catch (InvalidOperationException e) {
                 Debug.WriteLine("StatusLabel.setInfo(): " + e.Message);
             }
         }
