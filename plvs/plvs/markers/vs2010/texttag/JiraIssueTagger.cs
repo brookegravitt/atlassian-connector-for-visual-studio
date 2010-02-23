@@ -9,14 +9,49 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 namespace Atlassian.plvs.markers.vs2010.texttag {
     internal class JiraIssueTagger : ITagger<JiraIssueTag> {
+//        private readonly ITextView view;
         private readonly IClassifier classifier;
 
         internal JiraIssueTagger(IClassifier classifier) {
+//            this.view = view;
             this.classifier = classifier;
+
+//            AtlassianPanel.Instance.Jira.SelectedServerChanged += jiraSelectedServerChanged;
         }
 
+#if false
+        private void jiraSelectedServerChanged(object sender, EventArgs e) {
+            if (view == null) {
+                return;
+            }
+            ITextSnapshot snapshot = view.TextSnapshot;
+            SnapshotSpan requestSpan = new SnapshotSpan(snapshot, new Span(0, snapshot.Length));
+
+            var startLine = requestSpan.Start.GetContainingLine();
+            var endLine = (startLine.End >= requestSpan.End) ? startLine : requestSpan.End.GetContainingLine();
+            SnapshotSpan span = new SnapshotSpan(startLine.Start, endLine.End);
+
+            EventHandler<SnapshotSpanEventArgs> handler = TagsChanged;
+            if (handler != null) {
+                handler(this, new SnapshotSpanEventArgs(span));
+            }
+        }
+#endif 
+
         IEnumerable<ITagSpan<JiraIssueTag>> ITagger<JiraIssueTag>.GetTags(NormalizedSnapshotSpanCollection spans) {
-            foreach (SnapshotSpan span in spans) {
+#if false
+            JiraServer selectedServer = AtlassianPanel.Instance.Jira.getCurrentlySelectedServer();
+            if (selectedServer == null) {
+                yield break;
+            }
+#endif
+
+            foreach (SnapshotSpan requestSpan in spans) {
+
+                var startLine = requestSpan.Start.GetContainingLine();
+                var endLine = (startLine.End >= requestSpan.End) ? startLine : requestSpan.End.GetContainingLine();
+                SnapshotSpan span = new SnapshotSpan(startLine.Start, endLine.End);
+
                 foreach (ClassificationSpan classification in classifier.GetClassificationSpans(span)) {
                     if (!classification.ClassificationType.Classification.ToLower().Contains("comment")) continue;
                     MatchCollection matches = Constants.ISSUE_KEY_REGEX.Matches(classification.Span.GetText());

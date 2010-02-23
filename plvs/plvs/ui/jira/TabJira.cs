@@ -464,7 +464,13 @@ namespace Atlassian.plvs.ui.jira {
             }
 
             filtersTree.rememberLastSelectedFilterItem();
+
+            if (SelectedServerChanged != null) {
+                SelectedServerChanged(this, new EventArgs());
+            }
         }
+
+        public event EventHandler<EventArgs> SelectedServerChanged;
 
         private void restoreSelectedIssue(JiraIssue issue) {
             if (issue == null) {
