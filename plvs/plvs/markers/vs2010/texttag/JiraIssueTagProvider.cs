@@ -1,12 +1,11 @@
-﻿using System;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
 
 namespace Atlassian.plvs.markers.vs2010.texttag {
-    class JiraIssueTagProvider {
+    internal class JiraIssueTagProvider {
         [Export(typeof(ITaggerProvider))]
         [ContentType("code")]
         [TagType(typeof(JiraIssueTag))]
@@ -16,7 +15,7 @@ namespace Atlassian.plvs.markers.vs2010.texttag {
 
             public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag {
                 if (buffer == null) {
-                    throw new ArgumentNullException("buffer");
+                    return null;
                 }
 
                 return new JiraIssueTagger(AggregatorService.GetClassifier(buffer)) as ITagger<T>;
@@ -24,5 +23,3 @@ namespace Atlassian.plvs.markers.vs2010.texttag {
         }
     }
 }
-
-

@@ -34,10 +34,40 @@ namespace Atlassian.plvs.markers.vs2010.menu {
         public JiraIssueActionsSmartTagger(ITextView view, IClassifier classifier) {
             this.view = view;
             this.classifier = classifier;
-            this.view.LayoutChanged += OnLayoutChanged;
+            this.view.LayoutChanged += layoutChanged;
+            view.Caret.PositionChanged += caretPositionChanged;
+//            AtlassianPanel.Instance.Jira.SelectedServerChanged += jiraSelectedServerChanged;
         }
 
+#if false
+        private void jiraSelectedServerChanged(object sender, EventArgs e) {
+            if (view == null) {
+                return;
+            }
+            ITextSnapshot snapshot = view.TextSnapshot;
+            SnapshotSpan span = new SnapshotSpan(snapshot, new Span(0, snapshot.Length));
+            EventHandler<SnapshotSpanEventArgs> handler = TagsChanged;
+            if (handler != null) {
+                handler(this, new SnapshotSpanEventArgs(span));
+            }
+        }
+#endif 
+
         public IEnumerable<ITagSpan<JiraIssueActionsSmartTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
+#if false
+            JiraServer selectedServer = AtlassianPanel.Instance.Jira.getCurrentlySelectedServer();
+            if (selectedServer == null) {
+                yield break;
+            }
+#endif
+            ITextCaret caret = view.Caret;
+            SnapshotPoint point;
+
+            if (caret.Position.BufferPosition > 0)
+                point = caret.Position.BufferPosition;
+            else
+                yield break;
+
             foreach (SnapshotSpan span in spans) {
                 foreach (SnapshotSpan s in from classification in classifier.GetClassificationSpans(span)
                                            where classification.ClassificationType.Classification.ToLower().Contains("comment")
@@ -45,7 +75,9 @@ namespace Atlassian.plvs.markers.vs2010.menu {
                                            let c = classification
                                            from s in matches.Cast<Match>().Where(match => match.Success).Select(match => new SnapshotSpan(c.Span.Start + match.Index, match.Length))
                                            select s) {
-                    yield return new TagSpan<JiraIssueActionsSmartTag>(s, new JiraIssueActionsSmartTag(getSmartTagActions(s)));
+                    if (s.Start.Position <= point.Position && s.End.Position >= point.Position) {
+                        yield return new TagSpan<JiraIssueActionsSmartTag>(s, new JiraIssueActionsSmartTag(getSmartTagActions(s)));
+                    }
                 }
             }
         }
@@ -64,14 +96,24 @@ namespace Atlassian.plvs.markers.vs2010.menu {
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 
-        private void OnLayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
+        private void layoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
             ITextSnapshot snapshot = e.NewSnapshot;
+            invokeTagsChanged(snapshot);
+        }
+
+        private void caretPositionChanged(object sender, CaretPositionChangedEventArgs e) {
+            ITextSnapshot snapshot = view.TextSnapshot;
+            invokeTagsChanged(snapshot);
+        }
+
+        private void invokeTagsChanged(ITextSnapshot snapshot) {
             SnapshotSpan span = new SnapshotSpan(snapshot, new Span(0, snapshot.Length));
             EventHandler<SnapshotSpanEventArgs> handler = TagsChanged;
             if (handler != null) {
                 handler(this, new SnapshotSpanEventArgs(span));
             }
         }
+
 
         public void Dispose() {
             Dispose(true);
@@ -81,7 +123,8 @@ namespace Atlassian.plvs.markers.vs2010.menu {
         private void Dispose(bool disposing) {
             if (disposed) return;
             if (disposing) {
-                view.LayoutChanged -= OnLayoutChanged;
+                view.LayoutChanged -= layoutChanged;
+                view.Caret.PositionChanged -= caretPositionChanged;
                 view = null;
             }
 
@@ -161,7 +204,7 @@ namespace Atlassian.plvs.markers.vs2010.menu {
         public OpenIssueInIdeSmartTagAction(ITrackingSpan span) {
             snapshot = span.TextBuffer.CurrentSnapshot;
             issueKey = span.GetText(snapshot);
-            menuText = "Open JIRA Issue";
+            menuText = "Open JIRA Issue in IDE";
         }
 
         public string DisplayText {

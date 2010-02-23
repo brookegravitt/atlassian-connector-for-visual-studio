@@ -54,11 +54,9 @@ namespace Atlassian.plvs.markers.vs2010.quickinfo {
                            + "\r\nAssignee: " + JiraServerCache.Instance.getUsers(issue.Server).getUser(issue.Assignee)
                            + "\r\nLast Updated: " + issue.UpdateDate;
                 }
-                return "Issue Key: " + issueKey
-                       + "\r\nIssue URL (on currently selected server): " + server.Url + "/browse/" + issueKey;
+                return "Issue Key: " + issueKey;
             }
-            return "Issue Key: " + issueKey
-                   + "\r\nNo JIRA server selected";
+            return "Issue Key: " + issueKey + "\r\nNo JIRA server selected";
         }
 
         private bool disposed;
