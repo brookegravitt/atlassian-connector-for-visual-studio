@@ -234,7 +234,7 @@ namespace Atlassian.plvs.ui.bamboo {
             if (summaryStatusOk != null && summaryStatusOk == allOk) return;
 
             notifyBuildStatus.Icon = allpassing != null
-                                         ? (allOk ? Resources.bamboo_green_161 : Resources.bamboo_red_161)
+                                         ? (allOk && !haveExceptions ? Resources.bamboo_green_161 : Resources.bamboo_red_161)
                                          : Resources.bamboo_grey_161;
             notifyBuildStatus.BalloonTipText = allOk && !haveExceptions
                                                    ? "All builds are passing"
