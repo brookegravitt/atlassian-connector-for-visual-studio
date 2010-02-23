@@ -214,7 +214,8 @@ namespace Atlassian.plvs.ui.bamboo {
             }
             ((FlatBuildTreeModel) buildTree.Model).updateBuilds(builds);
 
-            if (exceptions != null && exceptions.Count > 0) {
+            bool haveExceptions = exceptions != null && exceptions.Count > 0;
+            if (haveExceptions) {
                 status.setError("Failed to poll some of the servers", exceptions);
             } else {
                 lastPollTime = DateTime.Now;
@@ -235,11 +236,11 @@ namespace Atlassian.plvs.ui.bamboo {
             notifyBuildStatus.Icon = allpassing != null
                                          ? (allOk ? Resources.bamboo_green_161 : Resources.bamboo_red_161)
                                          : Resources.bamboo_grey_161;
-            notifyBuildStatus.BalloonTipText = allOk
+            notifyBuildStatus.BalloonTipText = allOk && !haveExceptions
                                                    ? "All builds are passing"
-                                                   : (exceptions == null || exceptions.Count == 0 
-                                                        ? "Some builds failed" 
-                                                        : "Failed to retrieve build information");
+                                                   : (haveExceptions  
+                                                        ? "Failed to retrieve build information from some of the servers"
+                                                        : "Some of the monitored builds failed");
             notifyBuildStatus.Text = notifyBuildStatus.BalloonTipText;
             notifyBuildStatus.BalloonTipIcon = allOk ? ToolTipIcon.Info : ToolTipIcon.Warning;
             notifyBuildStatus.ShowBalloonTip(30000);
@@ -247,6 +248,8 @@ namespace Atlassian.plvs.ui.bamboo {
         }
 
         private void showPollTimeInfo() {
+            if (status.HaveErrors) return;
+
             if (lastPollTime != null && nextPollTime != null) {
                 int minutes = DateTime.Now.Subtract(lastPollTime.Value).Minutes;
                 status.setInfo("Last poll finished at "
