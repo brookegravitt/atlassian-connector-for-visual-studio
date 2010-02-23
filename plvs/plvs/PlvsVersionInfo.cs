@@ -3,8 +3,8 @@
           public class PlvsVersionInfo {
               public static string Version { get { return "0.9.0"; } }
               public static string BuildType { get { return "SNAPSHOT"; } }
-              public static string Stamp { get { return "20100223-1224"; } }
-              public const string VersionAndStamp = "0.9.0-20100223-1224";
+              public static string Stamp { get { return "20100223-1607"; } }
+              public const string VersionAndStamp = "0.9.0-20100223-1607";
           }
       }
     

@@ -6,12 +6,16 @@
     <Version>1.0</Version>
     <Description xml:space="preserve">Provides integration of Atlassian products with Visual Studio</Description>
     <Locale>1033</Locale>
+    <License>LICENSE</License>
+    <Icon>ide_plugin_32.png</Icon>
     <InstalledByMsi>false</InstalledByMsi>
     <SupportedProducts>
       <VisualStudio Version="10.0">
+        <Edition>Ultimate</Edition>
+        <Edition>Premium</Edition>
+        <Edition>Pro</Edition>
         <Edition>VSTS</Edition>
         <Edition>VSTD</Edition>
-        <Edition>Pro</Edition>
       </VisualStudio>
     </SupportedProducts>
     <SupportedFrameworkRuntimeEdition MinVersion="4.0" MaxVersion="4.0" />
