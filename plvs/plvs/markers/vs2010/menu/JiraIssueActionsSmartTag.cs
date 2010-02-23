@@ -36,10 +36,9 @@ namespace Atlassian.plvs.markers.vs2010.menu {
             this.classifier = classifier;
             this.view.LayoutChanged += layoutChanged;
             view.Caret.PositionChanged += caretPositionChanged;
-//            AtlassianPanel.Instance.Jira.SelectedServerChanged += jiraSelectedServerChanged;
+            AtlassianPanel.Instance.Jira.SelectedServerChanged += jiraSelectedServerChanged;
         }
 
-#if false
         private void jiraSelectedServerChanged(object sender, EventArgs e) {
             if (view == null) {
                 return;
@@ -51,15 +50,13 @@ namespace Atlassian.plvs.markers.vs2010.menu {
                 handler(this, new SnapshotSpanEventArgs(span));
             }
         }
-#endif 
 
         public IEnumerable<ITagSpan<JiraIssueActionsSmartTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
-#if false
             JiraServer selectedServer = AtlassianPanel.Instance.Jira.getCurrentlySelectedServer();
             if (selectedServer == null) {
                 yield break;
             }
-#endif
+
             ITextCaret caret = view.Caret;
             SnapshotPoint point;
 
@@ -125,6 +122,7 @@ namespace Atlassian.plvs.markers.vs2010.menu {
             if (disposing) {
                 view.LayoutChanged -= layoutChanged;
                 view.Caret.PositionChanged -= caretPositionChanged;
+                AtlassianPanel.Instance.Jira.SelectedServerChanged -= jiraSelectedServerChanged;
                 view = null;
             }
 

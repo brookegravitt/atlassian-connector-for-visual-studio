@@ -18,7 +18,7 @@ namespace Atlassian.plvs.markers.vs2010.texttag {
                     return null;
                 }
 
-                return new JiraIssueTagger(AggregatorService.GetClassifier(buffer)) as ITagger<T>;
+                return new JiraIssueTagger(buffer, AggregatorService.GetClassifier(buffer)) as ITagger<T>;
             }
         }
     }
