@@ -19,12 +19,8 @@ namespace Atlassian.plvs.eventsinks {
 
         public override int GetTipText(IVsTextMarker pMarker, string[] pbstrText) {
             if (issueKey != null) {
-#if VS2010
-                pbstrText[0] = "Right click for actions available on issue " + issueKey;
-#else 
                 pbstrText[0] = "Double click to try open " + issueKey +
                                "\non the currently selected server,\nRight click for more options";
-#endif
             }
 
             return VSConstants.S_OK;
@@ -37,20 +33,20 @@ namespace Atlassian.plvs.eventsinks {
             const uint menuItemFlags = (uint) (OLECMDF.OLECMDF_SUPPORTED | OLECMDF.OLECMDF_ENABLED);
 // ReSharper restore BitwiseOperatorOnEnumWihtoutFlags
 
-            if (pcmdf == null) {
-                return VSConstants.S_FALSE;
+            if (pcmdf == null || pbstrText == null) {
+                return VSConstants.S_OK;
             }
                 
             switch (iItem) {
                 case 0:
-                    if (pbstrText != null && issueKey != null) {
+                    if (issueKey != null) {
                         pbstrText[0] = "Open Issue " + issueKey + " in IDE";
                         pcmdf[0] = menuItemFlags;
                         return VSConstants.S_OK;
                     }
                     return VSConstants.S_FALSE;
                 case 1:
-                    if (pbstrText != null && issueKey != null) {
+                    if (issueKey != null) {
                         pbstrText[0] = "View Issue " + issueKey + " in the Browser";
                         pcmdf[0] = menuItemFlags;
                         return VSConstants.S_OK;
@@ -110,7 +106,7 @@ namespace Atlassian.plvs.eventsinks {
                 return;
             }
             try {
-                JiraServer server = AtlassianPanel.Instance.Jira.getCurrentlySelectedServer();
+                JiraServer server = AtlassianPanel.Instance.Jira.CurrentlySelectedServer;
                 if (server != null) {
                     Process.Start(server.Url + "/browse/" + issueKey);
                 } else {

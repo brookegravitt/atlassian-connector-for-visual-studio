@@ -698,6 +698,7 @@
     <Content Include="Resources\icons\bamboo-grey-16.png" />
     <Content Include="Resources\icons\bamboo-red-16.ico" />
     <Content Include="Resources\icons\bamboo-red-16.png" />
+    <Content Include="Resources\icons\bug.png" />
     <Content Include="Resources\icons\close.png" />
     <Content Include="Resources\icons\collapse_all.png" />
     <Content Include="Resources\icons\dropzone.png" />

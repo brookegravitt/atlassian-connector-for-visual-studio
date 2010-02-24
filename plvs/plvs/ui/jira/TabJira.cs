@@ -661,7 +661,7 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         public void createIssue() {
-            JiraServer server = filtersTree.getCurrentlySelectedServer();
+            JiraServer server = filtersTree.CurrentlySelectedServer;
             if (server == null || !metadataFetched) {
                 return;
             }
@@ -684,7 +684,7 @@ namespace Atlassian.plvs.ui.jira {
         public delegate void FindFinished(bool success, string message);
 
         public void findAndOpenIssue(string key, FindFinished onFinish) {
-            JiraServer server = filtersTree.getCurrentlySelectedServer();
+            JiraServer server = filtersTree.CurrentlySelectedServer;
             if (server == null) {
                 if (onFinish != null) {
                     onFinish(false, "No JIRA server selected");
@@ -789,9 +789,7 @@ namespace Atlassian.plvs.ui.jira {
             filtersTree.editCustomFilter(node);
         }
 
-        public JiraServer getCurrentlySelectedServer() {
-            return filtersTree.getCurrentlySelectedServer();
-        }
+        public JiraServer CurrentlySelectedServer { get { return filtersTree.CurrentlySelectedServer; } }
 
         public class SelectedIssueEventArgs : EventArgs {
             public SelectedIssueEventArgs(JiraIssue issue) {

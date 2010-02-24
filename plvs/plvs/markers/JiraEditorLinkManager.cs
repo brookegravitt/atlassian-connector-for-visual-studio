@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using Atlassian.plvs.eventsinks;
 using Atlassian.plvs.util.jira;
+using Atlassian.plvs.windows;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.TextManager.Interop;
 
@@ -34,7 +35,9 @@ namespace Atlassian.plvs.markers {
 
         public static void OnDocumentOpened(IVsTextLines lines) {
             if (!(isCSharp(lines) || isVb(lines))) return;
-            addMarkersToDocument(lines);
+            if (AtlassianPanel.Instance.Jira != null && AtlassianPanel.Instance.Jira.CurrentlySelectedServer != null) {
+                addMarkersToDocument(lines);
+            }
         }
 
         public static void OnDocumentSaved(uint cookie) {}
@@ -46,7 +49,10 @@ namespace Atlassian.plvs.markers {
 
             cleanupMarkers(textLines, JiraLinkTextMarkerType.Id);
             cleanupMarkers(textLines, JiraLinkMarginMarkerType.Id);
-            addMarkersToDocument(textLines);
+
+            if (AtlassianPanel.Instance.Jira != null && AtlassianPanel.Instance.Jira.CurrentlySelectedServer != null) {
+                addMarkersToDocument(textLines);
+            }
         }
 
         private static void addMarkersToDocument(IVsTextLines textLines) {

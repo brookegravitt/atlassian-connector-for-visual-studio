@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Atlassian.plvs.markers;
+using Atlassian.plvs.windows;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.TextManager.Interop;
@@ -9,7 +10,8 @@ namespace Atlassian.plvs.eventsinks {
     internal sealed class TextManagerEventSink : IVsTextManagerEvents {
         private readonly Dictionary<IVsTextLines, int> documentViewCounts = new Dictionary<IVsTextLines, int>();
 
-        #region IVsTextManagerEvents Members
+        private readonly Dictionary<IVsTextView, SelectedServerListener> selectedServerListeners =
+            new Dictionary<IVsTextView, SelectedServerListener>();
 
         public void OnRegisterMarkerType(int iMarkerType) {}
 
@@ -47,6 +49,32 @@ namespace Atlassian.plvs.eventsinks {
             textLinesEventSink.TextLines = buffer;
             textLinesEventSink.ConnectionPoint = connectionPointTextLinesEvents;
             textLinesEventSink.Cookie = cookie;
+
+            if (AtlassianPanel.Instance != null && AtlassianPanel.Instance.Jira != null) {
+                selectedServerListeners[pView] = new SelectedServerListener(pView);
+            }
+        }
+
+        private class SelectedServerListener {
+            private readonly IVsTextView pView;
+
+            public SelectedServerListener(IVsTextView pView) {
+                this.pView = pView;
+                AtlassianPanel.Instance.Jira.SelectedServerChanged += jiraSelectedServerChanged;
+            }
+
+            public void shutdown() {
+                AtlassianPanel.Instance.Jira.SelectedServerChanged -= jiraSelectedServerChanged;
+            }
+
+            private void jiraSelectedServerChanged(object sender, EventArgs e) {
+                IVsTextLines buffer;
+                pView.GetBuffer(out buffer);
+                if (buffer == null) {
+                    return;
+                }
+                JiraEditorLinkManager.OnDocumentChanged(buffer);
+            }
         }
 
         public void OnUnregisterView(IVsTextView pView) {
@@ -61,16 +89,14 @@ namespace Atlassian.plvs.eventsinks {
 
             if (documentViewCount > 1) {
                 documentViewCounts[buffer] = documentViewCount - 1;
-            }
-            else {
+            } else {
                 documentViewCounts.Remove(buffer);
                 JiraEditorLinkManager.OnDocumentClosed(buffer);
+                if (selectedServerListeners.ContainsKey(pView)) selectedServerListeners[pView].shutdown();
             }
         }
 
         public void OnUserPreferencesChanged(VIEWPREFERENCES[] pViewPrefs, FRAMEPREFERENCES[] pFramePrefs,
                                              LANGPREFERENCES[] pLangPrefs, FONTCOLORPREFERENCES[] pColorPrefs) {}
-
-        #endregion
     }
 }

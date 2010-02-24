@@ -70,6 +70,15 @@ namespace Atlassian.plvs.windows {
             new About().ShowDialog(this);
         }
 
+        private void buttonReportBug_Click(object sender, EventArgs e) {
+            try {
+                System.Diagnostics.Process.Start("https://studio.atlassian.com/secure/CreateIssue.jspa?pid=10500");
+// ReSharper disable EmptyGeneralCatchClause
+            } catch (Exception) {
+// ReSharper restore EmptyGeneralCatchClause
+            }
+        }
+
         private void buttonGlobalProperties_Click(object sender, EventArgs e) {
             openGlobalProperties();
         }

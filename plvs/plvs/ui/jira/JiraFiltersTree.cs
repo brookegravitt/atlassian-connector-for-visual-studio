@@ -106,9 +106,10 @@ namespace Atlassian.plvs.ui.jira {
             return null;
         }
 
-        public JiraServer getCurrentlySelectedServer() {
-            TreeNodeWithJiraServer node = SelectedNode as TreeNodeWithJiraServer;
-            return node == null ? null : node.Server;
+        public JiraServer CurrentlySelectedServer { get {
+                TreeNodeWithJiraServer node = SelectedNode as TreeNodeWithJiraServer;
+                return node == null ? null : node.Server;
+            }
         }
 
         public void addSavedFilterNodes(JiraServer server, IEnumerable<JiraSavedFilter> filters) {
@@ -154,7 +155,7 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         public void addCustomFilter() {
-            JiraServer server = getCurrentlySelectedServer();
+            JiraServer server = CurrentlySelectedServer;
             if (server == null) {
                 return;
             }
