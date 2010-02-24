@@ -372,7 +372,7 @@ namespace Atlassian.plvs.api.jira {
             eq &= other.Summary.Equals(Summary);
             eq &= other.Status.Equals(Status);
             eq &= other.StatusIconUrl.Equals(StatusIconUrl);
-            eq &= other.Priority.Equals(Priority);
+            eq &= Equals(other.Priority, Priority);
             eq &= other.Resolution.Equals(Resolution);
             eq &= other.Reporter.Equals(Reporter);
             eq &= other.Assignee.Equals(Assignee);
@@ -384,7 +384,7 @@ namespace Atlassian.plvs.api.jira {
             eq &= string.Equals(other.RemainingEstimate, RemainingEstimate);
             eq &= string.Equals(other.TimeSpent, TimeSpent);
             eq &= string.Equals(other.ParentKey, ParentKey);
-            eq &= other.PriorityIconUrl.Equals(PriorityIconUrl);
+            eq &= Equals(other.PriorityIconUrl, PriorityIconUrl);
             eq &= other.StatusId == StatusId;
             eq &= other.PriorityId == PriorityId;
             eq &= PlvsUtils.compareLists(other.comments, comments);
