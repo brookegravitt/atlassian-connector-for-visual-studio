@@ -54,10 +54,6 @@ Function CheckVS
 		ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\10.0" "InstallDir"
 		IfErrors 0 +2
 			Call AbortOnNoVS
-	ClearErrors		
-	ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\10.0" "InstallDir"
-	IfErrors 0 +2
-		Call AbortOnNoVS 
 FunctionEnd
 
 Function AbortOnNoVS
