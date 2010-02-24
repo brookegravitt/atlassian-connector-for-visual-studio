@@ -800,6 +800,7 @@
     <Content Include="Resources\icons\log-work.png" />
     <Content Include="Resources\icons\minus.png" />
     <Content Include="Resources\icons\new_comment.png" />
+    <Content Include="Resources\icons\nothing.png" />
     <Content Include="Resources\icons\open_in_ide.png" />
     <Content Include="Resources\icons\pazu.bmp" />
     <None Include="markers\Markers2008.reg" />
@@ -829,6 +830,10 @@
     <None Include="third party\ankh\LICENSE.rtf" />
     <Content Include="Resources\texts\attachment_download_html.txt" />
     <Content Include="Resources\texts\autoupdate_html.txt" />
+    <Content Include="Resources\texts\issue_summary_html.txt" />
+    <Content Include="Resources\texts\issue_summary_original_estimate_editable_html.txt" />
+    <Content Include="Resources\texts\issue_summary_parent_issue_html.txt" />
+    <Content Include="Resources\texts\issue_summary_remaining_estimate_editable_html.txt" />
     <Content Include="Resources\texts\throbber_html.txt" />
     <None Include="source.extension.vsixmanifest" />
     <Content Include="third party\ankh\Ankh.ExtensionPoints.dll" />
@@ -897,9 +902,11 @@
   <PropertyGroup>
     <PostBuildEvent>copy $(ProjectDir)\Resources\icons\edit.png $(ProjectDir)\$(OutDir)
 copy $(ProjectDir)\Resources\icons\ajax-loader.gif $(ProjectDir)\$(OutDir)
+copy $(ProjectDir)\Resources\icons\nothing.png $(ProjectDir)\$(OutDir)
 
 copy $(ProjectDir)\Resources\icons\edit.png "%25LOCALAPPDATA%25\Microsoft\VisualStudio\10.0Exp\Extensions\Atlassian\Atlassian Connector\1.0"
 copy $(ProjectDir)\Resources\icons\ajax-loader.gif "%25LOCALAPPDATA%25\Microsoft\VisualStudio\10.0Exp\Extensions\Atlassian\Atlassian Connector\1.0"
+copy $(ProjectDir)\Resources\icons\nothing.png "%25LOCALAPPDATA%25\Microsoft\VisualStudio\10.0Exp\Extensions\Atlassian\Atlassian Connector\1.0"
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

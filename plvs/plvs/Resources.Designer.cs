@@ -433,6 +433,68 @@ namespace Atlassian.plvs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;table class=&quot;summary&quot;&gt;
+        ///
+        ///&lt;tr&gt;&lt;td class=&quot;labelcolumn labelsummary&quot;&gt;Summary&lt;/td&gt;
+        ///&lt;td class=&quot;labelsummary&quot;&gt;
+        ///&lt;div onmouseover=&quot;showInline(&apos;summary-edit&apos;);&quot; onmouseout=&quot;hide(&apos;summary-edit&apos;);&quot; &gt;{1}
+        ///&lt;div id=&quot;summary-edit&quot; class=&quot;pencil&quot;&gt;&lt;a href=&quot;issueedit:summary&quot;&gt;&lt;img src=&quot;{0}&quot; alt=&quot;Edit&quot; style=&quot;border-style:none;vertical-align:top;&quot;&gt;&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;
+        ///
+        ///&lt;tr&gt;&lt;td class=&quot;labelcolumn&quot;&gt;Type&lt;/td&gt;&lt;td&gt;&lt;img alt=&quot;&quot; src=&quot;{2}&quot;/&gt;{3}&lt;/td&gt;&lt;/tr&gt;
+        ///
+        ///&lt;tr&gt;&lt;td class=&quot;labelcolumn&quot;&gt;Status&lt;/td&gt;&lt;td&gt;&lt;img alt=&quot;&quot; src=&quot;{4}&quot;/&gt; [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string issue_summary_html {
+            get {
+                return ResourceManager.GetString("issue_summary_html", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;tr&gt;&lt;td class=&quot;labelcolumn&quot;&gt;Original Estimate&lt;/td&gt;
+        ///&lt;td&gt;&lt;div onmouseover=&quot;showInline(&apos;timetracking-edit&apos;);&quot; onmouseout=&quot;hide(&apos;timetracking-edit&apos;);&quot; &gt;{1}
+        ///&lt;div id=&quot;timetracking-edit&quot; class=&quot;pencil&quot;&gt;&lt;a href=&quot;issueedit:timetracking&quot;&gt;
+        ///&lt;img src=&quot;{0}&quot; alt=&quot;Edit&quot; style=&quot;border-style:none;vertical-align:top;&quot;&gt;&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;
+        ///
+        ///&lt;tr&gt;&lt;td class=&quot;labelcolumn&quot;&gt;Remaining Estimate&lt;/td&gt;&lt;td&gt;{2}&lt;/td&gt;&lt;/tr&gt;
+        ///
+        ///&lt;tr&gt;&lt;td class=&quot;labelcolumn&quot;&gt;Time Spent&lt;/td&gt;&lt;td&gt;{3}&lt;/td&gt;&lt;/tr&gt;
+        ///.
+        /// </summary>
+        internal static string issue_summary_original_estimate_editable_html {
+            get {
+                return ResourceManager.GetString("issue_summary_original_estimate_editable_html", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;tr&gt;&lt;td class=&quot;labelcolumn&quot;&gt;Parent Issue&lt;/td&gt;&lt;td&gt;&lt;a href=&quot;parentissue:{0}&quot;&gt;{0}&lt;/a&gt;&lt;/td&gt;
+        ///.
+        /// </summary>
+        internal static string issue_summary_parent_issue_html {
+            get {
+                return ResourceManager.GetString("issue_summary_parent_issue_html", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;tr&gt;&lt;td class=&quot;labelcolumn&quot;&gt;Original Estimate&lt;/td&gt;&lt;td&gt;{1}&lt;/td&gt;&lt;/tr&gt;
+        ///
+        ///&lt;tr&gt;&lt;td class=&quot;labelcolumn&quot;&gt;Remaining Estimate&lt;/td&gt;
+        ///&lt;td&gt;&lt;div onmouseover=&quot;showInline(&apos;timetracking-edit&apos;);&quot; onmouseout=&quot;hide(&apos;timetracking-edit&apos;);&quot; &gt;{2}
+        ///&lt;div id=&quot;timetracking-edit&quot; class=&quot;pencil&quot;&gt;&lt;a href=&quot;issueedit:timetracking&quot;&gt;
+        ///&lt;img src=&quot;{0}&quot; alt=&quot;Edit&quot; style=&quot;border-style:none;vertical-align:top;&quot;&gt;&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;
+        ///
+        ///&lt;tr&gt;&lt;td class=&quot;labelcolumn&quot;&gt;Time Spent&lt;/td&gt;&lt;td&gt;{3}&lt;/td&gt;&lt;/tr&gt;
+        ///.
+        /// </summary>
+        internal static string issue_summary_remaining_estimate_editable_html {
+            get {
+                return ResourceManager.GetString("issue_summary_remaining_estimate_editable_html", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Issues - JIRA.
         /// </summary>
         internal static string IssueDetailsToolWindowTitle {
@@ -479,6 +541,13 @@ namespace Atlassian.plvs {
         internal static System.Drawing.Bitmap new_comment {
             get {
                 object obj = ResourceManager.GetObject("new_comment", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap nothing {
+            get {
+                object obj = ResourceManager.GetObject("nothing", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
