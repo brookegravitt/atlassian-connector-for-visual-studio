@@ -732,7 +732,6 @@
     <Content Include="Resources\icons\new_comment.png" />
     <Content Include="Resources\icons\open_in_ide.png" />
     <Content Include="Resources\icons\pazu.bmp" />
-    <None Include="markers\Markers2010.reg" />
     <None Include="markers\Markers2008.reg" />
     <None Include="Resources\icons\pazu_32.bmp" />
     <Content Include="Resources\icons\pazu_32.ico" />
