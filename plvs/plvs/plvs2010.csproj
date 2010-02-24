@@ -272,6 +272,10 @@
     <Compile Include="markers\vs2010\menu\JiraIssueActionsSmartTag.cs" />
     <Compile Include="markers\vs2010\marginglyph\JiraIssueGlyphFactory.cs" />
     <Compile Include="markers\vs2010\marginglyph\JiraIssueGlyphFactoryProvider.cs" />
+    <Compile Include="markers\vs2010\menu\JiraIssueActionsSmartTagger.cs" />
+    <Compile Include="markers\vs2010\menu\JiraIssueActionsSmartTagProvider.cs" />
+    <Compile Include="markers\vs2010\menu\OpenIssueInBrowserSmartTagAction.cs" />
+    <Compile Include="markers\vs2010\menu\OpenIssueInIdeSmartTagAction.cs" />
     <Compile Include="markers\vs2010\quickinfo\JiraIssueQuickInfoController.cs" />
     <Compile Include="markers\vs2010\quickinfo\JiraIssueQuickInfoControllerProvider.cs" />
     <Compile Include="markers\vs2010\quickinfo\JiraIssueQuickInfoProvider.cs" />
@@ -279,6 +283,7 @@
     <Compile Include="markers\vs2010\texttag\JiraIssueTag.cs" />
     <Compile Include="markers\vs2010\texttag\JiraIssueTagger.cs" />
     <Compile Include="markers\vs2010\texttag\JiraIssueTagProvider.cs" />
+    <Compile Include="markers\vs2010\texttag\LinkUpdateWorkaround.cs" />
     <Compile Include="models\AbstractServerModel.cs" />
     <Compile Include="api\bamboo\BambooServer.cs" />
     <Compile Include="models\bamboo\BambooServerModel.cs" />
@@ -796,7 +801,6 @@
     <Content Include="Resources\icons\new_comment.png" />
     <Content Include="Resources\icons\open_in_ide.png" />
     <Content Include="Resources\icons\pazu.bmp" />
-    <None Include="markers\Markers2010.reg" />
     <None Include="markers\Markers2008.reg" />
     <None Include="Resources\icons\pazu_32.bmp" />
     <Content Include="Resources\icons\pazu_32.ico" />
