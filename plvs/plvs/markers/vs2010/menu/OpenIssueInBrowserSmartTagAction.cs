@@ -37,7 +37,7 @@ namespace Atlassian.plvs.markers.vs2010.menu {
 
         public void Invoke() {
             try {
-                JiraServer server = AtlassianPanel.Instance.Jira.getCurrentlySelectedServer();
+                JiraServer server = AtlassianPanel.Instance.Jira.CurrentlySelectedServer;
                 if (server != null) {
                     Process.Start(server.Url + "/browse/" + issueKey);
                 } else {

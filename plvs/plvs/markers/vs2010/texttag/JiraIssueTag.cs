@@ -20,7 +20,7 @@ namespace Atlassian.plvs.markers.vs2010.texttag {
         }
                 
         private static Uri createUrl(string key) {
-            JiraServer server = AtlassianPanel.Instance.Jira.getCurrentlySelectedServer();
+            JiraServer server = AtlassianPanel.Instance.Jira.CurrentlySelectedServer;
             return server != null ? new Uri(server.Url + "/browse/" + key) : new Uri("about:blank");
         }
     }
