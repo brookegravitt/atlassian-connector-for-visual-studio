@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -50,6 +51,7 @@ namespace Atlassian.plvs.ui.jira {
         private const int A_LOT = 100000;
 
         private readonly string editImagePath;
+        private readonly string nothingImagePath;
 
         private WebBrowser issueDescription;
 
@@ -89,9 +91,12 @@ namespace Atlassian.plvs.ui.jira {
             if (name != null) {
                 name = name.Substring(0, name.LastIndexOf("/"));
                 editImagePath = name + "/edit.png";
+                nothingImagePath = name + "/nothing.png";
             }
 
             maybeAddMazioMenu();
+
+            issueSummary.ScriptErrorsSuppressed = true;
         }
 
         [DllImport("shell32.dll", CharSet = CharSet.Auto)]
@@ -331,59 +336,15 @@ namespace Atlassian.plvs.ui.jira {
             return sb.ToString();
         }
 
-        private void appendPencil(StringBuilder sb, string tag) {
-            sb.Append(" <div id=\"").Append(tag).Append("-edit").Append("\" class=\"pencil\"><a href=\"")
-                .Append(ISSUE_EDIT_URL_TYPE).Append(tag).Append("\"><img src=\"").Append(editImagePath)
-                .Append("\" alt=\"Edit\"  style=\"border-style:none;vertical-align:top;\"></a></div>");
-        }
-
-        private static void appendStartEditable(StringBuilder sb, string tag) {
-            sb.Append("<div onmouseover=\"showInline('").Append(tag).Append("-edit');\" onmouseout=\"hide('").Append(tag).Append("-edit');\" >");    
-        }
-
-        private static void appendEndEditable(StringBuilder sb) {
-            sb.Append("</div>");
-        }
-
         private string createSummaryHtml() {
-            StringBuilder sb = new StringBuilder();
+            string timeFields = string.Format((issue.TimeSpent != null
+                                               ? Resources.issue_summary_remaining_estimate_editable_html
+                                               : Resources.issue_summary_original_estimate_editable_html),
+                                          editImagePath,
+                                          issue.OriginalEstimate ?? "None",
+                                          issue.RemainingEstimate ?? "None",
+                                          issue.TimeSpent ?? "None");
 
-            sb.Append("<html>\n<head>\n")
-
-                .Append(Resources.summary_and_description_css)
-                .Append(Resources.toggler_javascript)
-
-                .Append("\n</head>\n<body>\n<table class=\"summary\">\n")
-                .Append("<tr><td class=\"labelcolumn labelsummary\">Summary</td><td class=\"labelsummary\">");
-
-            appendStartEditable(sb, SUMMARY_EDIT_TAG);
-            sb.Append(issue.Summary);
-            appendPencil(sb, SUMMARY_EDIT_TAG);
-            appendEndEditable(sb);
-            sb.Append("</td></tr>\n");
-
-            sb.Append("<tr><td class=\"labelcolumn\">Type</td><td>")
-                 .Append("<img alt=\"\" src=\"").Append(issue.IssueTypeIconUrl).Append("\"/>").Append(issue.IssueType).Append("</td></tr>\n")
-                 .Append("<tr><td class=\"labelcolumn\">Status</td><td>")
-                 .Append("<img alt=\"\" src=\"").Append(issue.StatusIconUrl).Append("\"/>").Append(issue.Status).Append("</td></tr>\n");
-
-            if (issue.IsSubtask) {
-                sb.Append("<tr><td class=\"labelcolumn\">Parent Issue</td><td>")
-                    .Append("<a href=\"").Append(PARENT_ISSUE_URL_TYPE).Append(issue.ParentKey).Append("\">")
-                    .Append(issue.ParentKey).Append("</a></td>");
-            }
-            
-            sb.Append("<tr><td class=\"labelcolumn\">Priority</td><td>");
-            appendStartEditable(sb, PRIORITY_EDIT_TAG);
-            sb.Append("<img alt=\"\" src=\"").Append(issue.PriorityIconUrl).Append("\"/>").Append(issue.Priority);
-            appendPencil(sb, PRIORITY_EDIT_TAG);
-            appendEndEditable(sb);
-            sb.Append("</td></tr>\n")
-
-
-                .Append("<tr><td class=\"labelcolumn\">Environment</td><td>");
-
-            appendStartEditable(sb, ENVIRONMENT_EDIT_TAG);
             string env = String.IsNullOrEmpty(issue.Environment) ? "None" : issue.Environment;
             // strip <p> tags - with them the pencil makes the whole panel shake and tremble
             if (env.StartsWith("<p>")) {
@@ -392,120 +353,51 @@ namespace Atlassian.plvs.ui.jira {
             if (env.EndsWith("</p>")) {
                 env = env.Substring(0, env.LastIndexOf("</p>"));
             }
-            sb.Append(env);
-            appendPencil(sb, ENVIRONMENT_EDIT_TAG);
-            appendEndEditable(sb);
-            sb.Append("</tr>\n")
 
-                .Append("<tr><td class=\"labelcolumn\">Assignee</td><td>");
-                
-            appendStartEditable(sb, ASSIGNEE_EDIT_TAG);
-            sb.Append(JiraServerCache.Instance.getUsers(issue.Server).getUser(issue.Assignee));
-            appendPencil(sb, ASSIGNEE_EDIT_TAG);
-            appendEndEditable(sb);
-            sb.Append("</tr>\n")
-                
-                .Append("<tr><td class=\"labelcolumn\">Reporter</td><td>")
-                .Append(JiraServerCache.Instance.getUsers(issue.Server).getUser(issue.Reporter)).Append("</td></tr>\n")
-                .Append("<tr><td class=\"labelcolumn\">Resolution</td><td>")
-                .Append(issue.Resolution).Append("</td></tr>\n")
-                .Append("<tr><td class=\"labelcolumn\">Created</td><td>")
-                .Append(JiraIssueUtils.getTimeStringFromIssueDateTime(issue.CreationDate)).Append("</td></tr>\n")
-                .Append("<tr><td class=\"labelcolumn\">Updated</td><td>")
-                .Append(JiraIssueUtils.getTimeStringFromIssueDateTime(issue.UpdateDate)).Append("</td></tr>\n");
+            string parentKeyOrNothing = issue.IsSubtask
+                                   ? string.Format(Resources.issue_summary_parent_issue_html, issue.ParentKey)
+                                   : "";
+            string tableContents = string.Format(Resources.issue_summary_html,
+                                                 editImagePath,
+                                                 issue.Summary,
+                                                 issue.IssueTypeIconUrl,
+                                                 issue.IssueType, 
+                                                 issue.StatusIconUrl,
+                                                 issue.Status,
+                                                 issue.PriorityIconUrl ?? nothingImagePath,
+                                                 issue.Priority ?? "None",
+                                                 env,
+                                                 JiraServerCache.Instance.getUsers(issue.Server).getUser(issue.Assignee),
+                                                 JiraServerCache.Instance.getUsers(issue.Server).getUser(issue.Reporter),
+                                                 issue.Resolution,
+                                                 JiraIssueUtils.getTimeStringFromIssueDateTime(issue.CreationDate),
+                                                 JiraIssueUtils.getTimeStringFromIssueDateTime(issue.UpdateDate),
+                                                 issue.Versions.Count > 1 ? "Affects Versions" : "Affects Version",
+                                                 createStringList(issue.Versions),
+                                                 issue.FixVersions.Count > 1 ? "Fix Versions" : "Fix Version",
+                                                 createStringList(issue.FixVersions),
+                                                 issue.Components.Count > 1 ? "Components" : "Component",
+                                                 createStringList(issue.Components),
+                                                 timeFields,
+                                                 parentKeyOrNothing);
+            return "<html><head>"
+                + Resources.summary_and_description_css
+                + Resources.toggler_javascript
+                + "</head><body><table class=\"summary\">" + tableContents + "</table></body></html>";    
+        }
 
-            sb.Append(issue.Versions.Count > 1
-                          ? "<tr><td class=\"labelcolumn\">Affects Versions</td><td>"
-                          : "<tr><td class=\"labelcolumn\">Affects Version</td><td>");
-
-            appendStartEditable(sb, AFFECTS_VERSIONS_EDIT_TAG);
-
-            if (issue.Versions.Count == 0)
+        private static string createStringList(ICollection<string> list) {
+            StringBuilder sb = new StringBuilder();
+            if (list.Count == 0)
                 sb.Append("None");
             else {
                 int i = 0;
-                foreach (string v in issue.Versions) {
-                    sb.Append(v);
-                    if (++i < issue.Versions.Count)
+                foreach (string s in list) {
+                    sb.Append(s);
+                    if (++i < list.Count)
                         sb.Append(", ");
                 }
             }
-
-            appendPencil(sb, AFFECTS_VERSIONS_EDIT_TAG);
-            appendEndEditable(sb);
-            
-            sb.Append("</tr>\n");
-
-            sb.Append(issue.FixVersions.Count > 1
-                          ? "<tr><td class=\"labelcolumn\">Fix Versions</td><td>"
-                          : "<tr><td class=\"labelcolumn\">Fix Version</td><td>");
-
-            appendStartEditable(sb, FIX_VERSIONS_EDIT_TAG);
-
-            if (issue.FixVersions.Count == 0)
-                sb.Append("None");
-            else {
-                int i = 0;
-                foreach (string v in issue.FixVersions) {
-                    sb.Append(v);
-                    if (++i < issue.FixVersions.Count)
-                        sb.Append(", ");
-                }
-            }
-
-            appendPencil(sb, FIX_VERSIONS_EDIT_TAG);
-            appendEndEditable(sb);
-            sb.Append("</tr>\n");
-
-            sb.Append(issue.Components.Count > 1
-                          ? "<tr><td class=\"labelcolumn\">Components</td><td>"
-                          : "<tr><td class=\"labelcolumn\">Component</td><td>");
-
-            appendStartEditable(sb, COMPONENTS_EDIT_TAG);
-
-            if (issue.Components.Count == 0)
-                sb.Append("None");
-            else {
-                int i = 0;
-                foreach (string c in issue.Components) {
-                    sb.Append(c);
-                    if (++i < issue.Components.Count)
-                        sb.Append(", ");
-                }
-            }
-
-            appendPencil(sb, COMPONENTS_EDIT_TAG);
-            appendEndEditable(sb);
-            sb.Append("</tr>\n");
-
-            sb.Append("<tr><td class=\"labelcolumn\">Original Estimate</td><td>");
-
-            if (issue.TimeSpent == null) {
-                appendStartEditable(sb, TIMETRACKING_EDIT_TAG);
-                sb.Append(issue.OriginalEstimate ?? "None");
-                appendPencil(sb, TIMETRACKING_EDIT_TAG);
-                appendEndEditable(sb);
-            } else {
-                sb.Append(issue.OriginalEstimate ?? "None");
-            }
-            sb.Append("</td></tr>\n");
-            
-            sb.Append("<tr><td class=\"labelcolumn\">Remaining Estimate</td><td>");
-
-            if (issue.TimeSpent != null) {
-                appendStartEditable(sb, TIMETRACKING_EDIT_TAG);
-                sb.Append(issue.RemainingEstimate);
-                appendPencil(sb, TIMETRACKING_EDIT_TAG);
-                appendEndEditable(sb);
-            } else {
-                sb.Append(issue.RemainingEstimate ?? "None");
-            }
-            sb.Append("</td></tr>\n");
-    
-            sb.Append("<tr><td class=\"labelcolumn\">Time Spent</td><td>")
-                .Append(issue.TimeSpent ?? "None").Append("</td></tr>\n")
-                .Append("\n</table>\n</body>\n</html>\n");
-
             return sb.ToString();
         }
 
@@ -598,22 +490,22 @@ namespace Atlassian.plvs.ui.jira {
                     if (linkType.OutwardLinksName != null && linkType.OutwardLinks != null) {
                         sb.Append("<div class=\"linkdirection\">").Append(linkType.OutwardLinksName).Append("</div>");
                         sb.Append("\n<div class=\"linkedissues\"><table class=\"summary\">\n");
-                        foreach (string key in linkType.OutwardLinks) {
-                            JiraIssue linkedIssue = model.getIssue(key, issue.Server) ?? facade.getIssue(issue.Server, key);
-                            if (linkedIssue != null) {
-                                appendIssueHtml(sb, linkedIssue, LINKED_ISSUE_URL_TYPE);
-                            }
+                        foreach (JiraIssue linkedIssue in linkType.OutwardLinks.Select(
+                            key => model.getIssue(key, issue.Server) ?? facade.getIssue(issue.Server, key))
+                            .Where(linkedIssue => linkedIssue != null)) {
+                            
+                            appendIssueHtml(sb, linkedIssue, LINKED_ISSUE_URL_TYPE);
                         }
                         sb.Append("\n</table></div>");
                     }
                     if (linkType.InwardLinksName != null && linkType.InwardLinks != null) {
                         sb.Append("<div class=\"linkdirection\">").Append(linkType.InwardLinksName).Append("</div>");
                         sb.Append("\n<div class=\"linkedissues\"><table class=\"summary\">\n");
-                        foreach (string key in linkType.InwardLinks) {
-                            JiraIssue linkedIssue = model.getIssue(key, issue.Server) ?? facade.getIssue(issue.Server, key);
-                            if (linkedIssue != null) {
-                                appendIssueHtml(sb, linkedIssue, LINKED_ISSUE_URL_TYPE);
-                            }
+                        foreach (JiraIssue linkedIssue in linkType.InwardLinks.Select(
+                            key => model.getIssue(key, issue.Server) ?? facade.getIssue(issue.Server, key))
+                            .Where(linkedIssue => linkedIssue != null)) {
+                            
+                            appendIssueHtml(sb, linkedIssue, LINKED_ISSUE_URL_TYPE);
                         }
                         sb.Append("\n</table></div>");
                     }
@@ -635,8 +527,7 @@ namespace Atlassian.plvs.ui.jira {
             StringBuilder sb = new StringBuilder();
 
             try {
-                foreach (string key in subsToQuery) {
-                    JiraIssue sub = facade.getIssue(issue.Server, key);
+                foreach (JiraIssue sub in subsToQuery.Select(key => facade.getIssue(issue.Server, key))) {
                     subsInModel.Add(sub);
                 }
                 Invoke(new MethodInvoker(delegate {
@@ -648,7 +539,8 @@ namespace Atlassian.plvs.ui.jira {
                     sb.Append("\n</table>\n</body>\n</html>\n");
                     webSubtasks.DocumentText = sb.ToString();
                 }));
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 try {
                     Invoke(new MethodInvoker(() => setWebBrowserWidgetText(webSubtasks, "Failed to retrieve subtasks")));
                 } catch (InvalidOperationException ex) {
@@ -948,13 +840,13 @@ namespace Atlassian.plvs.ui.jira {
             if (actions == null || actions.Count == 0) return;
 
             Invoke(new MethodInvoker(delegate {
-                                         foreach (var action in actions) {
-                                             var actionCopy = action;
-                                             ToolStripMenuItem item = new ToolStripMenuItem(action.Name, null, 
-                                                 new EventHandler(delegate
-                                                                      {
-                                                                          IssueActionRunner.runAction(this, actionCopy, model, issue, status);
-                                                                      }));
+                                         foreach (ToolStripMenuItem item in from action in actions
+                                                                            let actionCopy = action
+                                                                            select new ToolStripMenuItem(action.Name, null, 
+                                                                                new EventHandler(
+                                                                                    delegate {
+                                                                                        IssueActionRunner.runAction(this, actionCopy, model, issue, status);
+                                                                                    }))) {
                                              dropDownIssueActions.DropDownItems.Add(item);
                                          }
                                      }));

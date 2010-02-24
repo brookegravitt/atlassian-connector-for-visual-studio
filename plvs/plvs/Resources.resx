@@ -340,4 +340,19 @@
   <data name="bug" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\icons\bug.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="issue_summary_html" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\texts\issue_summary_html.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="issue_summary_original_estimate_editable_html" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\texts\issue_summary_original_estimate_editable_html.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="issue_summary_remaining_estimate_editable_html" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\texts\issue_summary_remaining_estimate_editable_html.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="issue_summary_parent_issue_html" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\texts\issue_summary_parent_issue_html.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="nothing" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\icons\nothing.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

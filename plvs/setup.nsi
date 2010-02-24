@@ -195,6 +195,7 @@ Function AddVs2010Files
   File "plvs\bin\Release\Aga.Controls.dll"
   File "plvs\bin\Release\edit.png"
   File "plvs\bin\Release\ajax-loader.gif"
+  File "plvs\bin\Release\nothing.png"
   File "plvs\bin\Release\plvs2010.pkgdef"
   File "plvs\bin\Release\extension.vsixmanifest"
   File "plvs\Resources\icons\ide_plugin_32.png"
@@ -227,6 +228,7 @@ Function un.RemoveVs2010Files
   Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\Aga.Controls.dll"
   Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\edit.png"
   Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\ajax-loader.gif"
+  Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\nothing.png"
   Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\plvs2010.pkgdef"
   Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\extension.vsixmanifest"
   Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\ide_plugin_32.png"
@@ -318,6 +320,7 @@ Section "Atlassian Connector For Visual Studio (required)"
   File "plvs\bin\Release\Aga.Controls.dll"
   File "plvs\bin\Release\edit.png"
   File "plvs\bin\Release\ajax-loader.gif"
+  File "plvs\bin\Release\nothing.png"
   File "plvs\bin\Release\plvs2010.pkgdef"
   File "plvs\bin\Release\extension.vsixmanifest"
   File "plvs\Resources\icons\ide_plugin_32.png"
@@ -378,6 +381,7 @@ Section "Uninstall"
   Delete $INSTDIR\Aga.Controls.dll
   Delete $INSTDIR\edit.png
   Delete $INSTDIR\ajax-loader.gif
+  Delete $INSTDIR\nothing.png
   Delete $INSTDIR\plvs2010.pkgdef
   Delete $INSTDIR\extension.vsixmanifest
   Delete $INSTDIR\LICENSE
