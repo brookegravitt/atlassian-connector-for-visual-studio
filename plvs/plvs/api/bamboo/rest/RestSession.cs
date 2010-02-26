@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Web;
 using System.Xml.XPath;
@@ -240,6 +238,9 @@ namespace Atlassian.plvs.api.bamboo.rest {
             req.ReadWriteTimeout = 20000;
             req.ContentType = "application/xml";
             req.Method = "GET";
+            // required for PLVS-83
+            req.Accept = "application/xml";
+
             if (setBasicAuth) {
                 setBasicAuthHeader(req);
             } else {
@@ -258,6 +259,8 @@ namespace Atlassian.plvs.api.bamboo.rest {
             req.ReadWriteTimeout = 20000;
             req.Method = "POST";
             req.ContentType = "text/xml";
+            // required for PLVS-83
+            req.Accept = "application/xml";
             req.ContentLength = 0;
 
             const string postData = "";

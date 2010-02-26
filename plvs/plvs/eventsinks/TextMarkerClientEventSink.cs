@@ -33,20 +33,20 @@ namespace Atlassian.plvs.eventsinks {
             const uint menuItemFlags = (uint) (OLECMDF.OLECMDF_SUPPORTED | OLECMDF.OLECMDF_ENABLED);
 // ReSharper restore BitwiseOperatorOnEnumWihtoutFlags
 
-            if (pcmdf == null || pbstrText == null) {
-                return VSConstants.S_OK;
+            if (pcmdf == null) {
+                return VSConstants.S_FALSE;
             }
                 
             switch (iItem) {
                 case 0:
-                    if (issueKey != null) {
+                    if (issueKey != null && pbstrText != null) {
                         pbstrText[0] = "Open Issue " + issueKey + " in IDE";
                         pcmdf[0] = menuItemFlags;
                         return VSConstants.S_OK;
                     }
                     return VSConstants.S_FALSE;
                 case 1:
-                    if (issueKey != null) {
+                    if (issueKey != null && pbstrText != null) {
                         pbstrText[0] = "View Issue " + issueKey + " in the Browser";
                         pcmdf[0] = menuItemFlags;
                         return VSConstants.S_OK;
