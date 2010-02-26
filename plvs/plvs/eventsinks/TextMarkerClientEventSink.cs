@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models.jira;
@@ -34,9 +35,9 @@ namespace Atlassian.plvs.eventsinks {
 // ReSharper restore BitwiseOperatorOnEnumWihtoutFlags
 
             if (pcmdf == null) {
-                return VSConstants.S_FALSE;
+                return VSConstants.S_OK;
             }
-                
+
             switch (iItem) {
                 case 0:
                     if (issueKey != null && pbstrText != null) {
@@ -76,7 +77,7 @@ namespace Atlassian.plvs.eventsinks {
                     return VSConstants.S_OK;
 
                 default:
-                    return VSConstants.S_FALSE;
+                    return VSConstants.S_OK;
             }
         }
 
@@ -84,8 +85,7 @@ namespace Atlassian.plvs.eventsinks {
             if (issueKey == null) return;
 
             bool found = false;
-            foreach (JiraIssue issue in JiraIssueListModelImpl.Instance.Issues) {
-                if (!issue.Key.Equals(issueKey)) continue;
+            foreach (JiraIssue issue in JiraIssueListModelImpl.Instance.Issues.Where(issue => issue.Key.Equals(issueKey))) {
                 IssueDetailsWindow.Instance.openIssue(issue);
                 found = true;
                 break;

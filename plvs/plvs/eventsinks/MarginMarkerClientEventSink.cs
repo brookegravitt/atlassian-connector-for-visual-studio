@@ -16,7 +16,7 @@ namespace Atlassian.plvs.eventsinks {
         }
 
         public override int GetMarkerCommandInfo(IVsTextMarker pMarker, int iItem, string[] pbstrText, uint[] pcmdf) {
-            return VSConstants.S_FALSE;
+            return VSConstants.E_NOTIMPL;
         }
 
         public override int ExecMarkerCommand(IVsTextMarker pMarker, int iItem) {
