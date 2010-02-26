@@ -28,7 +28,7 @@ namespace Atlassian.plvs.ui.jira.fields {
                 foreach (var entity in entities) {
                     ComboBoxWithImagesItem<JiraNamedEntity> item = new ComboBoxWithImagesItem<JiraNamedEntity>(entity, i);
                     if (useImages) {
-                        imageList.Images.Add(ImageCache.Instance.getImage(entity.IconUrl));
+                        imageList.Images.Add(ImageCache.Instance.getImage(entity.IconUrl).Img);
                     }
                     combo.Items.Add(item);
                     if (selectedEntityId != JiraIssue.UNKNOWN && selectedEntityId == entity.Id) {

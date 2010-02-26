@@ -1,4 +1,6 @@
-﻿namespace Atlassian.plvs.explorer {
+﻿using Atlassian.plvs.ui;
+
+namespace Atlassian.plvs.explorer {
     sealed partial class JiraServerExplorer {
         /// <summary>
         /// Required designer variable.
@@ -34,7 +36,7 @@
             this.labelPath = new System.Windows.Forms.ToolStripStatusLabel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.treeJira = new System.Windows.Forms.TreeView();
-            this.webJira = new System.Windows.Forms.WebBrowser();
+            this.webJira = new WebBrowserWithLabel();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.dropDownActions = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
@@ -156,7 +158,6 @@
             this.webJira.Location = new System.Drawing.Point(0, 0);
             this.webJira.MinimumSize = new System.Drawing.Size(20, 20);
             this.webJira.Name = "webJira";
-            this.webJira.ScriptErrorsSuppressed = true;
             this.webJira.Size = new System.Drawing.Size(608, 401);
             this.webJira.TabIndex = 0;
             // 
@@ -187,7 +188,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "JiraServerExplorer";
             this.Text = "JiraServerExplorer";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.JiraServerExplorer_FormClosed);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.jiraServerExplorerFormClosed);
             this.toolStripContainer1.BottomToolStripPanel.ResumeLayout(false);
             this.toolStripContainer1.BottomToolStripPanel.PerformLayout();
             this.toolStripContainer1.ContentPanel.ResumeLayout(false);
@@ -213,7 +214,7 @@
         private System.Windows.Forms.ToolStripStatusLabel labelPath;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TreeView treeJira;
-        private System.Windows.Forms.WebBrowser webJira;
+        private WebBrowserWithLabel webJira;
         private System.Windows.Forms.ToolStripPanel BottomToolStripPanel;
         private System.Windows.Forms.ToolStripPanel TopToolStripPanel;
         private System.Windows.Forms.ToolStripPanel RightToolStripPanel;

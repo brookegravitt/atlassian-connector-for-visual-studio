@@ -56,7 +56,7 @@ namespace Atlassian.plvs.dialogs.jira {
                     ImageList imageList = new ImageList();
                     int i = 0;
                     foreach (var priority in priorities) {
-                        imageList.Images.Add(ImageCache.Instance.getImage(priority.IconUrl));
+                        imageList.Images.Add(ImageCache.Instance.getImage(priority.IconUrl).Img);
                         comboPriorities.Items.Add(new ComboBoxWithImagesItem<JiraNamedEntity>(priority, i));
                         ++i;
                     }
@@ -193,7 +193,7 @@ namespace Atlassian.plvs.dialogs.jira {
             int i = 0;
             foreach (var type in issueTypes) {
                 ComboBoxWithImagesItem<JiraNamedEntity> item = new ComboBoxWithImagesItem<JiraNamedEntity>(type, i);
-                imageList.Images.Add(ImageCache.Instance.getImage(type.IconUrl));
+                imageList.Images.Add(ImageCache.Instance.getImage(type.IconUrl).Img);
                 comboTypes.Items.Add(item);
                 ++i;
             }

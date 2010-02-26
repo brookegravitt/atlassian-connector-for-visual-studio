@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 using System.IO;
 using System.Net;
 using System.Net.Security;
@@ -49,6 +50,17 @@ namespace Atlassian.plvs.util {
                     addBindingToButton(buttons[c.Name], c.Bindings as object[]);
                 }
             }
+        }
+
+        public static string getAssemblyBasedLocalFilePath(string fileName) {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            string name = assembly.EscapedCodeBase;
+
+            if (name != null) {
+                name = name.Substring(0, name.LastIndexOf("/"));
+                return name + "/" + fileName;
+            }
+            throw new InvalidOperationException("Unable to retrieve assembly location");
         }
 
         private static void addBindingToButton(ToolStripItem button, object[] bindings) {
@@ -122,6 +134,23 @@ namespace Atlassian.plvs.util {
             } while (count > 0);
 
             return sb.ToString();
+        }
+
+        public static byte[] getBytesFromStream(Stream stream) {
+            MemoryStream ms = new MemoryStream();
+            byte[] buf = new byte[8192];
+
+            int count;
+
+            do {
+                count = stream.Read(buf, 0, buf.Length);
+                if (count == 0) continue;
+                ms.Write(buf, 0, count);
+            } while (count > 0);
+
+            ms.Close();
+
+            return ms.GetBuffer();
         }
 
         ///  FUNCTION Enquote Public Domain 2002 JSON.org 

@@ -13,7 +13,7 @@ namespace Atlassian.plvs.ui.jira.issues.issuegroupnodes {
         #region Overrides of AbstractIssueGroupNode
 
         public override Image Icon {
-            get { return ImageCache.Instance.getImage(entity.IconUrl); }
+            get { return ImageCache.Instance.getImage(entity.IconUrl).Img; }
         }
 
         public override string getGroupName() {

@@ -40,6 +40,9 @@ namespace Atlassian.plvs.explorer {
             StartPosition = FormStartPosition.CenterParent;
 
             dropDownActions.Enabled = false;
+
+            webJira.Title = "";
+            webJira.ErrorString = Resources.explorer_navigator_error_html;
         }
 
         public static void closeAll() {
@@ -53,7 +56,7 @@ namespace Atlassian.plvs.explorer {
 
             activeExplorers[server.GUID.ToString()] = this;
 
-            webJira.Navigate(server.Url + "?" + JiraIssueUtils.getAuthString(server));
+            webJira.Browser.Navigate(server.Url + "?" + JiraIssueUtils.getAuthString(server));
 
             treeJira.Nodes.Add(new PrioritiesNode(this, model, facade, server));
             treeJira.Nodes.Add(new UsersNode(model, facade, server));
@@ -67,7 +70,7 @@ namespace Atlassian.plvs.explorer {
             if (node != null) {
                 node.onClick(status);
                 string url = node.getUrl(JiraIssueUtils.getAuthString(server));
-                webJira.Navigate(url);
+                webJira.Browser.Navigate(url);
 
                 ICollection<ToolStripItem> menuItems = node.MenuItems;
                 dropDownActions.Enabled = menuItems != null && menuItems.Count > 0;
@@ -82,7 +85,7 @@ namespace Atlassian.plvs.explorer {
             }
         }
 
-        private void JiraServerExplorer_FormClosed(object sender, FormClosedEventArgs e) {
+        private void jiraServerExplorerFormClosed(object sender, FormClosedEventArgs e) {
             activeExplorers.Remove(server.GUID.ToString());
         }
 
