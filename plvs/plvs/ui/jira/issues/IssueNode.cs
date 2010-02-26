@@ -18,7 +18,7 @@ namespace Atlassian.plvs.ui.jira.issues {
         }
 
         public override Image Icon {
-            get { return ImageCache.Instance.getImage(Issue.IssueTypeIconUrl); }
+            get { return ImageCache.Instance.getImage(Issue.IssueTypeIconUrl).Img; }
         }
 
         public override string Name {
@@ -26,7 +26,7 @@ namespace Atlassian.plvs.ui.jira.issues {
         }
 
         public Image PriorityIcon {
-            get { return ImageCache.Instance.getImage(Issue.PriorityIconUrl); }
+            get { return ImageCache.Instance.getImage(Issue.PriorityIconUrl).Img; }
         }
 
         public string StatusText {
@@ -34,7 +34,7 @@ namespace Atlassian.plvs.ui.jira.issues {
         }
 
         public Image StatusIcon {
-            get { return ImageCache.Instance.getImage(Issue.StatusIconUrl); }
+            get { return ImageCache.Instance.getImage(Issue.StatusIconUrl).Img; }
         }
 
         public string Updated {

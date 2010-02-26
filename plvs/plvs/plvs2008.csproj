@@ -771,6 +771,7 @@
     <None Include="third party\ankh\LICENSE.rtf" />
     <Content Include="Resources\texts\attachment_download_html.txt" />
     <Content Include="Resources\texts\autoupdate_html.txt" />
+    <Content Include="Resources\texts\explorer_navigator_error_html.txt" />
     <Content Include="Resources\texts\issue_summary_parent_issue_html.txt" />
     <Content Include="Resources\texts\issue_summary_remaining_estimate_editable_html.txt" />
     <Content Include="Resources\texts\issue_summary_html.txt" />

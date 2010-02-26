@@ -14,6 +14,7 @@ using System.Diagnostics;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs.jira;
+using Atlassian.plvs.models;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui.jira.issues;
 using Atlassian.plvs.util.jira;
@@ -51,8 +52,8 @@ namespace Atlassian.plvs.ui.jira {
         
         private const int A_LOT = 100000;
 
-        private readonly string editImagePath;
-        private readonly string nothingImagePath;
+        private static readonly string editImagePath = PlvsUtils.getAssemblyBasedLocalFilePath("edit.png");
+        private static readonly string nothingImagePath = PlvsUtils.getAssemblyBasedLocalFilePath("nothing.png");
 
         private WebBrowser issueDescription;
         private WebBrowserWithLabel webAttachmentView;
@@ -85,20 +86,12 @@ namespace Atlassian.plvs.ui.jira {
 
             toolTipAttachments.SetToolTip(listViewAttachments, "Drop a file here\nto upload it as an attachment");
 
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            string name = assembly.EscapedCodeBase;
-
             createIssueDescriptionPanel();
-
-            if (name != null) {
-                name = name.Substring(0, name.LastIndexOf("/"));
-                editImagePath = name + "/edit.png";
-                nothingImagePath = name + "/nothing.png";
-            }
 
             maybeAddMazioMenu();
 
             issueSummary.ScriptErrorsSuppressed = true;
+
             reinitializeAttachmentView(null);
         }
 
@@ -363,11 +356,11 @@ namespace Atlassian.plvs.ui.jira {
             string tableContents = string.Format(Resources.issue_summary_html,
                                                  editImagePath,
                                                  issue.Summary,
-                                                 issue.IssueTypeIconUrl,
+                                                 ImageCache.Instance.getImage(issue.IssueTypeIconUrl).FileUrl ?? nothingImagePath,
                                                  issue.IssueType, 
-                                                 issue.StatusIconUrl,
+                                                 ImageCache.Instance.getImage(issue.StatusIconUrl).FileUrl ?? nothingImagePath,
                                                  issue.Status,
-                                                 issue.PriorityIconUrl ?? nothingImagePath,
+                                                 ImageCache.Instance.getImage(issue.PriorityIconUrl).FileUrl ?? nothingImagePath,
                                                  issue.Priority ?? "None",
                                                  env,
                                                  JiraServerCache.Instance.getUsers(issue.Server).getUser(issue.Assignee),

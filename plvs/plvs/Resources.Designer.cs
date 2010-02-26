@@ -115,11 +115,12 @@ namespace Atlassian.plvs {
         ///   Looks up a localized string similar to &lt;body style=&quot;padding:2em;margin:0;&quot;&gt;
         ///&lt;div style=&quot;font-family:{0};font-size:12px;&quot;&gt;
         ///
-        ///&lt;center&gt;Unable to view attachment&lt;/center&gt;
-        ///&lt;center&gt;&lt;a href=&quot;{1}&quot;&gt;Click here to download it&lt;/a&gt;&lt;/center&gt;
+        ///&lt;center&gt;Unable to view attachment {1}&lt;/center&gt;
+        ///&lt;center&gt;Right-click on it and select &quot;Save as...&quot; from the menu to save attachment as a file&lt;/center&gt;
         ///
         ///&lt;/div&gt;
-        ///&lt;/body&gt;.
+        ///&lt;/body&gt;
+        ///.
         /// </summary>
         internal static string attachment_download_html {
             get {
@@ -303,6 +304,21 @@ namespace Atlassian.plvs {
             get {
                 object obj = ResourceManager.GetObject("expand_all", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;body style=&quot;padding:2em;margin:0;&quot;&gt;
+        ///&lt;div style=&quot;font-family:{0};font-size:12px;&quot;&gt;
+        ///
+        ///&lt;center&gt;Unable to explore JIRA server {1}&lt;/center&gt;
+        ///
+        ///&lt;/div&gt;
+        ///&lt;/body&gt;.
+        /// </summary>
+        internal static string explorer_navigator_error_html {
+            get {
+                return ResourceManager.GetString("explorer_navigator_error_html", resourceCulture);
             }
         }
         
