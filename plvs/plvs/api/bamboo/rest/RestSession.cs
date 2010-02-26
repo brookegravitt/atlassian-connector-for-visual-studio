@@ -34,12 +34,6 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
         public RestSession(BambooServer server) {
             this.server = server;
-            ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(certValidationCallback);
-        }
-
-        private static bool certValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslpolicyerrors) {
-            // todo - this is lame :)
-            return true;
         }
 
         public bool LoggedIn { get; private set; }

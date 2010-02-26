@@ -2,7 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
+using System.Net.Security;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -174,5 +177,12 @@ namespace Atlassian.plvs.util {
             return decoder.Frames[0];
         }
 #endif
+
+        public static void installSslCertificateHandler() {
+            // This call solves PLVS-103
+            // the code taken from http://www.codeproject.com/KB/webservices/web_service_over_SSL.aspx
+            ServicePointManager.ServerCertificateValidationCallback =
+                delegate(Object obj, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors) { return (true); };
+        }
     }
 }

@@ -319,6 +319,12 @@
     <Compile Include="ui\ToolWindowFrame.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="ui\WebBrowserWithLabel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\WebBrowserWithLabel.Designer.cs">
+      <DependentUpon>WebBrowserWithLabel.cs</DependentUpon>
+    </Compile>
     <Compile Include="util\Constants.cs" />
     <Compile Include="util\ExceptionBuilder.cs" />
     <Compile Include="util\jira\BambooBuildUtils.cs" />
@@ -568,6 +574,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ui\jira\IssueDetailsWindow.resx">
       <DependentUpon>IssueDetailsWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\WebBrowserWithLabel.resx">
+      <DependentUpon>WebBrowserWithLabel.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="windows\AtlassianPanel.resx">

@@ -27,6 +27,7 @@ using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 using Process=System.Diagnostics.Process;
 using SaveFileDialog = System.Windows.Forms.SaveFileDialog;
 using Thread=System.Threading.Thread;
+using Timer = System.Windows.Forms.Timer;
 
 namespace Atlassian.plvs.ui.jira {
     public partial class IssueDetailsPanel : UserControl {
@@ -54,6 +55,7 @@ namespace Atlassian.plvs.ui.jira {
         private readonly string nothingImagePath;
 
         private WebBrowser issueDescription;
+        private WebBrowserWithLabel webAttachmentView;
 
         public IssueDetailsPanel(JiraIssueListModel model, Solution solution, JiraIssue issue, TabControl tabWindow,
                                  TabPage myTab, ToolWindowStateMonitor toolWindowStateMonitor) {
@@ -97,6 +99,7 @@ namespace Atlassian.plvs.ui.jira {
             maybeAddMazioMenu();
 
             issueSummary.ScriptErrorsSuppressed = true;
+            reinitializeAttachmentView(null);
         }
 
         [DllImport("shell32.dll", CharSet = CharSet.Auto)]
@@ -423,6 +426,8 @@ namespace Atlassian.plvs.ui.jira {
             foreach (JiraAttachment att in issue.Attachments) {
                 listViewAttachments.Items.Add(new JiraAttachmentListViewItem(issue, att));
             }
+
+            webAttachmentView.Browser.Navigate(new Uri("about:blank"));
         }
 
         private void rebuildLinksPanel() {
@@ -863,11 +868,55 @@ namespace Atlassian.plvs.ui.jira {
             if (item == null) return;
 
             if (isInlineNavigable(item.Attachment.Name)) {
-                webAttachmentView.Navigate(item.Url + "?" + JiraIssueUtils.getAuthString(issue.Server));
+                try {
+                    webAttachmentView.Browser.Navigate(item.Url + "?" + JiraIssueUtils.getAuthString(issue.Server));
+                } catch (COMException ex) {
+                    Debug.WriteLine("IssueDetailsPanel.listViewAttachments_Click() - exception caught: " + ex.Message);
+                    reinitializeAttachmentView(() => showUnableToViewAttachmentPage(""));
+                }
             } else {
-                webAttachmentView.DocumentText = string.Format(Resources.attachment_download_html, 
-                    Font.FontFamily.Name, item.Url + "?" + JiraIssueUtils.getAuthString(issue.Server));
+                try {
+                    showUnableToViewAttachmentPage("due to unsupported attachment type");
+                } catch (COMException ex) {
+                    Debug.WriteLine("IssueDetailsPanel.listViewAttachments_Click() - exception caught: " + ex.Message);
+                    reinitializeAttachmentView(() => showUnableToViewAttachmentPage(""));
+                }
             }
+        }
+
+        private void showUnableToViewAttachmentPage(string cause) {
+            webAttachmentView.Browser.DocumentText = string.Format(webAttachmentView.ErrorString, Font.FontFamily.Name, cause);
+        }
+
+        private void reinitializeAttachmentView(Action onReinserted) {
+            splitContainerAttachments.Panel2.SuspendLayout();
+
+            if (webAttachmentView != null) {
+                splitContainerAttachments.Panel2.Controls.Remove(webAttachmentView);
+            }
+
+            webAttachmentView = new WebBrowserWithLabel
+                                {
+                                    Dock = DockStyle.Fill,
+                                    Location = new Point(0, 24),
+                                    MinimumSize = new Size(20, 20),
+                                    Name = "webAttachmentView",
+                                    Size = new Size(433, 378),
+                                    TabIndex = 0,
+                                    Title = "Attachment Preview",
+                                    ErrorString = Resources.attachment_download_html
+                                };
+            
+            splitContainerAttachments.Panel2.Controls.Add(webAttachmentView);
+            splitContainerAttachments.Panel2.ResumeLayout(true);
+            
+            if (onReinserted == null) return;
+
+            // lame as hell. How can I tell when exactly it is kosher 
+            // to set WebBrowser control contents after adding it to parent?
+            Timer t = new Timer { Interval = 1000 };
+            t.Tick += delegate { t.Stop(); onReinserted(); };
+            t.Start();
         }
 
         private void attachmentsMenuOpening(object sender, System.ComponentModel.CancelEventArgs e) {
