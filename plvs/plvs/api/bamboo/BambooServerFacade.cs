@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Atlassian.plvs.api.bamboo.rest;
+using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.api.bamboo {
     public class BambooServerFacade : ServerFacade {
@@ -9,7 +10,9 @@ namespace Atlassian.plvs.api.bamboo {
             get { return INSTANCE; }
         }
 
-        private BambooServerFacade() { }
+        private BambooServerFacade() {
+            PlvsUtils.installSslCertificateHandler();
+        }
 
         private static RestSession createSessionAndLogin(BambooServer server) {
             RestSession s = new RestSession(server);

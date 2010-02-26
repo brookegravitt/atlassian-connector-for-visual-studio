@@ -62,8 +62,6 @@ namespace Atlassian.plvs.ui.jira {
             this.toolStripAttachmentsMenu = new System.Windows.Forms.ToolStrip();
             this.buttonSaveAttachmentAs = new System.Windows.Forms.ToolStripButton();
             this.buttonUploadNew = new System.Windows.Forms.ToolStripButton();
-            this.webAttachmentView = new System.Windows.Forms.WebBrowser();
-            this.label3 = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.buttonViewInBrowser = new System.Windows.Forms.ToolStripButton();
             this.buttonRefresh = new System.Windows.Forms.ToolStripButton();
@@ -90,7 +88,6 @@ namespace Atlassian.plvs.ui.jira {
             this.tabSubtasks.SuspendLayout();
             this.tabAttachments.SuspendLayout();
             this.splitContainerAttachments.Panel1.SuspendLayout();
-            this.splitContainerAttachments.Panel2.SuspendLayout();
             this.splitContainerAttachments.SuspendLayout();
             this.toolStripContainer3.ContentPanel.SuspendLayout();
             this.toolStripContainer3.TopToolStripPanel.SuspendLayout();
@@ -344,11 +341,6 @@ namespace Atlassian.plvs.ui.jira {
             // splitContainerAttachments.Panel1
             // 
             this.splitContainerAttachments.Panel1.Controls.Add(this.toolStripContainer3);
-            // 
-            // splitContainerAttachments.Panel2
-            // 
-            this.splitContainerAttachments.Panel2.Controls.Add(this.webAttachmentView);
-            this.splitContainerAttachments.Panel2.Controls.Add(this.label3);
             this.splitContainerAttachments.Size = new System.Drawing.Size(777, 402);
             this.splitContainerAttachments.SplitterDistance = 340;
             this.splitContainerAttachments.TabIndex = 0;
@@ -426,7 +418,7 @@ namespace Atlassian.plvs.ui.jira {
             this.buttonUploadNew});
             this.toolStripAttachmentsMenu.Location = new System.Drawing.Point(3, 0);
             this.toolStripAttachmentsMenu.Name = "toolStripAttachmentsMenu";
-            this.toolStripAttachmentsMenu.Size = new System.Drawing.Size(179, 25);
+            this.toolStripAttachmentsMenu.Size = new System.Drawing.Size(148, 25);
             this.toolStripAttachmentsMenu.TabIndex = 0;
             // 
             // buttonSaveAttachmentAs
@@ -447,27 +439,6 @@ namespace Atlassian.plvs.ui.jira {
             this.buttonUploadNew.Size = new System.Drawing.Size(85, 22);
             this.buttonUploadNew.Text = "Upload New...";
             this.buttonUploadNew.Click += new System.EventHandler(this.uploadAttachment);
-            // 
-            // webAttachmentView
-            // 
-            this.webAttachmentView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webAttachmentView.Location = new System.Drawing.Point(0, 24);
-            this.webAttachmentView.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webAttachmentView.Name = "webAttachmentView";
-            this.webAttachmentView.ScriptErrorsSuppressed = true;
-            this.webAttachmentView.Size = new System.Drawing.Size(433, 378);
-            this.webAttachmentView.TabIndex = 0;
-            this.webAttachmentView.Url = new System.Uri("", System.UriKind.Relative);
-            // 
-            // label3
-            // 
-            this.label3.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label3.Location = new System.Drawing.Point(0, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(433, 24);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Preview";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // toolStrip1
             // 
@@ -576,7 +547,6 @@ namespace Atlassian.plvs.ui.jira {
             this.tabSubtasks.ResumeLayout(false);
             this.tabAttachments.ResumeLayout(false);
             this.splitContainerAttachments.Panel1.ResumeLayout(false);
-            this.splitContainerAttachments.Panel2.ResumeLayout(false);
             this.splitContainerAttachments.ResumeLayout(false);
             this.toolStripContainer3.ContentPanel.ResumeLayout(false);
             this.toolStripContainer3.TopToolStripPanel.ResumeLayout(false);
@@ -620,11 +590,9 @@ namespace Atlassian.plvs.ui.jira {
         private System.Windows.Forms.SplitContainer splitContainerAttachments;
         private ui.AutosizeListView listViewAttachments;
         private System.Windows.Forms.ColumnHeader columnName;
-        private System.Windows.Forms.WebBrowser webAttachmentView;
         private System.Windows.Forms.ColumnHeader columnAuthor;
         private System.Windows.Forms.ColumnHeader columnDate;
         private System.Windows.Forms.ColumnHeader columnSize;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ToolTip toolTipAttachments;
         private System.Windows.Forms.ToolStripContainer toolStripContainer3;
         private System.Windows.Forms.ToolStrip toolStripAttachmentsMenu;

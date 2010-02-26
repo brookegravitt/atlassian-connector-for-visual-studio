@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using Atlassian.plvs.api.jira.soap;
+using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.api.jira {
     public class JiraServerFacade : ServerFacade {
@@ -12,7 +16,9 @@ namespace Atlassian.plvs.api.jira {
             get { return INSTANCE; }
         }
 
-        private JiraServerFacade() {}
+        private JiraServerFacade() {
+            PlvsUtils.installSslCertificateHandler();
+        }
 
         private SoapSession getSoapSession(JiraServer server) {
             SoapSession s;
