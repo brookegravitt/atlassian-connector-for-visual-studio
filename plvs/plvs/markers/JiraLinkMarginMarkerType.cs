@@ -83,26 +83,7 @@ namespace Atlassian.plvs.markers {
             RECT rect = pRect[0];
 
             using (Graphics graphics = Graphics.FromHdc(hdc)) {
-#if VS2010
-#if false
-                int rectWidth = rect.right - rect.left;
-                int lineWidth = 20; // 2 + rectWidth / 20;
-
-                uint clrFore;
-                uint clrBack;
-                ErrorHandler.ThrowOnFailure(pMarkerColors.GetMarkerColors(JiraLinkTextMarkerType.Id, out clrFore, out clrBack));
-
-                int drawColorref = (int)clrFore;
-                Color color = Color.FromArgb(drawColorref & 0x0000FF, (drawColorref & 0x00FF00) >> 8, (drawColorref & 0xFF0000) >> 16);
-
-                using (SolidBrush brush = new SolidBrush(color)) {
-                    graphics.FillRectangle(brush, rect.left + (rectWidth - lineWidth) / 2, rect.top, lineWidth, rect.bottom - rect.top);
-                }
-#endif
-                graphics.DrawImage(jiraGlyph, new Rectangle(rect.top, rect.left, rect.bottom - rect.top, rect.right - rect.left), 0, 0, 16, 16, GraphicsUnit.Pixel);
-#else 
                 graphics.DrawImage(jiraGlyph, rect.left, rect.top);
-#endif
             }
             return VSConstants.S_OK;
         }

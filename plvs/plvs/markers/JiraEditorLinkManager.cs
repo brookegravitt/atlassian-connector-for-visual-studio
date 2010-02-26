@@ -123,8 +123,9 @@ namespace Atlassian.plvs.markers {
         }
 
         private static void maybeAddMarginMarker(IVsTextLines textLines, int lineNumber, int lineLength, int issueCount) {
-            if (issueCount > 0)
-                addMarker(textLines, lineNumber, 0, lineLength, JiraLinkMarginMarkerType.Id, new MarginMarkerClientEventSink(issueCount));
+            if (issueCount <= 0) return;
+            AbstractMarkerClientEventSink marginMarkerClientEventSink = new MarginMarkerClientEventSink(issueCount);
+            addMarker(textLines, lineNumber, 0, lineLength, JiraLinkMarginMarkerType.Id, marginMarkerClientEventSink);
         }
 
         private static bool scanForLineComment(IVsTextLines textLines, int lineNumber, string text, CommentStrings commentMarkers, ref int count) {
@@ -139,8 +140,8 @@ namespace Atlassian.plvs.markers {
             }
             for (int j = 0; j < matches.Count; ++j) {
                 int index = matches[j].Index + offset;
-                addMarker(textLines, lineNumber, index, index + matches[j].Length, JiraLinkTextMarkerType.Id,
-                          new TextMarkerClientEventSink(matches[j].Value));
+                AbstractMarkerClientEventSink textMarkerClientEventSink = new TextMarkerClientEventSink(matches[j].Value);
+                addMarker(textLines, lineNumber, index, index + matches[j].Length, JiraLinkTextMarkerType.Id, textMarkerClientEventSink);
             }
             return matches.Count > 0;
         }
