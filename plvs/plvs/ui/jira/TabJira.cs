@@ -125,17 +125,11 @@ namespace Atlassian.plvs.ui.jira {
                 oldIssueTreeModel.shutdown();
             }
 
-            AbstractIssueTreeModel issueTreeModel;
-
-            if (filtersTree.RecentlyViewedSelected) {
-                issueTreeModel = new FlatIssueTreeModel(searchingModel, buttonGroupSubtasks);
-            } else {
-                JiraIssueGroupByComboItem item = comboGroupBy.SelectedItem as JiraIssueGroupByComboItem;
-                if (item == null) {
-                    return;
-                }
-                issueTreeModel = item.TreeModel;
+            JiraIssueGroupByComboItem item = comboGroupBy.SelectedItem as JiraIssueGroupByComboItem;
+            if (item == null) {
+                return;
             }
+            AbstractIssueTreeModel issueTreeModel = item.TreeModel;
 
             // just in case somebody reuses the old model object :)
             issueTreeModel.shutdown();
@@ -157,17 +151,12 @@ namespace Atlassian.plvs.ui.jira {
             buttonSearch.Enabled = filtersTree.NodeWithServerSelected;
             buttonCreate.Enabled = filtersTree.NodeWithServerSelected && metadataFetched;
 
-            bool groupingControlsEnabled = !(filtersTree.RecentlyViewedSelected);
-            comboGroupBy.Enabled = groupingControlsEnabled;
-            comboGroupBy.Visible = groupingControlsEnabled;
-            labelGroupBy.Visible = groupingControlsEnabled;
-
             JiraIssueGroupByComboItem selected = comboGroupBy.SelectedItem as JiraIssueGroupByComboItem;
             Boolean notNone = selected != null && selected.By != JiraIssueGroupByComboItem.GroupBy.NONE;
-            buttonExpandAll.Visible = groupingControlsEnabled && notNone;
-            buttonExpandAll.Enabled = groupingControlsEnabled && notNone;
-            buttonCollapseAll.Visible = groupingControlsEnabled && notNone;
-            buttonCollapseAll.Enabled = groupingControlsEnabled && notNone;
+            buttonExpandAll.Visible = notNone;
+            buttonExpandAll.Enabled = notNone;
+            buttonCollapseAll.Visible = notNone;
+            buttonCollapseAll.Enabled = notNone;
             buttonEditFilter.Enabled = filtersTree.SelectedNode is JiraCustomFilterTreeNode;
             buttonRemoveFilter.Enabled = filtersTree.SelectedNode is JiraCustomFilterTreeNode;
             buttonAddFilter.Enabled = filtersTree.NodeWithServerSelected && metadataFetched;

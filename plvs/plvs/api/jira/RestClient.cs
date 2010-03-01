@@ -1,28 +1,18 @@
 ﻿using System;
 using System.Text;
-using System.Web;
 using System.Net;
 using System.IO;
 using System.Diagnostics;
 using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.api.jira {
-    internal class RestClient {
-        private readonly string baseUrl;
-        private readonly string userName;
-        private readonly string password;
+    internal class RestClient : JiraAuthenticatedClient {
 
-        public RestClient(JiraServer server) : this(server.Url, server.UserName, server.Password) {
-        }
-
-        private RestClient(string url, string userName, string password) {
-            baseUrl = url;
-            this.userName = userName;
-            this.password = password;
+        public RestClient(JiraServer server) : base(server.Url, server.UserName, server.Password) {
         }
 
         public string getRenderedContent(string issueKey, int issueType, int projectId, string markup) {
-            StringBuilder url = new StringBuilder(baseUrl + "/rest/api/1.0/render");
+            StringBuilder url = new StringBuilder(BaseUrl + "/rest/api/1.0/render");
 
             url.Append(appendAuthentication(true));
 
@@ -64,14 +54,6 @@ namespace Atlassian.plvs.api.jira {
                 Debug.WriteLine(e.Message);
                 throw;
             }
-        }
-
-        private string appendAuthentication(bool first) {
-            if (userName != null) {
-                return (first ? "?" : "&") + "os_username=" + HttpUtility.UrlEncode(userName)
-                       + "&os_password=" + HttpUtility.UrlEncode(password);
-            }
-            return "";
         }
     }
 }

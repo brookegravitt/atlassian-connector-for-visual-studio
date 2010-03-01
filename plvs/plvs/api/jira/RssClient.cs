@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Web;
 using System.Net;
 using System.IO;
 using System.Diagnostics;
@@ -9,25 +8,16 @@ using System.Xml.XPath;
 using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.api.jira {
-    internal class RssClient {
+    internal class RssClient : JiraAuthenticatedClient {
         private readonly JiraServer server;
-        private readonly string baseUrl;
-        private readonly string userName;
-        private readonly string password;
 
         public RssClient(JiraServer server)
-            : this(server.Url, server.UserName, server.Password) {
+            : base(server.Url, server.UserName, server.Password) {
             this.server = server;
         }
 
-        private RssClient(string url, string userName, string password) {
-            baseUrl = url;
-            this.userName = userName;
-            this.password = password;
-        }
-
         public List<JiraIssue> getSavedFilterIssues(int filterId, string sortBy, string sortOrder, int start, int max) {
-            StringBuilder url = new StringBuilder(baseUrl + "/sr/jira.issueviews:searchrequest-xml/");
+            StringBuilder url = new StringBuilder(BaseUrl + "/sr/jira.issueviews:searchrequest-xml/");
             url.Append(filterId).Append("/SearchRequest-").Append(filterId).Append(".xml");
             url.Append("?sorter/field=" + sortBy);
             url.Append("&sorter/order=" + sortOrder);
@@ -48,7 +38,7 @@ namespace Atlassian.plvs.api.jira {
         public List<JiraIssue> getCustomFilterIssues(string queryString, string sortBy, string sortOrder, int start,
                                                      int max) {
             StringBuilder url =
-                new StringBuilder(baseUrl + "/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?" +
+                new StringBuilder(BaseUrl + "/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?" +
                                   queryString);
             url.Append("&sorter/field=" + sortBy);
             url.Append("&sorter/order=" + sortOrder);
@@ -67,7 +57,7 @@ namespace Atlassian.plvs.api.jira {
         }
 
         public JiraIssue getIssue(string key) {
-            StringBuilder url = new StringBuilder(baseUrl + "/si/jira.issueviews:issue-xml/");
+            StringBuilder url = new StringBuilder(BaseUrl + "/si/jira.issueviews:issue-xml/");
             url.Append(key).Append("/").Append(key).Append(".xml");
 
             url.Append(appendAuthentication(true));
@@ -91,14 +81,6 @@ namespace Atlassian.plvs.api.jira {
             req.ReadWriteTimeout = 20000;
             HttpWebResponse resp = (HttpWebResponse) req.GetResponse();
             return resp.GetResponseStream();
-        }
-
-        private string appendAuthentication(bool first) {
-            if (userName != null) {
-                return (first ? "?" : "&") + "os_username=" + HttpUtility.UrlEncode(userName)
-                       + "&os_password=" + HttpUtility.UrlEncode(password);
-            }
-            return "";
         }
 
         private List<JiraIssue> createIssueList(Stream s) {
