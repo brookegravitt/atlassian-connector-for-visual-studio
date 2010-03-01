@@ -135,7 +135,7 @@ namespace Atlassian.plvs.dialogs.jira {
                 status.setInfo("Logged work for issue " + issue.Key);
                 UsageCollector.Instance.bumpJiraIssuesOpen();
                 JiraIssue updatedIssue = facade.getIssue(issue.Server, issue.Key);
-                parent.Invoke(new MethodInvoker(() => model.updateIssue(updatedIssue)));
+                parent.safeInvoke(new MethodInvoker(() => model.updateIssue(updatedIssue)));
             } catch (Exception e) {
                 status.setError("Failed to log work for issue " + issue.Key, e);
             }
@@ -165,7 +165,7 @@ namespace Atlassian.plvs.dialogs.jira {
             return result;
         }
 
-        private void LogWork_KeyPress(object sender, KeyPressEventArgs e) {
+        private void logWorkKeyPress(object sender, KeyPressEventArgs e) {
             if (e.KeyChar == (char)Keys.Escape) {
                 Close();
             }

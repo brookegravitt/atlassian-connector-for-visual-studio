@@ -210,7 +210,7 @@ namespace Atlassian.plvs.dialogs {
             }
         }
 
-        private void ProjectConfiguration_KeyPress(object sender, KeyPressEventArgs e) {
+        private void projectConfigurationKeyPress(object sender, KeyPressEventArgs e) {
             if (e.KeyChar == (char) Keys.Escape) {
                 Close();
             }

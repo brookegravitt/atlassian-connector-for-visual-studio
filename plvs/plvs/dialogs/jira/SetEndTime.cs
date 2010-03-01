@@ -36,7 +36,7 @@ namespace Atlassian.plvs.dialogs.jira {
             Close();
         }
 
-        private void SetEndTime_KeyPress(object sender, KeyPressEventArgs e) {
+        private void setEndTimeKeyPress(object sender, KeyPressEventArgs e) {
             if (e.KeyChar == (char)Keys.Escape) {
                 Close();
             }

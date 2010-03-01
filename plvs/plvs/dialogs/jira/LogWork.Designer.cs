@@ -194,7 +194,7 @@
             this.MinimizeBox = false;
             this.Name = "LogWork";
             this.Text = "LogWork";
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.LogWork_KeyPress);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.logWorkKeyPress);
             this.ResumeLayout(false);
             this.PerformLayout();
 

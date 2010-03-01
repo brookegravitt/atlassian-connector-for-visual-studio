@@ -88,7 +88,7 @@
             this.MinimizeBox = false;
             this.Name = "SearchIssue";
             this.Text = "Find Issue";
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.SearchIssue_KeyPress);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.searchIssueKeyPress);
             this.ResumeLayout(false);
             this.PerformLayout();
 

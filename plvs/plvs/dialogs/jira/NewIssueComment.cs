@@ -19,7 +19,7 @@ namespace Atlassian.plvs.dialogs.jira {
             get { return textComment.Text; }
         }
 
-        private void NewIssueComment_KeyPress(object sender, KeyPressEventArgs e) {
+        private void newIssueCommentKeyPress(object sender, KeyPressEventArgs e) {
             if (e.KeyChar != (char) Keys.Escape) return;
             DialogResult = DialogResult.Cancel;
             Close();

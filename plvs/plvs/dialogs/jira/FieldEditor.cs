@@ -65,10 +65,8 @@ namespace Atlassian.plvs.dialogs.jira {
         private void fillFieldWrap() {
             try {
                 getMetadata();
-            } catch (InvalidOperationException e) {
-                Debug.WriteLine("FieldEditor.fillFieldWrap() - InvalidOperationException: " + e.Message);
             } catch (Exception e) {
-                Invoke(new MethodInvoker(delegate {
+                this.safeInvoke(new MethodInvoker(delegate {
                                              PlvsUtils.showError("Unable to initialize field editor component", e);
                                              Close();
                                          }));
@@ -91,7 +89,7 @@ namespace Atlassian.plvs.dialogs.jira {
             versions.Reverse();
             List<JiraNamedEntity> comps = facade.getComponents(issue.Server, project);
 
-            Invoke(new MethodInvoker(() => createEditorWidget(versions, comps, issueSoapObject)));
+            this.safeInvoke(new MethodInvoker(() => createEditorWidget(versions, comps, issueSoapObject)));
         }
 
         private void createEditorWidget(IEnumerable<JiraNamedEntity> versions, IEnumerable<JiraNamedEntity> comps, object issueSoapObject) {
@@ -158,7 +156,7 @@ namespace Atlassian.plvs.dialogs.jira {
             }
         }
 
-        private void FieldEditor_KeyPress(object sender, KeyPressEventArgs e) {
+        private void fieldEditorKeyPress(object sender, KeyPressEventArgs e) {
             if (e.KeyChar == (char)Keys.Escape && buttonCancel.Enabled) {
                 Close();
             }
@@ -191,12 +189,12 @@ namespace Atlassian.plvs.dialogs.jira {
             try {
                 facade.updateIssue(issue, new List<JiraField> {field});
                 JiraIssue updatedIssue = facade.getIssue(issue.Server, issue.Key);
-                Invoke(new MethodInvoker(delegate {
+                this.safeInvoke(new MethodInvoker(delegate {
                                              Close();
                                              model.updateIssue(updatedIssue);
                                          }));
             } catch (Exception e) {
-                Invoke(new MethodInvoker(delegate {
+                this.safeInvoke(new MethodInvoker(delegate {
                                              PlvsUtils.showError("Failed to apply changes", e);
                                              Close();
                                          }));

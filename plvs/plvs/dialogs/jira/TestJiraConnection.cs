@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.api.jira.soap;
+using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.dialogs.jira {
     public sealed class TestJiraConnection : AbstractTestConnection {
@@ -20,9 +21,9 @@ namespace Atlassian.plvs.dialogs.jira {
                 facade.login(server);
             } catch (SoapSession.LoginException e) {
                 ex = e; 
-                result = "Failed to connec to to server";
+                result = "Failed to connect to to server";
             }
-            Invoke(new MethodInvoker(() => stopTest(result, ex)));
+            this.safeInvoke(new MethodInvoker(() => stopTest(result, ex)));
         }
     }
 }

@@ -2,13 +2,13 @@
 using System.IO;
 using Microsoft.VisualStudio.OLE.Interop;
 
-///
-/// from http://www.codeproject.com/KB/macros/SolutionNotebookToolbar.aspx?display=Print
-/// 
-/// license is CPOL: http://www.codeproject.com/info/cpol10.aspx
-/// 
 namespace Atlassian.plvs.util {
     /// <summary>
+    //
+    /// from http://www.codeproject.com/KB/macros/SolutionNotebookToolbar.aspx?display=Print
+    /// 
+    /// license is CPOL: http://www.codeproject.com/info/cpol10.aspx
+    /// 
     /// Wrapper around an IStream object.  Stream should really implement this, as it's pretty cookie-cutter.  But it doesn't.
     /// </summary>
     public class StreamEater : Stream {

@@ -134,7 +134,7 @@
             this.MinimizeBox = false;
             this.Name = "SetEndTime";
             this.Text = "Set End Time";
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.SetEndTime_KeyPress);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.setEndTimeKeyPress);
             ((System.ComponentModel.ISupportInitialize)(this.numericHours)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericMinutes)).EndInit();
             this.ResumeLayout(false);

@@ -344,7 +344,7 @@
             this.MinimizeBox = false;
             this.Name = "GlobalSettings";
             this.Text = "Global Settings";
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.GlobalSettings_KeyPress);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.globalSettingsKeyPress);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.tabControl1.ResumeLayout(false);

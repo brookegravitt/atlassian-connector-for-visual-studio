@@ -75,7 +75,7 @@
             this.MinimizeBox = false;
             this.Name = "FieldEditor";
             this.Text = "FieldEditor";
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.FieldEditor_KeyPress);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.fieldEditorKeyPress);
             this.ResumeLayout(false);
             this.PerformLayout();
 
