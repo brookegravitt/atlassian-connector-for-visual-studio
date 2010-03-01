@@ -104,6 +104,7 @@
     <Compile Include="api\bamboo\BambooPlan.cs" />
     <Compile Include="api\bamboo\BambooServerFacade.cs" />
     <Compile Include="api\bamboo\rest\RestSession.cs" />
+    <Compile Include="api\jira\JiraAuthenticatedClient.cs" />
     <Compile Include="api\jira\RestClient.cs" />
     <Compile Include="api\jira\IssueLinkType.cs" />
     <Compile Include="api\jira\JiraAttachment.cs" />
@@ -378,7 +379,7 @@
     <Compile Include="ui\ToolWindowFrame.cs">
       <SubType>UserControl</SubType>
     </Compile>
-	    <Compile Include="ui\WebBrowserWithLabel.cs">
+    <Compile Include="ui\WebBrowserWithLabel.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ui\WebBrowserWithLabel.Designer.cs">
@@ -635,11 +636,11 @@
       <DependentUpon>IssueDetailsWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-	<EmbeddedResource Include="ui\WebBrowserWithLabel.resx">
+    <EmbeddedResource Include="ui\WebBrowserWithLabel.resx">
       <DependentUpon>WebBrowserWithLabel.cs</DependentUpon>
-	  <SubType>Designer</SubType>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
-	<EmbeddedResource Include="windows\AtlassianPanel.resx">
+    <EmbeddedResource Include="windows\AtlassianPanel.resx">
       <DependentUpon>AtlassianPanel.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
