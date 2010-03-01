@@ -55,7 +55,7 @@ namespace Atlassian.plvs.dialogs {
             pageLoaded = true;
         }
 
-        private void About_KeyPress(object sender, KeyPressEventArgs e) {
+        private void aboutKeyPress(object sender, KeyPressEventArgs e) {
             if (e.KeyChar == (char) Keys.Escape) {
                 Close();
             }

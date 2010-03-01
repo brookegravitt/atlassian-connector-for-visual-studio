@@ -85,7 +85,7 @@
             this.MinimizeBox = false;
             this.Name = "NewIssueComment";
             this.Text = "Add Comment";
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.NewIssueComment_KeyPress);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.newIssueCommentKeyPress);
             this.ResumeLayout(false);
 
         }

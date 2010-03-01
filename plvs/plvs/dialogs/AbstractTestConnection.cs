@@ -82,7 +82,7 @@ namespace Atlassian.plvs.dialogs {
             buttonClose.Text = "Close";
         }
 
-        private void TestJiraConnection_KeyPress(object sender, KeyPressEventArgs e) {
+        private void testJiraConnectionKeyPress(object sender, KeyPressEventArgs e) {
             if (e.KeyChar == (char) Keys.Escape) {
                 stopOrClose();
             }

@@ -512,11 +512,7 @@ namespace Atlassian.plvs.ui.jira {
                 Invoke(new MethodInvoker(delegate { webLinkedIssues.DocumentText = sb.ToString(); }));
 
             } catch (Exception e) {
-                try {
-                    Invoke(new MethodInvoker(() => setWebBrowserWidgetText(webLinkedIssues, "Failed to retrieve issue links")));
-                } catch (InvalidOperationException ex) {
-                    Debug.WriteLine("IssueDetailsPanel.queryLinksAndDisplay(): " + ex.Message);
-                }
+                this.safeInvoke(new MethodInvoker(() => setWebBrowserWidgetText(webLinkedIssues, "Failed to retrieve issue links")));
                 status.setError("Failed to retrieve issue links", e);
             }
         }
@@ -539,11 +535,7 @@ namespace Atlassian.plvs.ui.jira {
                 }));
             }
             catch (Exception e) {
-                try {
-                    Invoke(new MethodInvoker(() => setWebBrowserWidgetText(webSubtasks, "Failed to retrieve subtasks")));
-                } catch (InvalidOperationException ex) {
-                    Debug.WriteLine("IssueDetailsPanel.querySubtasksAndDisplay(): " + ex.Message);
-                }
+                this.safeInvoke(new MethodInvoker(() => setWebBrowserWidgetText(webSubtasks, "Failed to retrieve subtasks")));
                 status.setError("Failed to retrieve subtasks", e);
             }                
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -91,7 +92,7 @@ namespace Atlassian.plvs.dialogs.jira {
 
                 if (!Visible) return;
 
-                Invoke(new MethodInvoker(delegate {
+                this.safeInvoke(new MethodInvoker(delegate {
                                              panelContent.Visible = true;
                                              panelThrobber.Visible = false;
 
@@ -142,8 +143,7 @@ namespace Atlassian.plvs.dialogs.jira {
         }
 
         private void updateOkButton() {
-            foreach (var editor in editors) {
-                if (editor.FieldValid) continue;
+            if (editors.Any(editor => !editor.FieldValid)) {
                 buttonOk.Enabled = false;
                 return;
             }
@@ -277,13 +277,13 @@ namespace Atlassian.plvs.dialogs.jira {
                                                           var newIssue = JiraServerFacade.Instance.getIssue(issue.Server, issue.Key);
                                                           UsageCollector.Instance.bumpJiraIssuesOpen();
                                                           status.setInfo("Action \"" + action.Name + "\" successfully run on issue " + issue.Key);
-                                                          Invoke(new MethodInvoker(delegate {
+                                                          this.safeInvoke(new MethodInvoker(delegate {
                                                                                        Close();
                                                                                        model.updateIssue(newIssue);
                                                                                    }));
                                                       }
                                                       catch (Exception ex) {
-                                                          Invoke(new MethodInvoker(() => showErrorAndResumeEditing(ex)));
+                                                          this.safeInvoke(new MethodInvoker(() => showErrorAndResumeEditing(ex)));
                                                       }
                                                   }));
             t.Start();
@@ -340,7 +340,7 @@ namespace Atlassian.plvs.dialogs.jira {
             Close();
         }
 
-        private void IssueWorkflowAction_Resize(object sender, EventArgs e) {
+        private void issueWorkflowActionResize(object sender, EventArgs e) {
             SuspendLayout();
 
             resizeStaticContent();
@@ -362,7 +362,7 @@ namespace Atlassian.plvs.dialogs.jira {
             return ClientSize.Width - FIELD_X_POS - 4*MARGIN;
         }
 
-        private void IssueWorkflowAction_KeyPress(object sender, KeyPressEventArgs e) {
+        private void issueWorkflowActionKeyPress(object sender, KeyPressEventArgs e) {
             if (buttonCancel.Enabled && e.KeyChar == (char)Keys.Escape) {
                 Close();
             }

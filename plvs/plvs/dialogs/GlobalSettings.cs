@@ -109,7 +109,7 @@ namespace Atlassian.plvs.dialogs {
             saveValues();
         }
 
-        private void GlobalSettings_KeyPress(object sender, KeyPressEventArgs e) {
+        private void globalSettingsKeyPress(object sender, KeyPressEventArgs e) {
             if (e.KeyChar == (char) Keys.Escape && !isRunningManualUpdateQuery) {
                 Close();
             }

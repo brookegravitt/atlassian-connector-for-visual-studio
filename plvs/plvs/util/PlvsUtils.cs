@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing.Printing;
 using System.IO;
 using System.Net;
@@ -212,6 +213,14 @@ namespace Atlassian.plvs.util {
             // the code taken from http://www.codeproject.com/KB/webservices/web_service_over_SSL.aspx
             ServicePointManager.ServerCertificateValidationCallback =
                 delegate(Object obj, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors) { return (true); };
+        }
+
+        public static void safeInvoke(this Control control, Delegate action) {
+            try {
+                control.Invoke(action);
+            } catch (InvalidOperationException e) {
+                Debug.WriteLine("PlvsUtils.safeInvoke() - exception: " + e.Message);
+            }
         }
     }
 }

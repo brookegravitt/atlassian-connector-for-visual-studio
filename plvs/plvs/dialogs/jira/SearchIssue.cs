@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Web;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
@@ -59,12 +60,7 @@ namespace Atlassian.plvs.dialogs.jira {
             if (query.Length == 0) return;
 
             if (JiraIssueUtils.ISSUE_REGEX.IsMatch(query.ToUpper())) {
-                JiraIssue foundIssue = null;
-                foreach (JiraIssue issue in Model.Issues) {
-                    if (!issue.Key.Equals(query) || !issue.Server.Url.Equals(Server.Url)) continue;
-                    foundIssue = issue;
-                    break;
-                }
+                JiraIssue foundIssue = Model.Issues.FirstOrDefault(issue => issue.Key.Equals(query) && issue.Server.Url.Equals(Server.Url));
 
                 if (foundIssue == null) {
                     string key = query.ToUpper();
@@ -80,7 +76,7 @@ namespace Atlassian.plvs.dialogs.jira {
             Close();
         }
 
-        private void SearchIssue_KeyPress(object sender, KeyPressEventArgs e) {
+        private void searchIssueKeyPress(object sender, KeyPressEventArgs e) {
             if (e.KeyChar == (char) Keys.Escape && buttonCancel.Enabled) {
                 Close();
             }

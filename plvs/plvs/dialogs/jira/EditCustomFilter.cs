@@ -267,7 +267,7 @@ namespace Atlassian.plvs.dialogs.jira {
                 List<JiraNamedEntity> versions = JiraServerFacade.Instance.getVersions(server, project);
 
                 versions.Reverse();
-                Invoke(new MethodInvoker(delegate {
+                this.safeInvoke(new MethodInvoker(delegate {
                                              refillIssueTypes(issueTypes);
                                              refillComponents(comps);
                                              refillFixFor(versions);
@@ -279,12 +279,7 @@ namespace Atlassian.plvs.dialogs.jira {
                                          }));
             }
             catch (Exception ex) {
-                if (ex is InvalidOperationException) {
-                    // probably the window got closed while we were fetching data
-                    Debug.WriteLine(ex.Message);
-                } else {
-                    PlvsUtils.showError("Unable to retrieve project-related data", ex);
-                }
+                PlvsUtils.showError("Unable to retrieve project-related data", ex);
             }
         }
 

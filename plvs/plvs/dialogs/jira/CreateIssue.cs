@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
@@ -114,18 +114,14 @@ namespace Atlassian.plvs.dialogs.jira {
             List<JiraNamedEntity> versions = JiraServerFacade.Instance.getVersions(server, project);
             // newest versions first
             versions.Reverse();
-            try {
-                Invoke(new MethodInvoker(delegate {
-                                             fillIssueTypes(issueTypes, store);
-                                             fillComponents(comps, store);
-                                             fillVersions(versions, store);
-                                             setAllEnabled(true);
-                                             updateButtons();
-                                             initialUpdate = false;
-                                         }));
-            } catch (InvalidOperationException e) {
-                Debug.WriteLine("CreateIssue.projectUpdateWorker() - InvalidOperationException: " + e.Message);
-            }
+            this.safeInvoke(new MethodInvoker(delegate {
+                                         fillIssueTypes(issueTypes, store);
+                                         fillComponents(comps, store);
+                                         fillVersions(versions, store);
+                                         setAllEnabled(true);
+                                         updateButtons();
+                                         initialUpdate = false;
+                                     }));
         }
 
         private void fillVersions(IEnumerable<JiraNamedEntity> versions, ParameterStore store) {
@@ -292,26 +288,17 @@ namespace Atlassian.plvs.dialogs.jira {
                               };
 
             if (listComponents.SelectedItems.Count > 0) {
-                List<string> comps = new List<string>();
-                foreach (var comp in listComponents.SelectedItems) {
-                    comps.Add(comp.ToString());
-                }
+                List<string> comps = (from object comp in listComponents.SelectedItems select comp.ToString()).ToList();
                 issue.Components = comps;
             }
 
             if (listAffectsVersions.SelectedItems.Count > 0) {
-                List<string> affects = new List<string>();
-                foreach (var ver in listAffectsVersions.SelectedItems) {
-                    affects.Add(ver.ToString());
-                }
+                List<string> affects = (from object ver in listAffectsVersions.SelectedItems select ver.ToString()).ToList();
                 issue.Versions = affects;
             }
 
             if (listFixVersions.SelectedItems.Count > 0) {
-                List<string> fixes = new List<string>();
-                foreach (var fix in listFixVersions.SelectedItems) {
-                    fixes.Add(fix.ToString());
-                }
+                List<string> fixes = (from object fix in listFixVersions.SelectedItems select fix.ToString()).ToList();
                 issue.FixVersions = fixes;
             }
 
@@ -326,15 +313,14 @@ namespace Atlassian.plvs.dialogs.jira {
         private void createIssueWorker(JiraIssue issue) {
             try {
                 string key = JiraServerFacade.Instance.createIssue(server, issue);
-                Invoke(new MethodInvoker(delegate {
+                this.safeInvoke(new MethodInvoker(delegate {
                                              setAllEnabled(true);
                                              buttonCancel.Enabled = true;
                                              Close();
                                              AtlassianPanel.Instance.Jira.findAndOpenIssue(key, null);
                                          }));
-            }
-            catch (Exception e) {
-                Invoke(new MethodInvoker(delegate {
+            } catch (Exception e) {
+                this.safeInvoke(new MethodInvoker(delegate {
                                              PlvsUtils.showError("Unable to create issue", e);
                                              setAllEnabled(true);
                                              buttonCancel.Enabled = true;
@@ -342,7 +328,7 @@ namespace Atlassian.plvs.dialogs.jira {
             }
         }
 
-        private void CreateIssue_KeyPress(object sender, KeyPressEventArgs e) {
+        private void createIssueKeyPress(object sender, KeyPressEventArgs e) {
             if (buttonCancel.Enabled && e.KeyChar == (char)Keys.Escape) {
                 Close();
             }

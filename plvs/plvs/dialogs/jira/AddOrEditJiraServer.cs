@@ -90,7 +90,7 @@ namespace Atlassian.plvs.dialogs.jira {
             get { return server; }
         }
 
-        private void AddOrEditJiraServer_KeyPress(object sender, KeyPressEventArgs e) {
+        private void addOrEditJiraServerKeyPress(object sender, KeyPressEventArgs e) {
             if (e.KeyChar != (char) Keys.Escape) return;
             DialogResult = DialogResult.Cancel;
             Close();

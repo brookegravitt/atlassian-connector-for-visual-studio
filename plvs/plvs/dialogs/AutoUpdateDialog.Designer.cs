@@ -81,7 +81,7 @@
             this.Name = "AutoUpdateDialog";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Update Atlassian Connector for Visual Studio";
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.About_KeyPress);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.aboutKeyPress);
             this.ResumeLayout(false);
 
         }

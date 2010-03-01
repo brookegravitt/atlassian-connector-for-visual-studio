@@ -202,7 +202,7 @@
             this.MinimumSize = new System.Drawing.Size(700, 350);
             this.Name = "ProjectConfiguration";
             this.Text = "Project Configuration";
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ProjectConfiguration_KeyPress);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.projectConfigurationKeyPress);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);

@@ -114,8 +114,8 @@
             this.MinimumSize = new System.Drawing.Size(400, 200);
             this.Name = "IssueWorkflowAction";
             this.Text = "IssueWorkflowAction";
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.IssueWorkflowAction_KeyPress);
-            this.Resize += new System.EventHandler(this.IssueWorkflowAction_Resize);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.issueWorkflowActionKeyPress);
+            this.Resize += new System.EventHandler(this.issueWorkflowActionResize);
             this.panelThrobber.ResumeLayout(false);
             this.ResumeLayout(false);
 
