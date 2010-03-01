@@ -6,19 +6,19 @@ using System.Windows.Forms;
 namespace Atlassian.plvs.dialogs {
     public sealed partial class AutoUpdateDialog : Form {
         private readonly string updateUrl;
+        private readonly string releaseNotesUrl;
         private bool pageLoaded;
 
         public AutoUpdateDialog(string stamp, string updateUrl, string blurbText, string releaseNotesUrl) {
             this.updateUrl = updateUrl;
+            this.releaseNotesUrl = releaseNotesUrl;
 
             InitializeComponent();
 
             browser.IsWebBrowserContextMenuEnabled = false;
-            browser.DocumentText = string.Format(
-                Resources.autoupdate_html, Font.FontFamily.Name, 
-                ColorTranslator.ToHtml(SystemColors.Control), 
-                stamp, blurbText, releaseNotesUrl);
-//            browser.ScrollBarsEnabled = true;
+            browser.DocumentText = string.Format(Resources.autoupdate_html, Font.FontFamily.Name, 
+                ColorTranslator.ToHtml(SystemColors.Control), stamp, blurbText);
+            browser.ScrollBarsEnabled = true;
 
             StartPosition = FormStartPosition.CenterParent;
 
@@ -29,7 +29,7 @@ namespace Atlassian.plvs.dialogs {
             try {
                 Process.Start(updateUrl);
                 // ReSharper disable EmptyGeneralCatchClause
-            } catch (Exception) {
+            } catch {
                 // ReSharper restore EmptyGeneralCatchClause
             }
             Close();
@@ -45,7 +45,7 @@ namespace Atlassian.plvs.dialogs {
             try {
                 Process.Start(url);
 // ReSharper disable EmptyGeneralCatchClause
-            } catch (Exception) {
+            } catch {
 // ReSharper restore EmptyGeneralCatchClause
             }
             e.Cancel = true;
@@ -64,6 +64,15 @@ namespace Atlassian.plvs.dialogs {
         private void browser_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e) {
             if (e.KeyValue == (char)Keys.Escape) {
                 Close();
+            }
+        }
+
+        private void buttonReleaseNotes_Click(object sender, EventArgs e) {
+            try {
+                Process.Start(releaseNotesUrl);
+// ReSharper disable EmptyGeneralCatchClause
+            } catch {
+// ReSharper restore EmptyGeneralCatchClause
             }
         }
     }

@@ -7,7 +7,5 @@
 
 <div>{3}</div>
 
-<div><a href="{4}">See full release notes</a></div>
-
 </div>
 </body>
