@@ -452,7 +452,7 @@ namespace Atlassian.plvs.ui.jira {
             this.dropDownIssueActions});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(124, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(155, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonViewInBrowser
@@ -497,12 +497,15 @@ namespace Atlassian.plvs.ui.jira {
             // 
             // dropDownIssueActions
             // 
+            this.dropDownIssueActions.AutoToolTip = false;
             this.dropDownIssueActions.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.dropDownIssueActions.Image = global::Atlassian.plvs.Resources.pin_other;
             this.dropDownIssueActions.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.dropDownIssueActions.Name = "dropDownIssueActions";
             this.dropDownIssueActions.Size = new System.Drawing.Size(29, 22);
             this.dropDownIssueActions.Text = "Issue Actions";
+            this.dropDownIssueActions.ToolTipText = "Issue Actions";
+            this.dropDownIssueActions.MouseEnter += new System.EventHandler(this.dropDownIssueActions_MouseEnter);
             this.dropDownIssueActions.DropDownOpened += new System.EventHandler(this.dropDownIssueActions_DropDownOpened);
             // 
             // label1
