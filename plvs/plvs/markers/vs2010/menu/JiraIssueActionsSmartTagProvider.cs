@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.Composition;
+using Atlassian.plvs.windows;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
@@ -20,6 +21,11 @@ namespace Atlassian.plvs.markers.vs2010.menu {
         internal IClassifierAggregatorService AggregatorService;
 
         public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
+
+            if (AtlassianPanel.Instance == null || AtlassianPanel.Instance.Jira == null) {
+                return null;
+            }
+
             if (buffer == null || textView == null) {
                 return null;
             }

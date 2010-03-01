@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using Atlassian.plvs.windows;
 using Microsoft.VisualStudio.Text.Editor;
@@ -20,8 +21,15 @@ namespace Atlassian.plvs.markers.vs2010.texttag {
     [ContentType("text")]
     [TextViewRole(PredefinedTextViewRoles.Document)]
     class LinkUpdateWorkaround : IWpfTextViewCreationListener {
+
+        private readonly List<ViewListener> listeners = new List<ViewListener>();
+
         public void TextViewCreated(IWpfTextView textView) {
-            new ViewListener(textView);
+            if (AtlassianPanel.Instance == null || AtlassianPanel.Instance.Jira == null) return;
+
+            ViewListener listener = new ViewListener(textView);
+            listeners.Add(listener);
+            textView.Closed += (sender, e) => listeners.Remove(listener);
         }
     }
 
