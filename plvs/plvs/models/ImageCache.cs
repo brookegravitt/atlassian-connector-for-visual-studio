@@ -6,6 +6,7 @@ using System.IO;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using Atlassian.plvs.dialogs;
 using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.models {
@@ -49,8 +50,11 @@ namespace Atlassian.plvs.models {
                 }
                 try {
                     HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
-                    request.Timeout = 5000;
-                    request.ReadWriteTimeout = 20000;
+
+                    // hm, these should not be JIRA-specific. Do we need yet another timeout value?
+                    request.Timeout = GlobalSettings.JiraTimeout * 1000;
+                    request.ReadWriteTimeout = GlobalSettings.JiraTimeout * 2000;
+
                     HttpWebResponse response = (HttpWebResponse) request.GetResponse();
                     var responseStream = response.GetResponseStream();
                     
@@ -66,9 +70,9 @@ namespace Atlassian.plvs.models {
                     ImageInfo imageInfo = new ImageInfo(img, new Uri(fileName));
                     cache[url] = imageInfo;
                     return imageInfo;
-                }
-                catch (Exception e) {
-                    Debug.WriteLine(e.Message);
+                } catch (Exception e) {
+                    Debug.WriteLine("ImageCache.getImage() - exception: " + e.Message);
+                    cache[url] = new ImageInfo(Resources.nothing, null);
                     return new ImageInfo(Resources.nothing, null);
                 }
             }
