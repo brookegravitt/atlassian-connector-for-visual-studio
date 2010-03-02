@@ -19,14 +19,14 @@ namespace Atlassian.plvs.api.jira.soap {
         public void login(string userName, string password) {
             try {
                 Token = service.login(userName, password);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 throw new LoginException(e);
             }
         }
 
         public void cleanup() {
             service.Abort();
+            service.logout(Token);
         }
 
         public List<JiraProject> getProjects() {
