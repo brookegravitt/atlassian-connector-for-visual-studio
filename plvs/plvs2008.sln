@@ -12,8 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		version.info = version.info
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dropdownbuttonbug", "dropdownbuttonbug\dropdownbuttonbug.csproj", "{C483845E-8837-4BF2-895F-7BF15968EFF4}"
-EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
@@ -28,10 +26,6 @@ Global
 		{A79DF670-278F-4D8E-AC58-72E4A08F09D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A79DF670-278F-4D8E-AC58-72E4A08F09D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A79DF670-278F-4D8E-AC58-72E4A08F09D6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C483845E-8837-4BF2-895F-7BF15968EFF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C483845E-8837-4BF2-895F-7BF15968EFF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C483845E-8837-4BF2-895F-7BF15968EFF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C483845E-8837-4BF2-895F-7BF15968EFF4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
