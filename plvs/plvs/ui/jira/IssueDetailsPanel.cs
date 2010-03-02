@@ -106,21 +106,33 @@ namespace Atlassian.plvs.ui.jira {
             string mazioDir = key.GetValue("Install_Dir") as string;
             if (mazioDir == null) return;
 
-            string token = facade.getSoapToken(issue.Server);
-            if (token == null) return;
-
             IntPtr[] hLarge = new[] { IntPtr.Zero };
             IntPtr[] hSmall = new[] { IntPtr.Zero };
 
             Image mazioImage = null;
 
             uint iconCount = ExtractIconEx(mazioDir + "\\mazio.exe", 0, hLarge, hSmall, 1);
-            if (iconCount > 0) {
-                Icon extractedIcon = (Icon) Icon.FromHandle(hSmall[0]).Clone();
-                mazioImage = extractedIcon.ToBitmap();
-            }
 
-            toolStripAttachmentsMenu.Items.Add("Attach Mazio Screenshot...", mazioImage, delegate { runMazio(token); });
+            // sometimes ExtractIconEx() seems to return some garbage large value. Hence exception block
+            try {
+                if (iconCount > 0) {
+                    Icon extractedIcon = (Icon)Icon.FromHandle(hSmall[0]).Clone();
+                    mazioImage = extractedIcon.ToBitmap();
+                }
+
+                toolStripAttachmentsMenu.Items.Add("Attach Mazio Screenshot...", mazioImage,
+                                                   delegate {
+                                                       Thread t = new Thread(() =>
+                                                       {
+                                                           string token = facade.getSoapToken(issue.Server);
+                                                           if (token == null) return;
+                                                           Invoke(new MethodInvoker(() => runMazio(token)));
+                                                       });
+                                                       t.Start();
+                                                   });
+            } catch (Exception e) {
+                Debug.WriteLine("IssueDetailsPanel.maybeAddMazioMenu() - exception: " + e.Message);
+            }
         }
 
         private void runMazio(string token) {
@@ -241,11 +253,11 @@ namespace Atlassian.plvs.ui.jira {
             Thread worker = new Thread(new ThreadStart(delegate {
                                                            try {
                                                                status.setInfo("Retrieving issue details...");
+                                                               facade.removeSession(issue.Server);
                                                                issue = facade.getIssue(issue.Server, issue.Key);
                                                                status.setInfo("Issue details retrieved");
                                                                Invoke(new MethodInvoker(() => model.updateIssue(issue)));
-                                                           }
-                                                           catch (Exception e) {
+                                                           } catch (Exception e) {
                                                                status.setError("Failed to retrieve issue details", e);
                                                            }
                                                            rebuildAllPanels(true);

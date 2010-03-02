@@ -9,6 +9,8 @@ namespace Atlassian.plvs.dialogs {
     public partial class GlobalSettings : Form {
         private const int DEFAULT_BAMBOO_POLLING_INTERVAL = 60;
         private const int DEFAULT_ISSUE_BATCH_SIZE = 25;
+        private const int DEFAULT_JIRA_TIMEOUT = 10;
+        private const int DEFAULT_BAMBOO_TIMEOUT = 10;
         private const string REG_AUTOUPDATE = "AutoupdateEnabled";
         private const string REG_BAMBOO_POLLING_INTERVAL = "BambooPollingInterval";
         private const string REG_CHECK_SNAPSHOTS = "AutoupdateCheckSnapshots";
@@ -18,6 +20,8 @@ namespace Atlassian.plvs.dialogs {
         private const string REG_REPORT_USAGE = "AutoupdateReportUsage";
         private const string REG_JIRA_SERVER_EXPLORER = "JiraServerExplorer";
         private const string REG_ANKH_SNV_ENABLED = "AnkhSVNIntegrationEnabled";
+        private const string REG_JIRA_TIMEOUT = "JiraTimeout";
+        private const string REG_BAMBOO_TIMEOUT = "BambooTimeout";
 
         private bool isRunningManualUpdateQuery;
 
@@ -35,6 +39,8 @@ namespace Atlassian.plvs.dialogs {
                 BambooPollingInterval = (int) root.GetValue(REG_BAMBOO_POLLING_INTERVAL, DEFAULT_BAMBOO_POLLING_INTERVAL);
                 JiraServerExplorerEnabled = (int)root.GetValue(REG_JIRA_SERVER_EXPLORER, 0) > 0;
                 AnkhSvnIntegrationEnabled = (int) root.GetValue(REG_ANKH_SNV_ENABLED, 0) > 0;
+                JiraTimeout = (int) root.GetValue(REG_JIRA_TIMEOUT, 10);
+                BambooTimeout = (int)root.GetValue(REG_BAMBOO_TIMEOUT, 10);
             } catch (Exception) {
                 JiraIssuesBatch = DEFAULT_ISSUE_BATCH_SIZE;
                 AutoupdateEnabled = true;
@@ -44,6 +50,8 @@ namespace Atlassian.plvs.dialogs {
                 BambooPollingInterval = DEFAULT_BAMBOO_POLLING_INTERVAL;
                 JiraServerExplorerEnabled = false;
                 AnkhSvnIntegrationEnabled = false;
+                JiraTimeout = DEFAULT_JIRA_TIMEOUT;
+                BambooTimeout = DEFAULT_BAMBOO_TIMEOUT;
             }
         }
 
@@ -64,7 +72,9 @@ namespace Atlassian.plvs.dialogs {
         public static bool CheckStableOnlyNow { get; private set; }
         public static int BambooPollingInterval { get; private set; }
         public static bool JiraServerExplorerEnabled { get; private set; }
-        public static bool AnkhSvnIntegrationEnabled { get; private set; } 
+        public static bool AnkhSvnIntegrationEnabled { get; private set; }
+        public static int JiraTimeout { get; private set; }
+        public static int BambooTimeout { get; private set; }
 
         private void initializeWidgets() {
             numericJiraBatchSize.Value = Math.Min(Math.Max(JiraIssuesBatch, 10), 1000);
@@ -78,6 +88,8 @@ namespace Atlassian.plvs.dialogs {
             radioUnstable.Checked = !CheckStableOnlyNow;
             checkJiraExplorer.Checked = JiraServerExplorerEnabled;
             checkAnkhSvn.Checked = AnkhSvnIntegrationEnabled;
+            numericJiraTimeout.Value = Math.Min(Math.Max(JiraTimeout, 2), 100);
+            numericBambooTimeout.Value = Math.Min(Math.Max(BambooTimeout, 2), 100);
         }
 
         public static void checkFirstRun() {
@@ -121,6 +133,8 @@ namespace Atlassian.plvs.dialogs {
 
         private void buttonOk_Click(object sender, EventArgs e) {
             JiraIssuesBatch = (int) numericJiraBatchSize.Value;
+            JiraTimeout = (int) numericJiraTimeout.Value;
+            BambooTimeout = (int) numericBambooTimeout.Value;
             AutoupdateEnabled = checkAutoupdate.Checked;
             AutoupdateSnapshots = checkUnstable.Checked;
             if (ReportUsage != checkStats.Checked) {
@@ -157,6 +171,8 @@ namespace Atlassian.plvs.dialogs {
                 root.SetValue(REG_BAMBOO_POLLING_INTERVAL, BambooPollingInterval);
                 root.SetValue(REG_JIRA_SERVER_EXPLORER, JiraServerExplorerEnabled ? 1 : 0);
                 root.SetValue(REG_ANKH_SNV_ENABLED, AnkhSvnIntegrationEnabled ? 1 : 0);
+                root.SetValue(REG_JIRA_TIMEOUT, JiraTimeout);
+                root.SetValue(REG_BAMBOO_TIMEOUT, BambooTimeout);
             } catch (Exception e) {
                 MessageBox.Show("Unable to save values to registry: " + e.Message, Constants.ERROR_CAPTION,
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -198,6 +214,8 @@ namespace Atlassian.plvs.dialogs {
             changed |= BambooPollingInterval != (int) numericBambooPollingInterval.Value;
             changed |= JiraServerExplorerEnabled != checkJiraExplorer.Checked;
             changed |= AnkhSvnIntegrationEnabled != checkAnkhSvn.Checked;
+            changed |= JiraTimeout != (int) numericJiraTimeout.Value;
+            changed |= BambooTimeout != (int) numericBambooTimeout.Value;
 
             buttonOk.Enabled = changed;
         }
@@ -246,6 +264,14 @@ namespace Atlassian.plvs.dialogs {
         }
 
         private void numericBambooPollingInterval_KeyUp(object sender, KeyEventArgs e) {
+            updateOkButton();
+        }
+
+        private void numericJiraTimeout_ValueChanged(object sender, EventArgs e) {
+            updateOkButton();
+        }
+
+        private void numericBambooTimeout_ValueChanged(object sender, EventArgs e) {
             updateOkButton();
         }
     }

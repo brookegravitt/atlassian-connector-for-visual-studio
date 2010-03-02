@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.dialogs;
 
@@ -12,76 +13,84 @@ namespace Atlassian.plvs.models.jira {
         }
 
         public void rebuildModelWithSavedFilter(JiraIssueListModel model, JiraServer server, JiraSavedFilter filter) {
+            facade.removeSession(server);
+            List<JiraIssue> issues = facade.getSavedFilterIssues(server, filter, 0, GlobalSettings.JiraIssuesBatch);
             lock (this) {
-                List<JiraIssue> issues = facade.getSavedFilterIssues(server, filter, 0, GlobalSettings.JiraIssuesBatch);
                 model.clear(false);
                 model.addIssues(issues);
             }
         }
 
         public void updateModelWithSavedFilter(JiraIssueListModel model, JiraServer server, JiraSavedFilter filter) {
+            facade.removeSession(server);
+            List<JiraIssue> issues = facade.getSavedFilterIssues(server, filter, model.Issues.Count, GlobalSettings.JiraIssuesBatch);
             lock (this) {
-                List<JiraIssue> issues = facade.getSavedFilterIssues(server, filter, model.Issues.Count,
-                                                                     GlobalSettings.JiraIssuesBatch);
                 model.addIssues(issues);
             }
         }
 
         public void rebuildModelWithPresetFilter(JiraIssueListModel model, JiraServer server, JiraPresetFilter filter) {
+            facade.removeSession(server);
+            List<JiraIssue> issues = facade.getCustomFilterIssues(server, filter, 0, GlobalSettings.JiraIssuesBatch);
             lock (this) {
-                List<JiraIssue> issues = facade.getCustomFilterIssues(server, filter, 0, GlobalSettings.JiraIssuesBatch);
                 model.clear(false);
                 model.addIssues(issues);
             }
         }
 
         public void updateModelWithPresetFilter(JiraIssueListModel model, JiraServer server, JiraPresetFilter filter) {
+            facade.removeSession(server);
+            List<JiraIssue> issues = facade.getCustomFilterIssues(server, filter, model.Issues.Count, GlobalSettings.JiraIssuesBatch);
             lock (this) {
-                List<JiraIssue> issues = facade.getCustomFilterIssues(server, filter, model.Issues.Count,
-                                                                      GlobalSettings.JiraIssuesBatch);
                 model.addIssues(issues);
             }
         }
 
         public void rebuildModelWithCustomFilter(JiraIssueListModel model, JiraServer server, JiraCustomFilter filter) {
+            facade.removeSession(server);
+            List<JiraIssue> issues = facade.getCustomFilterIssues(server, filter, 0, GlobalSettings.JiraIssuesBatch);
             lock (this) {
-                List<JiraIssue> issues = facade.getCustomFilterIssues(server, filter, 0, GlobalSettings.JiraIssuesBatch);
                 model.clear(false);
                 model.addIssues(issues);
             }
         }
 
         public void updateModelWithCustomFilter(JiraIssueListModel model, JiraServer server, JiraCustomFilter filter) {
+            facade.removeSession(server);
+            List<JiraIssue> issues = facade.getCustomFilterIssues(server, filter, model.Issues.Count, GlobalSettings.JiraIssuesBatch);
             lock (this) {
-                List<JiraIssue> issues = facade.getCustomFilterIssues(server, filter, model.Issues.Count,
-                                                                      GlobalSettings.JiraIssuesBatch);
                 model.addIssues(issues);
             }
         }
 
         public void rebuildModelWithRecentlyViewedIssues(JiraIssueListModel model) {
-            lock (this) {
-                ICollection<RecentlyViewedIssue> issues = RecentlyViewedIssuesModel.Instance.Issues;
-                ICollection<JiraServer> servers = JiraServerModel.Instance.getAllEnabledServers();
+            ICollection<RecentlyViewedIssue> issues = RecentlyViewedIssuesModel.Instance.Issues;
+            ICollection<JiraServer> servers = JiraServerModel.Instance.getAllEnabledServers();
 
-                List<JiraIssue> list = new List<JiraIssue>(issues.Count);
-                foreach (RecentlyViewedIssue issue in issues) {
-                    JiraServer server = findServer(issue.ServerGuid, servers);
-                    if (server != null)
-                        list.Add(facade.getIssue(server, issue.IssueKey));
+            List<JiraIssue> list = new List<JiraIssue>(issues.Count);
+            
+            JiraServer prevServer = null;
+
+            foreach (RecentlyViewedIssue issue in issues) {
+                JiraServer server = findServer(issue.ServerGuid, servers);
+                if (prevServer != server) {
+                    facade.removeSession(server);
+                    prevServer = server;
                 }
 
+                if (server != null) {
+                    list.Add(facade.getIssue(server, issue.IssueKey));
+                }
+            }
+
+            lock (this) {
                 model.clear(false);
                 model.addIssues(list);
             }
         }
 
         private static JiraServer findServer(Guid guid, IEnumerable<JiraServer> servers) {
-            foreach (JiraServer server in servers) {
-                if (server.GUID.Equals(guid))
-                    return server;
-            }
-            return null;
+            return servers.FirstOrDefault(server => server.GUID.Equals(guid));
         }
     }
 }

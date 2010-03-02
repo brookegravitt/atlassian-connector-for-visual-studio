@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
 using Atlassian.plvs.api.jira.soap;
 using Atlassian.plvs.util;
 
@@ -21,21 +18,25 @@ namespace Atlassian.plvs.api.jira {
         }
 
         private SoapSession getSoapSession(JiraServer server) {
-            SoapSession s;
-            if (!sessionMap.TryGetValue(server.Url + server.UserName, out s)) {
-                s = new SoapSession(server.Url);
-                s.login(server.UserName, server.Password);
-                sessionMap.Add(getSessionKey(server), s);
+            lock (sessionMap) {
+                SoapSession s;
+                if (!sessionMap.TryGetValue(server.Url + server.UserName, out s)) {
+                    s = new SoapSession(server.Url);
+                    s.login(server.UserName, server.Password);
+                    sessionMap.Add(getSessionKey(server), s);
+                }
+                return s;
             }
-            return s;
         }
 
         private static string getSessionKey(JiraServer server) {
             return server.Url + server.UserName;
         }
 
-        private void removeSession(JiraServer server) {
-            sessionMap.Remove(getSessionKey(server));
+        public void removeSession(JiraServer server) {
+            lock (sessionMap) {
+                sessionMap.Remove(getSessionKey(server));
+            }
         }
 
         public void login(JiraServer server) {
@@ -43,7 +44,7 @@ namespace Atlassian.plvs.api.jira {
         }
 
         public void dropAllSessions() {
-            lock(this) {
+            lock(sessionMap) {
                 sessionMap.Clear();
             }
         }
@@ -179,33 +180,29 @@ namespace Atlassian.plvs.api.jira {
 
         private delegate T Wrapped<T>();
         private T wrapExceptions<T>(JiraServer server, Wrapped<T> wrapped) {
-            lock (this) {
-                try {
-                    return wrapped();
-                } catch (System.Web.Services.Protocols.SoapException) {
-                    // let's retry _just once_ - PLVS-27
-                    removeSession(server);
-                    return wrapped();
-                } catch (Exception) {
-                    removeSession(server);
-                    throw;
-                }
+            try {
+                return wrapped();
+            } catch (System.Web.Services.Protocols.SoapException) {
+                // let's retry _just once_ - PLVS-27
+                removeSession(server);
+                return wrapped();
+            } catch (Exception) {
+                removeSession(server);
+                throw;
             }
         }
 
         private delegate void WrappedVoid();
         private void wrapExceptionsVoid(JiraServer server, WrappedVoid wrapped) {
-            lock (this) {
-                try {
-                    wrapped();
-                } catch (System.Web.Services.Protocols.SoapException) {
-                    // let's retry _just once_ - PLVS-27
-                    removeSession(server);
-                    wrapped();
-                } catch (Exception) {
-                    removeSession(server);
-                    throw;
-                }
+            try {
+                wrapped();
+            } catch (System.Web.Services.Protocols.SoapException) {
+                // let's retry _just once_ - PLVS-27
+                removeSession(server);
+                wrapped();
+            } catch (Exception) {
+                removeSession(server);
+                throw;
             }
         }
     }
