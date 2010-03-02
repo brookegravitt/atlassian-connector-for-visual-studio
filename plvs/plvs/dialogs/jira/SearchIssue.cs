@@ -7,6 +7,7 @@ using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
 using Atlassian.plvs.ui.jira;
+using Atlassian.plvs.util;
 using Atlassian.plvs.util.jira;
 using Atlassian.plvs.windows;
 
@@ -48,9 +49,9 @@ namespace Atlassian.plvs.dialogs.jira {
             AtlassianPanel.Instance.Jira.findAndOpenIssue(key, findFinished);
         }
 
-        private void findFinished(bool success, string message) {
+        private void findFinished(bool success, string message, Exception e) {
             if (!success) {
-                MessageBox.Show(message, "Error");
+                PlvsUtils.showError(message, e);
             }
             Close();
         }

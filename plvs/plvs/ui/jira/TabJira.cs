@@ -671,13 +671,13 @@ namespace Atlassian.plvs.ui.jira {
             dlg.ShowDialog(this);
         }
 
-        public delegate void FindFinished(bool success, string message);
+        public delegate void FindFinished(bool success, string message, Exception e);
 
         public void findAndOpenIssue(string key, FindFinished onFinish) {
             JiraServer server = filtersTree.CurrentlySelectedServer;
             if (server == null) {
                 if (onFinish != null) {
-                    onFinish(false, "No JIRA server selected");
+                    onFinish(false, "No JIRA server selected", null);
                 }
                 return;
             }
@@ -696,7 +696,7 @@ namespace Atlassian.plvs.ui.jira {
                     Invoke(new MethodInvoker(delegate
                                                  {
                                                      if (onFinish != null) {
-                                                         onFinish(true, null);
+                                                         onFinish(true, null, null);
                                                      }
                                                      IssueDetailsWindow.Instance.openIssue(issue);
                                                  }));
@@ -705,11 +705,9 @@ namespace Atlassian.plvs.ui.jira {
                 status.setError("Failed to find issue " + key, ex);
                 Invoke(new MethodInvoker(delegate
                                              {
-                                                 string message = "Unable to find issue " +
-                                                                  key + " on server \"" +
-                                                                  server.Name + "\"\n\n" + ex.Message;
+                                                 string message = "Unable to find issue " + key + " on server \"" + server.Name;
                                                  if (onFinish != null) {
-                                                     onFinish(false, message);
+                                                     onFinish(false, message, ex);
                                                  }
                                              }));
             }
