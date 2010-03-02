@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Web;
 using System.Xml.XPath;
+using Atlassian.plvs.dialogs;
 using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.api.bamboo.rest {
@@ -234,8 +235,8 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
         private Stream getQueryResultStream(string endpoint, bool setBasicAuth) {
             var req = (HttpWebRequest)WebRequest.Create(endpoint);
-            req.Timeout = 10000;
-            req.ReadWriteTimeout = 20000;
+            req.Timeout = GlobalSettings.BambooTimeout * 1000;
+            req.ReadWriteTimeout = GlobalSettings.BambooTimeout * 2000;
             req.ContentType = "application/xml";
             req.Method = "GET";
             // required for PLVS-83
@@ -255,8 +256,8 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
         private Stream postWithNullBody(string endpoint, bool setBasicAuth) {
             var req = (HttpWebRequest)WebRequest.Create(endpoint);
-            req.Timeout = 10000;
-            req.ReadWriteTimeout = 20000;
+            req.Timeout = GlobalSettings.BambooTimeout * 1000;
+            req.ReadWriteTimeout = GlobalSettings.BambooTimeout * 2000;
             req.Method = "POST";
             req.ContentType = "text/xml";
             // required for PLVS-83

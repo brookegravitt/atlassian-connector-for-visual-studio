@@ -5,6 +5,7 @@ using System.Net;
 using System.IO;
 using System.Diagnostics;
 using System.Xml.XPath;
+using Atlassian.plvs.dialogs;
 using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.api.jira {
@@ -77,8 +78,8 @@ namespace Atlassian.plvs.api.jira {
 
         private static Stream getRssQueryResultStream(StringBuilder url) {
             HttpWebRequest req = (HttpWebRequest) WebRequest.Create(url.ToString());
-            req.Timeout = 5000;
-            req.ReadWriteTimeout = 20000;
+            req.Timeout = GlobalSettings.JiraTimeout * 1000;
+            req.ReadWriteTimeout = GlobalSettings.JiraTimeout * 2000;
             HttpWebResponse resp = (HttpWebResponse) req.GetResponse();
             return resp.GetResponseStream();
         }

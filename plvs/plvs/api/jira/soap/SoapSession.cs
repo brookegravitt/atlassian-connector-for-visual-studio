@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Atlassian.plvs.Atlassian.plvs.api.soap.service;
+using Atlassian.plvs.dialogs;
 
 namespace Atlassian.plvs.api.jira.soap {
     public class SoapSession {
@@ -12,6 +13,7 @@ namespace Atlassian.plvs.api.jira.soap {
         public SoapSession(string u) {
             url = u + "/rpc/soap/jirasoapservice-v2";
             service.Url = url;
+            service.Timeout = GlobalSettings.JiraTimeout * 1000;
         }
 
         public void login(string userName, string password) {

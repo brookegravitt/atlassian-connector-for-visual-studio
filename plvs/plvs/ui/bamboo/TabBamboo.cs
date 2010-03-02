@@ -250,13 +250,15 @@ namespace Atlassian.plvs.ui.bamboo {
         private void showPollTimeInfo() {
             if (status.HaveErrors) return;
 
-            if (lastPollTime != null && nextPollTime != null) {
-                int minutes = DateTime.Now.Subtract(lastPollTime.Value).Minutes;
+            DateTime? last = lastPollTime;
+            DateTime? next = nextPollTime;
+
+            if (last != null && next != null) {
+                int minutes = DateTime.Now.Subtract(last.Value).Minutes;
                 status.setInfo("Last poll finished at "
-                               + lastPollTime.Value.ToShortDateString() + " " + lastPollTime.Value.ToLongTimeString()
+                               + last.Value.ToShortDateString() + " " + last.Value.ToLongTimeString()
                                + " (" + minutes + (minutes == 1 ? " minute" : " minutes") + " ago)" + getNextPollTimeInfo());
-            }
-            else if (nextPollTime != null) {
+            } else if (next != null) {
                 ICollection<BambooServer> servers = BambooServerModel.Instance.getAllEnabledServers();
                 int count = servers != null ? servers.Count : 0;
                 if (count > 0) {

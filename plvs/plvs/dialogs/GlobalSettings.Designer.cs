@@ -50,6 +50,10 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.numericBambooPollingInterval = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
+            this.numericBambooTimeout = new System.Windows.Forms.NumericUpDown();
+            this.label5 = new System.Windows.Forms.Label();
+            this.numericJiraTimeout = new System.Windows.Forms.NumericUpDown();
+            this.label6 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -57,6 +61,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericJiraBatchSize)).BeginInit();
             this.tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericBambooPollingInterval)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericBambooTimeout)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericJiraTimeout)).BeginInit();
             this.SuspendLayout();
             // 
             // checkAutoupdate
@@ -217,6 +223,8 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.label6);
+            this.tabPage2.Controls.Add(this.numericJiraTimeout);
             this.tabPage2.Controls.Add(this.checkAnkhSvn);
             this.tabPage2.Controls.Add(this.checkJiraExplorer);
             this.tabPage2.Controls.Add(this.label1);
@@ -232,7 +240,7 @@
             // checkAnkhSvn
             // 
             this.checkAnkhSvn.AutoSize = true;
-            this.checkAnkhSvn.Location = new System.Drawing.Point(9, 64);
+            this.checkAnkhSvn.Location = new System.Drawing.Point(9, 89);
             this.checkAnkhSvn.Name = "checkAnkhSvn";
             this.checkAnkhSvn.Size = new System.Drawing.Size(230, 17);
             this.checkAnkhSvn.TabIndex = 3;
@@ -243,7 +251,7 @@
             // checkJiraExplorer
             // 
             this.checkJiraExplorer.AutoSize = true;
-            this.checkJiraExplorer.Location = new System.Drawing.Point(9, 40);
+            this.checkJiraExplorer.Location = new System.Drawing.Point(9, 66);
             this.checkJiraExplorer.Name = "checkJiraExplorer";
             this.checkJiraExplorer.Size = new System.Drawing.Size(228, 17);
             this.checkJiraExplorer.TabIndex = 2;
@@ -262,7 +270,7 @@
             // 
             // numericJiraBatchSize
             // 
-            this.numericJiraBatchSize.Location = new System.Drawing.Point(114, 14);
+            this.numericJiraBatchSize.Location = new System.Drawing.Point(149, 14);
             this.numericJiraBatchSize.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -286,6 +294,8 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.label5);
+            this.tabPage3.Controls.Add(this.numericBambooTimeout);
             this.tabPage3.Controls.Add(this.numericBambooPollingInterval);
             this.tabPage3.Controls.Add(this.label2);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
@@ -298,7 +308,7 @@
             // 
             // numericBambooPollingInterval
             // 
-            this.numericBambooPollingInterval.Location = new System.Drawing.Point(130, 14);
+            this.numericBambooPollingInterval.Location = new System.Drawing.Point(149, 14);
             this.numericBambooPollingInterval.Maximum = new decimal(new int[] {
             3600,
             0,
@@ -329,6 +339,60 @@
             this.label2.TabIndex = 0;
             this.label2.Text = "Polling Interval [seconds]";
             // 
+            // numericBambooTimeout
+            // 
+            this.numericBambooTimeout.Location = new System.Drawing.Point(149, 40);
+            this.numericBambooTimeout.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.numericBambooTimeout.Name = "numericBambooTimeout";
+            this.numericBambooTimeout.Size = new System.Drawing.Size(60, 20);
+            this.numericBambooTimeout.TabIndex = 2;
+            this.numericBambooTimeout.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numericBambooTimeout.ValueChanged += new System.EventHandler(this.numericBambooTimeout_ValueChanged);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(6, 42);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(137, 13);
+            this.label5.TabIndex = 3;
+            this.label5.Text = "Network Timeout [seconds]";
+            // 
+            // numericJiraTimeout
+            // 
+            this.numericJiraTimeout.Location = new System.Drawing.Point(149, 40);
+            this.numericJiraTimeout.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.numericJiraTimeout.Name = "numericJiraTimeout";
+            this.numericJiraTimeout.Size = new System.Drawing.Size(60, 20);
+            this.numericJiraTimeout.TabIndex = 4;
+            this.numericJiraTimeout.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numericJiraTimeout.ValueChanged += new System.EventHandler(this.numericJiraTimeout_ValueChanged);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(6, 42);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(137, 13);
+            this.label6.TabIndex = 5;
+            this.label6.Text = "Network Timeout [seconds]";
+            // 
             // GlobalSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -355,6 +419,8 @@
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericBambooPollingInterval)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericBambooTimeout)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericJiraTimeout)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -383,6 +449,10 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckBox checkJiraExplorer;
         private System.Windows.Forms.CheckBox checkAnkhSvn;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.NumericUpDown numericJiraTimeout;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.NumericUpDown numericBambooTimeout;
 
     }
 }
