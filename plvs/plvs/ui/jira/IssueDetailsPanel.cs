@@ -253,7 +253,6 @@ namespace Atlassian.plvs.ui.jira {
             Thread worker = new Thread(new ThreadStart(delegate {
                                                            try {
                                                                status.setInfo("Retrieving issue details...");
-                                                               facade.removeSession(issue.Server);
                                                                issue = facade.getIssue(issue.Server, issue.Key);
                                                                status.setInfo("Issue details retrieved");
                                                                Invoke(new MethodInvoker(() => model.updateIssue(issue)));

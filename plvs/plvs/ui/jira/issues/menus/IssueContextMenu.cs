@@ -53,8 +53,7 @@ namespace Atlassian.plvs.ui.jira.issues.menus {
             List<JiraNamedEntity> actions = null;
             try {
                 actions = JiraServerFacade.Instance.getActionsForIssue(issue);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 status.setError("Failed to retrieve issue actions", e);
             }
             if (actions == null || actions.Count == 0) return;

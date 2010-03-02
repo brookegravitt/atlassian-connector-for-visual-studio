@@ -345,8 +345,6 @@ namespace Atlassian.plvs.ui.jira {
 
                 foreach (JiraServer server in servers) {
 
-                    Facade.removeSession(server);
-
                     status.setInfo("[" + server.Name + "] Loading project definitions...");
                     List<JiraProject> projects = Facade.getProjects(server);
                     foreach (JiraProject proj in projects) {

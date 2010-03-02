@@ -13,7 +13,6 @@ namespace Atlassian.plvs.models.jira {
         }
 
         public void rebuildModelWithSavedFilter(JiraIssueListModel model, JiraServer server, JiraSavedFilter filter) {
-            facade.removeSession(server);
             List<JiraIssue> issues = facade.getSavedFilterIssues(server, filter, 0, GlobalSettings.JiraIssuesBatch);
             lock (this) {
                 model.clear(false);
@@ -22,7 +21,6 @@ namespace Atlassian.plvs.models.jira {
         }
 
         public void updateModelWithSavedFilter(JiraIssueListModel model, JiraServer server, JiraSavedFilter filter) {
-            facade.removeSession(server);
             List<JiraIssue> issues = facade.getSavedFilterIssues(server, filter, model.Issues.Count, GlobalSettings.JiraIssuesBatch);
             lock (this) {
                 model.addIssues(issues);
@@ -30,7 +28,6 @@ namespace Atlassian.plvs.models.jira {
         }
 
         public void rebuildModelWithPresetFilter(JiraIssueListModel model, JiraServer server, JiraPresetFilter filter) {
-            facade.removeSession(server);
             List<JiraIssue> issues = facade.getCustomFilterIssues(server, filter, 0, GlobalSettings.JiraIssuesBatch);
             lock (this) {
                 model.clear(false);
@@ -39,7 +36,6 @@ namespace Atlassian.plvs.models.jira {
         }
 
         public void updateModelWithPresetFilter(JiraIssueListModel model, JiraServer server, JiraPresetFilter filter) {
-            facade.removeSession(server);
             List<JiraIssue> issues = facade.getCustomFilterIssues(server, filter, model.Issues.Count, GlobalSettings.JiraIssuesBatch);
             lock (this) {
                 model.addIssues(issues);
@@ -47,7 +43,6 @@ namespace Atlassian.plvs.models.jira {
         }
 
         public void rebuildModelWithCustomFilter(JiraIssueListModel model, JiraServer server, JiraCustomFilter filter) {
-            facade.removeSession(server);
             List<JiraIssue> issues = facade.getCustomFilterIssues(server, filter, 0, GlobalSettings.JiraIssuesBatch);
             lock (this) {
                 model.clear(false);
@@ -56,7 +51,6 @@ namespace Atlassian.plvs.models.jira {
         }
 
         public void updateModelWithCustomFilter(JiraIssueListModel model, JiraServer server, JiraCustomFilter filter) {
-            facade.removeSession(server);
             List<JiraIssue> issues = facade.getCustomFilterIssues(server, filter, model.Issues.Count, GlobalSettings.JiraIssuesBatch);
             lock (this) {
                 model.addIssues(issues);
@@ -68,20 +62,10 @@ namespace Atlassian.plvs.models.jira {
             ICollection<JiraServer> servers = JiraServerModel.Instance.getAllEnabledServers();
 
             List<JiraIssue> list = new List<JiraIssue>(issues.Count);
-            
-            JiraServer prevServer = null;
-
-            foreach (RecentlyViewedIssue issue in issues) {
-                JiraServer server = findServer(issue.ServerGuid, servers);
-                if (prevServer != server) {
-                    facade.removeSession(server);
-                    prevServer = server;
-                }
-
-                if (server != null) {
-                    list.Add(facade.getIssue(server, issue.IssueKey));
-                }
-            }
+            list.AddRange(from issue in issues
+                          let server = findServer(issue.ServerGuid, servers)
+                          where server != null
+                          select facade.getIssue(server, issue.IssueKey));
 
             lock (this) {
                 model.clear(false);
