@@ -91,6 +91,14 @@ namespace Atlassian.plvs.ui.jira {
 
             issuesTree = new JiraIssueTree(jiraSplitter.Panel2, status, searchingModel, filtersTree.ItemHeight, filtersTree.Font);
 
+            ToolStripMenuItem copyToClipboardItem = new ToolStripMenuItem("Copy to Clipboard", null)
+                                                    {
+                                                        DropDown = createCopyIssueMenuItems()
+                                                    };
+
+            ((ContextMenuStrip) copyToClipboardItem.DropDown).ShowImageMargin = false;
+            ((ContextMenuStrip) copyToClipboardItem.DropDown).ShowCheckMargin = false;
+
             issuesTree.addContextMenu(new ToolStripItem[]
                                   {
                                       new ToolStripMenuItem("Open in IDE", Resources.open_in_ide,
@@ -99,6 +107,7 @@ namespace Atlassian.plvs.ui.jira {
                                                             new EventHandler(browseIssue)),
                                       new ToolStripMenuItem("Edit in Browser", Resources.edit_in_browser,
                                                             new EventHandler(browseEditIssue)),
+                                      copyToClipboardItem,
                                       new ToolStripSeparator(),
                                       new ToolStripMenuItem("Log Work", Resources.log_work,
                                                             new EventHandler(logWork))
@@ -111,6 +120,68 @@ namespace Atlassian.plvs.ui.jira {
             issueTreeContainer.ContentPanel.Controls.Add(issuesTree);
 
             updateIssueListButtons();
+        }
+
+        private ContextMenuStrip createCopyIssueMenuItems() {
+            ContextMenuStrip strip = new ContextMenuStrip();
+            strip.Items.Add("phony");
+
+            strip.Opened += (s, e) => addCopyMenuActions(strip);
+
+            return strip;
+        }
+
+        private void addCopyMenuActions(ToolStrip strip) {
+            strip.Items.Clear();
+            ToolStripMenuItem[] items = new ToolStripMenuItem[4];
+            items[0] = new CopyToClipboardMenuItem(issuesTree, CopyToClipboardMenuItem.CopyType.KEY);
+            items[1] = new CopyToClipboardMenuItem(issuesTree, CopyToClipboardMenuItem.CopyType.SUMMARY);
+            items[2] = new CopyToClipboardMenuItem(issuesTree, CopyToClipboardMenuItem.CopyType.URL);
+            items[3] = new CopyToClipboardMenuItem(issuesTree, CopyToClipboardMenuItem.CopyType.KEY_AND_SUMMARY);
+            strip.Items.AddRange(items);
+        }
+
+        private class CopyToClipboardMenuItem : ToolStripMenuItem {
+            private readonly JiraIssueTree issuesTree;
+            private readonly CopyType type;
+
+            internal enum CopyType {
+                KEY,
+                SUMMARY,
+                URL,
+                KEY_AND_SUMMARY
+            }
+
+            public CopyToClipboardMenuItem(JiraIssueTree issuesTree, CopyType type) {
+                this.issuesTree = issuesTree;
+                this.type = type;
+
+                Click += (s, e) => Clipboard.SetText(Text); 
+            }
+
+            public override string Text {
+                get {
+                    if (issuesTree == null) {
+                        return base.Text;
+                    }
+                    TreeNodeAdv node = issuesTree.SelectedNode;
+                    if (node != null && node.Tag is IssueNode) {
+                        JiraIssue issue = (node.Tag as IssueNode).Issue;
+
+                        switch (type) {
+                            case CopyType.KEY:
+                                return issue.Key;
+                            case CopyType.SUMMARY:
+                                return issue.Summary;
+                            case CopyType.URL:
+                                return issue.Server.Url + "/browse/" + issue.Key;
+                            case CopyType.KEY_AND_SUMMARY:
+                                return issue.Key + ": " + issue.Summary;
+                        }
+                    }
+                    return "No issue selected";
+                }
+            }
         }
 
         private void comboGroupBy_SelectedIndexChanged(object sender, EventArgs e) {
