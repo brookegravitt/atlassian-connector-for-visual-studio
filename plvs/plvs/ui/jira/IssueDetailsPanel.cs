@@ -4,7 +4,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -796,9 +795,9 @@ namespace Atlassian.plvs.ui.jira {
             navigate(e);
         }
 
-        private static void openIssueFinished(bool success, string message) {
+        private static void openIssueFinished(bool success, string message, Exception e) {
             if (!success) {
-                MessageBox.Show(message, AtlassianConstants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                PlvsUtils.showError(message, e);
             }
         }
 

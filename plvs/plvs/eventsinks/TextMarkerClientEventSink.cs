@@ -1,9 +1,11 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui.jira;
+using Atlassian.plvs.util;
 using Atlassian.plvs.windows;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
@@ -95,9 +97,9 @@ namespace Atlassian.plvs.eventsinks {
             }
         }
 
-        private static void findFinished(bool success, string message) {
+        private static void findFinished(bool success, string message, Exception e) {
             if (!success) {
-                MessageBox.Show(message, AtlassianConstants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                PlvsUtils.showError(message, e);
             }
         }
 
