@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Windows.Forms;
 using System.Windows.Media;
 using Atlassian.plvs.api.jira;
@@ -48,9 +49,9 @@ namespace Atlassian.plvs.markers.vs2010.menu {
             }
         }
 
-        private static void findFinished(bool success, string message) {
+        private static void findFinished(bool success, string message, Exception e) {
             if (!success) {
-                MessageBox.Show(message, Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                PlvsUtils.showError(message, e);
             }
         }
     }
