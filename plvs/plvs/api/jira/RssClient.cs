@@ -28,9 +28,10 @@ namespace Atlassian.plvs.api.jira {
             url.Append(appendAuthentication(false));
 
             try {
-                return createIssueList(getRssQueryResultStream(url));
-            }
-            catch (Exception e) {
+                using (Stream stream = getRssQueryResultStream(url)) {
+                    return createIssueList(stream);
+                }
+            } catch (Exception e) {
                 Debug.WriteLine(e.Message);
                 throw;
             }
@@ -49,9 +50,10 @@ namespace Atlassian.plvs.api.jira {
             url.Append(appendAuthentication(false));
 
             try {
-                return createIssueList(getRssQueryResultStream(url));
-            }
-            catch (Exception e) {
+                using (Stream stream = getRssQueryResultStream(url)) {
+                    return createIssueList(stream);
+                }
+            } catch (Exception e) {
                 Debug.WriteLine(e.Message);
                 throw;
             }
@@ -64,11 +66,13 @@ namespace Atlassian.plvs.api.jira {
             url.Append(appendAuthentication(true));
 
             try {
-                List<JiraIssue> list = createIssueList(getRssQueryResultStream(url));
-                if (list.Count != 1) {
-                    throw new ArgumentException("No such issue");
+                using(Stream stream = getRssQueryResultStream(url)) {
+                    List<JiraIssue> list = createIssueList(stream);
+                    if (list.Count != 1) {
+                        throw new ArgumentException("No such issue");
+                    }
+                    return list[0];
                 }
-                return list[0];
             }
             catch (Exception e) {
                 Debug.WriteLine(e.Message);

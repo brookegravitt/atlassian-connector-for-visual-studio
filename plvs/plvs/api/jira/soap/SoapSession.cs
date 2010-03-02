@@ -5,7 +5,7 @@ using Atlassian.plvs.Atlassian.plvs.api.soap.service;
 using Atlassian.plvs.dialogs;
 
 namespace Atlassian.plvs.api.jira.soap {
-    public class SoapSession {
+    public class SoapSession : IDisposable {
         private readonly string url;
         public string Token { get; private set; }
         private readonly JiraSoapServiceService service = new JiraSoapServiceService();
@@ -24,9 +24,16 @@ namespace Atlassian.plvs.api.jira.soap {
             }
         }
 
-        public void cleanup() {
-            service.Abort();
+        public void logout() {
             service.logout(Token);
+            Token = null;
+        }
+
+        public void Dispose() {
+            if (Token != null) {
+                service.logout(Token);
+            }
+            service.Dispose();
         }
 
         public List<JiraProject> getProjects() {

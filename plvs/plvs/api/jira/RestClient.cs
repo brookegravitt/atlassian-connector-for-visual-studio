@@ -50,6 +50,8 @@ namespace Atlassian.plvs.api.jira {
                 Stream stream = resp.GetResponseStream();
                 string text = PlvsUtils.getTextDocument(stream);
                 stream.Close();
+                resp.Close();
+
                 return text;
             } catch (Exception e) {
                 Debug.WriteLine(e.Message);

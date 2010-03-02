@@ -43,38 +43,39 @@ namespace Atlassian.plvs.api.bamboo.rest {
                 + "?username=" + HttpUtility.UrlEncode(username, Encoding.UTF8) + "&password=" + HttpUtility.UrlEncode(pwd, Encoding.UTF8) 
                 + "&os_username=" + HttpUtility.UrlEncode(username, Encoding.UTF8) + "&os_password=" + HttpUtility.UrlEncode(pwd, Encoding.UTF8);
 
-            Stream stream = getQueryResultStream(endpoint, false);
+            using (Stream stream = getQueryResultStream(endpoint, false)) {
+                XPathDocument doc = XPathUtils.getXmlDocument(stream);
 
-            XPathDocument doc = XPathUtils.getXmlDocument(stream);
+                string exceptions = getRemoteExceptionMessages(doc);
+                if (exceptions != null) {
+                    throw new Exception(exceptions);
+                }
 
-            string exceptions = getRemoteExceptionMessages(doc);
-            if (exceptions != null) {
-                throw new Exception(exceptions);
+                XPathNavigator nav = doc.CreateNavigator();
+                XPathExpression expr = nav.Compile("/response/auth");
+                XPathNodeIterator it = nav.Select(expr);
+                if (it.Count == 0) {
+                    throw new Exception("Server did not return any authentication token");
+                }
+                if (it.Count != 1) {
+                    throw new Exception("Server returned unexpected number of authentication tokens (" + it.Count + ")");
+                }
+                it.MoveNext();
+                authToken = it.Current.Value;
+                userName = username;
+                password = pwd;
+
+                LoggedIn = true;
+                return this;
             }
-
-            XPathNavigator nav = doc.CreateNavigator();
-            XPathExpression expr = nav.Compile("/response/auth");
-            XPathNodeIterator it = nav.Select(expr);
-            if (it == null || it.Count == 0) {
-                throw new Exception("Server did not return any authentication token");
-            }
-            if (it.Count != 1) {
-                throw new Exception("Server returned unexpected number of authentication tokens (" + it.Count + ")");
-            }
-            it.MoveNext();
-            authToken = it.Current.Value;
-            userName = username;
-            password = pwd;
-
-            LoggedIn = true;
-            return this;
         }
 
         public void logout() {
             if (!LoggedIn) return;
             try {
                 string endpoint = server.Url + LOGOUT_ACTION + "?auth=" + HttpUtility.UrlEncode(authToken, Encoding.UTF8);
-                getQueryResultStream(endpoint, false);
+                Stream stream = getQueryResultStream(endpoint, false);
+                stream.Close();
             } catch (Exception e) {
                 Debug.WriteLine("RestSession.logout() - exception (ignored): " + e.Message);
             }
@@ -93,44 +94,44 @@ namespace Atlassian.plvs.api.bamboo.rest {
         }
 
         private ICollection<BambooPlan> getPlansFromUrl(string endpoint) {
+            using (Stream stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint), true)) {
 
-            Stream stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint), true);
+                XPathDocument doc = XPathUtils.getXmlDocument(stream);
 
-            XPathDocument doc = XPathUtils.getXmlDocument(stream);
+                string code = getRestErrorStatusCode(doc);
+                if (code != null) {
+                    throw new Exception(code);
+                }
 
-            string code = getRestErrorStatusCode(doc);
-            if (code != null) {
-                throw new Exception(code);
-            }
+                XPathNavigator nav = doc.CreateNavigator();
+                XPathExpression expr = nav.Compile("/plans/plans/plan");
+                XPathNodeIterator it = nav.Select(expr);
 
-            XPathNavigator nav = doc.CreateNavigator();
-            XPathExpression expr = nav.Compile("/plans/plans/plan");
-            XPathNodeIterator it = nav.Select(expr);
+                List<BambooPlan> plans = new List<BambooPlan>();
 
-            List<BambooPlan> plans = new List<BambooPlan>();
-
-            while(it.MoveNext()) {
-                string enabledValue = XPathUtils.getAttributeSafely(it.Current, "enabled", "true");
-                string key = XPathUtils.getAttributeSafely(it.Current, "key", null);
-                string name = XPathUtils.getAttributeSafely(it.Current, "name", null);
-                bool enabled = true;
-				if (enabledValue != null) {
-					enabled = Boolean.Parse(enabledValue);
-				}
-                it.Current.MoveToFirstChild();
-                bool favourite = false;
-                do {
-                    switch (it.Current.Name) {
-                        case "isFavourite":
-                            favourite = it.Current.Value.Equals("true");
-                            break;
+                while (it.MoveNext()) {
+                    string enabledValue = XPathUtils.getAttributeSafely(it.Current, "enabled", "true");
+                    string key = XPathUtils.getAttributeSafely(it.Current, "key", null);
+                    string name = XPathUtils.getAttributeSafely(it.Current, "name", null);
+                    bool enabled = true;
+                    if (enabledValue != null) {
+                        enabled = Boolean.Parse(enabledValue);
                     }
-                } while (it.Current.MoveToNext());
-                if (key == null || name == null) continue;
-                BambooPlan plan = new BambooPlan(key, name, enabled, favourite);
-                plans.Add(plan);
+                    it.Current.MoveToFirstChild();
+                    bool favourite = false;
+                    do {
+                        switch (it.Current.Name) {
+                            case "isFavourite":
+                                favourite = it.Current.Value.Equals("true");
+                                break;
+                        }
+                    } while (it.Current.MoveToNext());
+                    if (key == null || name == null) continue;
+                    BambooPlan plan = new BambooPlan(key, name, enabled, favourite);
+                    plans.Add(plan);
+                }
+                return plans;
             }
-            return plans;
         }
 
         public ICollection<BambooBuild> getLatestBuildsForFavouritePlans() {
@@ -152,57 +153,57 @@ namespace Atlassian.plvs.api.bamboo.rest {
         }
 
         private ICollection<BambooBuild> getBuildsFromUrl(string endpoint) {
-            Stream stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint), true);
+            using (Stream stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint), true)) {
+                XPathDocument doc = XPathUtils.getXmlDocument(stream);
 
-            XPathDocument doc = XPathUtils.getXmlDocument(stream);
+                string code = getRestErrorStatusCode(doc);
+                if (code != null) {
+                    throw new Exception(code);
+                }
 
-            string code = getRestErrorStatusCode(doc);
-            if (code != null) {
-                throw new Exception(code);
+                XPathNavigator nav = doc.CreateNavigator();
+                XPathExpression expr = nav.Compile("/builds/builds/build");
+                XPathNodeIterator it = nav.Select(expr);
+
+                List<BambooBuild> builds = new List<BambooBuild>();
+
+                while (it.MoveNext()) {
+                    int number = int.Parse(XPathUtils.getAttributeSafely(it.Current, "number", "-1"));
+                    string key = XPathUtils.getAttributeSafely(it.Current, "key", null);
+                    string state = XPathUtils.getAttributeSafely(it.Current, "state", null);
+                    it.Current.MoveToFirstChild();
+                    string buildRelativeTime = null;
+                    string buildDurationDescription = null;
+                    int successfulTestCount = 0;
+                    int failedTestCount = 0;
+                    string buildReason = null;
+                    do {
+                        switch (it.Current.Name) {
+                            case "buildRelativeTime":
+                                buildRelativeTime = it.Current.Value;
+                                break;
+                            case "buildDurationDescription":
+                                buildDurationDescription = it.Current.Value;
+                                break;
+                            case "successfulTestCount":
+                                successfulTestCount = int.Parse(it.Current.Value);
+                                break;
+                            case "failedTestCount":
+                                failedTestCount = int.Parse(it.Current.Value);
+                                break;
+                            case "buildReason":
+                                buildReason = it.Current.Value;
+                                break;
+                        }
+                    } while (it.Current.MoveToNext());
+                    if (key == null) continue;
+                    BambooBuild build = new BambooBuild(server,
+                        key, BambooBuild.stringToResult(state), number, buildRelativeTime,
+                        buildDurationDescription, successfulTestCount, failedTestCount, buildReason);
+                    builds.Add(build);
+                }
+                return builds;
             }
-
-            XPathNavigator nav = doc.CreateNavigator();
-            XPathExpression expr = nav.Compile("/builds/builds/build");
-            XPathNodeIterator it = nav.Select(expr);
-
-            List<BambooBuild> builds = new List<BambooBuild>();
-
-            while (it.MoveNext()) {
-                int number = int.Parse(XPathUtils.getAttributeSafely(it.Current, "number", "-1"));
-                string key = XPathUtils.getAttributeSafely(it.Current, "key", null);
-                string state = XPathUtils.getAttributeSafely(it.Current, "state", null);
-                it.Current.MoveToFirstChild();
-                string buildRelativeTime = null;
-                string buildDurationDescription = null;
-                int successfulTestCount = 0;
-                int failedTestCount = 0;
-                string buildReason = null;
-                do {
-                    switch (it.Current.Name) {
-                        case "buildRelativeTime":
-                            buildRelativeTime = it.Current.Value;
-                            break;
-                        case "buildDurationDescription":
-                            buildDurationDescription = it.Current.Value;
-                            break;
-                        case "successfulTestCount":
-                            successfulTestCount = int.Parse(it.Current.Value);
-                            break;
-                        case "failedTestCount":
-                            failedTestCount = int.Parse(it.Current.Value);
-                            break;
-                        case "buildReason":
-                            buildReason = it.Current.Value;
-                            break;
-                    }
-                } while (it.Current.MoveToNext());
-                if (key == null) continue;
-                BambooBuild build = new BambooBuild(server,
-                    key, BambooBuild.stringToResult(state), number, buildRelativeTime, 
-                    buildDurationDescription, successfulTestCount, failedTestCount, buildReason);
-                builds.Add(build);
-            }
-            return builds;
         }
 
         public void runBuild(string planKey) {
