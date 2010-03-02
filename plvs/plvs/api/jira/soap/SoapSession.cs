@@ -25,6 +25,10 @@ namespace Atlassian.plvs.api.jira.soap {
             }
         }
 
+        public void cleanup() {
+            service.Abort();
+        }
+
         public List<JiraProject> getProjects() {
             RemoteProject[] pTable = service.getProjectsNoSchemes(Token);
             return pTable.Select(p => new JiraProject(int.Parse(p.id), p.key, p.name)).ToList();

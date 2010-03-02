@@ -35,7 +35,11 @@ namespace Atlassian.plvs.api.jira {
 
         public void removeSession(JiraServer server) {
             lock (sessionMap) {
-                sessionMap.Remove(getSessionKey(server));
+                string sessionKey = getSessionKey(server);
+                if (sessionMap.ContainsKey(sessionKey)) {
+                    sessionMap[sessionKey].cleanup();
+                    sessionMap.Remove(sessionKey);
+                }
             }
         }
 
@@ -45,6 +49,9 @@ namespace Atlassian.plvs.api.jira {
 
         public void dropAllSessions() {
             lock(sessionMap) {
+                foreach (var session in sessionMap.Values) {
+                    session.cleanup();
+                }
                 sessionMap.Clear();
             }
         }
