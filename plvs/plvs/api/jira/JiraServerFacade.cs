@@ -224,8 +224,9 @@ namespace Atlassian.plvs.api.jira {
                 setSessionToken(server, session);
                 T res = wrapped();
                 return res;
-            } catch (Exception) {
+            } catch (Exception e) {
                 removeSessionToken(server);
+                maybeHandle503(server, e);
                 throw;
             }
         }
@@ -235,9 +236,19 @@ namespace Atlassian.plvs.api.jira {
             try {
                 setSessionToken(server, session);
                 wrapped();
-            } catch (Exception) {
+            } catch (Exception e) {
                 removeSessionToken(server);
+                maybeHandle503(server, e);
                 throw;
+            }
+        }
+
+        private static void maybeHandle503(JiraServer server, Exception e) {
+            if (e is SoapSession.LoginException) {
+                Exception inner = e.InnerException;
+                if (inner.Message != null && inner.Message.Contains("503")) {
+                    throw new FiveOhThreeJiraException(server);
+                }
             }
         }
 

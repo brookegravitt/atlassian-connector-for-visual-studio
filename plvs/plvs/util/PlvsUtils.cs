@@ -14,7 +14,9 @@ using System.Windows.Forms;
 #if VS2010
 using System.Windows.Media.Imaging;
 #endif
+using Atlassian.plvs.api.jira;
 using Atlassian.plvs.attributes;
+using Atlassian.plvs.dialogs;
 using EnvDTE;
 
 namespace Atlassian.plvs.util {
@@ -72,19 +74,48 @@ namespace Atlassian.plvs.util {
             button.Text = text + " (" + bindingText.Substring("Global::".Length) + ")";
         }
 
-        public static void showErrors(string msg, IEnumerable<Exception> exceptions) {
+        public static void showErrors(string msg, ICollection<Exception> exceptions) {
+            if (exceptions.Count == 1) {
+                foreach (Exception e in exceptions) {
+                    FiveOhThreeJiraException ex = e as FiveOhThreeJiraException;
+                    if (ex != null) {
+                        MessageBoxWithHtml.showError(Constants.ERROR_CAPTION, getJira503Description(ex.Server));
+                    } else {
+                        showNonJira503Errors(exceptions, msg);
+                    }
+                    break;
+                }
+            } else {
+                showNonJira503Errors(exceptions, msg);
+            }
+        }
+
+        private static string getJira503Description(JiraServer server) {
+            return string.Format(
+                "Your JIRA server \"<a href={1}>{0}</a>\" has returned error 503 (Service unavailable). This usually means that the server is "
+                + "not configured to accept remote API calls. <p>You can configure remote client access to your server "
+                + "<a href={1}/secure/admin/jira/EditApplicationProperties!default.jspa>here</a><br>(look for \"Accept remote API calls\").", 
+                server.Name, server.Url);
+        }
+
+        private static void showNonJira503Errors(IEnumerable<Exception> exceptions, string msg) {
             StringBuilder sb = new StringBuilder();
             foreach (Exception exception in exceptions) {
                 sb.Append(getExceptionMessage(exception)).Append("\n");
             }
             MessageBox.Show((msg != null ? msg + "\n\n" : "") + sb + "\n\nPress Ctrl+C to copy error text to clipboard",
-                Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         public static void showError(string msg, Exception e) {
-            string exceptionMessage = getExceptionMessage(e);
-            MessageBox.Show((msg != null ? msg + "\n\n" : "") + exceptionMessage + "\n\nPress Ctrl+C to copy error text to clipboard", 
-                Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            FiveOhThreeJiraException ex = e as FiveOhThreeJiraException;
+            if (ex != null) {
+                MessageBoxWithHtml.showError(Constants.ERROR_CAPTION, getJira503Description(ex.Server));
+            } else {
+                string exceptionMessage = getExceptionMessage(e);
+                MessageBox.Show((msg != null ? msg + "\n\n" : "") + exceptionMessage + "\n\nPress Ctrl+C to copy error text to clipboard",
+                    Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private const string RAE = "com.atlassian.jira.rpc.exception.RemoteAuthenticationException: ";
