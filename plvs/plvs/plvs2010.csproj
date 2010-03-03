@@ -104,6 +104,7 @@
     <Compile Include="api\bamboo\BambooPlan.cs" />
     <Compile Include="api\bamboo\BambooServerFacade.cs" />
     <Compile Include="api\bamboo\rest\RestSession.cs" />
+    <Compile Include="api\jira\FiveOhThreeJiraException.cs" />
     <Compile Include="api\jira\JiraAuthenticatedClient.cs" />
     <Compile Include="api\jira\RestClient.cs" />
     <Compile Include="api\jira\IssueLinkType.cs" />
@@ -197,6 +198,12 @@
     </Compile>
     <Compile Include="dialogs\jira\NewIssueComment.Designer.cs">
       <DependentUpon>NewIssueComment.cs</DependentUpon>
+    </Compile>
+	<Compile Include="dialogs\MessageBoxWithHtml.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\MessageBoxWithHtml.Designer.cs">
+      <DependentUpon>MessageBoxWithHtml.cs</DependentUpon>
     </Compile>
     <Compile Include="dialogs\ProjectConfiguration.cs">
       <SubType>Form</SubType>
@@ -570,6 +577,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\jira\NewIssueComment.resx">
       <DependentUpon>NewIssueComment.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\MessageBoxWithHtml.resx">
+      <DependentUpon>MessageBoxWithHtml.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\ProjectConfiguration.resx">
