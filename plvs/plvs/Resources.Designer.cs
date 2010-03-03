@@ -138,8 +138,6 @@ namespace Atlassian.plvs {
         ///
         ///&lt;div&gt;{3}&lt;/div&gt;
         ///
-        ///&lt;div&gt;&lt;a href=&quot;{4}&quot;&gt;See full release notes&lt;/a&gt;&lt;/div&gt;
-        ///
         ///&lt;/div&gt;
         ///&lt;/body&gt;
         ///.
@@ -276,6 +274,13 @@ namespace Atlassian.plvs {
         internal static string comments_css {
             get {
                 return ResourceManager.GetString("comments_css", resourceCulture);
+            }
+        }
+        
+        internal static System.Drawing.Bitmap CopyHS {
+            get {
+                object obj = ResourceManager.GetObject("CopyHS", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

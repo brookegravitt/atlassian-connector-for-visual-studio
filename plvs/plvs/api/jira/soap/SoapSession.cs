@@ -6,19 +6,19 @@ using Atlassian.plvs.dialogs;
 
 namespace Atlassian.plvs.api.jira.soap {
     public class SoapSession : IDisposable {
-        private readonly string url;
-        public string Token { get; private set; }
+
+        public string Token { get; set; }
         private readonly JiraSoapServiceService service = new JiraSoapServiceService();
 
-        public SoapSession(string u) {
-            url = u + "/rpc/soap/jirasoapservice-v2";
-            service.Url = url;
+        public SoapSession(string url) {
+            service.Url = url + "/rpc/soap/jirasoapservice-v2";
             service.Timeout = GlobalSettings.JiraTimeout * 1000;
         }
 
-        public void login(string userName, string password) {
+        public string login(string userName, string password) {
             try {
                 Token = service.login(userName, password);
+                return Token;
             } catch (Exception e) {
                 throw new LoginException(e);
             }
@@ -30,9 +30,6 @@ namespace Atlassian.plvs.api.jira.soap {
         }
 
         public void Dispose() {
-            if (Token != null) {
-                service.logout(Token);
-            }
             service.Dispose();
         }
 
@@ -183,7 +180,8 @@ namespace Atlassian.plvs.api.jira.soap {
                 throw new Exception("Field values must not be empty");
             }
             service.progressWorkflowAction(Token, issue.Key, id.ToString(), 
-                (from field in fields where field.Values != null select new RemoteFieldValue {id = field.Id, values = field.Values.ToArray()}).ToArray());
+                (from field in fields where field.Values != null 
+                 select new RemoteFieldValue {id = field.Id, values = field.Values.ToArray()}).ToArray());
             if (!string.IsNullOrEmpty(comment)) {
                 service.addComment(Token, issue.Key, new RemoteComment { body = comment });
             }
@@ -212,8 +210,6 @@ namespace Atlassian.plvs.api.jira.soap {
             service.addBase64EncodedAttachmentsToIssue(Token, key, new[] {name}, new[] {Convert.ToBase64String(attachment)});
         }
 
-        #region private parts
-
         private static List<JiraNamedEntity> createEntityList(IEnumerable<AbstractNamedRemoteEntity> entities) {
             return entities.Select(val => new JiraNamedEntity(int.Parse(val.id), val.name, null)).ToList();
         }
@@ -221,7 +217,5 @@ namespace Atlassian.plvs.api.jira.soap {
         private static List<JiraNamedEntity> createEntityListFromConstants(IEnumerable<AbstractRemoteConstant> vals) {
             return vals.Select(val => new JiraNamedEntity(int.Parse(val.id), val.name, val.icon)).ToList();
         }
-
-        #endregion
     }
 }
