@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 
 namespace Atlassian.plvs.api.jira {
     public class JiraServer : Server {
