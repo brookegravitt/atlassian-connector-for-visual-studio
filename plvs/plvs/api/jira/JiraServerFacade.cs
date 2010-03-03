@@ -13,13 +13,10 @@ namespace Atlassian.plvs.api.jira {
             get { return INSTANCE; }
         }
 
+        private readonly Dictionary<string, string> tokenMap = new Dictionary<string, string>();
+
         private JiraServerFacade() {
             PlvsUtils.installSslCertificateHandler();
-        }
-
-        private static SoapSession createSoapSession(JiraServer server) {
-            SoapSession s = new SoapSession(server.Url);
-            return s;
         }
 
         public void login(JiraServer server) {
@@ -27,13 +24,16 @@ namespace Atlassian.plvs.api.jira {
         }
 
         public void dropAllSessions() {
+            lock(tokenMap) {
+                tokenMap.Clear();
+            }
         }
 
         public string getSoapToken(JiraServer server) {
             try {
-                SoapSession session = createSoapSession(server);
-                session.login(server.UserName, server.Password);
-                return session.Token;
+                using (SoapSession session = createSoapSession(server)) {
+                    return session.login(server.UserName, server.Password);
+                }
             } catch (Exception e) {
                 Debug.WriteLine("JiraServerFacade.getSoapToken() - exception: " + e.Message);
             }
@@ -209,28 +209,52 @@ namespace Atlassian.plvs.api.jira {
             }
         }
 
+        private static SoapSession createSoapSession(JiraServer server) {
+            SoapSession s = new SoapSession(server.Url);
+            return s;
+        }
+
+        private static string getTokenKey(JiraServer server) {
+            return server.Url + "_" + server.UserName + "_" + server.Password;
+        }
+
         private delegate T Wrapped<T>();
-        private static T wrapExceptions<T>(JiraServer server, SoapSession session, Wrapped<T> wrapped) {
+        private T wrapExceptions<T>(JiraServer server, SoapSession session, Wrapped<T> wrapped) {
             try {
-                session.login(server.UserName, server.Password);
+                setSessionToken(server, session);
                 T res = wrapped();
-                session.logout();
                 return res;
             } catch (Exception) {
-                session.logout();
+                removeSessionToken(server);
                 throw;
             }
         }
 
         private delegate void WrappedVoid();
-        private static void wrapExceptionsVoid(JiraServer server, SoapSession session, WrappedVoid wrapped) {
+        private void wrapExceptionsVoid(JiraServer server, SoapSession session, WrappedVoid wrapped) {
             try {
-                session.login(server.UserName, server.Password);
+                setSessionToken(server, session);
                 wrapped();
-                session.logout();
             } catch (Exception) {
-                session.logout();
+                removeSessionToken(server);
                 throw;
+            }
+        }
+
+        private void setSessionToken(JiraServer server, SoapSession session) {
+            lock (tokenMap) {
+                string tokenKey = getTokenKey(server);
+                if (tokenMap.ContainsKey(tokenKey)) {
+                    session.Token = tokenMap[tokenKey];
+                } else {
+                    tokenMap[tokenKey] = session.login(server.UserName, server.Password);
+                }
+            }
+        }
+
+        private void removeSessionToken(JiraServer server) {
+            lock (tokenMap) {
+                tokenMap.Remove(getTokenKey(server));
             }
         }
     }

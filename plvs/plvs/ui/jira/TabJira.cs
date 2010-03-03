@@ -91,7 +91,7 @@ namespace Atlassian.plvs.ui.jira {
 
             issuesTree = new JiraIssueTree(jiraSplitter.Panel2, status, searchingModel, filtersTree.ItemHeight, filtersTree.Font);
 
-            ToolStripMenuItem copyToClipboardItem = new ToolStripMenuItem("Copy to Clipboard", null)
+            ToolStripMenuItem copyToClipboardItem = new ToolStripMenuItem("Copy to Clipboard", Resources.CopyHS)
                                                     {
                                                         DropDown = createCopyIssueMenuItems()
                                                     };
