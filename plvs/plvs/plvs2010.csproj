@@ -775,6 +775,7 @@
     <Content Include="Resources\icons\bug.png" />
     <Content Include="Resources\icons\close.png" />
     <Content Include="Resources\icons\collapse_all.png" />
+    <Content Include="Resources\icons\CopyHS.png" />
     <Content Include="Resources\icons\dropzone.png" />
     <Content Include="Resources\icons\edit.png" />
     <Content Include="Resources\icons\edit_in_browser.png" />
