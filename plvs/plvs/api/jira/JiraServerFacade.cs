@@ -222,8 +222,18 @@ namespace Atlassian.plvs.api.jira {
         private T wrapExceptions<T>(JiraServer server, SoapSession session, Wrapped<T> wrapped) {
             try {
                 setSessionToken(server, session);
-                T res = wrapped();
-                return res;
+                return wrapped();
+            } catch (System.Web.Services.Protocols.SoapException) {
+                // let's retry _just once_ - PLVS-27
+                removeSessionToken(server);
+                try {
+                    setSessionToken(server, session);
+                    return wrapped();
+                } catch (Exception e) {
+                    removeSessionToken(server);
+                    maybeHandle503(server, e);
+                    throw;
+                }
             } catch (Exception e) {
                 removeSessionToken(server);
                 maybeHandle503(server, e);
@@ -236,6 +246,17 @@ namespace Atlassian.plvs.api.jira {
             try {
                 setSessionToken(server, session);
                 wrapped();
+            } catch (System.Web.Services.Protocols.SoapException) {
+                // let's retry _just once_ - PLVS-27
+                removeSessionToken(server);
+                try {
+                    setSessionToken(server, session);
+                    wrapped();
+                } catch (Exception e) {
+                    removeSessionToken(server);
+                    maybeHandle503(server, e);
+                    throw;
+                }
             } catch (Exception e) {
                 removeSessionToken(server);
                 maybeHandle503(server, e);
