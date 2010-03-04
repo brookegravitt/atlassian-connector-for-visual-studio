@@ -266,7 +266,7 @@ namespace Atlassian.plvs.models.jira {
             ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
 
             int filtersCount = store.loadParameter(FILTER_COUNT, 0);
-            ICollection<JiraServer> servers = JiraServerModel.Instance.getAllEnabledServers();
+            ICollection<JiraServer> servers = JiraServerModel.Instance.getAllServers();
 
             for (int i = 0; i < filtersCount; ++i) {
                 string filterGuidStr = store.loadParameter(FILTER_GUID + i, null);
