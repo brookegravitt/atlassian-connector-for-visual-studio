@@ -71,5 +71,11 @@ namespace Atlassian.plvs.dialogs {
                 Close();
             }
         }
+
+        private void webContent_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e) {
+            if (e.KeyValue == (char)Keys.Escape) {
+                Close();
+            }
+        }
     }
 }
