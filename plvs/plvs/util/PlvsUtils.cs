@@ -79,7 +79,9 @@ namespace Atlassian.plvs.util {
                 foreach (Exception e in exceptions) {
                     FiveOhThreeJiraException ex = e as FiveOhThreeJiraException;
                     if (ex != null) {
-                        MessageBoxWithHtml.showError(Constants.ERROR_CAPTION, getJira503Description(ex.Server));
+                        MessageBoxWithHtml.showError(
+                            Constants.ERROR_CAPTION, getJira503Description(ex.Server), 
+                            () => Clipboard.SetText(getFullExceptionTextDetails(msg, ex)), null);
                     } else {
                         showNonJira503Errors(exceptions, msg);
                     }
@@ -92,30 +94,55 @@ namespace Atlassian.plvs.util {
 
         private static string getJira503Description(JiraServer server) {
             return string.Format(
-                "Your JIRA server \"<a href={1}>{0}</a>\" has returned error 503 (Service unavailable). This usually means that the server is "
-                + "not configured to accept remote API calls. <p>You can configure remote client access to your server "
-                + "<a href={1}/secure/admin/jira/EditApplicationProperties!default.jspa>here</a><br>(look for \"Accept remote API calls\").", 
+                "Your JIRA server \"<a href={1}>{0}</a>\" has returned error 503 (Service unavailable). \r\nThis usually means that the server is "
+                + "not configured to accept remote API calls. \r\n<p>You can configure remote client access to your server \r\n"
+                + "<a href={1}/secure/admin/jira/EditApplicationProperties!default.jspa>here</a><br>(look for \"Accept remote API calls\").\r\n", 
                 server.Name, server.Url);
         }
 
         private static void showNonJira503Errors(IEnumerable<Exception> exceptions, string msg) {
             StringBuilder sb = new StringBuilder();
-            foreach (Exception exception in exceptions) {
-                sb.Append(getExceptionMessage(exception)).Append("\n");
+            List<Exception> exList = new List<Exception>(exceptions);
+            int i = 0;
+            foreach (Exception exception in exList) {
+                sb.Append(getExceptionMessage(exception)).Append(getExceptionDetailsLink("" + i));
+                ++i;
+                if (i < exList.Count) {
+                    sb.Append("<br>\r\n");
+                }
             }
-            MessageBox.Show((msg != null ? msg + "\n\n" : "") + sb + "\n\nPress Ctrl+C to copy error text to clipboard",
-                            Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBoxWithHtml.showError(Constants.ERROR_CAPTION, (msg != null ? msg + "<br>\r\n<br>\r\n" : "") + sb,
+                delegate {
+                    sb = new StringBuilder();
+                    foreach (var exception in exList) {
+                        sb.Append(getFullExceptionTextDetails(msg, exception));
+                        sb.Append("\r\n");
+                    }
+                    Clipboard.SetText(sb.ToString());
+                },
+                delegate(string tag) {
+                    int idx = int.Parse(tag);
+                    new ExceptionViewer(null, exList[idx]).ShowDialog();
+                });
         }
 
         public static void showError(string msg, Exception e) {
             FiveOhThreeJiraException ex = e as FiveOhThreeJiraException;
             if (ex != null) {
-                MessageBoxWithHtml.showError(Constants.ERROR_CAPTION, getJira503Description(ex.Server));
+                MessageBoxWithHtml.showError(
+                    Constants.ERROR_CAPTION, getJira503Description(ex.Server), 
+                    () => Clipboard.SetText(getFullExceptionTextDetails(msg, ex)), null);
             } else {
-                string exceptionMessage = getExceptionMessage(e);
-                MessageBox.Show((msg != null ? msg + "\n\n" : "") + exceptionMessage + "\n\nPress Ctrl+C to copy error text to clipboard",
-                    Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                string exceptionMessage = getExceptionMessage(e) + getExceptionDetailsLink("ex");
+                MessageBoxWithHtml.showError(
+                    Constants.ERROR_CAPTION, (msg != null ? msg + "<br>\r\n<br>\r\n" : "") + exceptionMessage,
+                    () => Clipboard.SetText(getFullExceptionTextDetails(msg, e)),
+                    delegate { new ExceptionViewer(msg, e).ShowDialog(); });
             }
+        }
+
+        private static string getExceptionDetailsLink(string tag) {
+            return "<br><a href=\"" + MessageBoxWithHtml.EXCEPTION_LINK_TAG + tag + "\">exception details</a>";                
         }
 
         private const string RAE = "com.atlassian.jira.rpc.exception.RemoteAuthenticationException: ";
@@ -252,6 +279,21 @@ namespace Atlassian.plvs.util {
             } catch (InvalidOperationException e) {
                 Debug.WriteLine("PlvsUtils.safeInvoke() - exception: " + e.Message);
             }
+        }
+
+        public static string getFullExceptionTextDetails(string message, Exception exception) {
+            if (message == null && exception == null) {
+                return "";
+            }
+            string innerExceptionDetails = exception != null ? getFullExceptionTextDetails(null, exception.InnerException) : null;
+            return 
+                (message != null ? message + "\r\n\r\n" : "") 
+                + (exception != null
+                    ? (exception.Message + "\r\n\r\n" 
+                        + exception.GetType() + "\r\n\r\n" 
+                        + (string.IsNullOrEmpty(innerExceptionDetails) ? "" : innerExceptionDetails + "\r\n\r\n")
+                        +  exception.StackTrace)
+                    : "");
         }
     }
 }

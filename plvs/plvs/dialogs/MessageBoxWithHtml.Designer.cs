@@ -23,10 +23,12 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MessageBoxWithHtml));
             this.buttonOk = new System.Windows.Forms.Button();
             this.webContent = new System.Windows.Forms.WebBrowser();
             this.labelIcon = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.linkCopyToClipboard = new System.Windows.Forms.LinkLabel();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -70,22 +72,37 @@
             this.panel1.Size = new System.Drawing.Size(465, 135);
             this.panel1.TabIndex = 3;
             // 
+            // linkCopyToClipboard
+            // 
+            this.linkCopyToClipboard.AutoSize = true;
+            this.linkCopyToClipboard.Location = new System.Drawing.Point(15, 151);
+            this.linkCopyToClipboard.Name = "linkCopyToClipboard";
+            this.linkCopyToClipboard.Size = new System.Drawing.Size(150, 13);
+            this.linkCopyToClipboard.TabIndex = 4;
+            this.linkCopyToClipboard.TabStop = true;
+            this.linkCopyToClipboard.Text = "Copy Error Details to Clipboard";
+            this.linkCopyToClipboard.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkCopyToClipboard_LinkClicked);
+            // 
             // MessageBoxWithHtml
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(464, 186);
+            this.Controls.Add(this.linkCopyToClipboard);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.buttonOk);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "MessageBoxWithHtml";
-            this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.Text = "MessageBoxWithHtml";
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.messageBoxWithHtmlKeyPress);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -95,5 +112,6 @@
         private System.Windows.Forms.WebBrowser webContent;
         private System.Windows.Forms.Label labelIcon;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.LinkLabel linkCopyToClipboard;
     }
 }
