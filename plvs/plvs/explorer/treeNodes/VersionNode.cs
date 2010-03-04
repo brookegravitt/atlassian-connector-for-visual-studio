@@ -18,8 +18,8 @@ namespace Atlassian.plvs.explorer.treeNodes {
 
             ContextMenuStrip = new ContextMenuStrip();
 
-            menuItems.Add(new ToolStripMenuItem("Open \"Fix For\" Drop Zone", null, createFixForDropZone));
-            menuItems.Add(new ToolStripMenuItem("Open \"Affects\" Drop Zone", null, createAffectsDropZone));
+            menuItems.Add(new ToolStripMenuItem("Open \"Set Fix For " + version.Name + "\" Drop Zone", null, createFixForDropZone));
+            menuItems.Add(new ToolStripMenuItem("Open \"Set Affects " + version.Name + "\" Drop Zone", null, createAffectsDropZone));
 
             ContextMenuStrip.Items.Add("dummy");
 

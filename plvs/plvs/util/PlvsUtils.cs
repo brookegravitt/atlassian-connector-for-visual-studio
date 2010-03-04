@@ -212,6 +212,22 @@ namespace Atlassian.plvs.util {
             return ms.GetBuffer();
         }
 
+        /// <summary>
+        /// This method fixes PLVS-109 - for some weird reason if you only add one menu item 
+        /// to a drop down during DropDownOpened event, the menu shows up at coordinates (0, 0)
+        /// instead of below the drop down button. Probably some Windows Forms bug 
+        /// - I am able to reproduce this on a plain Forms project
+        /// </summary>
+        public static void addPhonyMenuItemFixingPlvs109(ToolStripDropDownButton menu) {
+            ToolStripSeparator toolStripSeparator = new ToolStripSeparator();
+            menu.DropDownItems.Add(toolStripSeparator);
+            // yes, just one microsecond is enough to make it work. There probably is a better way, 
+            // but frankly, I cannot be bothered to figure out what it could be
+            Timer t = new Timer { Interval = 1 };
+            t.Tick += (a, b) => { t.Stop(); menu.DropDownItems.Remove(toolStripSeparator); };
+            t.Start();
+        }
+
         ///  FUNCTION Enquote Public Domain 2002 JSON.org 
         ///  @author JSON.org 
         ///  @version 0.1 

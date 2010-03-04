@@ -824,7 +824,7 @@ namespace Atlassian.plvs.ui.jira {
         private void dropDownIssueActions_DropDownOpened(object sender, EventArgs e) {
             dropDownIssueActions.DropDownItems.Clear();
 
-            addPhonyMenuItemFixingPlvs109();
+            PlvsUtils.addPhonyMenuItemFixingPlvs109(dropDownIssueActions);
             dropDownIssueActions.DropDownItems.Add(new ToolStripMenuItem
                                                    {Text = "Loading issue actions...", Enabled = false});
             dropDownIssueActions.ToolTipText = "";
@@ -849,7 +849,7 @@ namespace Atlassian.plvs.ui.jira {
 
             Invoke(new MethodInvoker(delegate {
                 dropDownIssueActions.DropDownItems.Clear();
-                                         addPhonyMenuItemFixingPlvs109();
+                                         PlvsUtils.addPhonyMenuItemFixingPlvs109(dropDownIssueActions);
                                          foreach (ToolStripMenuItem item in from action in actions
                                                                             let actionCopy = action
                                                                             select new ToolStripMenuItem(action.Name, null, 
@@ -860,25 +860,6 @@ namespace Atlassian.plvs.ui.jira {
                                              dropDownIssueActions.DropDownItems.Add(item);
                                          }
                                      }));
-        }
-
-        /// <summary>
-        /// This method fixes PLVS-109 - for some weird reason if you only add one menu item 
-        /// to a drop down during DropDownOpened event, the menu shows up at coordinates (0, 0)
-        /// instead of below the drop down button. Probably some Windows Forms bug 
-        /// - I am able to reproduce this on a plain Forms project
-        /// </summary>
-        private void addPhonyMenuItemFixingPlvs109() {
-            ToolStripSeparator toolStripSeparator = new ToolStripSeparator();
-            dropDownIssueActions.DropDownItems.Add(toolStripSeparator);
-            // yes, just one microsecond is enough to make it work. There probably is a better way, 
-            // but frankly, I cannot be bothered to figure out what it could be
-            Timer t = new Timer {Interval = 1};
-            t.Tick += (a, b) => {
-                          t.Stop();
-                          dropDownIssueActions.DropDownItems.Remove(toolStripSeparator);
-                      };
-            t.Start();
         }
 
         private void buttonLogWork_Click(object sender, EventArgs e) {

@@ -22,7 +22,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
 
             worker = new AssigneeDropZoneWorker(Facade, Server, user);
 
-            menuItems.Add(new ToolStripMenuItem("Open \"Assignee\" Drop Zone", null, createDropZone));
+            menuItems.Add(new ToolStripMenuItem("Open \"Assign to " + user + "\" Drop Zone", null, createDropZone));
 
             ContextMenuStrip.Items.Add("dummy");
 
