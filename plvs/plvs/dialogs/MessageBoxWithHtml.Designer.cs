@@ -54,6 +54,7 @@
             this.webContent.TabIndex = 1;
             this.webContent.WebBrowserShortcutsEnabled = false;
             this.webContent.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webContent_Navigating);
+            this.webContent.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.webContent_PreviewKeyDown);
             // 
             // labelIcon
             // 
