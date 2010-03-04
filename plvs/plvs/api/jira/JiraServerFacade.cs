@@ -20,7 +20,12 @@ namespace Atlassian.plvs.api.jira {
         }
 
         public void login(JiraServer server) {
-            createSoapSession(server).login(server.UserName, server.Password);
+            try {
+                createSoapSession(server).login(server.UserName, server.Password);
+            } catch (Exception e) {
+                maybeHandle503(server, e);
+                throw;
+            }
         }
 
         public void dropAllSessions() {
