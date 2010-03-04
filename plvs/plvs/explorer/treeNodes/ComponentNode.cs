@@ -19,7 +19,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
 
             ContextMenuStrip = new ContextMenuStrip();
 
-            menuItems.Add(new ToolStripMenuItem("Open \"Component\" Drop Zone", null, createDropZone));
+            menuItems.Add(new ToolStripMenuItem("Open \"Set Component to " + comp.Name + "\" Drop Zone", null, createDropZone));
 
             ContextMenuStrip.Items.Add("dummy");
 

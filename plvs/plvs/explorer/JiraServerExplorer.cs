@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.explorer.treeNodes;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
+using Atlassian.plvs.util;
 using Atlassian.plvs.util.jira;
 
 namespace Atlassian.plvs.explorer {
@@ -41,6 +41,8 @@ namespace Atlassian.plvs.explorer {
 
             dropDownActions.Enabled = false;
 
+            dropDownActions.DropDownItems.Add("phony");
+
             webJira.Title = "";
             webJira.ErrorString = Resources.explorer_navigator_error_html;
         }
@@ -67,6 +69,7 @@ namespace Atlassian.plvs.explorer {
 
         private void treeJira_AfterSelect(object sender, TreeViewEventArgs e) {
             AbstractNavigableTreeNodeWithServer node = treeJira.SelectedNode as AbstractNavigableTreeNodeWithServer;
+            dropDownActions.DropDownItems.Add("phony");
             if (node != null) {
                 node.onClick(status);
                 string url = node.getUrl(JiraIssueUtils.getAuthString(server));
@@ -74,12 +77,6 @@ namespace Atlassian.plvs.explorer {
 
                 ICollection<ToolStripItem> menuItems = node.MenuItems;
                 dropDownActions.Enabled = menuItems != null && menuItems.Count > 0;
-                if (menuItems != null) {
-                    dropDownActions.DropDownItems.Clear();
-                    foreach (ToolStripItem item in menuItems) {
-                        dropDownActions.DropDownItems.Add(item);
-                    }
-                }
             } else {
                 dropDownActions.Enabled = false;
             }
@@ -99,6 +96,20 @@ namespace Atlassian.plvs.explorer {
             if (!firstSelect) return;
             firstSelect = false;
             e.Cancel = true;
+        }
+
+        private void dropDownActions_DropDownOpened(object sender, EventArgs e) {
+            AbstractNavigableTreeNodeWithServer node = treeJira.SelectedNode as AbstractNavigableTreeNodeWithServer;
+            if (node == null) return;
+
+            ICollection<ToolStripItem> menuItems = node.MenuItems;
+            if (menuItems == null) return;
+
+            dropDownActions.DropDownItems.Clear();
+            foreach (ToolStripItem item in menuItems) {
+                dropDownActions.DropDownItems.Add(item);
+            }
+            PlvsUtils.addPhonyMenuItemFixingPlvs109(dropDownActions);
         }
     }
 }

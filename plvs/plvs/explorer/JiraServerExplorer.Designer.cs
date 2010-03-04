@@ -36,7 +36,7 @@ namespace Atlassian.plvs.explorer {
             this.labelPath = new System.Windows.Forms.ToolStripStatusLabel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.treeJira = new System.Windows.Forms.TreeView();
-            this.webJira = new WebBrowserWithLabel();
+            this.webJira = new ui.WebBrowserWithLabel();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.dropDownActions = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
@@ -155,20 +155,23 @@ namespace Atlassian.plvs.explorer {
             // webJira
             // 
             this.webJira.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webJira.ErrorString = null;
             this.webJira.Location = new System.Drawing.Point(0, 0);
             this.webJira.MinimumSize = new System.Drawing.Size(20, 20);
             this.webJira.Name = "webJira";
             this.webJira.Size = new System.Drawing.Size(608, 401);
             this.webJira.TabIndex = 0;
+            this.webJira.Title = "No Title";
             // 
             // toolStrip1
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.dropDownActions});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(146, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(168, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // dropDownActions
@@ -177,6 +180,7 @@ namespace Atlassian.plvs.explorer {
             this.dropDownActions.Name = "dropDownActions";
             this.dropDownActions.Size = new System.Drawing.Size(134, 22);
             this.dropDownActions.Text = "Selected Item Actions";
+            this.dropDownActions.DropDownOpened += new System.EventHandler(this.dropDownActions_DropDownOpened);
             // 
             // JiraServerExplorer
             // 

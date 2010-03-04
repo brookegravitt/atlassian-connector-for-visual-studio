@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.models;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
 
@@ -17,7 +18,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
 
             ContextMenuStrip = new ContextMenuStrip();
 
-            menuItems.Add(new ToolStripMenuItem("Open \"Priority\" Drop Zone", null, createDropZone));
+            menuItems.Add(new ToolStripMenuItem("Open \"Set Priority to " + priority.Name + "\" Drop Zone", ImageCache.Instance.getImage(priority.IconUrl).Img, createDropZone));
 
             ContextMenuStrip.Items.Add("dummy");
 
