@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
-using Atlassian.plvs.api.jira.soap;
 using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.dialogs.jira {
