@@ -19,7 +19,7 @@ namespace Atlassian.plvs.dialogs.jira {
             Exception ex = null;
             try {
                 facade.login(server);
-            } catch (SoapSession.LoginException e) {
+            } catch (Exception e) {
                 ex = e; 
                 result = "Failed to connect to to server";
             }
