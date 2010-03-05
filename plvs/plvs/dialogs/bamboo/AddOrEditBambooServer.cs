@@ -171,7 +171,7 @@ namespace Atlassian.plvs.dialogs.bamboo {
                 ICollection<BambooPlan> plans  = facade.getPlanList(server);
                 Invoke(new MethodInvoker(() => fillPlanList(plans)));
             } catch (Exception e) {
-                PlvsUtils.showError("Unable to retrieve build plans", e);
+                Invoke(new MethodInvoker(() => PlvsUtils.showError("Unable to retrieve build plans", e)));
             } finally {
                 gettingPlans = false;
 
