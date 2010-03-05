@@ -133,7 +133,9 @@
     <Compile Include="dialogs\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
-    <Compile Include="dialogs\ExceptionViewer.cs" />
+    <Compile Include="dialogs\ExceptionViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="dialogs\ExceptionViewer.Designer.cs">
       <DependentUpon>ExceptionViewer.cs</DependentUpon>
     </Compile>
