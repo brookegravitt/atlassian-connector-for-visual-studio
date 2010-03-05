@@ -30,6 +30,18 @@ namespace Atlassian.plvs.ui.jira {
         private readonly NodeIcon controlPriorityIcon = new NodeIcon();
         private readonly NodeTextBox controlUpdated = new NodeTextBox();
 
+        private class ToolTipProvider : IToolTipProvider {
+            public string GetToolTip(TreeNodeAdv node, NodeControl nodeControl) {
+                IssueNode issueNode = node.Tag as IssueNode;
+                if (issueNode != null) {
+                    return issueNode.Issue.ToolTipText;
+                }
+                return null;
+            }
+        }
+
+        private static ToolTipProvider toolTipProvider = new ToolTipProvider();
+
         public JiraIssueTree(Control parent, StatusLabel status, JiraIssueListModel model, int itemHeight, Font font) {
             this.parent = parent;
             this.status = status;
@@ -42,6 +54,7 @@ namespace Atlassian.plvs.ui.jira {
             UseColumns = true;
             RowHeight = itemHeight;
             Font = font;
+            ShowNodeToolTips = true;
 
             colName.Header = "Summary";
             colStatus.Header = "Status";
@@ -52,25 +65,30 @@ namespace Atlassian.plvs.ui.jira {
             controlIcon.ParentColumn = colName;
             controlIcon.DataPropertyName = "Icon";
             controlIcon.LeftMargin = i++;
+            controlIcon.ToolTipProvider = toolTipProvider;
 
             controlName.ParentColumn = colName;
             controlName.DataPropertyName = "Name";
             controlName.Trimming = StringTrimming.EllipsisCharacter;
             controlName.UseCompatibleTextRendering = true;
+            controlName.ToolTipProvider = toolTipProvider;
             controlName.LeftMargin = i++;
 
             controlPriorityIcon.ParentColumn = colPriority;
             controlPriorityIcon.DataPropertyName = "PriorityIcon";
+            controlPriorityIcon.ToolTipProvider = toolTipProvider;
             controlPriorityIcon.LeftMargin = i++;
 
             controlStatusIcon.ParentColumn = colStatus;
             controlStatusIcon.DataPropertyName = "StatusIcon";
+            controlStatusIcon.ToolTipProvider = toolTipProvider;
             controlStatusIcon.LeftMargin = i++;
 
             controlStatusText.ParentColumn = colStatus;
             controlStatusText.DataPropertyName = "StatusText";
             controlStatusText.Trimming = StringTrimming.EllipsisCharacter;
             controlStatusText.UseCompatibleTextRendering = true;
+            controlStatusText.ToolTipProvider = toolTipProvider;
             controlStatusText.LeftMargin = i++;
 
             controlUpdated.ParentColumn = colUpdated;
@@ -78,6 +96,7 @@ namespace Atlassian.plvs.ui.jira {
             controlUpdated.Trimming = StringTrimming.EllipsisCharacter;
             controlUpdated.UseCompatibleTextRendering = true;
             controlUpdated.TextAlign = HorizontalAlignment.Right;
+            controlUpdated.ToolTipProvider = toolTipProvider;
             controlUpdated.LeftMargin = i;
 
             Columns.Add(colName);
