@@ -1,4 +1,5 @@
-﻿using Atlassian.plvs.markers;
+﻿using System;
+using Atlassian.plvs.markers;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.TextManager.Interop;
@@ -15,9 +16,27 @@ namespace Atlassian.plvs.eventsinks {
 
         public int OnLoadCompleted(int fReload) {
             ConnectionPoint.Unadvise(Cookie);
-            JiraEditorLinkManager.OnDocumentOpened(TextLines);
+
+            bool sharp = isCSharp(TextLines);
+            if (sharp || isVb(TextLines)) {
+                JiraEditorLinkManager.OnDocumentOpened(TextLines, sharp 
+                    ? JiraEditorLinkManager.BufferType.CSHARP
+                    : JiraEditorLinkManager.BufferType.VISUAL_BASIC);
+            }
 
             return VSConstants.S_OK;
+        }
+
+        private static bool isCSharp(IVsTextLines textLines) {
+            Guid languageServiceId;
+            textLines.GetLanguageServiceID(out languageServiceId);
+            return GuidList.CSHARP_LANGUAGE_GUID.Equals(languageServiceId);
+        }
+
+        private static bool isVb(IVsTextLines textLines) {
+            Guid languageServiceId;
+            textLines.GetLanguageServiceID(out languageServiceId);
+            return GuidList.VB_LANGUAGE_GUID.Equals(languageServiceId);
         }
     }
 }

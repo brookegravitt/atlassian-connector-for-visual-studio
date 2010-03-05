@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Atlassian.plvs.eventsinks;
 using Atlassian.plvs.util.jira;
@@ -8,6 +8,14 @@ using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace Atlassian.plvs.markers {
     internal class JiraEditorLinkManager {
+
+        public enum BufferType {
+            CSHARP,
+            VISUAL_BASIC
+        }
+
+        private static readonly List<IVsTextBuffer> cssBuffers = new List<IVsTextBuffer>();
+        private static readonly List<IVsTextBuffer> vbBuffers = new List<IVsTextBuffer>();
 
         private static readonly Regex BlockInOneLine = new Regex(@"/\*(.*)\*/");
         private static readonly Regex BlockCommentStarted = new Regex(@"/\*(.*)");
@@ -31,10 +39,30 @@ namespace Atlassian.plvs.markers {
 
         public static void OnSolutionClosed() {}
 
-        public static void OnDocumentClosed(IVsTextLines lines) {}
+        public static void OnDocumentClosed(IVsTextLines lines) {
+            lock(cssBuffers) {
+                if (cssBuffers.Contains(lines)) cssBuffers.Remove(lines);
+            }
 
-        public static void OnDocumentOpened(IVsTextLines lines) {
-            if (!(isCSharp(lines) || isVb(lines))) return;
+            lock (vbBuffers) {
+                if (vbBuffers.Contains(lines)) vbBuffers.Remove(lines);
+            }
+        }
+
+        public static void OnDocumentOpened(IVsTextLines lines, BufferType type) {
+            switch (type) {
+                case BufferType.CSHARP:
+                    lock(cssBuffers) {
+                        if (!cssBuffers.Contains(lines)) cssBuffers.Add(lines);
+                    }
+                    break;
+                case BufferType.VISUAL_BASIC:
+                    lock (vbBuffers) {
+                        if (!vbBuffers.Contains(lines)) vbBuffers.Add(lines);
+                    }
+                    break;
+            }
+
             if (AtlassianPanel.Instance.Jira != null && AtlassianPanel.Instance.Jira.CurrentlySelectedServer != null) {
                 addMarkersToDocument(lines);
             }
@@ -152,16 +180,42 @@ namespace Atlassian.plvs.markers {
             return new CommentStrings();
         }
 
+
         private static bool isCSharp(IVsTextLines textLines) {
-            Guid languageServiceId;
-            textLines.GetLanguageServiceID(out languageServiceId);
-            return GuidList.CSHARP_LANGUAGE_GUID.Equals(languageServiceId);
+            lock (cssBuffers) {
+                return cssBuffers.Contains(textLines);
+            }
+
+//            object oname = getBufferMoniker(textLines); 
+//            return oname != null ? oname.ToString().EndsWith(".cs") : false;
+
+            // PLVS-139 - GetLanguageServiceID() hangs when ivoked while "Find in Files" is running. 
+//            Guid languageServiceId;
+//            textLines.GetLanguageServiceID(out languageServiceId);
+//            return GuidList.CSHARP_LANGUAGE_GUID.Equals(languageServiceId);
         }
 
+//        private static object getBufferMoniker(IVsTextLines textLines) {
+//            object oname;
+//            Guid guidVsBufferMoniker = typeof(IVsUserData).GUID;
+//            IVsUserData ud = (IVsUserData)textLines;
+//            int hr = ud.GetData(ref guidVsBufferMoniker, out oname);
+
+//            return ErrorHandler.Succeeded(hr) ? oname : null;
+//        }
+
         private static bool isVb(IVsTextLines textLines) {
-            Guid languageServiceId;
-            textLines.GetLanguageServiceID(out languageServiceId);
-            return GuidList.VB_LANGUAGE_GUID.Equals(languageServiceId);
+            lock (vbBuffers) {
+                return vbBuffers.Contains(textLines);
+            }
+
+//            object oname = getBufferMoniker(textLines);
+//            return oname != null ? oname.ToString().EndsWith(".vb") : false;
+
+            // PLVS-139 - GetLanguageServiceID() hangs when ivoked while "Find in Files" is running. 
+//            Guid languageServiceId;
+//            textLines.GetLanguageServiceID(out languageServiceId);
+//            return GuidList.VB_LANGUAGE_GUID.Equals(languageServiceId);
         }
 
         private static void addMarker(IVsTextLines textLines, int line, int start, int end, int markerType,
