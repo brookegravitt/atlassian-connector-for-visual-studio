@@ -163,12 +163,20 @@ namespace Atlassian.plvs.api.jira.soap {
 
         public List<JiraNamedEntity> getActionsForIssue(JiraIssue issue) {
             RemoteNamedObject[] actions = service.getAvailableActions(Token, issue.Key);
-            return actions.Select(action => new JiraNamedEntity(int.Parse(action.id), action.name, null)).ToList();
+            if (actions == null) return new List<JiraNamedEntity>();
+
+            return (from action in actions 
+                    where action != null 
+                    select new JiraNamedEntity(int.Parse(action.id), action.name, null)).ToList();
         }
 
         public List<JiraField> getFieldsForAction(JiraIssue issue, int id) {
             RemoteField[] fields = service.getFieldsForAction(Token, issue.Key, id.ToString());
-            return fields.Select(field => new JiraField(field.id, field.name)).ToList();
+            if (fields == null) return new List<JiraField>();
+
+            return (from field in fields 
+                    where field != null 
+                    select new JiraField(field.id, field.name)).ToList();
         }
 
         public void runIssueActionWithoutParams(JiraIssue issue, int id) {
@@ -211,11 +219,19 @@ namespace Atlassian.plvs.api.jira.soap {
         }
 
         private static List<JiraNamedEntity> createEntityList(IEnumerable<AbstractNamedRemoteEntity> entities) {
-            return entities.Select(val => new JiraNamedEntity(int.Parse(val.id), val.name, null)).ToList();
+            if (entities == null) return new List<JiraNamedEntity>();
+
+            return (from val in entities 
+                    where val != null 
+                    select new JiraNamedEntity(int.Parse(val.id), val.name, null)).ToList();
         }
 
         private static List<JiraNamedEntity> createEntityListFromConstants(IEnumerable<AbstractRemoteConstant> vals) {
-            return vals.Select(val => new JiraNamedEntity(int.Parse(val.id), val.name, val.icon)).ToList();
+            if (vals == null) return new List<JiraNamedEntity>();
+
+            return (from val in vals 
+                    where val != null 
+                    select new JiraNamedEntity(int.Parse(val.id), val.name, val.icon)).ToList();
         }
     }
 }
