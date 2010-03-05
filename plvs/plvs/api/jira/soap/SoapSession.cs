@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Atlassian.plvs.Atlassian.plvs.api.soap.service;
 using Atlassian.plvs.dialogs;
 
@@ -34,8 +35,25 @@ namespace Atlassian.plvs.api.jira.soap {
         }
 
         public List<JiraProject> getProjects() {
-            RemoteProject[] pTable = service.getProjectsNoSchemes(Token);
+            // attempting a workaround for PLVS-133
+#if true
+            object pTable = service.getProjectsNoSchemes(Token);
+            if (pTable.GetType().IsArray) {
+                return (from pobj in ((object[])pTable).ToList()
+                        let id = pobj.GetType().GetProperty("id")
+                        let key = pobj.GetType().GetProperty("key")
+                        let name = pobj.GetType().GetProperty("name")
+                        select new JiraProject(
+                            int.Parse((string) id.GetValue(pobj, null)),
+                            (string) key.GetValue(pobj, null),
+                            (string) name.GetValue(pobj, null)))
+                        .ToList();
+            }
+
+            return new List<JiraProject>();
+#else
             return pTable.Select(p => new JiraProject(int.Parse(p.id), p.key, p.name)).ToList();
+#endif
         }
 
         public List<JiraSavedFilter> getSavedFilters() {
