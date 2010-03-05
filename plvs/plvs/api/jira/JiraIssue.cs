@@ -358,6 +358,22 @@ namespace Atlassian.plvs.api.jira {
 
         public bool HasAttachments { get { return Attachments != null && Attachments.Count > 0; } }
 
+        public string ToolTipText {
+            get {
+                return
+                    Key + "\r\n\r\n"
+                    + "Type:\t\t" + IssueType + "\r\n"
+                    + "Summary:\t" + (Summary.Length < 100 ? Summary : Summary.Substring(0, 100) + "...") + "\r\n"
+                    + "Status:\t\t" + Status + "\r\n"
+                    + "Priority:\t\t" + (Priority ?? "None") + "\r\n"
+                    + "Reporter:\t" + (Reporter ?? "None") + "\r\n"
+                    + "Assignee:\t" + (Assignee ?? "None") + "\r\n"
+                    + "Resolution:\t" + (Resolution ?? "None") + "\r\n"
+                    + "Created:\t\t" + JiraIssueUtils.getTimeStringFromIssueDateTime(CreationDate) + "\r\n"
+                    + "Last Updated:\t" + JiraIssueUtils.getTimeStringFromIssueDateTime(UpdateDate);
+            }
+        }
+
         public bool Equals(JiraIssue other) {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
