@@ -79,7 +79,8 @@
     <Compile Include="api\jira\JiraUser.cs" />
     <Compile Include="api\jira\RssClient.cs" />
     <Compile Include="api\Server.cs" />
-    <Compile Include="api\jira\soap\SoapSession.cs" />
+    <Compile Include="api\jira\soap\SoapSession.cs">
+    </Compile>
     <Compile Include="api\ServerFacade.cs" />
     <Compile Include="attributes\ProvideIssueRepositoryConnector.cs" />
     <Compile Include="attributes\StringValueAttribute.cs" />
