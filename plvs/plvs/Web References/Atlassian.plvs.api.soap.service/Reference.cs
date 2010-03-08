@@ -681,11 +681,13 @@ namespace Atlassian.plvs.Atlassian.plvs.api.soap.service {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapRpcMethodAttribute("", RequestNamespace="http://soap.rpc.jira.atlassian.com", ResponseNamespace="http://jira.atlassian.com/rpc/soap/jirasoapservice-v2")]
         [return: System.Xml.Serialization.SoapElementAttribute("getSecurityLevelReturn")]
-        public RemoteSecurityLevel getSecurityLevel(string in0, string in1) {
+//        public RemoteSecurityLevel getSecurityLevel(string in0, string in1) {
+        public object getSecurityLevel(string in0, string in1) {
             object[] results = this.Invoke("getSecurityLevel", new object[] {
                         in0,
                         in1});
-            return ((RemoteSecurityLevel)(results[0]));
+//            return ((RemoteSecurityLevel)(results[0]));
+            return results[0];
         }
         
         /// <remarks/>
@@ -845,11 +847,12 @@ namespace Atlassian.plvs.Atlassian.plvs.api.soap.service {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapRpcMethodAttribute("", RequestNamespace="http://soap.rpc.jira.atlassian.com", ResponseNamespace="http://jira.atlassian.com/rpc/soap/jirasoapservice-v2")]
         [return: System.Xml.Serialization.SoapElementAttribute("getComponentsReturn")]
-        public RemoteComponent[] getComponents(string in0, string in1) {
+        public object[] getComponents(string in0, string in1) {
+//        public RemoteComponent[] getComponents(string in0, string in1) {
             object[] results = this.Invoke("getComponents", new object[] {
                         in0,
                         in1});
-            return ((RemoteComponent[])(results[0]));
+            return (object[])results[0];
         }
         
         /// <remarks/>
@@ -909,11 +912,13 @@ namespace Atlassian.plvs.Atlassian.plvs.api.soap.service {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapRpcMethodAttribute("", RequestNamespace="http://soap.rpc.jira.atlassian.com", ResponseNamespace="http://jira.atlassian.com/rpc/soap/jirasoapservice-v2")]
         [return: System.Xml.Serialization.SoapElementAttribute("createIssueReturn")]
-        public RemoteIssue createIssue(string in0, RemoteIssue in1) {
+//        public RemoteIssue createIssue(string in0, RemoteIssue in1) {
+        public object createIssue(string in0, RemoteIssue in1) {
             object[] results = this.Invoke("createIssue", new object[] {
                         in0,
                         in1});
-            return ((RemoteIssue)(results[0]));
+//            return ((RemoteIssue)(results[0]));
+            return results[0];
         }
         
         /// <remarks/>
@@ -941,11 +946,13 @@ namespace Atlassian.plvs.Atlassian.plvs.api.soap.service {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapRpcMethodAttribute("", RequestNamespace="http://soap.rpc.jira.atlassian.com", ResponseNamespace="http://jira.atlassian.com/rpc/soap/jirasoapservice-v2")]
         [return: System.Xml.Serialization.SoapElementAttribute("getAvailableActionsReturn")]
-        public RemoteNamedObject[] getAvailableActions(string in0, string in1) {
+//        public RemoteNamedObject[] getAvailableActions(string in0, string in1) {
+        public object[] getAvailableActions(string in0, string in1) {
             object[] results = this.Invoke("getAvailableActions", new object[] {
                         in0,
                         in1});
-            return ((RemoteNamedObject[])(results[0]));
+//            return ((RemoteNamedObject[])(results[0]));
+            return (object[])results[0];
         }
         
         /// <remarks/>
@@ -973,10 +980,12 @@ namespace Atlassian.plvs.Atlassian.plvs.api.soap.service {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapRpcMethodAttribute("", RequestNamespace="http://soap.rpc.jira.atlassian.com", ResponseNamespace="http://jira.atlassian.com/rpc/soap/jirasoapservice-v2")]
         [return: System.Xml.Serialization.SoapElementAttribute("getSubTaskIssueTypesReturn")]
-        public RemoteIssueType[] getSubTaskIssueTypes(string in0) {
+//        public RemoteIssueType[] getSubTaskIssueTypes(string in0) {
+        public object[] getSubTaskIssueTypes(string in0) {
             object[] results = this.Invoke("getSubTaskIssueTypes", new object[] {
                         in0});
-            return ((RemoteIssueType[])(results[0]));
+            return (object[]) results[0];
+//            return ((RemoteIssueType[])(results[0]));
         }
         
         /// <remarks/>
@@ -1173,10 +1182,12 @@ namespace Atlassian.plvs.Atlassian.plvs.api.soap.service {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapRpcMethodAttribute("", RequestNamespace="http://soap.rpc.jira.atlassian.com", ResponseNamespace="http://jira.atlassian.com/rpc/soap/jirasoapservice-v2")]
         [return: System.Xml.Serialization.SoapElementAttribute("getPrioritiesReturn")]
-        public RemotePriority[] getPriorities(string in0) {
+//        public RemotePriority[] getPriorities(string in0) {
+        public object[] getPriorities(string in0) {
             object[] results = this.Invoke("getPriorities", new object[] {
                         in0});
-            return ((RemotePriority[])(results[0]));
+//            return ((RemotePriority[])(results[0]));
+            return (object[])results[0];
         }
         
         /// <remarks/>
@@ -1203,10 +1214,12 @@ namespace Atlassian.plvs.Atlassian.plvs.api.soap.service {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapRpcMethodAttribute("", RequestNamespace="http://soap.rpc.jira.atlassian.com", ResponseNamespace="http://jira.atlassian.com/rpc/soap/jirasoapservice-v2")]
         [return: System.Xml.Serialization.SoapElementAttribute("getResolutionsReturn")]
-        public RemoteResolution[] getResolutions(string in0) {
+//        public RemoteResolution[] getResolutions(string in0) {
+        public object[] getResolutions(string in0) {
             object[] results = this.Invoke("getResolutions", new object[] {
                         in0});
-            return ((RemoteResolution[])(results[0]));
+//            return ((RemoteResolution[])(results[0]));
+            return (object[])results[0];
         }
         
         /// <remarks/>
@@ -1233,10 +1246,12 @@ namespace Atlassian.plvs.Atlassian.plvs.api.soap.service {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapRpcMethodAttribute("", RequestNamespace="http://soap.rpc.jira.atlassian.com", ResponseNamespace="http://jira.atlassian.com/rpc/soap/jirasoapservice-v2")]
         [return: System.Xml.Serialization.SoapElementAttribute("getIssueTypesReturn")]
-        public RemoteIssueType[] getIssueTypes(string in0) {
+//        public RemoteIssueType[] getIssueTypes(string in0) {
+        public object[] getIssueTypes(string in0) {
             object[] results = this.Invoke("getIssueTypes", new object[] {
                         in0});
-            return ((RemoteIssueType[])(results[0]));
+//            return ((RemoteIssueType[])(results[0]));
+            return (object[]) results[0];
         }
         
         /// <remarks/>
@@ -1263,10 +1278,12 @@ namespace Atlassian.plvs.Atlassian.plvs.api.soap.service {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapRpcMethodAttribute("", RequestNamespace="http://soap.rpc.jira.atlassian.com", ResponseNamespace="http://jira.atlassian.com/rpc/soap/jirasoapservice-v2")]
         [return: System.Xml.Serialization.SoapElementAttribute("getStatusesReturn")]
-        public RemoteStatus[] getStatuses(string in0) {
+//        public RemoteStatus[] getStatuses(string in0) {
+        public object[] getStatuses(string in0) {
             object[] results = this.Invoke("getStatuses", new object[] {
                         in0});
-            return ((RemoteStatus[])(results[0]));
+//            return ((RemoteStatus[])(results[0]));
+            return (object[])results[0];
         }
         
         /// <remarks/>
@@ -1845,11 +1862,13 @@ namespace Atlassian.plvs.Atlassian.plvs.api.soap.service {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapRpcMethodAttribute("", RequestNamespace="http://soap.rpc.jira.atlassian.com", ResponseNamespace="http://jira.atlassian.com/rpc/soap/jirasoapservice-v2")]
         [return: System.Xml.Serialization.SoapElementAttribute("getVersionsReturn")]
-        public RemoteVersion[] getVersions(string in0, string in1) {
+//        public RemoteVersion[] getVersions(string in0, string in1) {
+        public object[] getVersions(string in0, string in1) {
             object[] results = this.Invoke("getVersions", new object[] {
                         in0,
                         in1});
-            return ((RemoteVersion[])(results[0]));
+//            return ((RemoteVersion[])(results[0]));
+            return (object[])results[0];
         }
         
         /// <remarks/>
@@ -2101,11 +2120,13 @@ namespace Atlassian.plvs.Atlassian.plvs.api.soap.service {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapRpcMethodAttribute("", RequestNamespace="http://soap.rpc.jira.atlassian.com", ResponseNamespace="http://jira.atlassian.com/rpc/soap/jirasoapservice-v2")]
         [return: System.Xml.Serialization.SoapElementAttribute("getIssueTypesForProjectReturn")]
-        public RemoteIssueType[] getIssueTypesForProject(string in0, string in1) {
+//        public RemoteIssueType[] getIssueTypesForProject(string in0, string in1) {
+        public object[] getIssueTypesForProject(string in0, string in1) {
             object[] results = this.Invoke("getIssueTypesForProject", new object[] {
                         in0,
                         in1});
-            return ((RemoteIssueType[])(results[0]));
+//            return ((RemoteIssueType[])(results[0]));
+            return (object[])results[0];
         }
         
         /// <remarks/>
@@ -2133,11 +2154,13 @@ namespace Atlassian.plvs.Atlassian.plvs.api.soap.service {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapRpcMethodAttribute("", RequestNamespace="http://soap.rpc.jira.atlassian.com", ResponseNamespace="http://jira.atlassian.com/rpc/soap/jirasoapservice-v2")]
         [return: System.Xml.Serialization.SoapElementAttribute("getSubTaskIssueTypesForProjectReturn")]
-        public RemoteIssueType[] getSubTaskIssueTypesForProject(string in0, string in1) {
+//        public RemoteIssueType[] getSubTaskIssueTypesForProject(string in0, string in1) {
+        public object[] getSubTaskIssueTypesForProject(string in0, string in1) {
             object[] results = this.Invoke("getSubTaskIssueTypesForProject", new object[] {
                         in0,
                         in1});
-            return ((RemoteIssueType[])(results[0]));
+//            return ((RemoteIssueType[])(results[0]));
+            return (object[])results[0];
         }
         
         /// <remarks/>
@@ -3775,10 +3798,12 @@ namespace Atlassian.plvs.Atlassian.plvs.api.soap.service {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapRpcMethodAttribute("", RequestNamespace="http://soap.rpc.jira.atlassian.com", ResponseNamespace="http://jira.atlassian.com/rpc/soap/jirasoapservice-v2")]
         [return: System.Xml.Serialization.SoapElementAttribute("getSavedFiltersReturn")]
-        public RemoteFilter[] getSavedFilters(string in0) {
+//        public RemoteFilter[] getSavedFilters(string in0) {
+        public object[] getSavedFilters(string in0) {
             object[] results = this.Invoke("getSavedFilters", new object[] {
                         in0});
-            return ((RemoteFilter[])(results[0]));
+//            return ((RemoteFilter[])(results[0]));
+            return ((object[])(results[0]));
         }
         
         /// <remarks/>
@@ -4041,10 +4066,12 @@ namespace Atlassian.plvs.Atlassian.plvs.api.soap.service {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapRpcMethodAttribute("", RequestNamespace="http://soap.rpc.jira.atlassian.com", ResponseNamespace="http://jira.atlassian.com/rpc/soap/jirasoapservice-v2")]
         [return: System.Xml.Serialization.SoapElementAttribute("getProjectsNoSchemesReturn")]
-        public RemoteProject[] getProjectsNoSchemes(string in0) {
+//        public RemoteProject[] getProjectsNoSchemes(string in0) {
+        public object[] getProjectsNoSchemes(string in0) {
             object[] results = this.Invoke("getProjectsNoSchemes", new object[] {
                         in0});
-            return ((RemoteProject[])(results[0]));
+//            return ((RemoteProject[])(results[0]));
+            return ((object[])(results[0]));
         }
         
         /// <remarks/>

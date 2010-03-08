@@ -6,12 +6,18 @@ using Atlassian.plvs.Atlassian.plvs.api.soap.service;
 using Atlassian.plvs.dialogs;
 
 namespace Atlassian.plvs.api.jira.soap {
+
     public class SoapSession : IDisposable {
 
         public string Token { get; set; }
         private readonly JiraSoapServiceService service = new JiraSoapServiceService();
 
+        public class LoginException : Exception {
+            public LoginException(Exception e) : base("Login failed", e) { }
+        }
+
         public SoapSession(string url) {
+
             service.Url = url + "/rpc/soap/jirasoapservice-v2";
             service.Timeout = GlobalSettings.JiraTimeout * 1000;
         }
@@ -37,28 +43,38 @@ namespace Atlassian.plvs.api.jira.soap {
         public List<JiraProject> getProjects() {
             // attempting a workaround for PLVS-133
 #if true
-            object pTable = service.getProjectsNoSchemes(Token);
-            if (pTable.GetType().IsArray) {
-                return (from pobj in ((object[])pTable).ToList()
-                        let id = pobj.GetType().GetProperty("id")
-                        let key = pobj.GetType().GetProperty("key")
-                        let name = pobj.GetType().GetProperty("name")
-                        select new JiraProject(
-                            int.Parse((string) id.GetValue(pobj, null)),
-                            (string) key.GetValue(pobj, null),
-                            (string) name.GetValue(pobj, null)))
-                        .ToList();
-            }
 
-            return new List<JiraProject>();
+            object[] results = service.getProjectsNoSchemes(Token);
+
+            return (from pobj in results.ToList()
+                    let id = pobj.GetType().GetProperty("id")
+                    let key = pobj.GetType().GetProperty("key")
+                    let name = pobj.GetType().GetProperty("name")
+                    select new JiraProject(
+                        int.Parse((string) id.GetValue(pobj, null)),
+                        (string) key.GetValue(pobj, null),
+                        (string) name.GetValue(pobj, null)))
+                    .ToList();
+
 #else
             return pTable.Select(p => new JiraProject(int.Parse(p.id), p.key, p.name)).ToList();
 #endif
         }
 
         public List<JiraSavedFilter> getSavedFilters() {
+#if true
+            object[] results = service.getSavedFilters(Token);
+            return (from pobj in results.ToList()
+                    let id = pobj.GetType().GetProperty("id")
+                    let name = pobj.GetType().GetProperty("name")
+                    select new JiraSavedFilter(
+                        int.Parse((string) id.GetValue(pobj, null)), 
+                        (string) name.GetValue(pobj, null)))
+                    .ToList();
+#else
             RemoteFilter[] fTable = service.getSavedFilters(Token);
             return fTable.Select(f => new JiraSavedFilter(int.Parse(f.id), f.name)).ToList();
+#endif
         }
 
         public string createIssue(JiraIssue issue) {
@@ -75,30 +91,32 @@ namespace Atlassian.plvs.api.jira.soap {
             }
 
             if (issue.Components != null && issue.Components.Count > 0) {
-                RemoteComponent[] components = service.getComponents(Token, issue.ProjectKey);
+                List<JiraNamedEntity> components = getComponents(issue.ProjectKey);
+//                RemoteComponent[] components = service.getComponents(Token, issue.ProjectKey);
                 List<RemoteComponent> comps = new List<RemoteComponent>();
                 foreach (string t in issue.Components) {
                     // fixme: a bit problematic part. What if two components have the same name?
                     // I suppose JiraIssue class has to be fixed, but that would require more problematic
                     // construction of it during server query
                     string tCopy = t;
-                    foreach (RemoteComponent component in components.Where(component => component.name.Equals(tCopy))) {
-                        comps.Add(component);
+                    foreach (JiraNamedEntity component in components.Where(component => component.Name.Equals(tCopy))) {
+                        comps.Add(new RemoteComponent {id = component.Id.ToString(), name = component.Name});
                         break;
                     }
                 }
                 ri.components = comps.ToArray();
             }
 
-            RemoteVersion[] versions = service.getVersions(Token, issue.ProjectKey);
+            List<JiraNamedEntity> versions = getVersions(issue.ProjectKey);
+//            RemoteVersion[] versions = service.getVersions(Token, issue.ProjectKey);
             
             if (issue.Versions != null && issue.Versions.Count > 0) {
                 List<RemoteVersion> vers = new List<RemoteVersion>();
                 foreach (string t in issue.Versions) {
                     // fixme: a bit problematic part. same as for components
                     string tCopy = t;
-                    foreach (RemoteVersion version in versions.Where(version => version.name.Equals(tCopy))) {
-                        vers.Add(version);
+                    foreach (JiraNamedEntity version in versions.Where(version => version.Name.Equals(tCopy))) {
+                        vers.Add(new RemoteVersion {id = version.Id.ToString(), name = version.Name } );
                         break;
                     }
                 }
@@ -110,24 +128,25 @@ namespace Atlassian.plvs.api.jira.soap {
                 foreach (string t in issue.FixVersions) {
                     // fixme: a bit problematic part. same as for components
                     string tCopy = t;
-                    foreach (RemoteVersion version in versions.Where(version => version.name.Equals(tCopy))) {
-                        vers.Add(version);
+                    foreach (JiraNamedEntity version in versions.Where(version => version.Name.Equals(tCopy))) {
+                        vers.Add(new RemoteVersion { id = version.Id.ToString(), name = version.Name });
                         break;
                     }
                 }
                 ri.fixVersions = vers.ToArray();
             }
 
+#if true
+            object createdIssue = service.createIssue(Token, ri);
+            return (string) createdIssue.GetType().GetProperty("key").GetValue(createdIssue, null);
+#else
             RemoteIssue createdIssue = service.createIssue(Token, ri);
             return createdIssue.key;
+#endif
         }
 
         public void addComment(JiraIssue issue, string comment) {
             service.addComment(Token, issue.Key, new RemoteComment {body = comment});
-        }
-
-        public class LoginException : Exception {
-            public LoginException(Exception e) : base("Login failed", e) {}
         }
 
         public object getIssueSoapObject(string key) {
@@ -136,8 +155,13 @@ namespace Atlassian.plvs.api.jira.soap {
 
         public JiraNamedEntity getSecurityLevel(string key) {
             try {
+#if true
+                object securityLevel = service.getSecurityLevel(Token, key);
+                return securityLevel == null ? null : createNamedEntity(securityLevel);
+#else
                 RemoteSecurityLevel securityLevel = service.getSecurityLevel(Token, key);
                 return securityLevel == null ? null : new JiraNamedEntity(int.Parse(securityLevel.id), securityLevel.name, null);
+#endif
             } catch (Exception) {
                 return null;
             }
@@ -168,11 +192,19 @@ namespace Atlassian.plvs.api.jira.soap {
         }
 
         public List<JiraNamedEntity> getComponents(JiraProject project) {
-            return createEntityList(service.getComponents(Token, project.Key));
+            return getComponents(project.Key);
+        }
+
+        private List<JiraNamedEntity> getComponents(string projectKey) {
+            return createEntityList(service.getComponents(Token, projectKey));
         }
 
         public List<JiraNamedEntity> getVersions(JiraProject project) {
-            return createEntityList(service.getVersions(Token, project.Key));
+            return getVersions(project.Key);
+        }
+
+        private List<JiraNamedEntity> getVersions(string projectKey) {
+            return createEntityList(service.getVersions(Token, projectKey));
         }
 
         public List<JiraNamedEntity> getResolutions() {
@@ -180,12 +212,17 @@ namespace Atlassian.plvs.api.jira.soap {
         }
 
         public List<JiraNamedEntity> getActionsForIssue(JiraIssue issue) {
+#if true
+            object[] results = service.getAvailableActions(Token, issue.Key);
+            return createEntityList(results);
+#else
             RemoteNamedObject[] actions = service.getAvailableActions(Token, issue.Key);
             if (actions == null) return new List<JiraNamedEntity>();
 
             return (from action in actions 
                     where action != null 
                     select new JiraNamedEntity(int.Parse(action.id), action.name, null)).ToList();
+#endif
         }
 
         public List<JiraField> getFieldsForAction(JiraIssue issue, int id) {
@@ -236,6 +273,20 @@ namespace Atlassian.plvs.api.jira.soap {
             service.addBase64EncodedAttachmentsToIssue(Token, key, new[] {name}, new[] {Convert.ToBase64String(attachment)});
         }
 
+#if true
+        private static List<JiraNamedEntity> createEntityList(IEnumerable<object> entities) {
+            return entities == null 
+                ? new List<JiraNamedEntity>() 
+                : (from val in entities where val != null select createNamedEntity(val)).ToList();
+        }
+
+        private static List<JiraNamedEntity> createEntityListFromConstants(IEnumerable<object> vals) {
+            return createEntityList(vals);
+//            return vals == null 
+//                ? new List<JiraNamedEntity>() 
+//                : (from val in vals where val != null select createNamedEntity(val)).ToList();
+        }
+#else 
         private static List<JiraNamedEntity> createEntityList(IEnumerable<AbstractNamedRemoteEntity> entities) {
             if (entities == null) return new List<JiraNamedEntity>();
 
@@ -250,6 +301,19 @@ namespace Atlassian.plvs.api.jira.soap {
             return (from val in vals 
                     where val != null 
                     select new JiraNamedEntity(int.Parse(val.id), val.name, val.icon)).ToList();
+        }
+
+#endif
+
+        private static JiraNamedEntity createNamedEntity(object o) {
+            int id = int.Parse((string)o.GetType().GetProperty("id").GetValue(o, null));
+            string name = (string)o.GetType().GetProperty("name").GetValue(o, null);
+            PropertyInfo propertyInfo = o.GetType().GetProperty("icon");
+            string icon = null;
+            if (propertyInfo != null) {
+                icon = (string)propertyInfo.GetValue(o, null);
+            }
+            return new JiraNamedEntity(id, name, icon);
         }
     }
 }
