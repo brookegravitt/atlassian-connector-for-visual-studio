@@ -17,7 +17,7 @@ namespace Atlassian.plvs.eventsinks {
         public int OnLoadCompleted(int fReload) {
             ConnectionPoint.Unadvise(Cookie);
 
-            bool sharp = isCSharp(TextLines);
+            bool sharp = isCSharpOrCppOrC(TextLines);
             if (sharp || isVb(TextLines)) {
                 JiraEditorLinkManager.OnDocumentOpened(TextLines, sharp 
                     ? JiraEditorLinkManager.BufferType.CSHARP
@@ -27,10 +27,11 @@ namespace Atlassian.plvs.eventsinks {
             return VSConstants.S_OK;
         }
 
-        private static bool isCSharp(IVsTextLines textLines) {
+        private static bool isCSharpOrCppOrC(IVsTextLines textLines) {
             Guid languageServiceId;
             textLines.GetLanguageServiceID(out languageServiceId);
-            return GuidList.CSHARP_LANGUAGE_GUID.Equals(languageServiceId);
+            return GuidList.CSHARP_LANGUAGE_GUID.Equals(languageServiceId) 
+                || GuidList.C_AND_CPP_LANGUAGE_GUID.Equals(languageServiceId);
         }
 
         private static bool isVb(IVsTextLines textLines) {

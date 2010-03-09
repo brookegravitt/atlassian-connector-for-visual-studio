@@ -73,7 +73,7 @@ namespace Atlassian.plvs.markers {
         public static void OnMarkerInvalidated(IVsTextLineMarker marker) {}
 
         public static void OnDocumentChanged(IVsTextLines textLines) {
-            if (!(isCSharp(textLines) || isVb(textLines))) return;
+            if (!(isCSharpOrCppOrC(textLines) || isVb(textLines))) return;
 
             cleanupMarkers(textLines, JiraLinkTextMarkerType.Id);
             cleanupMarkers(textLines, JiraLinkMarginMarkerType.Id);
@@ -175,13 +175,13 @@ namespace Atlassian.plvs.markers {
         }
 
         private static CommentStrings getCommentMarkerStrings(IVsTextLines lines) {
-            if (isCSharp(lines)) return new CommentStrings("//", "/*", "*/");
+            if (isCSharpOrCppOrC(lines)) return new CommentStrings("//", "/*", "*/");
             if (isVb(lines)) return new CommentStrings("'", null, null);
             return new CommentStrings();
         }
 
 
-        private static bool isCSharp(IVsTextLines textLines) {
+        private static bool isCSharpOrCppOrC(IVsTextLines textLines) {
             lock (cssBuffers) {
                 return cssBuffers.Contains(textLines);
             }
