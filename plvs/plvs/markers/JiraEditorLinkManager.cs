@@ -10,7 +10,7 @@ namespace Atlassian.plvs.markers {
     internal class JiraEditorLinkManager {
 
         public enum BufferType {
-            CSHARP,
+            CSHARP_OR_C_OR_CPP,
             VISUAL_BASIC
         }
 
@@ -51,7 +51,7 @@ namespace Atlassian.plvs.markers {
 
         public static void OnDocumentOpened(IVsTextLines lines, BufferType type) {
             switch (type) {
-                case BufferType.CSHARP:
+                case BufferType.CSHARP_OR_C_OR_CPP:
                     lock(cssBuffers) {
                         if (!cssBuffers.Contains(lines)) cssBuffers.Add(lines);
                     }
