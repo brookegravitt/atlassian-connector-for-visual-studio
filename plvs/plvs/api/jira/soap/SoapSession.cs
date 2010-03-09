@@ -78,24 +78,59 @@ namespace Atlassian.plvs.api.jira.soap {
         }
 
         public string createIssue(JiraIssue issue) {
+
+#if true
+            object[] issuesTable = service.getIssuesFromTextSearch(Token, "<<<<<<<<<<<<<IHOPETHEREISNOSUCHTEXT>>>>>>>>>>>>>>");
+
+            Type issueObjectType = issuesTable.GetType().GetElementType();
+            object ri = issueObjectType.GetConstructor(new Type[] {}).Invoke(new object[] {});
+            setObjectProperty(ri, "project", issue.ProjectKey);
+            setObjectProperty(ri, "type", issue.IssueTypeId.ToString());
+            setObjectProperty(ri, "priority", issue.PriorityId.ToString());
+            setObjectProperty(ri, "summary", issue.Summary);
+            setObjectProperty(ri, "description", issue.Description);
+
+            if (issue.Assignee != null) {
+                setObjectProperty(ri, "assignee", issue.Assignee);
+            }
+
+            if (issue.Components != null && issue.Components.Count > 0) {
+                object[] components = service.getComponents(Token, issue.ProjectKey);
+                setObjectTablePropertyFromObjectList(ri, "components", issue.Components, components);
+            }
+
+            object[] versions = service.getVersions(Token, issue.ProjectKey);
+
+            if (issue.Versions != null && issue.Versions.Count > 0) {
+                setObjectTablePropertyFromObjectList(ri, "affectsVersions", issue.Versions, versions);
+            }
+
+            if (issue.FixVersions != null && issue.FixVersions.Count > 0) {
+                setObjectTablePropertyFromObjectList(ri, "fixVersions", issue.FixVersions, versions);
+            }
+
+            object createdIssue = service.createIssue(Token, ri);
+            return (string) createdIssue.GetType().GetProperty("key").GetValue(createdIssue, null);
+
+#else
             RemoteIssue ri = new RemoteIssue
-                             {
-                                 project = issue.ProjectKey,
-                                 type = issue.IssueTypeId.ToString(),
-                                 priority = issue.PriorityId.ToString(),
-                                 summary = issue.Summary,
-                                 description = issue.Description,
-                             };
+                 {
+                     project = issue.ProjectKey,
+                     type = issue.IssueTypeId.ToString(),
+                     priority = issue.PriorityId.ToString(),
+                     summary = issue.Summary,
+                     description = issue.Description,
+                 };
             if (issue.Assignee != null) {
                 ri.assignee = issue.Assignee;
             }
 
             if (issue.Components != null && issue.Components.Count > 0) {
                 List<JiraNamedEntity> components = getComponents(issue.ProjectKey);
-//                RemoteComponent[] components = service.getComponents(Token, issue.ProjectKey);
+//                RemoteComponent[] objects = service.getComponents(Token, issue.ProjectKey);
                 List<RemoteComponent> comps = new List<RemoteComponent>();
                 foreach (string t in issue.Components) {
-                    // fixme: a bit problematic part. What if two components have the same name?
+                    // fixme: a bit problematic part. What if two objects have the same name?
                     // I suppose JiraIssue class has to be fixed, but that would require more problematic
                     // construction of it during server query
                     string tCopy = t;
@@ -113,7 +148,7 @@ namespace Atlassian.plvs.api.jira.soap {
             if (issue.Versions != null && issue.Versions.Count > 0) {
                 List<RemoteVersion> vers = new List<RemoteVersion>();
                 foreach (string t in issue.Versions) {
-                    // fixme: a bit problematic part. same as for components
+                    // fixme: a bit problematic part. same as for objects
                     string tCopy = t;
                     foreach (JiraNamedEntity version in versions.Where(version => version.Name.Equals(tCopy))) {
                         vers.Add(new RemoteVersion {id = version.Id.ToString(), name = version.Name } );
@@ -126,7 +161,7 @@ namespace Atlassian.plvs.api.jira.soap {
             if (issue.FixVersions != null && issue.FixVersions.Count > 0) {
                 List<RemoteVersion> vers = new List<RemoteVersion>();
                 foreach (string t in issue.FixVersions) {
-                    // fixme: a bit problematic part. same as for components
+                    // fixme: a bit problematic part. same as for objects
                     string tCopy = t;
                     foreach (JiraNamedEntity version in versions.Where(version => version.Name.Equals(tCopy))) {
                         vers.Add(new RemoteVersion { id = version.Id.ToString(), name = version.Name });
@@ -136,17 +171,26 @@ namespace Atlassian.plvs.api.jira.soap {
                 ri.fixVersions = vers.ToArray();
             }
 
-#if true
-            object createdIssue = service.createIssue(Token, ri);
-            return (string) createdIssue.GetType().GetProperty("key").GetValue(createdIssue, null);
-#else
             RemoteIssue createdIssue = service.createIssue(Token, ri);
             return createdIssue.key;
 #endif
         }
 
         public void addComment(JiraIssue issue, string comment) {
+#if true
+            object[] comments = service.getComments(Token, issue.Key);
+            if (comments == null) {
+                throw new Exception("Unable to retrieve information about the RemoteComment type");
+            }
+            Type type = comments.GetType();
+            Type commentType = type.GetElementType();
+            ConstructorInfo constructor = commentType.GetConstructor(new Type[] {});
+            object commentObject = constructor.Invoke(new object[] {});
+            setObjectProperty(commentObject, "body", comment);
+            service.addComment(Token, issue.Key, commentObject);
+#else
             service.addComment(Token, issue.Key, new RemoteComment {body = comment});
+#endif
         }
 
         public object getIssueSoapObject(string key) {
@@ -192,11 +236,7 @@ namespace Atlassian.plvs.api.jira.soap {
         }
 
         public List<JiraNamedEntity> getComponents(JiraProject project) {
-            return getComponents(project.Key);
-        }
-
-        private List<JiraNamedEntity> getComponents(string projectKey) {
-            return createEntityList(service.getComponents(Token, projectKey));
+            return createEntityList(service.getComponents(Token, project.Key));
         }
 
         public List<JiraNamedEntity> getVersions(JiraProject project) {
@@ -282,9 +322,6 @@ namespace Atlassian.plvs.api.jira.soap {
 
         private static List<JiraNamedEntity> createEntityListFromConstants(IEnumerable<object> vals) {
             return createEntityList(vals);
-//            return vals == null 
-//                ? new List<JiraNamedEntity>() 
-//                : (from val in vals where val != null select createNamedEntity(val)).ToList();
         }
 #else 
         private static List<JiraNamedEntity> createEntityList(IEnumerable<AbstractNamedRemoteEntity> entities) {
@@ -304,6 +341,38 @@ namespace Atlassian.plvs.api.jira.soap {
         }
 
 #endif
+
+        private static void setObjectProperty(object o, string name, object value) {
+            o.GetType().GetProperty(name).SetValue(o, value, null);
+        }
+
+        private static void setObjectTablePropertyFromObjectList(object ri, string propertyName, IEnumerable<string> items, object[] availableObjects) {
+            ConstructorInfo tableConstructor = availableObjects.GetType().GetConstructor(new[] { typeof(int) });
+            ConstructorInfo itemConstructor = availableObjects.GetType().GetElementType().GetConstructor(new Type[] { });
+            List<object> list = new List<object>();
+            foreach (string item in items) {
+
+                foreach (object obj in availableObjects) {
+
+                    // fixme: a bit problematic part. What if two entities have the same name?
+                    // I suppose JiraIssue class has to be fixed, but that would require more problematic
+                    // construction of it during server query
+                    if (!obj.GetType().GetProperty("name").GetValue(obj, null).Equals(item)) continue;
+
+                    object newItem = itemConstructor.Invoke(new object[] { });
+                    setObjectProperty(newItem, "id", obj.GetType().GetProperty("id").GetValue(obj, null));
+                    setObjectProperty(newItem, "name", obj.GetType().GetProperty("name").GetValue(obj, null));
+                    
+                    list.Add(newItem);
+                }
+            }
+            object[] table = tableConstructor.Invoke(new object[] { list.Count }) as object[];
+            if (table == null) return;
+            for (int i = 0; i < table.Length; ++i) {
+                table[i] = list[i];
+            }
+            setObjectProperty(ri, propertyName, table);
+        }
 
         private static JiraNamedEntity createNamedEntity(object o) {
             int id = int.Parse((string)o.GetType().GetProperty("id").GetValue(o, null));

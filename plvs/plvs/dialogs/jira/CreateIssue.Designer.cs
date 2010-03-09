@@ -290,7 +290,6 @@
             this.MinimizeBox = false;
             this.Name = "CreateIssue";
             this.Text = "Create JIRA Issue";
-            this.TopMost = true;
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.createIssueKeyPress);
             this.ResumeLayout(false);
             this.PerformLayout();
