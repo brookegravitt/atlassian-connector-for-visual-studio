@@ -880,11 +880,13 @@ namespace Atlassian.plvs.Atlassian.plvs.api.soap.service {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapRpcMethodAttribute("", RequestNamespace="http://soap.rpc.jira.atlassian.com", ResponseNamespace="http://jira.atlassian.com/rpc/soap/jirasoapservice-v2")]
         [return: System.Xml.Serialization.SoapElementAttribute("getIssueReturn")]
-        public RemoteIssue getIssue(string in0, string in1) {
+//        public RemoteIssue getIssue(string in0, string in1) {
+        public object getIssue(string in0, string in1) {
             object[] results = this.Invoke("getIssue", new object[] {
                         in0,
                         in1});
-            return ((RemoteIssue)(results[0]));
+//            return ((RemoteIssue)(results[0]));
+            return results[0];
         }
         
         /// <remarks/>
@@ -913,7 +915,7 @@ namespace Atlassian.plvs.Atlassian.plvs.api.soap.service {
         [System.Web.Services.Protocols.SoapRpcMethodAttribute("", RequestNamespace="http://soap.rpc.jira.atlassian.com", ResponseNamespace="http://jira.atlassian.com/rpc/soap/jirasoapservice-v2")]
         [return: System.Xml.Serialization.SoapElementAttribute("createIssueReturn")]
 //        public RemoteIssue createIssue(string in0, RemoteIssue in1) {
-        public object createIssue(string in0, RemoteIssue in1) {
+        public object createIssue(string in0, object in1) {
             object[] results = this.Invoke("createIssue", new object[] {
                         in0,
                         in1});
@@ -1926,11 +1928,13 @@ namespace Atlassian.plvs.Atlassian.plvs.api.soap.service {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapRpcMethodAttribute("", RequestNamespace="http://soap.rpc.jira.atlassian.com", ResponseNamespace="http://jira.atlassian.com/rpc/soap/jirasoapservice-v2")]
         [return: System.Xml.Serialization.SoapElementAttribute("getCommentsReturn")]
-        public RemoteComment[] getComments(string in0, string in1) {
+//        public RemoteComment[] getComments(string in0, string in1) {
+        public object[] getComments(string in0, string in1) {
             object[] results = this.Invoke("getComments", new object[] {
                         in0,
                         in1});
-            return ((RemoteComment[])(results[0]));
+//            return ((RemoteComment[])(results[0]));
+            return (object[])results[0];
         }
         
         /// <remarks/>
@@ -2283,7 +2287,8 @@ namespace Atlassian.plvs.Atlassian.plvs.api.soap.service {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapRpcMethodAttribute("", RequestNamespace="http://soap.rpc.jira.atlassian.com", ResponseNamespace="http://jira.atlassian.com/rpc/soap/jirasoapservice-v2")]
-        public void addComment(string in0, string in1, RemoteComment in2) {
+//        public void addComment(string in0, string in1, RemoteComment in2) {
+        public void addComment(string in0, string in1, object in2) {
             this.Invoke("addComment", new object[] {
                         in0,
                         in1,
@@ -3574,11 +3579,13 @@ namespace Atlassian.plvs.Atlassian.plvs.api.soap.service {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapRpcMethodAttribute("", RequestNamespace="http://soap.rpc.jira.atlassian.com", ResponseNamespace="http://jira.atlassian.com/rpc/soap/jirasoapservice-v2")]
         [return: System.Xml.Serialization.SoapElementAttribute("getIssuesFromTextSearchReturn")]
-        public RemoteIssue[] getIssuesFromTextSearch(string in0, string in1) {
+//        public RemoteIssue[] getIssuesFromTextSearch(string in0, string in1) {
+        public object[] getIssuesFromTextSearch(string in0, string in1) {
             object[] results = this.Invoke("getIssuesFromTextSearch", new object[] {
                         in0,
                         in1});
-            return ((RemoteIssue[])(results[0]));
+            return (object[])results[0];
+//            return ((RemoteIssue[])(results[0]));
         }
         
         /// <remarks/>
