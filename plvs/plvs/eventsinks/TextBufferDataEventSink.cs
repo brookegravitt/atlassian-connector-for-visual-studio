@@ -20,7 +20,7 @@ namespace Atlassian.plvs.eventsinks {
             bool sharp = isCSharpOrCppOrC(TextLines);
             if (sharp || isVb(TextLines)) {
                 JiraEditorLinkManager.OnDocumentOpened(TextLines, sharp 
-                    ? JiraEditorLinkManager.BufferType.CSHARP
+                    ? JiraEditorLinkManager.BufferType.CSHARP_OR_C_OR_CPP
                     : JiraEditorLinkManager.BufferType.VISUAL_BASIC);
             }
 
