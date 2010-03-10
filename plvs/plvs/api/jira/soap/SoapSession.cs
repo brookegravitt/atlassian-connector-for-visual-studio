@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using Atlassian.plvs.Atlassian.plvs.api.soap.service;
 using Atlassian.plvs.dialogs;
@@ -24,7 +25,8 @@ namespace Atlassian.plvs.api.jira.soap {
 
         public string login(string userName, string password) {
             try {
-                Token = service.login(userName, password);
+                service.Credentials = CredentialUtils.getCredentialCacheForUserAndPassword(service.Url, userName, password);
+                Token = service.login(CredentialUtils.getUserNameWithoutDomain(userName), password);
                 return Token;
             } catch (Exception e) {
                 throw new LoginException(e);

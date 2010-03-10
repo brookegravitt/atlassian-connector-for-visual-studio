@@ -40,8 +40,10 @@ namespace Atlassian.plvs.api.bamboo.rest {
         public RestSession login(string username, string pwd) {
 
             string endpoint = server.Url + LOGIN_ACTION 
-                + "?username=" + HttpUtility.UrlEncode(username, Encoding.UTF8) + "&password=" + HttpUtility.UrlEncode(pwd, Encoding.UTF8) 
-                + "&os_username=" + HttpUtility.UrlEncode(username, Encoding.UTF8) + "&os_password=" + HttpUtility.UrlEncode(pwd, Encoding.UTF8);
+                + "?username=" + HttpUtility.UrlEncode(CredentialUtils.getUserNameWithoutDomain(username), Encoding.UTF8) 
+                + "&password=" + HttpUtility.UrlEncode(pwd, Encoding.UTF8) 
+                + "&os_username=" + HttpUtility.UrlEncode(CredentialUtils.getUserNameWithoutDomain(username), Encoding.UTF8) 
+                + "&os_password=" + HttpUtility.UrlEncode(pwd, Encoding.UTF8);
 
             using (Stream stream = getQueryResultStream(endpoint, false)) {
                 XPathDocument doc = XPathUtils.getXmlDocument(stream);
@@ -244,7 +246,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
             req.Accept = "application/xml";
 
             if (setBasicAuth) {
-                setBasicAuthHeader(req);
+                setBasicAuthHeader(endpoint, req);
             } else {
                 restoreSessionContext(req);
             }
@@ -270,7 +272,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
             byte[] byteArray = Encoding.UTF8.GetBytes(postData);
 
             if (setBasicAuth) {
-                setBasicAuthHeader(req);
+                setBasicAuthHeader(endpoint, req);
             } else {
                 restoreSessionContext(req);
             }
@@ -290,13 +292,17 @@ namespace Atlassian.plvs.api.bamboo.rest {
             return url.Contains("?") ? "&os_authType=basic" : "?os_authType=basic";
         }
 
-        private void setBasicAuthHeader(WebRequest req) {
+        private void setBasicAuthHeader(string url, WebRequest req) {
             if (userName == null || password == null) {
                 return;
             }
-            string authInfo = userName + ":" + password;
+#if true
+            req.Credentials = CredentialUtils.getCredentialCacheForUserAndPassword(url, userName, password);
+#else
+            string authInfo = CredentialUtils.getUserNameWithoutDomain(userName) + ":" + password;
             authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
             req.Headers["Authorization"] = "Basic " + authInfo;
+#endif
         }
 
        	private static string getRemoteExceptionMessages(IXPathNavigable doc) {
