@@ -885,5 +885,13 @@ namespace Atlassian.plvs.ui.jira {
                 JiraServerExplorer.showJiraServerExplorerFor(MODEL, node.Server, Facade);
             }
         }
+
+        private void buttonHelp_Click(object sender, EventArgs e) {
+            try {
+                Process.Start("http://confluence.atlassian.com/display/IDEPLUGIN/Using+JIRA+in+the+Visual+Studio+Connector");
+            } catch (Exception ex) {
+                Debug.WriteLine("TabJira.buttonHelp_Click() - exception: " + ex.Message);
+            }
+        }
     }
 }

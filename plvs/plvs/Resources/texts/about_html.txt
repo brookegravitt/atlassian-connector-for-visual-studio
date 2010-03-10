@@ -4,12 +4,17 @@ The Atlassian Connector for Microsoft Visual Studio is an Visual Studio package 
 with the Atlassian products within your IDE. Now you don't have to switch between websites,<br>
 email messages and news feeds to see what's happening to your project and your code.<br>
 Instead, you can see the relevant <a href="http://www.atlassian.com/software/jira/">JIRA</a> issues
-<!--, 
-<a href="http://www.atlassian.com/software/crucible/">Crucible</a> reviews and <a href="http://www.atlassian.com/software/bamboo/">Bamboo</a><br>
+and <a href="http://www.atlassian.com/software/bamboo/">Bamboo</a>
 build information
---> right there in your development environment. 
+<!--, 
+<a href="http://www.atlassian.com/software/crucible/">Crucible</a> reviews 
+--> 
+
+<br>right there in your development environment. 
+
 <!-- Viewing your code in <a href="http://www.atlassian.com/software/fisheye/">FishEye</a><br> 
 is just a click away. -->
+
 <br>
 <br>
 Developed by Atlassian for you to lust after
@@ -22,5 +27,7 @@ Licensed under the Apache License
 Version {0}-{1}, Build {2}
 <br>
 Copyright (c) Atlassian 2009-2010
+<br><br>
+<a href="http://confluence.atlassian.com/display/IDEPLUGIN/Atlassian+Connector+for+Visual+Studio">Get help</a>
 
 </div>

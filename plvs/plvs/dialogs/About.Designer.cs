@@ -39,7 +39,7 @@
             this.browser.Location = new System.Drawing.Point(12, 245);
             this.browser.MinimumSize = new System.Drawing.Size(20, 20);
             this.browser.Name = "browser";
-            this.browser.Size = new System.Drawing.Size(538, 201);
+            this.browser.Size = new System.Drawing.Size(538, 227);
             this.browser.TabIndex = 0;
             this.browser.TabStop = false;
             this.browser.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.browser_Navigating);
@@ -48,7 +48,7 @@
             // 
             // buttonClose
             // 
-            this.buttonClose.Location = new System.Drawing.Point(243, 464);
+            this.buttonClose.Location = new System.Drawing.Point(244, 489);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(75, 23);
             this.buttonClose.TabIndex = 1;
@@ -70,7 +70,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(562, 499);
+            this.ClientSize = new System.Drawing.Size(562, 524);
             this.Controls.Add(this.buttonClose);
             this.Controls.Add(this.browser);
             this.Controls.Add(this.picture);
