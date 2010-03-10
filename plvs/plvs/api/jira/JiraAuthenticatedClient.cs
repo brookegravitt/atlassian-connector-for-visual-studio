@@ -15,8 +15,9 @@ namespace Atlassian.plvs.api.jira {
 
         protected string appendAuthentication(bool first) {
             if (UserName != null) {
-                return (first ? "?" : "&") + "os_username=" + HttpUtility.UrlEncode(UserName)
-                       + "&os_password=" + HttpUtility.UrlEncode(Password);
+                return (first ? "?" : "&") + "os_username=" 
+                    + HttpUtility.UrlEncode(CredentialUtils.getUserNameWithoutDomain(UserName))
+                    + "&os_password=" + HttpUtility.UrlEncode(Password);
             }
             return "";
         }
