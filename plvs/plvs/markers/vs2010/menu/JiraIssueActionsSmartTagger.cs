@@ -40,7 +40,7 @@ namespace Atlassian.plvs.markers.vs2010.menu {
         }
 
         public IEnumerable<ITagSpan<JiraIssueActionsSmartTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
-            JiraServer selectedServer = AtlassianPanel.Instance.Jira.CurrentlySelectedServer;
+            JiraServer selectedServer = AtlassianPanel.Instance.Jira.CurrentlySelectedServerOrDefault;
             if (selectedServer == null) {
                 yield break;
             }

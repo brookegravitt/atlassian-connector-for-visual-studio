@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Atlassian.plvs.api;
 using Atlassian.plvs.store;
 
 namespace Atlassian.plvs.models {
     public abstract class AbstractServerModel<T> where T : Server {
-        
+
+        private const string DEFAULT_SERVER_GUID = "defaultServerGuid_";
         private const string SERVER_COUNT = "serverCount";
         private const string SERVER_GUID = "serverGuid_";
         private const string SERVER_NAME = "serverName_";
@@ -26,6 +28,32 @@ namespace Atlassian.plvs.models {
         protected abstract void saveCustomServerParameters(ParameterStore store, T server);
         protected abstract T createServer(Guid guid, string name, string url, string userName, string password, bool enabled);
 
+        private Guid defaultServerGuid;
+
+        public Guid DefaultServerGuid { get { return defaultServerGuid; } }
+
+        public event EventHandler<EventArgs> DefaultServerChanged;
+
+        public T DefaultServer {
+            get {
+                lock(serverMap) {
+                    return serverMap.ContainsKey(defaultServerGuid) ? serverMap[defaultServerGuid] : null;
+                }
+            }
+            set {
+                lock(serverMap) {
+                    if (!serverMap.ContainsKey(value.GUID)) {
+                        return;
+                    }
+                    defaultServerGuid = value.GUID;
+                    save();
+                    if (DefaultServerChanged != null) {
+                        DefaultServerChanged(this, new EventArgs());
+                    }
+                }
+            }
+        }
+
         public ICollection<T> getAllServers() {
             lock (serverMap) {
                 // return a clone. Otherwise NREs and IOEs happen at exit
@@ -37,17 +65,15 @@ namespace Atlassian.plvs.models {
 
         public ICollection<T> getAllEnabledServers() {
             ICollection<T> servers = getAllServers();
-            List<T> enabledServers = new List<T>();
-            foreach (var server in servers) {
-                if (server.Enabled) {
-                    enabledServers.Add(server);
-                }
-            }
-            return enabledServers;
+            return servers.Where(server => server.Enabled).ToList();
         }
 
         public void load() {
             ParameterStore store = ParameterStoreManager.Instance.getStoreFor(StoreType);
+            
+            string defaultGuidString = store.loadParameter(DEFAULT_SERVER_GUID, null);
+            defaultServerGuid = defaultGuidString != null ? new Guid(defaultGuidString) : Guid.Empty;
+
             int count = store.loadParameter(SERVER_COUNT, -1);
             if (count != -1) {
                 try {
@@ -72,8 +98,7 @@ namespace Atlassian.plvs.models {
 
                         addServer(server);
                     }
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     Debug.WriteLine(e);
                 }
             }
@@ -83,6 +108,8 @@ namespace Atlassian.plvs.models {
             try {
                 ParameterStore store = ParameterStoreManager.Instance.getStoreFor(StoreType);
                 store.storeParameter(SERVER_COUNT, serverMap.Values.Count);
+
+                store.storeParameter(DEFAULT_SERVER_GUID, defaultServerGuid.ToString());
 
                 int i = 1;
                 foreach (T s in getAllServers()) {
@@ -102,8 +129,7 @@ namespace Atlassian.plvs.models {
                     CredentialsVault.Instance.saveCredentials(s);
                     ++i;
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 Debug.WriteLine(e);
             }
         }

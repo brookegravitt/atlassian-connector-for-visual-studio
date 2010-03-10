@@ -25,6 +25,7 @@ namespace Atlassian.plvs.ui.jira {
         private readonly ImageList filterTreeImages = new ImageList();
         private ToolTip filtersTreeToolTip;
         private Action reloadIssues;
+        private JiraServerModel model;
 
         public JiraFiltersTree() {
             initImageList();
@@ -65,8 +66,9 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         public void addServerNodes(List<JiraServer> servers) {
+            if (model == null) return;
             foreach (JiraServer server in servers) {
-                Nodes.Add(new JiraServerTreeNode(server, 0));
+                Nodes.Add(new JiraServerTreeNode(model, server, 0));
             }
         }
 
@@ -431,6 +433,10 @@ namespace Atlassian.plvs.ui.jira {
 
         public void setReloadIssuesCallback(Action reload) {
             reloadIssues = reload;
+        }
+
+        public void setModel(JiraServerModel m) {
+            model = m;
         }
     }
 }

@@ -42,6 +42,7 @@
             this.addNewServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.jIRAToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bambooToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.setAsDefaultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -52,7 +53,7 @@
             this.serverTree.HideSelection = false;
             this.serverTree.Location = new System.Drawing.Point(12, 12);
             this.serverTree.Name = "serverTree";
-            this.serverTree.Size = new System.Drawing.Size(224, 219);
+            this.serverTree.Size = new System.Drawing.Size(235, 219);
             this.serverTree.TabIndex = 0;
             this.serverTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.serverTree_AfterSelect);
             // 
@@ -109,11 +110,11 @@
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.webServerDetails.IsWebBrowserContextMenuEnabled = false;
-            this.webServerDetails.Location = new System.Drawing.Point(242, 12);
+            this.webServerDetails.Location = new System.Drawing.Point(255, 12);
             this.webServerDetails.MinimumSize = new System.Drawing.Size(20, 20);
             this.webServerDetails.Name = "webServerDetails";
             this.webServerDetails.ScriptErrorsSuppressed = true;
-            this.webServerDetails.Size = new System.Drawing.Size(476, 190);
+            this.webServerDetails.Size = new System.Drawing.Size(463, 190);
             this.webServerDetails.TabIndex = 7;
             this.webServerDetails.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webServerDetails_Navigating);
             // 
@@ -150,10 +151,11 @@
             this.menuStrip1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.menuStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.addNewServerToolStripMenuItem});
+            this.addNewServerToolStripMenuItem,
+            this.setAsDefaultToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(12, 238);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(127, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(327, 24);
             this.menuStrip1.TabIndex = 8;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -171,7 +173,7 @@
             // 
             this.jIRAToolStripMenuItem.Image = global::Atlassian.plvs.Resources.tab_jira;
             this.jIRAToolStripMenuItem.Name = "jIRAToolStripMenuItem";
-            this.jIRAToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.jIRAToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.jIRAToolStripMenuItem.Text = "JIRA";
             this.jIRAToolStripMenuItem.Click += new System.EventHandler(this.menuJira_Click);
             // 
@@ -179,9 +181,17 @@
             // 
             this.bambooToolStripMenuItem.Image = global::Atlassian.plvs.Resources.tab_bamboo;
             this.bambooToolStripMenuItem.Name = "bambooToolStripMenuItem";
-            this.bambooToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.bambooToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.bambooToolStripMenuItem.Text = "Bamboo";
             this.bambooToolStripMenuItem.Click += new System.EventHandler(this.menuBamboo_Click);
+            // 
+            // setAsDefaultToolStripMenuItem
+            // 
+            this.setAsDefaultToolStripMenuItem.Image = global::Atlassian.plvs.Resources.bluetick;
+            this.setAsDefaultToolStripMenuItem.Name = "setAsDefaultToolStripMenuItem";
+            this.setAsDefaultToolStripMenuItem.Size = new System.Drawing.Size(108, 20);
+            this.setAsDefaultToolStripMenuItem.Text = "Set As Default";
+            this.setAsDefaultToolStripMenuItem.Click += new System.EventHandler(this.setAsDefaultToolStripMenuItem_Click);
             // 
             // ProjectConfiguration
             // 
@@ -226,5 +236,6 @@
         private System.Windows.Forms.ToolStripMenuItem addNewServerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem jIRAToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem bambooToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem setAsDefaultToolStripMenuItem;
     }
 }

@@ -108,7 +108,7 @@ namespace Atlassian.plvs.eventsinks {
                 return;
             }
             try {
-                JiraServer server = AtlassianPanel.Instance.Jira.CurrentlySelectedServer;
+                JiraServer server = AtlassianPanel.Instance.Jira.CurrentlySelectedServerOrDefault;
                 if (server != null) {
                     Process.Start(server.Url + "/browse/" + issueKey);
                 } else {

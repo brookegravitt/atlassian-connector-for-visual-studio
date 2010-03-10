@@ -74,8 +74,7 @@ namespace Atlassian.plvs {
         ///with the Atlassian products within your IDE. Now you don&apos;t have to switch between websites,&lt;br&gt;
         ///email messages and news feeds to see what&apos;s happening to your project and your code.&lt;br&gt;
         ///Instead, you can see the relevant &lt;a href=&quot;http://www.atlassian.com/software/jira/&quot;&gt;JIRA&lt;/a&gt; issues
-        ///&lt;!--, 
-        ///&lt;a href=&quot;http://www.atlassian.com/software/ [rest of string was truncated]&quot;;.
+        ///and &lt;a href=&quot;http://www.atlassian.com/software/bamb [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string about_html {
             get {
@@ -201,6 +200,13 @@ namespace Atlassian.plvs {
             get {
                 object obj = ResourceManager.GetObject("bamboo_red_161", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap bluetick {
+            get {
+                object obj = ResourceManager.GetObject("bluetick", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

@@ -41,7 +41,7 @@ namespace Atlassian.plvs.markers.vs2010.quickinfo {
         }
 
         private static string createIssueTextFromKey(string issueKey) {
-            JiraServer server = AtlassianPanel.Instance.Jira.CurrentlySelectedServer;
+            JiraServer server = AtlassianPanel.Instance.Jira.CurrentlySelectedServerOrDefault;
             if (server != null) {
                 JiraIssue issue = JiraIssueListModelImpl.Instance.getIssue(issueKey, server);
                 if (issue != null) {
