@@ -347,5 +347,13 @@ namespace Atlassian.plvs.ui.bamboo {
                 AddNewServerLinkClicked(this, new EventArgs());
             }
         }
+
+        private void buttonHelp_Click(object sender, EventArgs e) {
+            try {
+                Process.Start("http://confluence.atlassian.com/display/IDEPLUGIN/Using+Bamboo+in+the+Visual+Studio+Connector");
+            } catch (Exception ex) {
+                Debug.WriteLine("TabBamboo.buttonHelp_Click() - exception: " + ex.Message);
+            }
+        }
     }
 }

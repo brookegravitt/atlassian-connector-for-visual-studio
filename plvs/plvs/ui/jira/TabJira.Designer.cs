@@ -28,6 +28,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TabJira));
             this.jiraContainer = new System.Windows.Forms.ToolStripContainer();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.jiraStatus = new System.Windows.Forms.ToolStripStatusLabel();
@@ -57,6 +58,7 @@
             this.buttonSearch = new System.Windows.Forms.ToolStripButton();
             this.buttonRefresh = new System.Windows.Forms.ToolStripButton();
             this.filtersTreeToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.buttonHelp = new System.Windows.Forms.ToolStripButton();
             this.jiraContainer.BottomToolStripPanel.SuspendLayout();
             this.jiraContainer.ContentPanel.SuspendLayout();
             this.jiraContainer.SuspendLayout();
@@ -177,7 +179,7 @@
             this.buttonEditFilter});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(149, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(118, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonRefreshAll
@@ -264,10 +266,11 @@
             this.buttonEditInBrowser,
             this.buttonCreate,
             this.buttonSearch,
-            this.buttonRefresh});
+            this.buttonRefresh,
+            this.buttonHelp});
             this.toolStrip2.Location = new System.Drawing.Point(3, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(571, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(623, 25);
             this.toolStrip2.TabIndex = 0;
             // 
             // labelNarrow
@@ -387,6 +390,16 @@
             this.buttonRefresh.Text = "Refresh Issues";
             this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
             // 
+            // buttonHelp
+            // 
+            this.buttonHelp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonHelp.Image = Resources.about;
+            this.buttonHelp.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonHelp.Name = "buttonHelp";
+            this.buttonHelp.Size = new System.Drawing.Size(23, 22);
+            this.buttonHelp.Text = "Help";
+            this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
+            // 
             // TabJira
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -453,5 +466,6 @@
         private System.Windows.Forms.ToolStripButton buttonCreate;
         private System.Windows.Forms.ToolStripButton buttonGroupSubtasks;
         private System.Windows.Forms.ToolStripButton buttonServerExplorer;
+        private System.Windows.Forms.ToolStripButton buttonHelp;
     }
 }

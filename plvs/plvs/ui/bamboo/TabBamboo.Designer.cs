@@ -24,6 +24,7 @@
         /// </summary>
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TabBamboo));
             this.toolStripContainer = new System.Windows.Forms.ToolStripContainer();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -32,6 +33,7 @@
             this.buttonViewInBrowser = new System.Windows.Forms.ToolStripButton();
             this.buttonRunBuild = new System.Windows.Forms.ToolStripButton();
             this.notifyBuildStatus = new System.Windows.Forms.NotifyIcon(this.components);
+            this.buttonHelp = new System.Windows.Forms.ToolStripButton();
             this.toolStripContainer.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer.SuspendLayout();
@@ -83,10 +85,11 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.buttonPoll,
             this.buttonViewInBrowser,
-            this.buttonRunBuild});
+            this.buttonRunBuild,
+            this.buttonHelp});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(72, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(126, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonPoll
@@ -124,6 +127,16 @@
             this.notifyBuildStatus.Text = "notifyIcon1";
             this.notifyBuildStatus.Visible = true;
             // 
+            // buttonHelp
+            // 
+            this.buttonHelp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonHelp.Image = Resources.about;
+            this.buttonHelp.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonHelp.Name = "buttonHelp";
+            this.buttonHelp.Size = new System.Drawing.Size(23, 22);
+            this.buttonHelp.Text = "Help";
+            this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
+            // 
             // TabBamboo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -155,5 +168,6 @@
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
         private System.Windows.Forms.ToolStripButton buttonViewInBrowser;
         private System.Windows.Forms.ToolStripButton buttonRunBuild;
+        private System.Windows.Forms.ToolStripButton buttonHelp;
     }
 }
