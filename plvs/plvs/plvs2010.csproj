@@ -390,6 +390,7 @@
     <Compile Include="ui\OwnerDrawListBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ui\TextBoxWithSpellChecker.cs" />
     <Compile Include="ui\ToolWindowFrame.cs">
       <SubType>UserControl</SubType>
     </Compile>
