@@ -63,7 +63,7 @@ namespace Atlassian.plvs.markers {
                     break;
             }
 
-            if (AtlassianPanel.Instance.Jira != null && AtlassianPanel.Instance.Jira.CurrentlySelectedServer != null) {
+            if (AtlassianPanel.Instance.Jira != null && AtlassianPanel.Instance.Jira.CurrentlySelectedServerOrDefault != null) {
                 addMarkersToDocument(lines);
             }
         }
@@ -78,7 +78,7 @@ namespace Atlassian.plvs.markers {
             cleanupMarkers(textLines, JiraLinkTextMarkerType.Id);
             cleanupMarkers(textLines, JiraLinkMarginMarkerType.Id);
 
-            if (AtlassianPanel.Instance.Jira != null && AtlassianPanel.Instance.Jira.CurrentlySelectedServer != null) {
+            if (AtlassianPanel.Instance.Jira != null && AtlassianPanel.Instance.Jira.CurrentlySelectedServerOrDefault != null) {
                 addMarkersToDocument(textLines);
             }
         }

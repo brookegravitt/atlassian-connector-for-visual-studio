@@ -32,7 +32,7 @@ namespace Atlassian.plvs.markers.vs2010.texttag {
         }
 
         IEnumerable<ITagSpan<JiraIssueTag>> ITagger<JiraIssueTag>.GetTags(NormalizedSnapshotSpanCollection spans) {
-            JiraServer selectedServer = AtlassianPanel.Instance.Jira.CurrentlySelectedServer;
+            JiraServer selectedServer = AtlassianPanel.Instance.Jira.CurrentlySelectedServerOrDefault;
             if (selectedServer == null) {
                 yield break;
             }

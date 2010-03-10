@@ -64,11 +64,11 @@ namespace Atlassian.plvs.dialogs {
 //            serverTree.Nodes.Add(fisheyeRoot);
 
             foreach (var server in jiraServers) {
-                jiraRoot.Nodes.Add(new JiraServerTreeNode(server, server.Enabled ? JIRA_ENABLED : JIRA_DISABLED));
+                jiraRoot.Nodes.Add(new JiraServerTreeNode(jiraServerModel, server, server.Enabled ? JIRA_ENABLED : JIRA_DISABLED));
             }
 
             foreach (var server in bambooServers) {
-                bambooRoot.Nodes.Add(new BambooServerTreeNode(server, server.Enabled ? BAMBOO_ENABLED : BAMBOO_DISABLED));
+                bambooRoot.Nodes.Add(new BambooServerTreeNode(bambooServerModel, server, server.Enabled ? BAMBOO_ENABLED : BAMBOO_DISABLED));
             }
 
             StartPosition = FormStartPosition.CenterParent;
@@ -93,13 +93,25 @@ namespace Atlassian.plvs.dialogs {
         }
 
         private void serverTree_AfterSelect(object sender, TreeViewEventArgs e) {
-            bool jiraServerSelected = serverTree.SelectedNode is JiraServerTreeNode;
-            bool bambooServerSelected = serverTree.SelectedNode is BambooServerTreeNode;
+            updateUi();
+        }
+
+        private void updateUi() {
+            JiraServerTreeNode jiraServerTreeNode = serverTree.SelectedNode as JiraServerTreeNode;
+            BambooServerTreeNode bambooServerTreeNode = serverTree.SelectedNode as BambooServerTreeNode;
+            bool jiraServerSelected = jiraServerTreeNode != null;
+            bool bambooServerSelected = bambooServerTreeNode != null;
             buttonEdit.Enabled = jiraServerSelected || bambooServerSelected;
             buttonDelete.Enabled = jiraServerSelected || bambooServerSelected;
             buttonTest.Enabled = jiraServerSelected || bambooServerSelected;
 
             webServerDetails.DocumentText = createServerSummaryText(serverTree.SelectedNode);
+            setAsDefaultToolStripMenuItem.Enabled = 
+                jiraServerSelected || bambooServerSelected
+                    ? (jiraServerSelected
+                           ? !jiraServerModel.DefaultServerGuid.Equals(jiraServerTreeNode.Server.GUID)
+                           : !bambooServerModel.DefaultServerGuid.Equals(bambooServerTreeNode.Server.GUID))
+                    : false;
         }
 
         private static string createServerSummaryText(TreeNode node) {
@@ -121,8 +133,9 @@ namespace Atlassian.plvs.dialogs {
             var dialog = new AddOrEditBambooServer(null, bambooFacade);
             var result = dialog.ShowDialog();
             if (result != DialogResult.OK) return;
+
             bambooServerModel.addServer(dialog.Server);
-            var newNode = new BambooServerTreeNode(dialog.Server, dialog.Server.Enabled ? BAMBOO_ENABLED : BAMBOO_DISABLED);
+            var newNode = new BambooServerTreeNode(bambooServerModel, dialog.Server, dialog.Server.Enabled ? BAMBOO_ENABLED : BAMBOO_DISABLED);
             bambooRoot.Nodes.Add(newNode);
             serverTree.ExpandAll();
             serverTree.SelectedNode = newNode;
@@ -133,8 +146,9 @@ namespace Atlassian.plvs.dialogs {
             var dialog = new AddOrEditJiraServer(null, jiraFacade);
             var result = dialog.ShowDialog();
             if (result != DialogResult.OK) return;
+
             jiraServerModel.addServer(dialog.Server);
-            var newNode = new JiraServerTreeNode(dialog.Server, dialog.Server.Enabled ? JIRA_ENABLED : JIRA_DISABLED);
+            var newNode = new JiraServerTreeNode(jiraServerModel, dialog.Server, dialog.Server.Enabled ? JIRA_ENABLED : JIRA_DISABLED);
             jiraRoot.Nodes.Add(newNode);
             serverTree.ExpandAll();
             serverTree.SelectedNode = newNode;
@@ -233,6 +247,20 @@ namespace Atlassian.plvs.dialogs {
 // ReSharper disable EmptyGeneralCatchClause
             } catch (Exception) {
 // ReSharper restore EmptyGeneralCatchClause
+            }
+        }
+
+        private void setAsDefaultToolStripMenuItem_Click(object sender, EventArgs e) {
+            JiraServerTreeNode jiraServerTreeNode = serverTree.SelectedNode as JiraServerTreeNode;
+            BambooServerTreeNode bambooServerTreeNode = serverTree.SelectedNode as BambooServerTreeNode;
+            if (jiraServerTreeNode != null) {
+                jiraServerModel.DefaultServer = jiraServerTreeNode.Server;
+                SomethingChanged = true;
+                updateUi();
+            } else if (bambooServerTreeNode != null) {
+                bambooServerModel.DefaultServer = bambooServerTreeNode.Server;
+                SomethingChanged = true;
+                updateUi();
             }
         }
     }

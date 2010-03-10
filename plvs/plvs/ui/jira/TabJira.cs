@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Threading;
 using Atlassian.plvs.api.jira;
@@ -54,6 +55,7 @@ namespace Atlassian.plvs.ui.jira {
 
             filtersTree.setReloadIssuesCallback(reloadIssues);
             filtersTree.addToolTip(filtersTreeToolTip);
+            filtersTree.setModel(JiraServerModel.Instance);
 
             ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
             bool groupSubtasks = store.loadParameter(GROUP_SUBTASKS_UNDER_PARENT, 1) != 0;
@@ -219,8 +221,8 @@ namespace Atlassian.plvs.ui.jira {
             buttonEditInBrowser.Enabled = issueSelected;
             buttonOpen.Enabled = issueSelected;
             buttonRefresh.Enabled = filtersTree.FilterOrRecentlyViewedSelected;
-            buttonSearch.Enabled = filtersTree.NodeWithServerSelected;
-            buttonCreate.Enabled = filtersTree.NodeWithServerSelected && metadataFetched;
+            buttonSearch.Enabled = CurrentlySelectedServerOrDefault != null;
+            buttonCreate.Enabled = CurrentlySelectedServerOrDefault != null && metadataFetched;
 
             JiraIssueGroupByComboItem selected = comboGroupBy.SelectedItem as JiraIssueGroupByComboItem;
             Boolean notNone = selected != null && selected.By != JiraIssueGroupByComboItem.GroupBy.NONE;
@@ -722,10 +724,8 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         public void createIssue() {
-            JiraServer server = filtersTree.CurrentlySelectedServer;
-            if (server == null || !metadataFetched) {
-                return;
-            }
+            if (!metadataFetched) return;
+            JiraServer server = CurrentlySelectedServerOrDefault;
             CreateIssue.createDialogOrBringToFront(server);
         }
 
@@ -745,14 +745,13 @@ namespace Atlassian.plvs.ui.jira {
         public delegate void FindFinished(bool success, string message, Exception e);
 
         public void findAndOpenIssue(string key, FindFinished onFinish) {
-            JiraServer server = filtersTree.CurrentlySelectedServer;
+            JiraServer server = CurrentlySelectedServerOrDefault;
             if (server == null) {
                 if (onFinish != null) {
                     onFinish(false, "No JIRA server selected", null);
                 }
                 return;
             }
-
             Thread runner = new Thread(() => finishAndOpenIssueWorker(key, server, onFinish));
             runner.Start();
         }
@@ -848,7 +847,15 @@ namespace Atlassian.plvs.ui.jira {
             filtersTree.editCustomFilter(node);
         }
 
-        public JiraServer CurrentlySelectedServer { get { return filtersTree.CurrentlySelectedServer; } }
+        public JiraServer CurrentlySelectedServerOrDefault {
+            get {
+                JiraServer server = filtersTree.CurrentlySelectedServer ?? JiraServerModel.Instance.DefaultServer;
+                if (server == null && JiraServerModel.Instance.getAllEnabledServers().Count == 1) {
+                    server = JiraServerModel.Instance.getAllEnabledServers().First();
+                }
+                return server;
+            }
+        }
 
         public class SelectedIssueEventArgs : EventArgs {
             public SelectedIssueEventArgs(JiraIssue issue) {
