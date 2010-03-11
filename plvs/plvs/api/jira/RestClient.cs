@@ -23,8 +23,8 @@ namespace Atlassian.plvs.api.jira {
 
                 req.Credentials = CredentialUtils.getCredentialCacheForUserAndPassword(url.ToString(), UserName, Password);
                 req.Method = "POST";
-                req.Timeout = GlobalSettings.JiraTimeout * 1000;
-                req.ReadWriteTimeout = GlobalSettings.JiraTimeout * 2000;
+                req.Timeout = GlobalSettings.NetworkTimeout * 1000;
+                req.ReadWriteTimeout = GlobalSettings.NetworkTimeout * 2000;
                 req.ContentType = "application/json";
                 Stream requestStream = req.GetRequestStream();
                 ASCIIEncoding encoding = new ASCIIEncoding();

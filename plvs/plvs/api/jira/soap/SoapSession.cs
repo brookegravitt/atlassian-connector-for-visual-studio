@@ -21,7 +21,7 @@ namespace Atlassian.plvs.api.jira.soap {
         public SoapSession(string url) {
 
             service.Url = url + "/rpc/soap/jirasoapservice-v2";
-            service.Timeout = GlobalSettings.JiraTimeout * 1000;
+            service.Timeout = GlobalSettings.NetworkTimeout * 1000;
         }
 
         public string login(string userName, string password) {

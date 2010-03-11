@@ -83,8 +83,8 @@ namespace Atlassian.plvs.api.jira {
         private Stream getRssQueryResultStream(StringBuilder url) {
             HttpWebRequest req = (HttpWebRequest) WebRequest.Create(url.ToString());
             req.Credentials = CredentialUtils.getCredentialCacheForUserAndPassword(url.ToString(), UserName, Password);
-            req.Timeout = GlobalSettings.JiraTimeout * 1000;
-            req.ReadWriteTimeout = GlobalSettings.JiraTimeout * 2000;
+            req.Timeout = GlobalSettings.NetworkTimeout * 1000;
+            req.ReadWriteTimeout = GlobalSettings.NetworkTimeout * 2000;
             HttpWebResponse resp = (HttpWebResponse) req.GetResponse();
             return resp.GetResponseStream();
         }

@@ -52,8 +52,8 @@ namespace Atlassian.plvs.models {
                     HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
 
                     // hm, these should not be JIRA-specific. Do we need yet another timeout value?
-                    request.Timeout = GlobalSettings.JiraTimeout * 1000;
-                    request.ReadWriteTimeout = GlobalSettings.JiraTimeout * 2000;
+                    request.Timeout = GlobalSettings.NetworkTimeout * 1000;
+                    request.ReadWriteTimeout = GlobalSettings.NetworkTimeout * 2000;
 
                     HttpWebResponse response = (HttpWebResponse) request.GetResponse();
                     var responseStream = response.GetResponseStream();
