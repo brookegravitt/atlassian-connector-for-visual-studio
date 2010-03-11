@@ -50,10 +50,22 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.numericBambooPollingInterval = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
-            this.numericBambooTimeout = new System.Windows.Forms.NumericUpDown();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.textPassword = new System.Windows.Forms.TextBox();
+            this.textUserName = new System.Windows.Forms.TextBox();
+            this.textProxyHost = new System.Windows.Forms.TextBox();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.numericJiraTimeout = new System.Windows.Forms.NumericUpDown();
+            this.radioUseNoProxy = new System.Windows.Forms.RadioButton();
+            this.radioUseCustomProxy = new System.Windows.Forms.RadioButton();
+            this.radioUseSystemProxy = new System.Windows.Forms.RadioButton();
             this.label6 = new System.Windows.Forms.Label();
+            this.numericNetworkTimeout = new System.Windows.Forms.NumericUpDown();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -61,8 +73,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericJiraBatchSize)).BeginInit();
             this.tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericBambooPollingInterval)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericBambooTimeout)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericJiraTimeout)).BeginInit();
+            this.tabPage4.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericNetworkTimeout)).BeginInit();
             this.SuspendLayout();
             // 
             // checkAutoupdate
@@ -204,6 +218,7 @@
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Location = new System.Drawing.Point(13, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -223,8 +238,6 @@
             // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.label6);
-            this.tabPage2.Controls.Add(this.numericJiraTimeout);
             this.tabPage2.Controls.Add(this.checkAnkhSvn);
             this.tabPage2.Controls.Add(this.checkJiraExplorer);
             this.tabPage2.Controls.Add(this.label1);
@@ -240,7 +253,7 @@
             // checkAnkhSvn
             // 
             this.checkAnkhSvn.AutoSize = true;
-            this.checkAnkhSvn.Location = new System.Drawing.Point(9, 89);
+            this.checkAnkhSvn.Location = new System.Drawing.Point(6, 63);
             this.checkAnkhSvn.Name = "checkAnkhSvn";
             this.checkAnkhSvn.Size = new System.Drawing.Size(230, 17);
             this.checkAnkhSvn.TabIndex = 3;
@@ -251,7 +264,7 @@
             // checkJiraExplorer
             // 
             this.checkJiraExplorer.AutoSize = true;
-            this.checkJiraExplorer.Location = new System.Drawing.Point(9, 66);
+            this.checkJiraExplorer.Location = new System.Drawing.Point(6, 40);
             this.checkJiraExplorer.Name = "checkJiraExplorer";
             this.checkJiraExplorer.Size = new System.Drawing.Size(228, 17);
             this.checkJiraExplorer.TabIndex = 2;
@@ -294,8 +307,6 @@
             // 
             // tabPage3
             // 
-            this.tabPage3.Controls.Add(this.label5);
-            this.tabPage3.Controls.Add(this.numericBambooTimeout);
             this.tabPage3.Controls.Add(this.numericBambooPollingInterval);
             this.tabPage3.Controls.Add(this.label2);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
@@ -339,59 +350,174 @@
             this.label2.TabIndex = 0;
             this.label2.Text = "Polling Interval [seconds]";
             // 
-            // numericBambooTimeout
+            // tabPage4
             // 
-            this.numericBambooTimeout.Location = new System.Drawing.Point(149, 40);
-            this.numericBambooTimeout.Minimum = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            this.numericBambooTimeout.Name = "numericBambooTimeout";
-            this.numericBambooTimeout.Size = new System.Drawing.Size(60, 20);
-            this.numericBambooTimeout.TabIndex = 2;
-            this.numericBambooTimeout.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.numericBambooTimeout.ValueChanged += new System.EventHandler(this.numericBambooTimeout_ValueChanged);
+            this.tabPage4.Controls.Add(this.groupBox2);
+            this.tabPage4.Controls.Add(this.label6);
+            this.tabPage4.Controls.Add(this.numericNetworkTimeout);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(538, 248);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "Network Settings";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.numericUpDown1);
+            this.groupBox2.Controls.Add(this.textPassword);
+            this.groupBox2.Controls.Add(this.textUserName);
+            this.groupBox2.Controls.Add(this.textProxyHost);
+            this.groupBox2.Controls.Add(this.checkBox1);
+            this.groupBox2.Controls.Add(this.label9);
+            this.groupBox2.Controls.Add(this.label8);
+            this.groupBox2.Controls.Add(this.label7);
+            this.groupBox2.Controls.Add(this.label5);
+            this.groupBox2.Controls.Add(this.radioUseNoProxy);
+            this.groupBox2.Controls.Add(this.radioUseCustomProxy);
+            this.groupBox2.Controls.Add(this.radioUseSystemProxy);
+            this.groupBox2.Location = new System.Drawing.Point(9, 39);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(523, 203);
+            this.groupBox2.TabIndex = 7;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Proxy Settings";
+            // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Location = new System.Drawing.Point(435, 68);
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(74, 20);
+            this.numericUpDown1.TabIndex = 12;
+            // 
+            // textPassword
+            // 
+            this.textPassword.Location = new System.Drawing.Point(192, 143);
+            this.textPassword.Name = "textPassword";
+            this.textPassword.PasswordChar = '*';
+            this.textPassword.Size = new System.Drawing.Size(173, 20);
+            this.textPassword.TabIndex = 11;
+            // 
+            // textUserName
+            // 
+            this.textUserName.Location = new System.Drawing.Point(192, 117);
+            this.textUserName.Name = "textUserName";
+            this.textUserName.Size = new System.Drawing.Size(173, 20);
+            this.textUserName.TabIndex = 10;
+            // 
+            // textProxyHost
+            // 
+            this.textProxyHost.Location = new System.Drawing.Point(138, 68);
+            this.textProxyHost.Name = "textProxyHost";
+            this.textProxyHost.Size = new System.Drawing.Size(227, 20);
+            this.textProxyHost.TabIndex = 8;
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(77, 94);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(145, 17);
+            this.checkBox1.TabIndex = 7;
+            this.checkBox1.Text = "Use Proxy Authentication";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(126, 146);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(53, 13);
+            this.label9.TabIndex = 6;
+            this.label9.Text = "Password";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(126, 120);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(60, 13);
+            this.label8.TabIndex = 5;
+            this.label8.Text = "User Name";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(374, 71);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(55, 13);
+            this.label7.TabIndex = 4;
+            this.label7.Text = "Proxy Port";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 42);
+            this.label5.Location = new System.Drawing.Point(74, 71);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(137, 13);
+            this.label5.Size = new System.Drawing.Size(58, 13);
             this.label5.TabIndex = 3;
-            this.label5.Text = "Network Timeout [seconds]";
+            this.label5.Text = "Proxy Host";
             // 
-            // numericJiraTimeout
+            // radioUseNoProxy
             // 
-            this.numericJiraTimeout.Location = new System.Drawing.Point(149, 40);
-            this.numericJiraTimeout.Minimum = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            this.numericJiraTimeout.Name = "numericJiraTimeout";
-            this.numericJiraTimeout.Size = new System.Drawing.Size(60, 20);
-            this.numericJiraTimeout.TabIndex = 4;
-            this.numericJiraTimeout.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.numericJiraTimeout.ValueChanged += new System.EventHandler(this.numericJiraTimeout_ValueChanged);
+            this.radioUseNoProxy.AutoSize = true;
+            this.radioUseNoProxy.Location = new System.Drawing.Point(15, 180);
+            this.radioUseNoProxy.Name = "radioUseNoProxy";
+            this.radioUseNoProxy.Size = new System.Drawing.Size(110, 17);
+            this.radioUseNoProxy.TabIndex = 2;
+            this.radioUseNoProxy.TabStop = true;
+            this.radioUseNoProxy.Text = "Do Not Use Proxy";
+            this.radioUseNoProxy.UseVisualStyleBackColor = true;
+            // 
+            // radioUseCustomProxy
+            // 
+            this.radioUseCustomProxy.AutoSize = true;
+            this.radioUseCustomProxy.Location = new System.Drawing.Point(15, 44);
+            this.radioUseCustomProxy.Name = "radioUseCustomProxy";
+            this.radioUseCustomProxy.Size = new System.Drawing.Size(152, 17);
+            this.radioUseCustomProxy.TabIndex = 1;
+            this.radioUseCustomProxy.TabStop = true;
+            this.radioUseCustomProxy.Text = "Use Custom Proxy Settings";
+            this.radioUseCustomProxy.UseVisualStyleBackColor = true;
+            // 
+            // radioUseSystemProxy
+            // 
+            this.radioUseSystemProxy.AutoSize = true;
+            this.radioUseSystemProxy.Location = new System.Drawing.Point(15, 20);
+            this.radioUseSystemProxy.Name = "radioUseSystemProxy";
+            this.radioUseSystemProxy.Size = new System.Drawing.Size(151, 17);
+            this.radioUseSystemProxy.TabIndex = 0;
+            this.radioUseSystemProxy.TabStop = true;
+            this.radioUseSystemProxy.Text = "Use System Proxy Settings";
+            this.radioUseSystemProxy.UseVisualStyleBackColor = true;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 42);
+            this.label6.Location = new System.Drawing.Point(6, 15);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(137, 13);
-            this.label6.TabIndex = 5;
+            this.label6.TabIndex = 6;
             this.label6.Text = "Network Timeout [seconds]";
+            // 
+            // numericNetworkTimeout
+            // 
+            this.numericNetworkTimeout.Location = new System.Drawing.Point(149, 13);
+            this.numericNetworkTimeout.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.numericNetworkTimeout.Name = "numericNetworkTimeout";
+            this.numericNetworkTimeout.Size = new System.Drawing.Size(60, 20);
+            this.numericNetworkTimeout.TabIndex = 5;
+            this.numericNetworkTimeout.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numericNetworkTimeout.ValueChanged += new System.EventHandler(this.numericNetworkTimeout_ValueChanged);
             // 
             // GlobalSettings
             // 
@@ -419,8 +545,12 @@
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericBambooPollingInterval)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericBambooTimeout)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericJiraTimeout)).EndInit();
+            this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericNetworkTimeout)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -449,10 +579,22 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckBox checkJiraExplorer;
         private System.Windows.Forms.CheckBox checkAnkhSvn;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.NumericUpDown numericJiraTimeout;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.NumericUpDown numericBambooTimeout;
+        private System.Windows.Forms.RadioButton radioUseNoProxy;
+        private System.Windows.Forms.RadioButton radioUseCustomProxy;
+        private System.Windows.Forms.RadioButton radioUseSystemProxy;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.NumericUpDown numericNetworkTimeout;
+        private System.Windows.Forms.TextBox textPassword;
+        private System.Windows.Forms.TextBox textUserName;
+        private System.Windows.Forms.TextBox textProxyHost;
+        private System.Windows.Forms.NumericUpDown numericUpDown1;
 
     }
 }
