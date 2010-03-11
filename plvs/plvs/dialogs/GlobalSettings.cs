@@ -10,7 +10,6 @@ namespace Atlassian.plvs.dialogs {
         private const int DEFAULT_BAMBOO_POLLING_INTERVAL = 60;
         private const int DEFAULT_ISSUE_BATCH_SIZE = 25;
         private const int DEFAULT_JIRA_TIMEOUT = 10;
-        private const int DEFAULT_BAMBOO_TIMEOUT = 10;
         private const string REG_AUTOUPDATE = "AutoupdateEnabled";
         private const string REG_BAMBOO_POLLING_INTERVAL = "BambooPollingInterval";
         private const string REG_CHECK_SNAPSHOTS = "AutoupdateCheckSnapshots";
@@ -49,7 +48,6 @@ namespace Atlassian.plvs.dialogs {
                 JiraServerExplorerEnabled = false;
                 AnkhSvnIntegrationEnabled = false;
                 NetworkTimeout = DEFAULT_JIRA_TIMEOUT;
-                BambooTimeout = DEFAULT_BAMBOO_TIMEOUT;
             }
         }
 
@@ -72,7 +70,6 @@ namespace Atlassian.plvs.dialogs {
         public static bool JiraServerExplorerEnabled { get; private set; }
         public static bool AnkhSvnIntegrationEnabled { get; private set; }
         public static int NetworkTimeout { get; private set; }
-        public static int BambooTimeout { get; private set; }
 
         private void initializeWidgets() {
             numericJiraBatchSize.Value = Math.Min(Math.Max(JiraIssuesBatch, 10), 1000);
