@@ -5,10 +5,10 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
-using Atlassian.plvs.Atlassian.plvs.api.soap.service;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui.jira.fields;
 using Atlassian.plvs.util;
+using Atlassian.plvs.util.jira;
 
 namespace Atlassian.plvs.dialogs.jira {
     public partial class FieldEditor : Form {
@@ -99,10 +99,12 @@ namespace Atlassian.plvs.dialogs.jira {
                     editorProvider = new TextLineFieldEditorProvider(field, issue.Summary, fieldValid);
                     break;
                 case JiraActionFieldType.WidgetType.DESCRIPTION:
-                    editorProvider = new TextAreaFieldEditorProvider(facade, issue, field, ((RemoteIssue) issueSoapObject).description, fieldValid);
+                    string descr = JiraIssueUtils.getIssueSoapObjectPropertyValue<string>(issueSoapObject, "description") ?? "";
+                    editorProvider = new TextAreaFieldEditorProvider(facade, issue, field, descr, fieldValid);
                     break;
                 case JiraActionFieldType.WidgetType.ENVIRONMENT:
-                    editorProvider = new TextAreaFieldEditorProvider(facade, issue, field, ((RemoteIssue)issueSoapObject).environment, fieldValid);
+                    string env = JiraIssueUtils.getIssueSoapObjectPropertyValue<string>(issueSoapObject, "environment") ?? "";
+                    editorProvider = new TextAreaFieldEditorProvider(facade, issue, field, env, fieldValid);
                     break;
                 case JiraActionFieldType.WidgetType.VERSIONS:
                     editorProvider = new NamedEntityListFieldEditorProvider(field, issue.Versions, versions, fieldValid);
@@ -112,7 +114,7 @@ namespace Atlassian.plvs.dialogs.jira {
                     break;
                 case JiraActionFieldType.WidgetType.ASSIGNEE:
                     editorProvider = new UserFieldEditorProvider(issue.Server, field,
-                                                         field.Values.Count > 0 ? field.Values[0] : "", fieldValid, true);
+                                                         field.Values.IsNullOrEmpty() ? "" : field.Values[0], fieldValid, true);
                     break;
                 case JiraActionFieldType.WidgetType.COMPONENTS:
                     editorProvider = new NamedEntityListFieldEditorProvider(field, issue.Components, comps, fieldValid);

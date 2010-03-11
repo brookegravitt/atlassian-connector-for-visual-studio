@@ -157,13 +157,13 @@ namespace Atlassian.plvs.dialogs.jira {
                 JiraFieldEditorProvider editor = null;
                 switch (JiraActionFieldType.getFieldTypeForField(field)) {
                     case JiraActionFieldType.WidgetType.SUMMARY:
-                        editor = new TextLineFieldEditorProvider(field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
+                        editor = new TextLineFieldEditorProvider(field, field.Values.IsNullOrEmpty() ? "" : field.Values[0], fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.DESCRIPTION:
-                        editor = new TextAreaFieldEditorProvider(JiraServerFacade.Instance, issue, field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
+                        editor = new TextAreaFieldEditorProvider(JiraServerFacade.Instance, issue, field, field.Values.IsNullOrEmpty() ? "" : field.Values[0], fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.ENVIRONMENT:
-                        editor = new TextAreaFieldEditorProvider(JiraServerFacade.Instance, issue, field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
+                        editor = new TextAreaFieldEditorProvider(JiraServerFacade.Instance, issue, field, field.Values.IsNullOrEmpty() ? "" : field.Values[0], fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.ISSUE_TYPE:
                         editor = new NamedEntityComboEditorProvider(field, issue.IssueTypeId, issue.IsSubtask ? subtaskIssueTypes : issueTypes, fieldValid);
@@ -175,15 +175,15 @@ namespace Atlassian.plvs.dialogs.jira {
                         editor = new NamedEntityListFieldEditorProvider(field, issue.FixVersions, versions, fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.ASSIGNEE:
-                        editor = new UserFieldEditorProvider(issue.Server, field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
+                        editor = new UserFieldEditorProvider(issue.Server, field, field.Values.IsNullOrEmpty() ? "" : field.Values[0], fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.REPORTER:
-                        editor = new UserFieldEditorProvider(issue.Server, field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
+                        editor = new UserFieldEditorProvider(issue.Server, field, field.Values.IsNullOrEmpty() ? "" : field.Values[0], fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.DUE_DATE:
-                        editor = new DateFieldEditorProvider(field, field.Values.Count > 0 
-                                                                ? JiraIssueUtils.getDateTimeFromShortString(field.Values[0]) 
-                                                                : (DateTime?) null, fieldValid);
+                        editor = new DateFieldEditorProvider(field, field.Values.IsNullOrEmpty()
+                                                                        ? (DateTime?) null 
+                                                                        : JiraIssueUtils.getDateTimeFromShortString(field.Values[0]), fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.COMPONENTS:
                         editor = new NamedEntityListFieldEditorProvider(field, issue.Components, comps, fieldValid);
@@ -196,7 +196,7 @@ namespace Atlassian.plvs.dialogs.jira {
                         editor = new NamedEntityComboEditorProvider(field, issue.PriorityId, JiraServerCache.Instance.getPriorities(issue.Server), fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.TIMETRACKING:
-                        editor = new TimeTrackingEditorProvider(field, field.Values.Count > 0 ? field.Values[0] : "", fieldValid);
+                        editor = new TimeTrackingEditorProvider(field, field.Values.IsNullOrEmpty() ? "" : field.Values[0], fieldValid);
                         break;
 // ReSharper disable RedundantCaseLabel
                     case JiraActionFieldType.WidgetType.SECURITY:
