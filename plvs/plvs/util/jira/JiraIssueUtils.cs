@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Web;
 using Atlassian.plvs.api.jira;
@@ -74,6 +75,17 @@ namespace Atlassian.plvs.util.jira {
 
         public static string getAuthString(JiraServer server) {
             return "os_username=" + HttpUtility.UrlEncode(server.UserName) + "&os_password=" + HttpUtility.UrlEncode(server.Password);
+        }
+
+        public static T getIssueSoapObjectPropertyValue<T>(object soapObject, string name) {
+            if (soapObject == null) {
+                return default(T);
+            }
+            PropertyInfo property = soapObject.GetType().GetProperty(name);
+            if (property == null) {
+                return default(T);
+            }
+            return (T) property.GetValue(soapObject, null);
         }
     }
 }

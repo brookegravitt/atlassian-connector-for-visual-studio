@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -43,8 +44,7 @@ namespace Atlassian.plvs.api.jira.soap {
         }
 
         public List<JiraProject> getProjects() {
-            // attempting a workaround for PLVS-133
-#if true
+#if PLVS_133_WORKAROUND
 
             object[] results = service.getProjectsNoSchemes(Token);
 
@@ -64,7 +64,7 @@ namespace Atlassian.plvs.api.jira.soap {
         }
 
         public List<JiraSavedFilter> getSavedFilters() {
-#if true
+#if PLVS_133_WORKAROUND
             object[] results = service.getSavedFilters(Token);
             return (from pobj in results.ToList()
                     let id = pobj.GetType().GetProperty("id")
@@ -81,7 +81,7 @@ namespace Atlassian.plvs.api.jira.soap {
 
         public string createIssue(JiraIssue issue) {
 
-#if true
+#if PLVS_133_WORKAROUND
             object[] issuesTable = service.getIssuesFromTextSearch(Token, "<<<<<<<<<<<<<IHOPETHEREISNOSUCHTEXT>>>>>>>>>>>>>>");
 
             Type issueObjectType = issuesTable.GetType().GetElementType();
@@ -179,7 +179,7 @@ namespace Atlassian.plvs.api.jira.soap {
         }
 
         public void addComment(JiraIssue issue, string comment) {
-#if true
+#if PLVS_133_WORKAROUND
             object[] comments = service.getComments(Token, issue.Key);
             if (comments == null) {
                 throw new Exception("Unable to retrieve information about the RemoteComment type");
@@ -201,7 +201,7 @@ namespace Atlassian.plvs.api.jira.soap {
 
         public JiraNamedEntity getSecurityLevel(string key) {
             try {
-#if true
+#if PLVS_133_WORKAROUND
                 object securityLevel = service.getSecurityLevel(Token, key);
                 return securityLevel == null ? null : createNamedEntity(securityLevel);
 #else
@@ -254,7 +254,7 @@ namespace Atlassian.plvs.api.jira.soap {
         }
 
         public List<JiraNamedEntity> getActionsForIssue(JiraIssue issue) {
-#if true
+#if PLVS_133_WORKAROUND
             object[] results = service.getAvailableActions(Token, issue.Key);
             return createEntityList(results);
 #else
@@ -268,12 +268,24 @@ namespace Atlassian.plvs.api.jira.soap {
         }
 
         public List<JiraField> getFieldsForAction(JiraIssue issue, int id) {
+#if PLVS_133_WORKAROUND
+            object[] fields = service.getFieldsForAction(Token, issue.Key, id.ToString());
+            if (fields == null) return new List<JiraField>();
+
+            return (from field in fields
+                    where field != null
+                    let fieldId = field.GetType().GetProperty("id")
+                    let name = field.GetType().GetProperty("name")
+                    select new JiraField((string) fieldId.GetValue(field, null), (string) name.GetValue(field, null)))
+                    .ToList();
+#else
             RemoteField[] fields = service.getFieldsForAction(Token, issue.Key, id.ToString());
             if (fields == null) return new List<JiraField>();
 
             return (from field in fields 
                     where field != null 
                     select new JiraField(field.id, field.name)).ToList();
+#endif
         }
 
         public void runIssueActionWithoutParams(JiraIssue issue, int id) {
@@ -281,6 +293,19 @@ namespace Atlassian.plvs.api.jira.soap {
         }
 
         public void runIssueActionWithParams(JiraIssue issue, int id, ICollection<JiraField> fields, string comment) {
+#if PLVS_133_WORKAROUND
+            List<object> fieldValues = new List<object>();
+            foreach (var field in fields) {
+                if (field.Values == null) continue;
+                object rfv = createRemoteFieldValueObject(field.Id);
+                setObjectProperty(rfv, "values", field.Values.ToArray());
+                fieldValues.Add(rfv);
+            }
+            service.progressWorkflowAction(Token, issue.Key, id.ToString(), fieldValues.ToArray());
+            if (comment != null) {
+                addComment(issue, comment);
+            }
+#else
             if (fields == null || fields.Count == 0) {
                 throw new Exception("Field values must not be empty");
             }
@@ -290,32 +315,61 @@ namespace Atlassian.plvs.api.jira.soap {
             if (!string.IsNullOrEmpty(comment)) {
                 service.addComment(Token, issue.Key, new RemoteComment { body = comment });
             }
+#endif
         }
 
         public void logWorkAndAutoUpdateRemaining(string key, string timeSpent, DateTime startDate) {
+#if PLVS_133_WORKAROUND
+            ConstructorInfo constructor = getRemoteWorklogConstructor(key);
+            object worklog = createWorklogObject(constructor, timeSpent, startDate);
+            service.addWorklogAndAutoAdjustRemainingEstimate(Token, key, worklog);
+#else
             RemoteWorklog worklog = new RemoteWorklog { timeSpent = timeSpent, startDate = startDate };
             service.addWorklogAndAutoAdjustRemainingEstimate(Token, key, worklog);
+#endif
         }
 
         public void logWorkAndLeaveRemainingUnchanged(string key, string timeSpent, DateTime startDate) {
+#if PLVS_133_WORKAROUND
+            ConstructorInfo constructor = getRemoteWorklogConstructor(key);
+            object worklog = createWorklogObject(constructor, timeSpent, startDate);
+            service.addWorklogAndRetainRemainingEstimate(Token, key, worklog);
+#else
             RemoteWorklog worklog = new RemoteWorklog { timeSpent = timeSpent, startDate = startDate };
             service.addWorklogAndRetainRemainingEstimate(Token, key, worklog);
+#endif
         }
 
         public void logWorkAndUpdateRemainingManually(string key, string timeSpent, DateTime startDate, string remainingEstimate) {
+#if PLVS_133_WORKAROUND
+            ConstructorInfo constructor = getRemoteWorklogConstructor(key);
+            object worklog = createWorklogObject(constructor, timeSpent, startDate);
+            service.addWorklogWithNewRemainingEstimate(Token, key, worklog, remainingEstimate);
+#else
             RemoteWorklog worklog = new RemoteWorklog { timeSpent = timeSpent, startDate = startDate };
             service.addWorklogWithNewRemainingEstimate(Token, key, worklog, remainingEstimate);
+#endif
         }
 
         public void updateIssue(string key, ICollection<JiraField> fields) {
+#if PLVS_133_WORKAROUND
+            List<object> values = new List<object>();
+            foreach (var field in fields) {
+                object rfv = createRemoteFieldValueObject(field.Id);
+                setObjectProperty(rfv, "values", field.Values.ToArray());
+                values.Add(rfv);
+            }
+            service.updateIssue(Token, key, values.ToArray());
+#else
             service.updateIssue(Token, key, fields.Select(field => new RemoteFieldValue {id = field.Id, values = field.Values.ToArray()}).ToArray());
+#endif
         }
 
         public void uploadAttachment(string key, string name, byte[] attachment) {
             service.addBase64EncodedAttachmentsToIssue(Token, key, new[] {name}, new[] {Convert.ToBase64String(attachment)});
         }
 
-#if true
+#if PLVS_133_WORKAROUND
         private static List<JiraNamedEntity> createEntityList(IEnumerable<object> entities) {
             return entities == null 
                 ? new List<JiraNamedEntity>() 
@@ -344,11 +398,41 @@ namespace Atlassian.plvs.api.jira.soap {
 
 #endif
 
+        private ConstructorInfo getRemoteWorklogConstructor(string key) {
+            object[] remoteWorklogs = service.getWorklogs(Token, key);
+            Type elementType = remoteWorklogs.GetType().GetElementType();
+            return elementType.GetConstructor(new Type[] { });
+        }
+
+        private static object createWorklogObject(ConstructorInfo constructor, string timeSpent, DateTime startDate) {
+            object worklog = constructor.Invoke(new object[] { });
+            setObjectProperty(worklog, "timeSpent", timeSpent);
+            setObjectProperty(worklog, "startDate", startDate);
+            return worklog;
+        }
+
+        private static object createRemoteFieldValueObject(string id) {
+            MemberInfo info = typeof(JiraSoapServiceService);
+            object[] attributes = info.GetCustomAttributes(true);
+            Type rfvType = (from attribute in attributes
+                            let property = attribute.GetType().GetProperty("Type")
+                            where property != null
+                            select property.GetValue(attribute, null) as Type)
+                                .FirstOrDefault(type => type != null && type.Name.Equals("RemoteFieldValue"));
+            if (rfvType == null) {
+                throw new Exception("Unable to retrieve information about the RemoteFieldValue type");
+            }
+            ConstructorInfo constructor = rfvType.GetConstructor(new Type[] { });
+            object rfv = constructor.Invoke(new object[] { });
+            setObjectProperty(rfv, "id", id);
+            return rfv;
+        }
+
         private static void setObjectProperty(object o, string name, object value) {
             o.GetType().GetProperty(name).SetValue(o, value, null);
         }
 
-        private static void setObjectTablePropertyFromObjectList(object ri, string propertyName, IEnumerable<string> items, object[] availableObjects) {
+        private static void setObjectTablePropertyFromObjectList(object o, string propertyName, IEnumerable<string> items, object[] availableObjects) {
             ConstructorInfo tableConstructor = availableObjects.GetType().GetConstructor(new[] { typeof(int) });
             ConstructorInfo itemConstructor = availableObjects.GetType().GetElementType().GetConstructor(new Type[] { });
             List<object> list = new List<object>();
@@ -373,7 +457,7 @@ namespace Atlassian.plvs.api.jira.soap {
             for (int i = 0; i < table.Length; ++i) {
                 table[i] = list[i];
             }
-            setObjectProperty(ri, propertyName, table);
+            setObjectProperty(o, propertyName, table);
         }
 
         private static JiraNamedEntity createNamedEntity(object o) {

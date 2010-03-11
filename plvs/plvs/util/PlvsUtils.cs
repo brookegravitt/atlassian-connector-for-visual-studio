@@ -300,6 +300,10 @@ namespace Atlassian.plvs.util {
             }
         }
 
+        public static bool IsNullOrEmpty(this ICollection c) {
+            return (c == null || c.Count == 0);
+        }
+
         public static string getFullExceptionTextDetails(string message, Exception exception) {
             if (message == null && exception == null) {
                 return "";
