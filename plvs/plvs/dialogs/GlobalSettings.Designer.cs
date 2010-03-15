@@ -377,9 +377,9 @@
             this.groupBox2.Controls.Add(this.radioUseNoProxy);
             this.groupBox2.Controls.Add(this.radioUseCustomProxy);
             this.groupBox2.Controls.Add(this.radioUseSystemProxy);
-            this.groupBox2.Location = new System.Drawing.Point(9, 39);
+            this.groupBox2.Location = new System.Drawing.Point(6, 39);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(523, 203);
+            this.groupBox2.Size = new System.Drawing.Size(526, 203);
             this.groupBox2.TabIndex = 7;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Proxy Settings";
