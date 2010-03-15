@@ -308,6 +308,7 @@
     <Compile Include="ui\ComboBoxWithImages.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ui\jira\fields\ResolutionEditorProvider.cs" />
     <Compile Include="ui\jira\JiraProjectListViewItem.cs" />
     <Compile Include="ui\jira\fields\DateFieldEditorProvider.cs" />
     <Compile Include="ui\jira\fields\FixedHeightFieldEditorProvider.cs" />
