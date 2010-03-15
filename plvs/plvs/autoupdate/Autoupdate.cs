@@ -71,7 +71,8 @@ namespace Atlassian.plvs.autoupdate {
                 url = UsageCollector.Instance.getUsageReportingUrl(url);
             }
 
-            Thread t = new Thread(() => runSingleUpdateQuery(url, true));
+            Exception ex;
+            Thread t = new Thread(() => runSingleUpdateQuery(url, true, out ex));
             t.Start();
         }
 
@@ -89,17 +90,25 @@ namespace Atlassian.plvs.autoupdate {
             if (GlobalSettings.ReportUsage) {
                 url = UsageCollector.Instance.getUsageReportingUrl(url);
             }
-            Thread t = new Thread(new ThreadStart(delegate { 
-                if (runSingleUpdateQuery(url, false)) {
+            Thread t = new Thread(new ThreadStart(delegate {
+                Exception ex;
+                if (runSingleUpdateQuery(url, false, out ex)) {
                     parent.Invoke(new MethodInvoker(delegate { showUpdateDialog(); onFinished(); }));
                 } else {
-                    parent.Invoke(new MethodInvoker(delegate
-                                                        {
-                                                            MessageBox.Show("You have the latest connector version installed",
-                                                                            Constants.INFO_CAPTION, MessageBoxButtons.OK, 
-                                                                            MessageBoxIcon.Information);
+                    if (ex != null) {
+                        parent.Invoke(new MethodInvoker(delegate {
+                                                            PlvsUtils.showError(
+                                                                "Unable to retrieve autoupdate information", ex);
                                                             onFinished();
                                                         }));
+                    } else {
+                        parent.Invoke(new MethodInvoker(delegate {
+                                                                MessageBox.Show("You have the latest connector version installed",
+                                                                                Constants.INFO_CAPTION, MessageBoxButtons.OK,
+                                                                                MessageBoxIcon.Information);
+                                                                onFinished();
+                                                            }));
+                    }
                 }
             }));
             t.Start();
@@ -110,13 +119,16 @@ namespace Atlassian.plvs.autoupdate {
             dialog.ShowDialog();
         }
 
-        private bool runSingleUpdateQuery(string url, bool updateToolWindowButton) {
+        private bool runSingleUpdateQuery(string url, bool updateToolWindowButton, out Exception connectionException) {
             AtlassianPanel issueListWindow = AtlassianPanel.Instance;
+            connectionException = null;
             try {
                 HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
 
-                req.Timeout = 5000;
-                req.ReadWriteTimeout = 20000;
+                req.Proxy = GlobalSettings.Proxy;
+
+                req.Timeout = GlobalSettings.NetworkTimeout;
+                req.ReadWriteTimeout = GlobalSettings.NetworkTimeout * 2;
                 HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
                 Stream str = resp.GetResponseStream();
 
@@ -157,6 +169,7 @@ namespace Atlassian.plvs.autoupdate {
                 if (issueListWindow != null && updateToolWindowButton) {
                     issueListWindow.setAutoupdateUnavailable(ex);
                 }
+                connectionException = ex;
             }
             return false;
         }

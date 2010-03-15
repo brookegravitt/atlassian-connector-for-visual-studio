@@ -18,10 +18,10 @@ namespace Atlassian.plvs.api.jira.soap {
             public LoginException(Exception e) : base("Login failed", e) { }
         }
 
-        public SoapSession(string url) {
-
+        public SoapSession(string url, bool noProxy) {
             service.Url = url + "/rpc/soap/jirasoapservice-v2";
             service.Timeout = GlobalSettings.NetworkTimeout * 1000;
+            service.Proxy = noProxy ? null : GlobalSettings.Proxy;
         }
 
         public string login(string userName, string password) {

@@ -8,8 +8,10 @@ using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.api.jira {
     internal class RestClient : JiraAuthenticatedClient {
+        private readonly JiraServer server;
 
         public RestClient(JiraServer server) : base(server.Url, server.UserName, server.Password) {
+            this.server = server;
         }
 
         public string getRenderedContent(string issueKey, int issueType, int projectId, string markup) {
@@ -20,6 +22,7 @@ namespace Atlassian.plvs.api.jira {
             try {
 
                 HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url.ToString());
+                req.Proxy = server.NoProxy ? null : GlobalSettings.Proxy;
 
                 req.Credentials = CredentialUtils.getCredentialCacheForUserAndPassword(url.ToString(), UserName, Password);
                 req.Method = "POST";

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.bamboo;
@@ -47,6 +48,7 @@ namespace Atlassian.plvs.dialogs.bamboo {
                     }
 
                     checkEnabled.Checked = server.Enabled;
+                    checkDontUseProxy.Checked = server.NoProxy;
                 }
             } else {
                 ++invocations;
@@ -58,6 +60,7 @@ namespace Atlassian.plvs.dialogs.bamboo {
                 checkedListBuilds.Enabled = false;
 
                 checkEnabled.Checked = true;
+                checkDontUseProxy.Checked = false;
             }
 
             StartPosition = FormStartPosition.CenterParent;
@@ -101,6 +104,7 @@ namespace Atlassian.plvs.dialogs.bamboo {
             server.UserName = user.Text.Trim();
             server.Password = password.Text;
             server.Enabled = checkEnabled.Checked;
+            server.NoProxy = checkDontUseProxy.Checked;
         }
 
         private void name_TextChanged(object sender, EventArgs e) {
@@ -127,7 +131,7 @@ namespace Atlassian.plvs.dialogs.bamboo {
             get { return server; }
         }
 
-        private void AddOrEditJiraServer_KeyPress(object sender, KeyPressEventArgs e) {
+        private void addOrEditServerKeyPress(object sender, KeyPressEventArgs e) {
             if (e.KeyChar != (char) Keys.Escape) return;
             if (gettingPlans) return;
             DialogResult = DialogResult.Cancel;
@@ -157,6 +161,7 @@ namespace Atlassian.plvs.dialogs.bamboo {
             user.Enabled = false;
             password.Enabled = false;
             checkEnabled.Enabled = false;
+            checkDontUseProxy.Enabled = false;
 
             buttonGetBuilds.Enabled = false;
             buttonTestConnection.Enabled = false;
@@ -184,6 +189,7 @@ namespace Atlassian.plvs.dialogs.bamboo {
                                              user.Enabled = true;
                                              password.Enabled = true;
                                              checkEnabled.Enabled = true;
+                                             checkDontUseProxy.Enabled = true;
                                              checkIfValid();
                 }));
             }
@@ -197,10 +203,9 @@ namespace Atlassian.plvs.dialogs.bamboo {
             int i = 0;
             foreach (var plan in plans) {
                 checkedListBuilds.Items.Add(plan);
-                foreach (string key in planKeys) {
-                    if (!plan.Key.Equals(key)) continue;
+                BambooPlan planCopy = plan;
+                if (planKeys.Any(key => planCopy.Key.Equals(key))) {
                     checkedListBuilds.SetItemChecked(i, true);
-                    break;
                 }
                 ++i;
             }
@@ -213,6 +218,10 @@ namespace Atlassian.plvs.dialogs.bamboo {
         private void buttonTestConnection_Click(object sender, EventArgs e) {
             fillServerData();
             new TestBambooConnection(facade, server).ShowDialog();
+        }
+
+        private void checkUseProxy_CheckedChanged(object sender, EventArgs e) {
+            checkIfValid();
         }
     }
 }

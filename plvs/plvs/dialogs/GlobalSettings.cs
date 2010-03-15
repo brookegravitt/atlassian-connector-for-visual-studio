@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Net;
 using System.Windows.Forms;
+using Atlassian.plvs.attributes;
 using Atlassian.plvs.autoupdate;
+using Atlassian.plvs.store;
 using Atlassian.plvs.util;
 using Microsoft.Win32;
 
@@ -21,7 +24,33 @@ namespace Atlassian.plvs.dialogs {
         private const string REG_ANKH_SNV_ENABLED = "AnkhSVNIntegrationEnabled";
         private const string REG_NETWORK_TIMEOUT = "NetworkTimeout";
 
+        private const string REG_PROXY_TYPE = "ProxyType";
+        private const string REG_PROXY_HOST = "ProxyHost";
+        private const string REG_PROXY_PORT = "ProxyPort";
+        private const string REG_PROXY_USE_AUTH = "ProxyUseAuth";
+        private const string REG_PROXY_USER = "ProxyUser";
+        private const string REG_PROXY_PASSWORD = "ProxyPassword";
+
         private bool isRunningManualUpdateQuery;
+
+        private const string PASSWORD_ENTROPY = "borgriubdfasd";
+
+        private enum ProxyType {
+            [StringValue("System")]
+            SYSTEM, 
+            [StringValue("Custom")]
+            CUSTOM,
+            [StringValue("None")]
+            NONE
+        }
+
+        private static ProxyType currentProxyType;
+        private static ProxyType proxyTypeToSave;
+        private static string proxyHost;
+        private static int proxyPort;
+        private static bool proxyUseAuth;
+        private static string proxyUser;
+        private static string proxyPassword;
 
         static GlobalSettings() {
             try {
@@ -38,6 +67,19 @@ namespace Atlassian.plvs.dialogs {
                 JiraServerExplorerEnabled = (int)root.GetValue(REG_JIRA_SERVER_EXPLORER, 0) > 0;
                 AnkhSvnIntegrationEnabled = (int) root.GetValue(REG_ANKH_SNV_ENABLED, 0) > 0;
                 NetworkTimeout = (int) root.GetValue(REG_NETWORK_TIMEOUT, 10);
+                string proxy = (string) root.GetValue(REG_PROXY_TYPE, ProxyType.SYSTEM.GetStringValue());
+                if (proxy.Equals(ProxyType.CUSTOM.GetStringValue())) {
+                    currentProxyType = ProxyType.CUSTOM;
+                } else if (proxy.Equals(ProxyType.NONE.GetStringValue())) {
+                    currentProxyType = ProxyType.NONE;
+                } else {
+                    currentProxyType = ProxyType.SYSTEM;
+                }
+                proxyHost = (string) root.GetValue(REG_PROXY_HOST, "");
+                proxyPort = (int) root.GetValue(REG_PROXY_PORT, 0);
+                proxyUseAuth = ((int) root.GetValue(REG_PROXY_USE_AUTH, 0)) == 1;
+                proxyUser = (string) root.GetValue(REG_PROXY_USER, "");
+                proxyPassword = DPApi.decrypt((string) root.GetValue(REG_PROXY_PASSWORD, ""), PASSWORD_ENTROPY);
             } catch (Exception) {
                 JiraIssuesBatch = DEFAULT_ISSUE_BATCH_SIZE;
                 AutoupdateEnabled = true;
@@ -48,7 +90,15 @@ namespace Atlassian.plvs.dialogs {
                 JiraServerExplorerEnabled = false;
                 AnkhSvnIntegrationEnabled = false;
                 NetworkTimeout = DEFAULT_JIRA_TIMEOUT;
+                currentProxyType = ProxyType.SYSTEM;
+                proxyHost = "";
+                proxyPort = 0;
+                proxyUseAuth = false;
+                proxyUser = "";
+                proxyPassword = "";
             }
+
+            proxyTypeToSave = currentProxyType;
         }
 
         public GlobalSettings() {
@@ -70,6 +120,30 @@ namespace Atlassian.plvs.dialogs {
         public static bool JiraServerExplorerEnabled { get; private set; }
         public static bool AnkhSvnIntegrationEnabled { get; private set; }
         public static int NetworkTimeout { get; private set; }
+        public static IWebProxy Proxy { get { return getProxy(); } }
+
+        private static IWebProxy getProxy() {
+            switch (proxyTypeToSave) {
+                case ProxyType.NONE:
+                    return null;
+                case ProxyType.CUSTOM:
+                    WebProxy proxy = new WebProxy
+                                     {
+                                         Address = new Uri("http://" + proxyHost + (proxyPort > 0 ? (":" + proxyPort) : ""))
+                                     };
+                    if (proxyUseAuth) {
+                        string domain = proxyUser.Contains("\\") && !proxyUser.EndsWith("\\")
+                                            ? proxyUser.Substring(0, proxyUser.IndexOf("\\"))
+                                            : null;
+                        string user = proxyUser.Contains("\\") && !proxyUser.EndsWith("\\")
+                                          ? proxyUser.Substring(proxyUser.IndexOf("\\") + 1)
+                                          : proxyUser.Trim(new[] { '\\' });
+                        proxy.Credentials = new NetworkCredential(user, proxyPassword, domain);
+                    }
+                    return proxy;
+            }
+            return WebRequest.DefaultWebProxy;
+        }
 
         private void initializeWidgets() {
             numericJiraBatchSize.Value = Math.Min(Math.Max(JiraIssuesBatch, 10), 1000);
@@ -84,6 +158,14 @@ namespace Atlassian.plvs.dialogs {
             checkJiraExplorer.Checked = JiraServerExplorerEnabled;
             checkAnkhSvn.Checked = AnkhSvnIntegrationEnabled;
             numericNetworkTimeout.Value = Math.Min(Math.Max(NetworkTimeout, 2), 100);
+            radioUseSystemProxy.Checked = currentProxyType == ProxyType.SYSTEM;
+            radioUseCustomProxy.Checked = currentProxyType == ProxyType.CUSTOM;
+            radioUseNoProxy.Checked = currentProxyType == ProxyType.NONE;
+            textProxyHost.Text = proxyHost;
+            numericProxyPort.Value = proxyPort;
+            checkUseProxyAuth.Checked = proxyUseAuth;
+            textProxyUserName.Text = proxyUser;
+            textProxyPassword.Text = proxyPassword;
         }
 
         public static void checkFirstRun() {
@@ -138,6 +220,12 @@ namespace Atlassian.plvs.dialogs {
             BambooPollingInterval = (int) numericBambooPollingInterval.Value;
             JiraServerExplorerEnabled = checkJiraExplorer.Checked;
             AnkhSvnIntegrationEnabled = checkAnkhSvn.Checked;
+            proxyTypeToSave = currentProxyType;
+            proxyHost = textProxyHost.Text;
+            proxyPort = (int) numericProxyPort.Value;
+            proxyUseAuth = checkUseProxyAuth.Checked;
+            proxyUser = textProxyUserName.Text;
+            proxyPassword = textProxyPassword.Text;
 
             saveValues();
 
@@ -165,6 +253,12 @@ namespace Atlassian.plvs.dialogs {
                 root.SetValue(REG_JIRA_SERVER_EXPLORER, JiraServerExplorerEnabled ? 1 : 0);
                 root.SetValue(REG_ANKH_SNV_ENABLED, AnkhSvnIntegrationEnabled ? 1 : 0);
                 root.SetValue(REG_NETWORK_TIMEOUT, NetworkTimeout);
+                root.SetValue(REG_PROXY_TYPE, proxyTypeToSave.GetStringValue());
+                root.SetValue(REG_PROXY_HOST, proxyHost);
+                root.SetValue(REG_PROXY_PORT, proxyPort);
+                root.SetValue(REG_PROXY_USE_AUTH, proxyUseAuth ? 1 : 0);
+                root.SetValue(REG_PROXY_USER, proxyUser);
+                root.SetValue(REG_PROXY_PASSWORD, DPApi.encrypt(proxyPassword, PASSWORD_ENTROPY));
             } catch (Exception e) {
                 MessageBox.Show("Unable to save values to registry: " + e.Message, Constants.ERROR_CAPTION,
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -207,6 +301,12 @@ namespace Atlassian.plvs.dialogs {
             changed |= JiraServerExplorerEnabled != checkJiraExplorer.Checked;
             changed |= AnkhSvnIntegrationEnabled != checkAnkhSvn.Checked;
             changed |= NetworkTimeout != (int) numericNetworkTimeout.Value;
+            changed |= proxyTypeToSave != currentProxyType;
+            changed |= !proxyHost.Equals(textProxyHost.Text);
+            changed |= proxyPort != numericProxyPort.Value;
+            changed |= proxyUseAuth != checkUseProxyAuth.Checked;
+            changed |= !proxyUser.Equals(textProxyUserName.Text);
+            changed |= !proxyPassword.Equals(textProxyPassword.Text);
 
             buttonOk.Enabled = changed;
         }
@@ -260,6 +360,63 @@ namespace Atlassian.plvs.dialogs {
 
         private void numericNetworkTimeout_ValueChanged(object sender, EventArgs e) {
             updateOkButton();
+        }
+
+        private void radioUseSystemProxy_CheckedChanged(object sender, EventArgs e) {
+            setProxyType();
+            updateOkButton();
+        }
+
+        private void radioUseCustomProxy_CheckedChanged(object sender, EventArgs e) {
+            setProxyType();
+            updateOkButton();
+        }
+
+        private void radioUseNoProxy_CheckedChanged(object sender, EventArgs e) {
+            setProxyType();
+            updateOkButton();
+        }
+
+        private void textProxyHost_TextChanged(object sender, EventArgs e) {
+            updateOkButton();
+        }
+
+        private void numericProxyPort_ValueChanged(object sender, EventArgs e) {
+            updateOkButton();
+        }
+
+        private void checkUseProxyAuth_CheckedChanged(object sender, EventArgs e) {
+            setProxyType();
+            updateOkButton();
+        }
+
+        private void textProxyUserName_TextChanged(object sender, EventArgs e) {
+            updateOkButton();
+        }
+
+        private void textProxyPassword_TextChanged(object sender, EventArgs e) {
+            updateOkButton();
+        }
+
+        private void setProxyType() {
+            if (radioUseNoProxy.Checked) {
+                currentProxyType = ProxyType.NONE;
+            } else if (radioUseCustomProxy.Checked) {
+                currentProxyType = ProxyType.CUSTOM;
+            } else {
+                currentProxyType = ProxyType.SYSTEM;
+            }
+
+            updateCustomProxyControls();
+        }
+
+        private void updateCustomProxyControls() {
+            bool enabled = currentProxyType == ProxyType.CUSTOM;
+            textProxyHost.Enabled = enabled;
+            numericProxyPort.Enabled = enabled;
+            checkUseProxyAuth.Enabled = enabled;
+            textProxyUserName.Enabled = enabled && checkUseProxyAuth.Checked;
+            textProxyPassword.Enabled = enabled && checkUseProxyAuth.Checked;
         }
     }
 }
