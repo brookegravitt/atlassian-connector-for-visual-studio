@@ -127,8 +127,8 @@ namespace Atlassian.plvs.autoupdate {
 
                 req.Proxy = GlobalSettings.Proxy;
 
-                req.Timeout = GlobalSettings.NetworkTimeout;
-                req.ReadWriteTimeout = GlobalSettings.NetworkTimeout * 2;
+                req.Timeout = GlobalSettings.NetworkTimeout * 1000;
+                req.ReadWriteTimeout = GlobalSettings.NetworkTimeout * 2000;
                 HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
                 Stream str = resp.GetResponseStream();
 
