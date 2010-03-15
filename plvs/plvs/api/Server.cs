@@ -9,20 +9,22 @@ namespace Atlassian.plvs.api {
         private string userName;
         private string password;
         private bool enabled;
+        private bool noProxy;
 
         public static Guid JiraServerTypeGuid = new Guid("0C644383-BC4C-406d-B325-CA0AB1815B38");
         public static Guid BambooServerTypeGuid = new Guid("1C7A224E-52C4-4575-9212-7D731C13CFE9");
 
-        protected Server(string name, string url, string userName, string password)
-            : this(Guid.NewGuid(), name, url, userName, password, true) {}
+        protected Server(string name, string url, string userName, string password, bool noProxy)
+            : this(Guid.NewGuid(), name, url, userName, password, noProxy, true) {}
 
-        protected Server(Guid guid, string name, string url, string userName, string password, bool enabled) {
+        protected Server(Guid guid, string name, string url, string userName, string password, bool noProxy, bool enabled) {
             this.guid = guid;
             this.name = name;
             this.url = url;
             this.userName = userName;
             this.password = password;
             this.enabled = enabled;
+            this.noProxy = noProxy;
         }
 
         protected Server(Server other) {
@@ -33,6 +35,7 @@ namespace Atlassian.plvs.api {
                 userName = other.userName;
                 password = other.password;
                 enabled = other.enabled;
+                noProxy = other.noProxy;
             }
             else {
                 guid = Guid.NewGuid();
@@ -67,6 +70,11 @@ namespace Atlassian.plvs.api {
             set { enabled = value; }
         }
 
+        public bool NoProxy {
+            get { return noProxy; }
+            set { noProxy = value; }
+        }
+
 // ReSharper disable InconsistentNaming
         public Guid GUID
 // ReSharper restore InconsistentNaming
@@ -85,6 +93,7 @@ namespace Atlassian.plvs.api {
             sb.Append("<tr valign=top><td width=\"150\">Enabled</td><td>").Append(Enabled ? "Yes" : "No").Append("</td></tr>\r\n");
             sb.Append("<tr valign=top><td width=\"150\">URL</td><td><a href=\"").Append(Url).Append("\">").Append(Url).Append("</a></td></tr>\r\n");
             sb.Append("<tr valign=top><td width=\"150\">User Name</td><td>").Append(UserName).Append("</td></tr>\r\n");
+            sb.Append("<tr valign=top><td width=\"150\">Use Proxy</td><td>").Append(NoProxy ? "No" : "Yes").Append("</td></tr>\r\n");
             return sb.ToString();
         }
 

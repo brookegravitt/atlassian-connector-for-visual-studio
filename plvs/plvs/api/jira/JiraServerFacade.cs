@@ -215,7 +215,7 @@ namespace Atlassian.plvs.api.jira {
         }
 
         private static SoapSession createSoapSession(JiraServer server) {
-            SoapSession s = new SoapSession(server.Url);
+            SoapSession s = new SoapSession(server.Url, server.NoProxy);
             return s;
         }
 

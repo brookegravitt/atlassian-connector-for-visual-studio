@@ -52,11 +52,11 @@
             this.label2 = new System.Windows.Forms.Label();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-            this.textPassword = new System.Windows.Forms.TextBox();
-            this.textUserName = new System.Windows.Forms.TextBox();
+            this.numericProxyPort = new System.Windows.Forms.NumericUpDown();
+            this.textProxyPassword = new System.Windows.Forms.TextBox();
+            this.textProxyUserName = new System.Windows.Forms.TextBox();
             this.textProxyHost = new System.Windows.Forms.TextBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.checkUseProxyAuth = new System.Windows.Forms.CheckBox();
             this.label9 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
@@ -75,7 +75,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericBambooPollingInterval)).BeginInit();
             this.tabPage4.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericProxyPort)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericNetworkTimeout)).BeginInit();
             this.SuspendLayout();
             // 
@@ -360,16 +360,16 @@
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage4.Size = new System.Drawing.Size(538, 248);
             this.tabPage4.TabIndex = 3;
-            this.tabPage4.Text = "Network Settings";
+            this.tabPage4.Text = "Network And Proxy Settings";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.numericUpDown1);
-            this.groupBox2.Controls.Add(this.textPassword);
-            this.groupBox2.Controls.Add(this.textUserName);
+            this.groupBox2.Controls.Add(this.numericProxyPort);
+            this.groupBox2.Controls.Add(this.textProxyPassword);
+            this.groupBox2.Controls.Add(this.textProxyUserName);
             this.groupBox2.Controls.Add(this.textProxyHost);
-            this.groupBox2.Controls.Add(this.checkBox1);
+            this.groupBox2.Controls.Add(this.checkUseProxyAuth);
             this.groupBox2.Controls.Add(this.label9);
             this.groupBox2.Controls.Add(this.label8);
             this.groupBox2.Controls.Add(this.label7);
@@ -384,27 +384,35 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Proxy Settings";
             // 
-            // numericUpDown1
+            // numericProxyPort
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(435, 68);
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(74, 20);
-            this.numericUpDown1.TabIndex = 12;
+            this.numericProxyPort.Location = new System.Drawing.Point(435, 68);
+            this.numericProxyPort.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.numericProxyPort.Name = "numericProxyPort";
+            this.numericProxyPort.Size = new System.Drawing.Size(74, 20);
+            this.numericProxyPort.TabIndex = 12;
+            this.numericProxyPort.ValueChanged += new System.EventHandler(this.numericProxyPort_ValueChanged);
             // 
-            // textPassword
+            // textProxyPassword
             // 
-            this.textPassword.Location = new System.Drawing.Point(192, 143);
-            this.textPassword.Name = "textPassword";
-            this.textPassword.PasswordChar = '*';
-            this.textPassword.Size = new System.Drawing.Size(173, 20);
-            this.textPassword.TabIndex = 11;
+            this.textProxyPassword.Location = new System.Drawing.Point(192, 143);
+            this.textProxyPassword.Name = "textProxyPassword";
+            this.textProxyPassword.PasswordChar = '*';
+            this.textProxyPassword.Size = new System.Drawing.Size(173, 20);
+            this.textProxyPassword.TabIndex = 11;
+            this.textProxyPassword.TextChanged += new System.EventHandler(this.textProxyPassword_TextChanged);
             // 
-            // textUserName
+            // textProxyUserName
             // 
-            this.textUserName.Location = new System.Drawing.Point(192, 117);
-            this.textUserName.Name = "textUserName";
-            this.textUserName.Size = new System.Drawing.Size(173, 20);
-            this.textUserName.TabIndex = 10;
+            this.textProxyUserName.Location = new System.Drawing.Point(192, 117);
+            this.textProxyUserName.Name = "textProxyUserName";
+            this.textProxyUserName.Size = new System.Drawing.Size(173, 20);
+            this.textProxyUserName.TabIndex = 10;
+            this.textProxyUserName.TextChanged += new System.EventHandler(this.textProxyUserName_TextChanged);
             // 
             // textProxyHost
             // 
@@ -412,16 +420,18 @@
             this.textProxyHost.Name = "textProxyHost";
             this.textProxyHost.Size = new System.Drawing.Size(227, 20);
             this.textProxyHost.TabIndex = 8;
+            this.textProxyHost.TextChanged += new System.EventHandler(this.textProxyHost_TextChanged);
             // 
-            // checkBox1
+            // checkUseProxyAuth
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(77, 94);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(145, 17);
-            this.checkBox1.TabIndex = 7;
-            this.checkBox1.Text = "Use Proxy Authentication";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkUseProxyAuth.AutoSize = true;
+            this.checkUseProxyAuth.Location = new System.Drawing.Point(77, 94);
+            this.checkUseProxyAuth.Name = "checkUseProxyAuth";
+            this.checkUseProxyAuth.Size = new System.Drawing.Size(145, 17);
+            this.checkUseProxyAuth.TabIndex = 7;
+            this.checkUseProxyAuth.Text = "Use Proxy Authentication";
+            this.checkUseProxyAuth.UseVisualStyleBackColor = true;
+            this.checkUseProxyAuth.CheckedChanged += new System.EventHandler(this.checkUseProxyAuth_CheckedChanged);
             // 
             // label9
             // 
@@ -469,6 +479,7 @@
             this.radioUseNoProxy.TabStop = true;
             this.radioUseNoProxy.Text = "Do Not Use Proxy";
             this.radioUseNoProxy.UseVisualStyleBackColor = true;
+            this.radioUseNoProxy.CheckedChanged += new System.EventHandler(this.radioUseNoProxy_CheckedChanged);
             // 
             // radioUseCustomProxy
             // 
@@ -480,6 +491,7 @@
             this.radioUseCustomProxy.TabStop = true;
             this.radioUseCustomProxy.Text = "Use Custom Proxy Settings";
             this.radioUseCustomProxy.UseVisualStyleBackColor = true;
+            this.radioUseCustomProxy.CheckedChanged += new System.EventHandler(this.radioUseCustomProxy_CheckedChanged);
             // 
             // radioUseSystemProxy
             // 
@@ -491,6 +503,7 @@
             this.radioUseSystemProxy.TabStop = true;
             this.radioUseSystemProxy.Text = "Use System Proxy Settings";
             this.radioUseSystemProxy.UseVisualStyleBackColor = true;
+            this.radioUseSystemProxy.CheckedChanged += new System.EventHandler(this.radioUseSystemProxy_CheckedChanged);
             // 
             // label6
             // 
@@ -549,7 +562,7 @@
             this.tabPage4.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericProxyPort)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericNetworkTimeout)).EndInit();
             this.ResumeLayout(false);
 
@@ -581,7 +594,7 @@
         private System.Windows.Forms.CheckBox checkAnkhSvn;
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox checkUseProxyAuth;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label7;
@@ -591,10 +604,10 @@
         private System.Windows.Forms.RadioButton radioUseSystemProxy;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.NumericUpDown numericNetworkTimeout;
-        private System.Windows.Forms.TextBox textPassword;
-        private System.Windows.Forms.TextBox textUserName;
+        private System.Windows.Forms.TextBox textProxyPassword;
+        private System.Windows.Forms.TextBox textProxyUserName;
         private System.Windows.Forms.TextBox textProxyHost;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.NumericUpDown numericProxyPort;
 
     }
 }

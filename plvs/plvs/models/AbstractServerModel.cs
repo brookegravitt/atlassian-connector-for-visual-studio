@@ -15,6 +15,7 @@ namespace Atlassian.plvs.models {
         private const string SERVER_URL = "serverUrl_";
         private const string SERVER_TYPE = "serverType_";
         private const string SERVER_ENABLED = "serverEnabled_";
+        private const string SERVER_DONT_USE_PROXY = "serverNoProxy_";
 
         public class ModelException : Exception {
             public ModelException(string message) : base(message) {}
@@ -26,7 +27,7 @@ namespace Atlassian.plvs.models {
         protected abstract Guid SupportedServerType { get; }
         protected abstract void loadCustomServerParameters(ParameterStore store, T server);
         protected abstract void saveCustomServerParameters(ParameterStore store, T server);
-        protected abstract T createServer(Guid guid, string name, string url, string userName, string password, bool enabled);
+        protected abstract T createServer(Guid guid, string name, string url, string userName, string password, bool noProxy, bool enabled);
 
         private Guid defaultServerGuid;
 
@@ -89,7 +90,10 @@ namespace Atlassian.plvs.models {
                         string sName = store.loadParameter(SERVER_NAME + guidStr, null);
                         string url = store.loadParameter(SERVER_URL + guidStr, null);
 
-                        T server = createServer(guid, sName, url, null, null, store.loadParameter(SERVER_ENABLED + guidStr, 1) > 0);
+                        T server = createServer(
+                            guid, sName, url, null, null, 
+                            store.loadParameter(SERVER_DONT_USE_PROXY + guidStr, 0) > 0, 
+                            store.loadParameter(SERVER_ENABLED + guidStr, 1) > 0);
 
                         server.UserName = CredentialsVault.Instance.getUserName(server);
                         server.Password = CredentialsVault.Instance.getPassword(server);
@@ -121,6 +125,8 @@ namespace Atlassian.plvs.models {
                     store.storeParameter(var, s.Url);
                     var = SERVER_TYPE + s.GUID;
                     store.storeParameter(var, s.Type.ToString());
+                    var = SERVER_DONT_USE_PROXY + s.GUID;
+                    store.storeParameter(var, s.NoProxy ? 1 : 0);
                     var = SERVER_ENABLED + s.GUID;
                     store.storeParameter(var, s.Enabled ? 1 : 0);
 

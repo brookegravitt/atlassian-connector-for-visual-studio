@@ -238,6 +238,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
         private Stream getQueryResultStream(string endpoint, bool setBasicAuth) {
             var req = (HttpWebRequest)WebRequest.Create(endpoint);
+            req.Proxy = server.NoProxy ? null : GlobalSettings.Proxy;
             req.Timeout = GlobalSettings.NetworkTimeout * 1000;
             req.ReadWriteTimeout = GlobalSettings.NetworkTimeout * 2000;
             req.ContentType = "application/xml";
@@ -259,6 +260,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
         private Stream postWithNullBody(string endpoint, bool setBasicAuth) {
             var req = (HttpWebRequest)WebRequest.Create(endpoint);
+            req.Proxy = server.NoProxy ? null : GlobalSettings.Proxy;
             req.Timeout = GlobalSettings.NetworkTimeout * 1000;
             req.ReadWriteTimeout = GlobalSettings.NetworkTimeout * 2000;
             req.Method = "POST";

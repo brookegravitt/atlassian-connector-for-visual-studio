@@ -40,12 +40,13 @@
             this.password = new System.Windows.Forms.TextBox();
             this.checkEnabled = new System.Windows.Forms.CheckBox();
             this.buttonTestConnection = new System.Windows.Forms.Button();
+            this.checkDontUseProxy = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // buttonCancel
             // 
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(377, 151);
+            this.buttonCancel.Location = new System.Drawing.Point(377, 176);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 0;
@@ -54,7 +55,7 @@
             // 
             // buttonAddOrEdit
             // 
-            this.buttonAddOrEdit.Location = new System.Drawing.Point(296, 151);
+            this.buttonAddOrEdit.Location = new System.Drawing.Point(296, 176);
             this.buttonAddOrEdit.Name = "buttonAddOrEdit";
             this.buttonAddOrEdit.Size = new System.Drawing.Size(75, 23);
             this.buttonAddOrEdit.TabIndex = 1;
@@ -74,7 +75,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(13, 122);
+            this.label2.Location = new System.Drawing.Point(13, 145);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(53, 13);
             this.label2.TabIndex = 3;
@@ -83,7 +84,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(13, 96);
+            this.label3.Location = new System.Drawing.Point(13, 119);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(60, 13);
             this.label3.TabIndex = 4;
@@ -116,7 +117,7 @@
             // 
             // user
             // 
-            this.user.Location = new System.Drawing.Point(97, 93);
+            this.user.Location = new System.Drawing.Point(97, 116);
             this.user.Name = "user";
             this.user.Size = new System.Drawing.Size(355, 20);
             this.user.TabIndex = 8;
@@ -124,7 +125,7 @@
             // 
             // password
             // 
-            this.password.Location = new System.Drawing.Point(97, 119);
+            this.password.Location = new System.Drawing.Point(97, 142);
             this.password.Name = "password";
             this.password.PasswordChar = '*';
             this.password.Size = new System.Drawing.Size(355, 20);
@@ -133,8 +134,7 @@
             // checkEnabled
             // 
             this.checkEnabled.AutoSize = true;
-            this.checkEnabled.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkEnabled.Location = new System.Drawing.Point(12, 46);
+            this.checkEnabled.Location = new System.Drawing.Point(97, 46);
             this.checkEnabled.Name = "checkEnabled";
             this.checkEnabled.Size = new System.Drawing.Size(99, 17);
             this.checkEnabled.TabIndex = 10;
@@ -144,7 +144,7 @@
             // 
             // buttonTestConnection
             // 
-            this.buttonTestConnection.Location = new System.Drawing.Point(97, 151);
+            this.buttonTestConnection.Location = new System.Drawing.Point(97, 176);
             this.buttonTestConnection.Name = "buttonTestConnection";
             this.buttonTestConnection.Size = new System.Drawing.Size(112, 23);
             this.buttonTestConnection.TabIndex = 11;
@@ -152,11 +152,23 @@
             this.buttonTestConnection.UseVisualStyleBackColor = true;
             this.buttonTestConnection.Click += new System.EventHandler(this.buttonTestConnection_Click);
             // 
+            // checkDontUseProxy
+            // 
+            this.checkDontUseProxy.AutoSize = true;
+            this.checkDontUseProxy.Location = new System.Drawing.Point(97, 93);
+            this.checkDontUseProxy.Name = "checkDontUseProxy";
+            this.checkDontUseProxy.Size = new System.Drawing.Size(111, 17);
+            this.checkDontUseProxy.TabIndex = 12;
+            this.checkDontUseProxy.Text = "Do Not Use Proxy";
+            this.checkDontUseProxy.UseVisualStyleBackColor = true;
+            this.checkDontUseProxy.CheckedChanged += new System.EventHandler(this.checkDontUseProxy_CheckedChanged);
+            // 
             // AddOrEditJiraServer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(464, 186);
+            this.ClientSize = new System.Drawing.Size(464, 211);
+            this.Controls.Add(this.checkDontUseProxy);
             this.Controls.Add(this.buttonTestConnection);
             this.Controls.Add(this.checkEnabled);
             this.Controls.Add(this.password);
@@ -196,5 +208,6 @@
         private System.Windows.Forms.TextBox password;
         private System.Windows.Forms.CheckBox checkEnabled;
         private System.Windows.Forms.Button buttonTestConnection;
+        private System.Windows.Forms.CheckBox checkDontUseProxy;
     }
 }

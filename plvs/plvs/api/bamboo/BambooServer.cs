@@ -9,12 +9,12 @@ namespace Atlassian.plvs.api.bamboo {
 
         public List<string> PlanKeys { get; set; }
 
-        public BambooServer(string name, string url, string userName, string password) 
-            : base(name, url, userName, password) {
+        public BambooServer(string name, string url, string userName, string password, bool noProxy) 
+            : base(name, url, userName, password, noProxy) {
         }
         
-        public BambooServer(Guid guid, string name, string url, string userName, string password, bool enabled) 
-            : base(guid, name, url, userName, password, enabled) {
+        public BambooServer(Guid guid, string name, string url, string userName, string password, bool noProxy, bool enabled) 
+            : base(guid, name, url, userName, password, noProxy, enabled) {
         }
 
         public BambooServer(BambooServer other) : base(other) {
