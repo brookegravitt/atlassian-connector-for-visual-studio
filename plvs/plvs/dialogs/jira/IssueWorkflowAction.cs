@@ -190,7 +190,7 @@ namespace Atlassian.plvs.dialogs.jira {
                         break;
                     case JiraActionFieldType.WidgetType.RESOLUTION:
                         SortedDictionary<int, JiraNamedEntity> resolutions = JiraServerCache.Instance.getResolutions(issue.Server);
-                        editor = new NamedEntityComboEditorProvider(field, issue.ResolutionId, resolutions != null ? resolutions.Values : null, fieldValid, false);
+                        editor = new ResolutionEditorProvider(issue.Server, field, issue.ResolutionId, resolutions != null ? resolutions.Values : null, fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.PRIORITY:
                         editor = new NamedEntityComboEditorProvider(field, issue.PriorityId, JiraServerCache.Instance.getPriorities(issue.Server), fieldValid);
