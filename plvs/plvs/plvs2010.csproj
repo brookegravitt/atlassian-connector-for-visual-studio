@@ -359,6 +359,7 @@
     <Compile Include="ui\jira\fields\FixedHeightFieldEditorProvider.cs" />
     <Compile Include="ui\jira\fields\NamedEntityComboEditorProvider.cs" />
     <Compile Include="ui\jira\fields\JiraFieldEditorProvider.cs" />
+    <Compile Include="ui\jira\fields\ResolutionEditorProvider.cs" />
     <Compile Include="ui\jira\fields\TextAreaFieldEditorProvider.cs" />
     <Compile Include="ui\jira\fields\TextLineFieldEditorProvider.cs" />
     <Compile Include="ui\jira\fields\TimeTrackingEditorProvider.cs" />
