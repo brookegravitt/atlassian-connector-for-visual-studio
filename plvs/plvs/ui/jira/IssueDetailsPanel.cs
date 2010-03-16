@@ -31,7 +31,7 @@ using Timer = System.Windows.Forms.Timer;
 
 namespace Atlassian.plvs.ui.jira {
     public partial class IssueDetailsPanel : UserControl {
-        private readonly JiraIssueListModel model;
+        private JiraIssueListModel model;
         private readonly Solution solution;
 
         private readonly JiraServerFacade facade = JiraServerFacade.Instance;
@@ -254,6 +254,16 @@ namespace Atlassian.plvs.ui.jira {
                                                                status.setInfo("Retrieving issue details...");
                                                                issue = facade.getIssue(issue.Server, issue.Key);
                                                                status.setInfo("Issue details retrieved");
+
+                                                               // PLVS-133 - this should never happen but does?
+                                                               if (model == null) {
+                                                                   Invoke(new MethodInvoker(() 
+                                                                       =>
+                                                                       PlvsUtils.showError("Issue List Model was null, please report this as a bug", 
+                                                                       new Exception("IssueDetailsPanel.runRefreshThread()"))));
+                                                                   model = JiraIssueListModelImpl.Instance;
+                                                               }
+
                                                                Invoke(new MethodInvoker(() => model.updateIssue(issue)));
                                                            } catch (Exception e) {
                                                                status.setError("Failed to retrieve issue details", e);
