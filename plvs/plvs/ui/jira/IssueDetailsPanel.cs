@@ -845,10 +845,21 @@ namespace Atlassian.plvs.ui.jira {
             } catch (Exception ex) {
                 status.setError("Failed to retrieve issue actions", ex);
             }
-            if (actions == null || actions.Count == 0) return;
+            if (actions == null || actions.Count == 0) {
+                Invoke(new MethodInvoker(delegate {
+                                             dropDownIssueActions.DropDownItems.Clear();
+                                             dropDownIssueActions.DropDownItems.Add(new ToolStripMenuItem
+                                                                                    {
+                                                                                        Text = "No issue actions are available",
+                                                                                        Enabled = false
+                                                                                    });
+                                             PlvsUtils.addPhonyMenuItemFixingPlvs109(dropDownIssueActions);
+                }));
+                return;
+            }
 
             Invoke(new MethodInvoker(delegate {
-                dropDownIssueActions.DropDownItems.Clear();
+                                         dropDownIssueActions.DropDownItems.Clear();
                                          PlvsUtils.addPhonyMenuItemFixingPlvs109(dropDownIssueActions);
                                          foreach (ToolStripMenuItem item in from action in actions
                                                                             let actionCopy = action
