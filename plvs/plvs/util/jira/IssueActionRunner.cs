@@ -30,6 +30,16 @@ namespace Atlassian.plvs.util.jira {
             issueWithTime.SecurityLevel = JiraServerFacade.Instance.getSecurityLevel(issue);
             object soapIssueObject = JiraServerFacade.Instance.getIssueSoapObject(issue);
             List<JiraField> fieldsWithValues = JiraActionFieldType.fillFieldValues(issue, soapIssueObject, fields);
+            
+            // PLVS-133 - this should never happen but does?
+            if (model == null) {
+                owner.Invoke(new MethodInvoker(()
+                    =>
+                    PlvsUtils.showError("Issue List Model was null, please report this as a bug",
+                    new Exception("IssueActionRunner.runAction()"))));
+                model = JiraIssueListModelImpl.Instance;
+            }
+
             if (fieldsWithValues == null || fieldsWithValues.Count == 0) {
                 runActionWithoutFields(owner, action, model, issue, status);
             } else {
