@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -811,6 +811,8 @@
     <None Include="Resources\texts\summary_and_description_css.txt" />
     <None Include="Resources\texts\toggler_javascript.txt" />
     <None Include="third party\ankh\LICENSE.rtf" />
+    <Content Include="Resources\icons\vs2008.bmp" />
+    <Content Include="Resources\icons\vs2010.bmp" />
     <Content Include="Resources\texts\attachment_download_html.txt" />
     <Content Include="Resources\texts\autoupdate_html.txt" />
     <Content Include="Resources\texts\explorer_navigator_error_html.txt" />
