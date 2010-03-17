@@ -867,6 +867,8 @@
     <None Include="Resources\texts\summary_and_description_css.txt" />
     <None Include="Resources\texts\toggler_javascript.txt" />
     <None Include="third party\ankh\LICENSE.rtf" />
+    <Content Include="Resources\icons\vs2008.bmp" />
+    <Content Include="Resources\icons\vs2010.bmp" />
     <Content Include="Resources\texts\attachment_download_html.txt" />
     <Content Include="Resources\texts\autoupdate_html.txt" />
     <Content Include="Resources\texts\explorer_navigator_error_html.txt" />
