@@ -42,6 +42,7 @@
             this.browser.Size = new System.Drawing.Size(538, 227);
             this.browser.TabIndex = 0;
             this.browser.TabStop = false;
+            this.browser.WebBrowserShortcutsEnabled = false;
             this.browser.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.browser_Navigating);
             this.browser.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.browser_PreviewKeyDown);
             this.browser.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.browser_DocumentCompleted);

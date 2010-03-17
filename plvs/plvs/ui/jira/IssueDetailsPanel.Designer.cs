@@ -54,7 +54,7 @@ namespace Atlassian.plvs.ui.jira {
             this.tabAttachments = new System.Windows.Forms.TabPage();
             this.splitContainerAttachments = new System.Windows.Forms.SplitContainer();
             this.toolStripContainer3 = new System.Windows.Forms.ToolStripContainer();
-            this.listViewAttachments = new ui.AutosizeListView();
+            this.listViewAttachments = new global::Atlassian.plvs.ui.AutosizeListView();
             this.columnName = new System.Windows.Forms.ColumnHeader();
             this.columnAuthor = new System.Windows.Forms.ColumnHeader();
             this.columnSize = new System.Windows.Forms.ColumnHeader();
@@ -169,6 +169,7 @@ namespace Atlassian.plvs.ui.jira {
             this.issueSummary.Name = "issueSummary";
             this.issueSummary.Size = new System.Drawing.Size(771, 396);
             this.issueSummary.TabIndex = 0;
+            this.issueSummary.WebBrowserShortcutsEnabled = false;
             this.issueSummary.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.issueSummary_Navigating);
             this.issueSummary.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.issueSummary_DocumentCompleted);
             // 
@@ -223,6 +224,7 @@ namespace Atlassian.plvs.ui.jira {
             this.issueComments.Name = "issueComments";
             this.issueComments.Size = new System.Drawing.Size(494, 371);
             this.issueComments.TabIndex = 0;
+            this.issueComments.WebBrowserShortcutsEnabled = false;
             this.issueComments.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.issueComments_Navigating);
             this.issueComments.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.issueComments_DocumentCompleted);
             // 
@@ -296,6 +298,7 @@ namespace Atlassian.plvs.ui.jira {
             this.webLinkedIssues.ScriptErrorsSuppressed = true;
             this.webLinkedIssues.Size = new System.Drawing.Size(777, 402);
             this.webLinkedIssues.TabIndex = 0;
+            this.webLinkedIssues.WebBrowserShortcutsEnabled = false;
             this.webLinkedIssues.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webLinkedIssues_Navigating);
             this.webLinkedIssues.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webLinkedIssues_DocumentCompleted);
             // 
@@ -319,6 +322,7 @@ namespace Atlassian.plvs.ui.jira {
             this.webSubtasks.Name = "webSubtasks";
             this.webSubtasks.Size = new System.Drawing.Size(771, 396);
             this.webSubtasks.TabIndex = 0;
+            this.webSubtasks.WebBrowserShortcutsEnabled = false;
             this.webSubtasks.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webSubtasks_Navigating);
             this.webSubtasks.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webSubtasks_DocumentCompleted);
             // 
@@ -452,7 +456,7 @@ namespace Atlassian.plvs.ui.jira {
             this.dropDownIssueActions});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(155, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(124, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonViewInBrowser

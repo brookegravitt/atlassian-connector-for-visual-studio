@@ -116,6 +116,7 @@
             this.webServerDetails.ScriptErrorsSuppressed = true;
             this.webServerDetails.Size = new System.Drawing.Size(463, 190);
             this.webServerDetails.TabIndex = 7;
+            this.webServerDetails.WebBrowserShortcutsEnabled = false;
             this.webServerDetails.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webServerDetails_Navigating);
             // 
             // menuJira
@@ -155,7 +156,7 @@
             this.setAsDefaultToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(12, 238);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(327, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(235, 24);
             this.menuStrip1.TabIndex = 8;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -173,7 +174,7 @@
             // 
             this.jIRAToolStripMenuItem.Image = global::Atlassian.plvs.Resources.tab_jira;
             this.jIRAToolStripMenuItem.Name = "jIRAToolStripMenuItem";
-            this.jIRAToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.jIRAToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
             this.jIRAToolStripMenuItem.Text = "JIRA";
             this.jIRAToolStripMenuItem.Click += new System.EventHandler(this.menuJira_Click);
             // 
@@ -181,7 +182,7 @@
             // 
             this.bambooToolStripMenuItem.Image = global::Atlassian.plvs.Resources.tab_bamboo;
             this.bambooToolStripMenuItem.Name = "bambooToolStripMenuItem";
-            this.bambooToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.bambooToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
             this.bambooToolStripMenuItem.Text = "Bamboo";
             this.bambooToolStripMenuItem.Click += new System.EventHandler(this.menuBamboo_Click);
             // 
