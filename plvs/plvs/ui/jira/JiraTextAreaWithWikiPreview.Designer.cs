@@ -86,6 +86,7 @@
             this.webPreview.Name = "webPreview";
             this.webPreview.Size = new System.Drawing.Size(490, 251);
             this.webPreview.TabIndex = 0;
+            this.webPreview.WebBrowserShortcutsEnabled = false;
             this.webPreview.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webPreview_Navigating);
             // 
             // JiraTextAreaWithWikiPreview

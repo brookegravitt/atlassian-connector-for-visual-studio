@@ -157,7 +157,8 @@ namespace Atlassian.plvs.ui.jira {
                                    MinimumSize = new Size(20, 20),
                                    Name = "issueDescription",
                                    Size = new Size(126, 124),
-                                   TabIndex = 1
+                                   TabIndex = 1,
+                                   WebBrowserShortcutsEnabled = false
                                };
 
             issueDescription.Navigating += issueDescription_Navigating;
