@@ -39,6 +39,10 @@ Var CheckboxVS2008
 Var CheckboxVS2008_State
 Var CheckboxVS2010
 Var CheckboxVS2010_State
+Var Image2008
+Var Image2008Handle
+Var Image2010
+Var Image2010Handle
 
 Var FoundVS2008
 Var FoundVS2010
@@ -51,7 +55,12 @@ Function .onInit
 	${If} $0 != 0
 	    MessageBox MB_ICONSTOP|MB_OK "Visual Studio is running. Close it and try again."
 		Abort
-	${EndIf}		
+	${EndIf}	
+
+	InitPluginsDir
+	File /oname=$PLUGINSDIR\vs2008.bmp "plvs\Resources\icons\vs2008.bmp"
+	File /oname=$PLUGINSDIR\vs2010.bmp "plvs\Resources\icons\vs2010.bmp"
+	
 FunctionEnd
 
 Function un.onInit
@@ -184,21 +193,32 @@ Function nsComponentsPage
 		${NSD_CreateLabel} 0 0 100% 24u "Setup has detected that multiple versions of Microsoft Visual Studio are installed. Please select versions that you want to integrate with"
 		Pop $Label
 
-		${NSD_CreateCheckbox} 0 35u 100% 10u "Visual Studio 200&8"
+		${NSD_CreateCheckbox} 35u 32u 100% 10u "Visual Studio 200&8"
 		Pop $CheckboxVS2008
 		${NSD_Check} $CheckboxVS2008
 		${If} $CheckboxVS2008_State == ${BST_UNCHECKED}
 			${NSD_Uncheck} $CheckboxVS2008
 		${EndIf}
 	
-		${NSD_CreateCheckbox} 0 50u 100% 10u "Visual Studio 20&10"
+		${NSD_CreateCheckbox} 35u 56u 100% 10u "Visual Studio 20&10"
 		Pop $CheckboxVS2010
 		${NSD_Check} $CheckboxVS2010
 		${If} $CheckboxVS2010_State == ${BST_UNCHECKED}
 			${NSD_Uncheck} $CheckboxVS2010
 		${EndIf}
 
+		${NSD_CreateBitmap} 0 20u 100% 100% ""
+		Pop $Image2008
+		${NSD_SetImage} $Image2008 $PLUGINSDIR\vs2008.bmp $Image2008Handle
+
+		${NSD_CreateBitmap} 0 45u 100% 100% ""
+		Pop $Image2010
+		${NSD_SetImage} $Image2010 $PLUGINSDIR\vs2010.bmp $Image2010Handle
+
 		nsDialogs::Show
+		
+		${NSD_FreeImage} $Image2008Handle
+		${NSD_FreeImage} $Image2010Handle
 
 	${Else}
 
