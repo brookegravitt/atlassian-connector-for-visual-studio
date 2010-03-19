@@ -59,6 +59,7 @@ namespace Atlassian.plvs.api.jira.soap {
                     .ToList();
 
 #else
+            RemoteProject[] pTable = service.getProjectsNoSchemes(Token);
             return pTable.Select(p => new JiraProject(int.Parse(p.id), p.key, p.name)).ToList();
 #endif
         }
@@ -128,7 +129,7 @@ namespace Atlassian.plvs.api.jira.soap {
             }
 
             if (issue.Components != null && issue.Components.Count > 0) {
-                List<JiraNamedEntity> components = getComponents(issue.ProjectKey);
+                IEnumerable<JiraNamedEntity> components = getComponents(issue.ProjectKey);
 //                RemoteComponent[] objects = service.getComponents(Token, issue.ProjectKey);
                 List<RemoteComponent> comps = new List<RemoteComponent>();
                 foreach (string t in issue.Components) {
@@ -239,6 +240,10 @@ namespace Atlassian.plvs.api.jira.soap {
 
         public List<JiraNamedEntity> getComponents(JiraProject project) {
             return createEntityList(service.getComponents(Token, project.Key));
+        }
+
+        private IEnumerable<JiraNamedEntity> getComponents(string projectKey) {
+            return createEntityList(service.getComponents(Token, projectKey));
         }
 
         public List<JiraNamedEntity> getVersions(JiraProject project) {

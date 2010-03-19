@@ -681,14 +681,21 @@ namespace Atlassian.plvs.Atlassian.plvs.api.soap.service {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapRpcMethodAttribute("", RequestNamespace="http://soap.rpc.jira.atlassian.com", ResponseNamespace="http://jira.atlassian.com/rpc/soap/jirasoapservice-v2")]
         [return: System.Xml.Serialization.SoapElementAttribute("getSecurityLevelReturn")]
-//        public RemoteSecurityLevel getSecurityLevel(string in0, string in1) {
+#if PLVS_133_WORKAROUND
         public object getSecurityLevel(string in0, string in1) {
             object[] results = this.Invoke("getSecurityLevel", new object[] {
                         in0,
                         in1});
-//            return ((RemoteSecurityLevel)(results[0]));
             return results[0];
         }
+#else
+        public RemoteSecurityLevel getSecurityLevel(string in0, string in1) {
+            object[] results = this.Invoke("getSecurityLevel", new object[] {
+                        in0,
+                        in1});
+            return ((RemoteSecurityLevel)(results[0]));
+        }
+#endif
         
         /// <remarks/>
         public void getSecurityLevelAsync(string in0, string in1) {
@@ -847,13 +854,21 @@ namespace Atlassian.plvs.Atlassian.plvs.api.soap.service {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapRpcMethodAttribute("", RequestNamespace="http://soap.rpc.jira.atlassian.com", ResponseNamespace="http://jira.atlassian.com/rpc/soap/jirasoapservice-v2")]
         [return: System.Xml.Serialization.SoapElementAttribute("getComponentsReturn")]
+#if PLVS_133_WORKAROUND
         public object[] getComponents(string in0, string in1) {
-//        public RemoteComponent[] getComponents(string in0, string in1) {
             object[] results = this.Invoke("getComponents", new object[] {
                         in0,
                         in1});
             return (object[])results[0];
         }
+#else
+        public RemoteComponent[] getComponents(string in0, string in1) {
+            object[] results = this.Invoke("getComponents", new object[] {
+                        in0,
+                        in1});
+            return (RemoteComponent[])results[0];
+        }
+#endif
         
         /// <remarks/>
         public void getComponentsAsync(string in0, string in1) {
