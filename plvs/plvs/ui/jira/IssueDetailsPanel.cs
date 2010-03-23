@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using System.Diagnostics;
+using Atlassian.plvs.api;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs.jira;
@@ -136,7 +137,9 @@ namespace Atlassian.plvs.ui.jira {
 
         private void runMazio(string token) {
             try {
-                Process.Start("mazio:jira:" + issue.Server.UserName + "@" + issue.Server.Url + ":" + issue.Key + "?soaptoken=" + token);
+                Process.Start("mazio:jira:" 
+                    + CredentialUtils.getUserNameWithoutDomain(issue.Server.UserName) 
+                    + "@" + issue.Server.Url + ":" + issue.Key + "?soaptoken=" + token);
 // ReSharper disable EmptyGeneralCatchClause
             } catch (Exception) {
 // ReSharper restore EmptyGeneralCatchClause
@@ -377,11 +380,11 @@ namespace Atlassian.plvs.ui.jira {
             string tableContents = string.Format(Resources.issue_summary_html,
                                                  editImagePath,
                                                  issue.Summary,
-                                                 ImageCache.Instance.getImage(issue.IssueTypeIconUrl).FileUrl ?? nothingImagePath,
-                                                 issue.IssueType, 
-                                                 ImageCache.Instance.getImage(issue.StatusIconUrl).FileUrl ?? nothingImagePath,
+                                                 ImageCache.Instance.getImage(issue.Server, issue.IssueTypeIconUrl).FileUrl ?? nothingImagePath,
+                                                 issue.IssueType,
+                                                 ImageCache.Instance.getImage(issue.Server, issue.StatusIconUrl).FileUrl ?? nothingImagePath,
                                                  issue.Status,
-                                                 ImageCache.Instance.getImage(issue.PriorityIconUrl).FileUrl ?? nothingImagePath,
+                                                 ImageCache.Instance.getImage(issue.Server, issue.PriorityIconUrl).FileUrl ?? nothingImagePath,
                                                  issue.Priority ?? "None",
                                                  env,
                                                  JiraServerCache.Instance.getUsers(issue.Server).getUser(issue.Assignee),
@@ -896,7 +899,7 @@ namespace Atlassian.plvs.ui.jira {
 
             if (isInlineNavigable(item.Attachment.Name)) {
                 try {
-                    webAttachmentView.Browser.Navigate(item.Url + "?" + JiraIssueUtils.getAuthString(issue.Server));
+                    webAttachmentView.Browser.Navigate(item.Url + "?" + CredentialUtils.getOsAuthString(issue.Server));
                 } catch (COMException ex) {
                     Debug.WriteLine("IssueDetailsPanel.listViewAttachments_Click() - exception caught: " + ex.Message);
                     reinitializeAttachmentView(() => showUnableToViewAttachmentPage(""));
@@ -967,7 +970,7 @@ namespace Atlassian.plvs.ui.jira {
             status.setInfo("Saving attachment \"" + item.Attachment.Name + "\"...");
             WebClient client = new WebClient();
             client.DownloadDataCompleted += ((sender, e) => downloadDataCompleted(item.Attachment.Name, e, stream));
-            client.DownloadDataAsync(new Uri(item.Url + "?" + JiraIssueUtils.getAuthString(issue.Server)));
+            client.DownloadDataAsync(new Uri(item.Url + "?" + CredentialUtils.getOsAuthString(issue.Server)));
         }
 
         private void downloadDataCompleted(string name, DownloadDataCompletedEventArgs e, Stream stream) {

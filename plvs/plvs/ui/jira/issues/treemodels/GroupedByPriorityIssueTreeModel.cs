@@ -19,7 +19,7 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
         private readonly List<JiraIssue> issuesWithUnknownPriority = new List<JiraIssue>();
 
         private static readonly JiraNamedEntity UNKNOWN_PRIORITY = new JiraNamedEntity(-1, "No Priority", null);
-        private readonly ByPriorityIssueGroupNode unknownPriorityNode = new ByPriorityIssueGroupNode(UNKNOWN_PRIORITY);
+        private readonly ByPriorityIssueGroupNode unknownPriorityNode = new ByPriorityIssueGroupNode(null, UNKNOWN_PRIORITY);
 
         public GroupedByPriorityIssueTreeModel(JiraIssueListModel model, ToolStripButton groupSubtasksButton)
             : base(model, groupSubtasksButton) {
@@ -37,7 +37,7 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
                     break;
                 }
                 ByPriorityIssueGroupNode groupNode = 
-                    prio.Id == UNKNOWN_PRIORITY.Id ? unknownPriorityNode : new ByPriorityIssueGroupNode(prio);
+                    prio.Id == UNKNOWN_PRIORITY.Id ? unknownPriorityNode : new ByPriorityIssueGroupNode(issue.Server, prio);
                 groupNodes[prio.Id] = groupNode;
                 if (prio.Id == UNKNOWN_PRIORITY.Id) {
                     issuesWithUnknownPriority.Add(issue);

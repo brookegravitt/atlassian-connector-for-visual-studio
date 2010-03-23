@@ -6,7 +6,7 @@ using System.IO;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using Atlassian.plvs.dialogs;
+using Atlassian.plvs.api;
 using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.models {
@@ -40,7 +40,7 @@ namespace Atlassian.plvs.models {
             iconCacheDir = dir;
         }
 
-        public ImageInfo getImage(string url) {
+        public ImageInfo getImage(Server server, string url) {
             if (url == null) {
                 return new ImageInfo(Resources.nothing, null);
             }
@@ -49,13 +49,7 @@ namespace Atlassian.plvs.models {
                     return cache[url];
                 }
                 try {
-                    HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
-
-                    // hm, these should not be JIRA-specific. Do we need yet another timeout value?
-                    request.Timeout = GlobalSettings.NetworkTimeout * 1000;
-                    request.ReadWriteTimeout = GlobalSettings.NetworkTimeout * 2000;
-
-                    HttpWebResponse response = (HttpWebResponse) request.GetResponse();
+                    HttpWebResponse response = getResponse(server, url);
                     var responseStream = response.GetResponseStream();
                     
                     byte[] imgbytes = PlvsUtils.getBytesFromStream(responseStream);
@@ -76,6 +70,23 @@ namespace Atlassian.plvs.models {
                     return new ImageInfo(Resources.nothing, null);
                 }
             }
+        }
+
+        private static HttpWebResponse getResponse(Server server, string url) {
+            string authUrl = server == null ? url : url + "?" + CredentialUtils.getOsAuthString(server);
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(authUrl);
+            request.KeepAlive = true;
+
+            if (server != null) {
+                request.Credentials = CredentialUtils.getCredentialsForUserAndPassword(url, server.UserName, server.Password);
+            }
+
+            request.Accept = @"image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, */*";
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+            return response;
         }
 
         public void clear() {

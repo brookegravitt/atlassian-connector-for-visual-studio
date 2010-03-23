@@ -5,7 +5,7 @@ using Atlassian.plvs.api.jira;
 namespace Atlassian.plvs.ui.jira.fields {
     public sealed class ResolutionEditorProvider : NamedEntityComboEditorProvider {
         public ResolutionEditorProvider(JiraServer server, JiraField field, int selectedEntityId, IEnumerable<JiraNamedEntity> entities, FieldValidListener validListener) 
-            : base(field, selectedEntityId, entities, validListener, false) {
+            : base(server, field, selectedEntityId, entities, validListener, false) {
 
             SortedDictionary<int, JiraNamedEntity> resolutions = JiraServerCache.Instance.getResolutions(server);
             if (resolutions.Count == 0) {

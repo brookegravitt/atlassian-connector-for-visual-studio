@@ -26,7 +26,7 @@ namespace Atlassian.plvs.api.jira.soap {
 
         public string login(string userName, string password) {
             try {
-                service.Credentials = CredentialUtils.getCredentialCacheForUserAndPassword(service.Url, userName, password);
+                service.Credentials = CredentialUtils.getCredentialsForUserAndPassword(service.Url, userName, password);
                 Token = service.login(CredentialUtils.getUserNameWithoutDomain(userName), password);
                 return Token;
             } catch (Exception e) {

@@ -18,7 +18,9 @@ namespace Atlassian.plvs.explorer.treeNodes {
 
             ContextMenuStrip = new ContextMenuStrip();
 
-            menuItems.Add(new ToolStripMenuItem("Open \"Set Priority to " + priority.Name + "\" Drop Zone", ImageCache.Instance.getImage(priority.IconUrl).Img, createDropZone));
+            menuItems.Add(new ToolStripMenuItem(
+                "Open \"Set Priority to " + priority.Name + "\" Drop Zone", 
+                ImageCache.Instance.getImage(server, priority.IconUrl).Img, createDropZone));
 
             ContextMenuStrip.Items.Add("dummy");
 

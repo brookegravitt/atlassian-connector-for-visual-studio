@@ -406,8 +406,8 @@ namespace Atlassian.plvs.dialogs.jira {
             this.MinimizeBox = false;
             this.Name = "EditCustomFilter";
             this.Text = "Edit Local Filter";
-            this.Shown += new System.EventHandler(this.EditCustomFilter_Shown);
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.EditCustomFilter_KeyPress);
+            this.Shown += new System.EventHandler(this.editCustomFilterShown);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.editCustomFilterKeyPress);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();

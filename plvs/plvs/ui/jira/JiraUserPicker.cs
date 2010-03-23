@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
+using Atlassian.plvs.api;
 using Atlassian.plvs.api.jira;
 
 namespace Atlassian.plvs.ui.jira {
@@ -40,7 +41,7 @@ namespace Atlassian.plvs.ui.jira {
         public string Value { 
             get {
                 if (checkAssignToMe.Enabled && checkAssignToMe.Checked) {
-                    return jiraServer.UserName;
+                    return CredentialUtils.getUserNameWithoutDomain(jiraServer.UserName);
                 }
                 if (!(comboUsers.SelectedItem is JiraUser)) {
                     return comboUsers.Text;

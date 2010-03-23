@@ -43,7 +43,7 @@ namespace Atlassian.plvs.dialogs.jira {
             listViewProjects.SelectedIndexChanged += listViewProjects_SelectedValueChanged;
         }
 
-        private void EditCustomFilter_Shown(object sender, EventArgs e) {
+        private void editCustomFilterShown(object sender, EventArgs e) {
             SortedDictionary<string, JiraProject> projects = JiraServerCache.Instance.getProjects(server);
             SortedDictionary<int, JiraNamedEntity> statuses = JiraServerCache.Instance.getStatues(server);
             SortedDictionary<int, JiraNamedEntity> resolutions = JiraServerCache.Instance.getResolutions(server);
@@ -150,7 +150,7 @@ namespace Atlassian.plvs.dialogs.jira {
             int i = 0;
 
             foreach (JiraNamedEntity prio in priorities) {
-                imageList.Images.Add(ImageCache.Instance.getImage(prio.IconUrl).Img);
+                imageList.Images.Add(ImageCache.Instance.getImage(server, prio.IconUrl).Img);
                 ListViewItem lvi = new JiraNamedEntityListViewItem(prio, i);
                 listViewPriorities.Items.Add(lvi);
                 ++i;
@@ -168,7 +168,7 @@ namespace Atlassian.plvs.dialogs.jira {
             int i = 0;
 
             foreach (int key in statuses.Keys) {
-                imageList.Images.Add(ImageCache.Instance.getImage(statuses[key].IconUrl).Img);
+                imageList.Images.Add(ImageCache.Instance.getImage(server, statuses[key].IconUrl).Img);
                 ListViewItem lvi = new JiraNamedEntityListViewItem(statuses[key], i);
                 listViewStatuses.Items.Add(lvi);
                 ++i;
@@ -195,7 +195,7 @@ namespace Atlassian.plvs.dialogs.jira {
                 issueTypes = JiraServerCache.Instance.getIssueTypes(server).Values;
             }
             foreach (JiraNamedEntity issueType in issueTypes) {
-                imageList.Images.Add(ImageCache.Instance.getImage(issueType.IconUrl).Img);
+                imageList.Images.Add(ImageCache.Instance.getImage(server, issueType.IconUrl).Img);
                 ListViewItem lvi = new JiraNamedEntityListViewItem(issueType, i);
                 listViewIssueTypes.Items.Add(lvi);
                 ++i;
@@ -446,7 +446,7 @@ namespace Atlassian.plvs.dialogs.jira {
             filter.Resolutions.Clear();
         }
 
-        private void EditCustomFilter_KeyPress(object sender, KeyPressEventArgs e) {
+        private void editCustomFilterKeyPress(object sender, KeyPressEventArgs e) {
             if (e.KeyChar == (char) Keys.Escape) {
                 Close();
             }

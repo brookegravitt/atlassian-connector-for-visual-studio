@@ -17,7 +17,7 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
         protected override AbstractIssueGroupNode findGroupNode(JiraIssue issue) {
             if (!groupNodes.ContainsKey(issue.StatusId)) {
                 SortedDictionary<int, JiraNamedEntity> statuses = JiraServerCache.Instance.getStatues(issue.Server);
-                groupNodes[issue.StatusId] = new ByStatusIssueGroupNode(statuses[issue.StatusId]);
+                groupNodes[issue.StatusId] = new ByStatusIssueGroupNode(issue.Server, statuses[issue.StatusId]);
             }
             return groupNodes[issue.StatusId];
         }

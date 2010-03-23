@@ -8,18 +8,18 @@ namespace Atlassian.plvs.ui.jira.fields {
         private readonly JiraNamedEntityComboBox combo = new JiraNamedEntityComboBox();
 
         public NamedEntityComboEditorProvider(
-            JiraField field, int selectedEntityId, IEnumerable<JiraNamedEntity> entities, FieldValidListener validListener) 
+            JiraServer server, JiraField field, int selectedEntityId, IEnumerable<JiraNamedEntity> entities, FieldValidListener validListener) 
             : base(field, validListener) {
-            init(selectedEntityId, entities, true);
+            init(server, selectedEntityId, entities, true);
         }
 
         public NamedEntityComboEditorProvider(
-            JiraField field, int selectedEntityId, IEnumerable<JiraNamedEntity> entities, FieldValidListener validListener, bool useImages)
+            JiraServer server, JiraField field, int selectedEntityId, IEnumerable<JiraNamedEntity> entities, FieldValidListener validListener, bool useImages)
             : base(field, validListener) {
-            init(selectedEntityId, entities, useImages);
+            init(server, selectedEntityId, entities, useImages);
         }
 
-        private void init(int selectedEntityId, IEnumerable<JiraNamedEntity> entities, bool useImages) {
+        private void init(JiraServer server, int selectedEntityId, IEnumerable<JiraNamedEntity> entities, bool useImages) {
 
             ImageList imageList = new ImageList();
             int i = 0;
@@ -28,7 +28,7 @@ namespace Atlassian.plvs.ui.jira.fields {
                 foreach (var entity in entities) {
                     ComboBoxWithImagesItem<JiraNamedEntity> item = new ComboBoxWithImagesItem<JiraNamedEntity>(entity, i);
                     if (useImages) {
-                        imageList.Images.Add(ImageCache.Instance.getImage(entity.IconUrl).Img);
+                        imageList.Images.Add(ImageCache.Instance.getImage(server, entity.IconUrl).Img);
                     }
                     combo.Items.Add(item);
                     if (selectedEntityId != JiraIssue.UNKNOWN && selectedEntityId == entity.Id) {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using Atlassian.plvs.api;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.explorer.treeNodes;
 using Atlassian.plvs.models.jira;
@@ -58,7 +59,7 @@ namespace Atlassian.plvs.explorer {
 
             activeExplorers[server.GUID.ToString()] = this;
 
-            webJira.Browser.Navigate(server.Url + "?" + JiraIssueUtils.getAuthString(server));
+            webJira.Browser.Navigate(server.Url + "?" + CredentialUtils.getOsAuthString(server));
 
             treeJira.Nodes.Add(new PrioritiesNode(this, model, facade, server));
             treeJira.Nodes.Add(new UsersNode(model, facade, server));
@@ -72,7 +73,7 @@ namespace Atlassian.plvs.explorer {
             dropDownActions.DropDownItems.Add("phony");
             if (node != null) {
                 node.onClick(status);
-                string url = node.getUrl(JiraIssueUtils.getAuthString(server));
+                string url = node.getUrl(CredentialUtils.getOsAuthString(server));
                 webJira.Browser.Navigate(url);
 
                 ICollection<ToolStripItem> menuItems = node.MenuItems;
