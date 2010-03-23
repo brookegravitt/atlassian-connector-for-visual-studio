@@ -24,7 +24,7 @@ namespace Atlassian.plvs.api.jira {
                 HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url.ToString());
                 req.Proxy = server.NoProxy ? null : GlobalSettings.Proxy;
 
-                req.Credentials = CredentialUtils.getCredentialCacheForUserAndPassword(url.ToString(), UserName, Password);
+                req.Credentials = CredentialUtils.getCredentialsForUserAndPassword(url.ToString(), UserName, Password);
                 req.Method = "POST";
                 req.Timeout = GlobalSettings.NetworkTimeout * 1000;
                 req.ReadWriteTimeout = GlobalSettings.NetworkTimeout * 2000;

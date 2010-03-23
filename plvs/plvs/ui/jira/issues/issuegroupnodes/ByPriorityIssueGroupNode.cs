@@ -2,7 +2,8 @@
 
 namespace Atlassian.plvs.ui.jira.issues.issuegroupnodes {
     class ByPriorityIssueGroupNode : AbstractByNamedEntityIssueGroupNode {
-        public ByPriorityIssueGroupNode(JiraNamedEntity priority) : base(priority) {
+        public ByPriorityIssueGroupNode(JiraServer server, JiraNamedEntity priority)
+            : base(server, priority) {
         }
     }
 }

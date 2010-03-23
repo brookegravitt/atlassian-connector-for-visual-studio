@@ -166,7 +166,7 @@ namespace Atlassian.plvs.dialogs.jira {
                         editor = new TextAreaFieldEditorProvider(JiraServerFacade.Instance, issue, field, field.Values.IsNullOrEmpty() ? "" : field.Values[0], fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.ISSUE_TYPE:
-                        editor = new NamedEntityComboEditorProvider(field, issue.IssueTypeId, issue.IsSubtask ? subtaskIssueTypes : issueTypes, fieldValid);
+                        editor = new NamedEntityComboEditorProvider(issue.Server, field, issue.IssueTypeId, issue.IsSubtask ? subtaskIssueTypes : issueTypes, fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.VERSIONS:
                         editor = new NamedEntityListFieldEditorProvider(field, issue.Versions, versions, fieldValid);
@@ -193,7 +193,7 @@ namespace Atlassian.plvs.dialogs.jira {
                         editor = new ResolutionEditorProvider(issue.Server, field, issue.ResolutionId, resolutions != null ? resolutions.Values : null, fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.PRIORITY:
-                        editor = new NamedEntityComboEditorProvider(field, issue.PriorityId, JiraServerCache.Instance.getPriorities(issue.Server), fieldValid);
+                        editor = new NamedEntityComboEditorProvider(issue.Server, field, issue.PriorityId, JiraServerCache.Instance.getPriorities(issue.Server), fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.TIMETRACKING:
                         editor = new TimeTrackingEditorProvider(field, field.Values.IsNullOrEmpty() ? "" : field.Values[0], fieldValid);

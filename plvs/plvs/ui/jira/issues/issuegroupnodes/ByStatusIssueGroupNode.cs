@@ -2,7 +2,8 @@
 
 namespace Atlassian.plvs.ui.jira.issues.issuegroupnodes {
     class ByStatusIssueGroupNode : AbstractByNamedEntityIssueGroupNode {
-        public ByStatusIssueGroupNode(JiraNamedEntity status) : base(status) {
+        public ByStatusIssueGroupNode(JiraServer server, JiraNamedEntity status)
+            : base(server, status) {
         }
     }
 }

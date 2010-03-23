@@ -428,19 +428,19 @@ namespace Atlassian.plvs.ui.jira {
                     List<JiraNamedEntity> issueTypes = Facade.getIssueTypes(server);
                     foreach (JiraNamedEntity type in issueTypes) {
                         JiraServerCache.Instance.addIssueType(server, type);
-                        ImageCache.Instance.getImage(type.IconUrl);
+                        ImageCache.Instance.getImage(server, type.IconUrl);
                     }
                     List<JiraNamedEntity> subtaskIssueTypes = Facade.getSubtaskIssueTypes(server);
                     foreach (JiraNamedEntity type in subtaskIssueTypes) {
                         JiraServerCache.Instance.addIssueType(server, type);
-                        ImageCache.Instance.getImage(type.IconUrl);
+                        ImageCache.Instance.getImage(server, type.IconUrl);
                     }
 
                     status.setInfo("[" + server.Name + "] Loading issue priorities...");
                     List<JiraNamedEntity> priorities = Facade.getPriorities(server);
                     foreach (JiraNamedEntity prio in priorities) {
                         JiraServerCache.Instance.addPriority(server, prio);
-                        ImageCache.Instance.getImage(prio.IconUrl);
+                        ImageCache.Instance.getImage(server, prio.IconUrl);
                     }
 
                     status.setInfo("[" + server.Name + "] Loading issue resolutions...");
@@ -453,7 +453,7 @@ namespace Atlassian.plvs.ui.jira {
                     List<JiraNamedEntity> statuses = Facade.getStatuses(server);
                     foreach (JiraNamedEntity s in statuses) {
                         JiraServerCache.Instance.addStatus(server, s);
-                        ImageCache.Instance.getImage(s.IconUrl);
+                        ImageCache.Instance.getImage(server, s.IconUrl);
                     }
 
                     status.setInfo("[" + server.Name + "] Loading saved filters...");

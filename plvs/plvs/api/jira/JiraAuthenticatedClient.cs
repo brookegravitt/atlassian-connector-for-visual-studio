@@ -1,6 +1,4 @@
-﻿using System.Web;
-
-namespace Atlassian.plvs.api.jira {
+﻿namespace Atlassian.plvs.api.jira {
     internal class JiraAuthenticatedClient {
 
         protected string UserName { get; private set; }
@@ -15,9 +13,7 @@ namespace Atlassian.plvs.api.jira {
 
         protected string appendAuthentication(bool first) {
             if (UserName != null) {
-                return (first ? "?" : "&") + "os_username=" 
-                    + HttpUtility.UrlEncode(CredentialUtils.getUserNameWithoutDomain(UserName))
-                    + "&os_password=" + HttpUtility.UrlEncode(Password);
+                return (first ? "?" : "&") + CredentialUtils.getOsAuthString(UserName, Password);
             }
             return "";
         }

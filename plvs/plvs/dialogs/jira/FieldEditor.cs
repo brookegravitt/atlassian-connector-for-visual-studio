@@ -120,7 +120,7 @@ namespace Atlassian.plvs.dialogs.jira {
                     editorProvider = new NamedEntityListFieldEditorProvider(field, issue.Components, comps, fieldValid);
                     break;
                 case JiraActionFieldType.WidgetType.PRIORITY:
-                    editorProvider = new NamedEntityComboEditorProvider(field, issue.PriorityId,
+                    editorProvider = new NamedEntityComboEditorProvider(issue.Server, field, issue.PriorityId,
                                                                 JiraServerCache.Instance.getPriorities(issue.Server),
                                                                 fieldValid);
                     break;

@@ -299,7 +299,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
                 return;
             }
 #if true
-            req.Credentials = CredentialUtils.getCredentialCacheForUserAndPassword(url, userName, password);
+            req.Credentials = CredentialUtils.getCredentialsForUserAndPassword(url, userName, password);
 #else
             string authInfo = CredentialUtils.getUserNameWithoutDomain(userName) + ":" + password;
             authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
