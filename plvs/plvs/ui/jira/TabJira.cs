@@ -93,7 +93,7 @@ namespace Atlassian.plvs.ui.jira {
 
             issuesTree = new JiraIssueTree(jiraSplitter.Panel2, status, searchingModel, filtersTree.ItemHeight, filtersTree.Font);
 
-            ToolStripMenuItem copyToClipboardItem = new ToolStripMenuItem("Copy to Clipboard", Resources.CopyHS)
+            ToolStripMenuItem copyToClipboardItem = new ToolStripMenuItem("Copy to Clipboard", Resources.ico_copytoclipboard)
                                                     {
                                                         DropDown = createCopyIssueMenuItems()
                                                     };
@@ -103,15 +103,15 @@ namespace Atlassian.plvs.ui.jira {
 
             issuesTree.addContextMenu(new ToolStripItem[]
                                   {
-                                      new ToolStripMenuItem("Open in IDE", Resources.open_in_ide,
+                                      new ToolStripMenuItem("Open in IDE", Resources.ico_editinide,
                                                             new EventHandler(openIssue)),
                                       new ToolStripMenuItem("View in Browser", Resources.view_in_browser,
                                                             new EventHandler(browseIssue)),
-                                      new ToolStripMenuItem("Edit in Browser", Resources.edit_in_browser,
+                                      new ToolStripMenuItem("Edit in Browser", Resources.ico_editinbrowser,
                                                             new EventHandler(browseEditIssue)),
                                       copyToClipboardItem,
                                       new ToolStripSeparator(),
-                                      new ToolStripMenuItem("Log Work", Resources.log_work,
+                                      new ToolStripMenuItem("Log Work", Resources.ico_logworkonissue,
                                                             new EventHandler(logWork))
                                   });
 

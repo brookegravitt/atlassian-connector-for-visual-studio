@@ -323,7 +323,7 @@
             // 
             this.buttonGroupSubtasks.CheckOnClick = true;
             this.buttonGroupSubtasks.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonGroupSubtasks.Image = global::Atlassian.plvs.Resources.group_subtasks;
+            this.buttonGroupSubtasks.Image = global::Atlassian.plvs.Resources.ico_groupsubtasks;
             this.buttonGroupSubtasks.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonGroupSubtasks.Name = "buttonGroupSubtasks";
             this.buttonGroupSubtasks.Size = new System.Drawing.Size(23, 22);
@@ -333,7 +333,7 @@
             // buttonOpen
             // 
             this.buttonOpen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonOpen.Image = global::Atlassian.plvs.Resources.open_in_ide;
+            this.buttonOpen.Image = global::Atlassian.plvs.Resources.ico_editinide;
             this.buttonOpen.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonOpen.Name = "buttonOpen";
             this.buttonOpen.Size = new System.Drawing.Size(23, 22);
@@ -353,7 +353,7 @@
             // buttonEditInBrowser
             // 
             this.buttonEditInBrowser.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonEditInBrowser.Image = global::Atlassian.plvs.Resources.edit_in_browser;
+            this.buttonEditInBrowser.Image = global::Atlassian.plvs.Resources.ico_editinbrowser;
             this.buttonEditInBrowser.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonEditInBrowser.Name = "buttonEditInBrowser";
             this.buttonEditInBrowser.Size = new System.Drawing.Size(23, 22);

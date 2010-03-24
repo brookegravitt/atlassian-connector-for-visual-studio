@@ -283,13 +283,6 @@ namespace Atlassian.plvs {
             }
         }
         
-        internal static System.Drawing.Bitmap CopyHS {
-            get {
-                object obj = ResourceManager.GetObject("CopyHS", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
         internal static System.Drawing.Bitmap dropzone {
             get {
                 object obj = ResourceManager.GetObject("dropzone", resourceCulture);
@@ -300,13 +293,6 @@ namespace Atlassian.plvs {
         internal static System.Drawing.Bitmap edit {
             get {
                 object obj = ResourceManager.GetObject("edit", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap edit_in_browser {
-            get {
-                object obj = ResourceManager.GetObject("edit_in_browser", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -361,13 +347,6 @@ namespace Atlassian.plvs {
             }
         }
         
-        internal static System.Drawing.Bitmap group_subtasks {
-            get {
-                object obj = ResourceManager.GetObject("group_subtasks", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
         internal static System.Drawing.Bitmap icn_plan_disabled {
             get {
                 object obj = ResourceManager.GetObject("icn_plan_disabled", resourceCulture);
@@ -392,6 +371,34 @@ namespace Atlassian.plvs {
         internal static System.Drawing.Bitmap ico_clonefilter {
             get {
                 object obj = ResourceManager.GetObject("ico_clonefilter", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap ico_copytoclipboard {
+            get {
+                object obj = ResourceManager.GetObject("ico_copytoclipboard", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap ico_editinbrowser {
+            get {
+                object obj = ResourceManager.GetObject("ico_editinbrowser", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap ico_editinide {
+            get {
+                object obj = ResourceManager.GetObject("ico_editinide", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap ico_groupsubtasks {
+            get {
+                object obj = ResourceManager.GetObject("ico_groupsubtasks", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -427,6 +434,27 @@ namespace Atlassian.plvs {
         internal static System.Drawing.Bitmap ico_jira_saved_filter {
             get {
                 object obj = ResourceManager.GetObject("ico_jira_saved_filter", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap ico_logworkonissue {
+            get {
+                object obj = ResourceManager.GetObject("ico_logworkonissue", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap ico_updateavailable {
+            get {
+                object obj = ResourceManager.GetObject("ico_updateavailable", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap ico_updatenotavailable {
+            get {
+                object obj = ResourceManager.GetObject("ico_updatenotavailable", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -548,13 +576,6 @@ namespace Atlassian.plvs {
             get {
                 object obj = ResourceManager.GetObject("jira_blue_161", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap log_work {
-            get {
-                object obj = ResourceManager.GetObject("log_work", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
