@@ -492,7 +492,7 @@ namespace Atlassian.plvs.ui.jira {
             // buttonLogWork
             // 
             this.buttonLogWork.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonLogWork.Image = global::Atlassian.plvs.Resources.log_work;
+            this.buttonLogWork.Image = global::Atlassian.plvs.Resources.ico_logworkonissue;
             this.buttonLogWork.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonLogWork.Name = "buttonLogWork";
             this.buttonLogWork.Size = new System.Drawing.Size(23, 22);

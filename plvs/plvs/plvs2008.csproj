@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -752,25 +752,29 @@
     <Content Include="Resources\icons\bug.png" />
     <Content Include="Resources\icons\close.png" />
     <Content Include="Resources\icons\collapse_all.png" />
-    <Content Include="Resources\icons\CopyHS.png" />
     <Content Include="Resources\icons\dropzone.png" />
     <Content Include="Resources\icons\edit.png" />
-    <Content Include="Resources\icons\edit_in_browser.png" />
     <Content Include="Resources\icons\expand_all.png" />
     <Content Include="Resources\icons\find-jira.png" />
     <Content Include="Resources\icons\folder-bamboo.png" />
     <Content Include="Resources\icons\folder-jira.png" />
     <Content Include="Resources\icons\global_properties.png" />
-    <Content Include="Resources\icons\group-subtasks.png" />
     <Content Include="Resources\icons\icn_plan_disabled.gif" />
     <Content Include="Resources\icons\icn_plan_failed.gif" />
     <Content Include="Resources\icons\icn_plan_passed.gif" />
     <Content Include="Resources\icons\ico_clonefilter.png" />
+    <None Include="Resources\icons\ico_copytoclipboard.png" />
+    <None Include="Resources\icons\ico_editinbrowser.png" />
+    <None Include="Resources\icons\ico_editinide.png" />
+    <None Include="Resources\icons\ico_groupsubtasks.png" />
     <Content Include="Resources\icons\ico_jira_custom_filter.png" />
     <Content Include="Resources\icons\ico_jira_filter.png" />
     <Content Include="Resources\icons\ico_jira_preset_filter.png" />
     <Content Include="Resources\icons\ico_jira_recent_issues.png" />
     <Content Include="Resources\icons\ico_jira_saved_filter.png" />
+    <None Include="Resources\icons\ico_logworkonissue.png" />
+    <None Include="Resources\icons\ico_updateavailable.png" />
+    <None Include="Resources\icons\ico_updatenotavailable.png" />
     <Content Include="Resources\icons\ide_plugin_16.bmp" />
     <Content Include="Resources\icons\ide_plugin_16.ico" />
     <Content Include="Resources\icons\ide_plugin_300.png" />
@@ -780,7 +784,6 @@
     <Content Include="Resources\icons\jira-blue-16-with-padding.png" />
     <Content Include="Resources\icons\jira-blue-16.ico" />
     <Content Include="Resources\icons\jira-blue-16.png" />
-    <Content Include="Resources\icons\log-work.png" />
     <Content Include="Resources\icons\minus.png" />
     <Content Include="Resources\icons\new_comment.png" />
     <Content Include="Resources\icons\nothing.png" />
