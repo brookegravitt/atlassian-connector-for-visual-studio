@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 using Atlassian.plvs.api;
 using Atlassian.plvs.autoupdate;
@@ -111,7 +112,7 @@ namespace Atlassian.plvs.windows {
                                              updateAction = action;
                                              updateException = null;
                                              notifyUpdate.Visible = true;
-                                             notifyUpdate.Icon = Resources.status_plugin2;
+                                             notifyUpdate.Icon = Icon.FromHandle(Resources.ico_updateavailable.GetHicon());
                                              notifyUpdate.Text = "New version of the connector available, double-click to install";
                                              notifyUpdate.BalloonTipIcon = ToolTipIcon.Info;
                                              notifyUpdate.BalloonTipTitle = UPDATE_BALOON_TITLE;
@@ -126,7 +127,7 @@ namespace Atlassian.plvs.windows {
                                              updateAction = null;
                                              updateException = exception;
                                              notifyUpdate.Visible = true;
-                                             notifyUpdate.Icon = Resources.update_unavailable1;
+                                             notifyUpdate.Icon = Icon.FromHandle(Resources.ico_updatenotavailable.GetHicon());
                                              notifyUpdate.Text = "Unable to retrieve update information, double-click for details";
                                              notifyUpdate.BalloonTipIcon = ToolTipIcon.Error;
                                              notifyUpdate.BalloonTipTitle = UPDATE_BALOON_TITLE;
