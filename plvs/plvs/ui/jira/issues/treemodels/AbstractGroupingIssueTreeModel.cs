@@ -23,7 +23,9 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
             foreach (var issue in issues) {
                 if (!(issue.IsSubtask && GroupSubtasksUnderParent)) {
                     AbstractIssueGroupNode group = findGroupNode(issue);
-                    group.IssueNodes.Add(new IssueNode(issue));
+                    if (group != null) {
+                        group.IssueNodes.Add(new IssueNode(issue));
+                    }
                 } else {
                     subs.Add(issue);
                 }
@@ -42,7 +44,9 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
             // Not really kosher, priority order is lost :(
             foreach (JiraIssue sub in orphanSubs) {
                 AbstractIssueGroupNode group = findGroupNode(sub);
-                group.IssueNodes.Add(new IssueNode(sub));
+                if (group != null) {
+                    group.IssueNodes.Add(new IssueNode(sub));
+                }
             }
 
             if (StructureChanged != null) {
@@ -120,8 +124,7 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
                             }
 
                             if (NodesChanged != null) {
-                                NodesChanged(this, new TreeModelEventArgs(
-                                    new TreePath(new object[] {groupNode, issueNode}), new object[] {subNode}));
+                                NodesChanged(this, new TreeModelEventArgs(new TreePath(new object[] {groupNode, issueNode}), new object[] {subNode}));
                             }
                             return;
                         }
