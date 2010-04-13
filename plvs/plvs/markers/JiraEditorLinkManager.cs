@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Atlassian.plvs.api.jira;
 using Atlassian.plvs.eventsinks;
 using Atlassian.plvs.util.jira;
 using Atlassian.plvs.windows;
@@ -163,15 +164,23 @@ namespace Atlassian.plvs.markers {
 
         private static bool scanCommentedLine(IVsTextLines textLines, int lineNumber, string text, int offset, ref int count) {
             MatchCollection matches = JiraIssueUtils.ISSUE_REGEX.Matches(text);
-            if (matches.Count > 0) {
-                count += matches.Count;
-            }
+            
+            SortedDictionary<string, JiraProject> projects = 
+                JiraServerCache.Instance.getProjects(AtlassianPanel.Instance.Jira.CurrentlySelectedServerOrDefault);
+
+            int countOrg = count;
+
             for (int j = 0; j < matches.Count; ++j) {
+                if (!projects.ContainsKey(matches[j].Groups[2].Value)) continue;
+
+                ++count;
+
                 int index = matches[j].Index + offset;
                 AbstractMarkerClientEventSink textMarkerClientEventSink = new TextMarkerClientEventSink(matches[j].Value);
                 addMarker(textLines, lineNumber, index, index + matches[j].Length, JiraLinkTextMarkerType.Id, textMarkerClientEventSink);
             }
-            return matches.Count > 0;
+
+            return count - countOrg > 0;
         }
 
         private static CommentStrings getCommentMarkerStrings(IVsTextLines lines) {

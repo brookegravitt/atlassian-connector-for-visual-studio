@@ -13,7 +13,5 @@ namespace Atlassian.plvs.util {
         public const string INTEGRATE_WITH_ANKH = "integrate.with.ankh";
 
         public const string PAZU_REG_KEY = @"Software\Atlassian\Atlassian Connector for Visual Studio";
-
-        public static readonly Regex ISSUE_KEY_REGEX = new Regex(@"([A-Z]+-[0-9]+)");
     }
 }

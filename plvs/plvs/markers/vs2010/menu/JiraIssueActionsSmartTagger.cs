@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.util;
+using Atlassian.plvs.util.jira;
 using Atlassian.plvs.windows;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
@@ -56,7 +57,7 @@ namespace Atlassian.plvs.markers.vs2010.menu {
             foreach (SnapshotSpan span in spans) {
                 foreach (SnapshotSpan s in from classification in classifier.GetClassificationSpans(span)
                                            where classification.ClassificationType.Classification.ToLower().Contains("comment")
-                                           let matches = Constants.ISSUE_KEY_REGEX.Matches(classification.Span.GetText())
+                                           let matches = JiraIssueUtils.ISSUE_REGEX.Matches(classification.Span.GetText())
                                            let c = classification
                                            from s in matches.Cast<Match>().Where(match => match.Success).Select(match => new SnapshotSpan(c.Span.Start + match.Index, match.Length))
                                            select s) {
