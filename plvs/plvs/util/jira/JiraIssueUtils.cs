@@ -9,7 +9,7 @@ using Atlassian.plvs.api.jira;
 namespace Atlassian.plvs.util.jira {
     public sealed class JiraIssueUtils {
 
-        public static readonly Regex ISSUE_REGEX = new Regex(@"([A-Z]+-\d+)");
+        public static readonly Regex ISSUE_REGEX = new Regex(@"(([A-Z]+)-\d+)");
 
         private const string JiraFormat = "ddd, d MMM yyyy HH:mm:ss zzz";
         private const string ShortFormatFromJira = "dd/MM/yy";
