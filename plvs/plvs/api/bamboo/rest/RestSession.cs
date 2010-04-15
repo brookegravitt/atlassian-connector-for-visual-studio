@@ -160,7 +160,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
         public ICollection<BambooBuild> getLatestBuildsForFavouritePlans() {
             string endpoint = server.Url + LATEST_BUILDS_FOR_FAVOURITE_PLANS_ACTION;
-            return getBuildsFromUrl(endpoint);
+            return getBuildsFromUrl(endpoint, true);
         }
     
         public ICollection<BambooBuild> getLatestBuildsForPlanKeys(ICollection<string> keys) {
@@ -168,7 +168,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
             foreach (string key in keys) {
                 string buildUrl = string.Format(LATEST_BUILDS_FOR_PLANS_ACTION, key);
                 string endpoint = server.Url + buildUrl;
-                ICollection<BambooBuild> builds = getBuildsFromUrl(endpoint);
+                ICollection<BambooBuild> builds = getBuildsFromUrl(endpoint, false);
                 if (builds != null) {
                     result.AddRange(builds);
                 }
@@ -176,13 +176,13 @@ namespace Atlassian.plvs.api.bamboo.rest {
             return result;
         }
 
-        private ICollection<BambooBuild> getBuildsFromUrl(string endpoint) {
-            return getBuildsFromUrlWithStartIndex(endpoint, 0);
+        private ICollection<BambooBuild> getBuildsFromUrl(string endpoint, bool withRecursion) {
+            return getBuildsFromUrlWithStartIndex(endpoint, 0, withRecursion);
         }
 
-        private ICollection<BambooBuild> getBuildsFromUrlWithStartIndex(string endpoint, int start) {
+        private ICollection<BambooBuild> getBuildsFromUrlWithStartIndex(string endpoint, int start, bool withRecursion) {
 
-            using (Stream stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint) + "&start-index=" + start, true)) {
+            using (Stream stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint) + (withRecursion ? "&start-index=" + start : ""), true)) {
                 XPathDocument doc = XPathUtils.getXmlDocument(stream);
 
                 string code = getRestErrorStatusCode(doc);
@@ -245,8 +245,8 @@ namespace Atlassian.plvs.api.bamboo.rest {
                 }
 
                 // Yes, recursion here. I hope it works as I think it should. If not, we are all doomed
-                if (totalBuildsCount > maxResult + startIndex) {
-                    builds.AddRange(getBuildsFromUrlWithStartIndex(endpoint, startIndex + maxResult));
+                if (withRecursion && totalBuildsCount > maxResult + startIndex) {
+                    builds.AddRange(getBuildsFromUrlWithStartIndex(endpoint, startIndex + maxResult, true));
                 }
 
                 return builds;
