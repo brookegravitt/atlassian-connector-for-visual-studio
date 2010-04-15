@@ -96,7 +96,11 @@ namespace Atlassian.plvs.api.bamboo.rest {
         }
 
         private ICollection<BambooPlan> getPlansFromUrl(string endpoint) {
-            using (Stream stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint), true)) {
+            return getPlansFromUrlWithStartIndex(endpoint, 0);
+        }
+
+        private ICollection<BambooPlan> getPlansFromUrlWithStartIndex(string endpoint, int start) {
+            using (Stream stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint) + "&start-index=" + start, true)) {
 
                 XPathDocument doc = XPathUtils.getXmlDocument(stream);
 
@@ -106,8 +110,20 @@ namespace Atlassian.plvs.api.bamboo.rest {
                 }
 
                 XPathNavigator nav = doc.CreateNavigator();
-                XPathExpression expr = nav.Compile("/plans/plans/plan");
+
+                XPathExpression expr = nav.Compile("/plans/plans");
                 XPathNodeIterator it = nav.Select(expr);
+                int totalPlansCount = 0;
+                int maxResult = 0;
+                int startIndex = 0;
+                if (it.MoveNext()) {
+                    totalPlansCount = int.Parse(XPathUtils.getAttributeSafely(it.Current, "size", "0"));
+                    maxResult = int.Parse(XPathUtils.getAttributeSafely(it.Current, "max-result", "0"));
+                    startIndex = int.Parse(XPathUtils.getAttributeSafely(it.Current, "start-index", "0"));
+                }
+
+                expr = nav.Compile("/plans/plans/plan");
+                it = nav.Select(expr);
 
                 List<BambooPlan> plans = new List<BambooPlan>();
 
@@ -132,6 +148,12 @@ namespace Atlassian.plvs.api.bamboo.rest {
                     BambooPlan plan = new BambooPlan(key, name, enabled, favourite);
                     plans.Add(plan);
                 }
+
+                // Yes, recursion here. I hope it works as I think it should. If not, we are all doomed
+                if (totalPlansCount > maxResult + startIndex) {
+                    plans.AddRange(getPlansFromUrlWithStartIndex(endpoint, startIndex + maxResult));
+                }
+
                 return plans;
             }
         }
@@ -155,7 +177,12 @@ namespace Atlassian.plvs.api.bamboo.rest {
         }
 
         private ICollection<BambooBuild> getBuildsFromUrl(string endpoint) {
-            using (Stream stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint), true)) {
+            return getBuildsFromUrlWithStartIndex(endpoint, 0);
+        }
+
+        private ICollection<BambooBuild> getBuildsFromUrlWithStartIndex(string endpoint, int start) {
+
+            using (Stream stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint) + "&start-index=" + start, true)) {
                 XPathDocument doc = XPathUtils.getXmlDocument(stream);
 
                 string code = getRestErrorStatusCode(doc);
@@ -164,8 +191,20 @@ namespace Atlassian.plvs.api.bamboo.rest {
                 }
 
                 XPathNavigator nav = doc.CreateNavigator();
-                XPathExpression expr = nav.Compile("/builds/builds/build");
+
+                XPathExpression expr = nav.Compile("/builds/builds");
                 XPathNodeIterator it = nav.Select(expr);
+                int totalBuildsCount = 0;
+                int maxResult = 0;
+                int startIndex = 0;
+                if (it.MoveNext()) {
+                    totalBuildsCount = int.Parse(XPathUtils.getAttributeSafely(it.Current, "size", "0"));
+                    maxResult = int.Parse(XPathUtils.getAttributeSafely(it.Current, "max-result", "0"));
+                    startIndex = int.Parse(XPathUtils.getAttributeSafely(it.Current, "start-index", "0"));
+                }
+
+                expr = nav.Compile("/builds/builds/build");
+                it = nav.Select(expr);
 
                 List<BambooBuild> builds = new List<BambooBuild>();
 
@@ -204,6 +243,12 @@ namespace Atlassian.plvs.api.bamboo.rest {
                         buildDurationDescription, successfulTestCount, failedTestCount, buildReason);
                     builds.Add(build);
                 }
+
+                // Yes, recursion here. I hope it works as I think it should. If not, we are all doomed
+                if (totalBuildsCount > maxResult + startIndex) {
+                    builds.AddRange(getBuildsFromUrlWithStartIndex(endpoint, startIndex + maxResult));
+                }
+
                 return builds;
             }
         }
