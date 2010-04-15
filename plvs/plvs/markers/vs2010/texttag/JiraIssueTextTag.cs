@@ -2,15 +2,14 @@
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.windows;
 using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 
 namespace Atlassian.plvs.markers.vs2010.texttag {
-    public class JiraIssueTag : IUrlTag, IGlyphTag {
+    public class JiraIssueTextTag : IUrlTag {
         public SnapshotSpan Where { get; set; }
         public string IssueKey { get; private set; }
 
-        public JiraIssueTag(SnapshotSpan where, string issueKey) {
+        public JiraIssueTextTag(SnapshotSpan where, string issueKey) {
             Where = where;
             IssueKey = issueKey;
         }

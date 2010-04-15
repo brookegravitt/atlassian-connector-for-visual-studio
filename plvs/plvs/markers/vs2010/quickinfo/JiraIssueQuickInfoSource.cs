@@ -25,10 +25,10 @@ namespace Atlassian.plvs.markers.vs2010.quickinfo {
                 return;
             }
             
-            JiraIssueTag tag = provider.CurrentTag;
+            JiraIssueTextTag textTag = provider.currentTextTag;
 
-            if (tag != null) {
-                string issueKey = tag.IssueKey;
+            if (textTag != null) {
+                string issueKey = textTag.IssueKey;
 
                 ITextSnapshot currentSnapshot = subjectTriggerPoint.Value.Snapshot;
                 SnapshotSpan querySpan = new SnapshotSpan(subjectTriggerPoint.Value, 0);

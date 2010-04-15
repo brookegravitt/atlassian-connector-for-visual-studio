@@ -22,7 +22,7 @@ namespace Atlassian.plvs.markers.vs2010.quickinfo {
         [Import]
         public IViewTagAggregatorFactoryService tagAggregatorFactoryService;
 
-        public JiraIssueTag CurrentTag { get; set; }
+        public JiraIssueTextTag currentTextTag { get; set; }
 
         public IQuickInfoSource TryCreateQuickInfoSource(ITextBuffer textBuffer) {
             return new JiraIssueQuickInfoSource(this, textBuffer);

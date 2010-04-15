@@ -29,18 +29,18 @@ namespace Atlassian.plvs.markers.vs2010.quickinfo {
 
             if (point == null) return;
 
-            ITagAggregator<JiraIssueTag> aggregator = provider.TagAggregatorFactoryService.CreateTagAggregator<JiraIssueTag>(textView);
-            IEnumerable<IMappingTagSpan<JiraIssueTag>> spans = aggregator.GetTags(new SnapshotSpan(new SnapshotPoint(textView.TextSnapshot, 0),
+            ITagAggregator<JiraIssueTextTag> aggregator = provider.TagAggregatorFactoryService.CreateTagAggregator<JiraIssueTextTag>(textView);
+            IEnumerable<IMappingTagSpan<JiraIssueTextTag>> spans = aggregator.GetTags(new SnapshotSpan(new SnapshotPoint(textView.TextSnapshot, 0),
                                                                                textView.TextSnapshot.Length - 1));
 
-            JiraIssueTag tag = (from span in spans
+            JiraIssueTextTag textTag = (from span in spans
                                 let t = span.Tag
                                 where t.Where.Start.Position <= point.Value.Position && t.Where.End.Position >= point.Value.Position
                                 select span.Tag).FirstOrDefault();
 
-            provider.InfoSourceProvider.CurrentTag = tag;
+            provider.InfoSourceProvider.currentTextTag = textTag;
             
-            if (tag == null) return;
+            if (textTag == null) return;
 
             ITrackingPoint triggerPoint = point.Value.Snapshot.CreateTrackingPoint(point.Value.Position, PointTrackingMode.Positive);
             

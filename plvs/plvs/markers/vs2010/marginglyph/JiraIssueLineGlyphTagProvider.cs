@@ -5,12 +5,12 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
 
-namespace Atlassian.plvs.markers.vs2010.texttag {
-    internal class JiraIssueTagProvider {
+namespace Atlassian.plvs.markers.vs2010.marginglyph {
+    internal class JiraIssueLineGlyphTagProvider {
         [Export(typeof(ITaggerProvider))]
         [ContentType("code")]
-        [TagType(typeof(JiraIssueTextTag))]
-        internal class JiraIssueTaggerProvider : ITaggerProvider {
+        [TagType(typeof(JiraIssueLineGlyphTag))]
+        internal class JiraIssueLineGlyphTaggerProvider : ITaggerProvider {
             [Import]
             internal IClassifierAggregatorService AggregatorService;
 
@@ -23,7 +23,7 @@ namespace Atlassian.plvs.markers.vs2010.texttag {
                     return null;
                 }
 
-                return new JiraIssueTextTagger(buffer, AggregatorService.GetClassifier(buffer)) as ITagger<T>;
+                return new JiraIssueLineGlyphTagger(buffer, AggregatorService.GetClassifier(buffer)) as ITagger<T>;
             }
         }
     }
