@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -9,6 +10,7 @@ using Atlassian.plvs.store;
 using Atlassian.plvs.ui;
 using Atlassian.plvs.util;
 using Atlassian.plvs.windows;
+using Timer = System.Threading.Timer;
 
 namespace Atlassian.plvs.dialogs.jira {
     public partial class CreateIssue : Form {
@@ -218,6 +220,7 @@ namespace Atlassian.plvs.dialogs.jira {
             textDescription.Enabled = enabled;
             jiraAssigneePicker.Enabled = enabled;
             buttonCreate.Enabled = enabled;
+            buttonCreateAndClose.Enabled = enabled;
         }
 
         private void updateButtons() {
@@ -226,6 +229,7 @@ namespace Atlassian.plvs.dialogs.jira {
                 && comboProjects.SelectedItem != null
                 && comboTypes.SelectedItem != null
                 && comboPriorities.SelectedItem != null;
+            buttonCreateAndClose.Enabled = buttonCreate.Enabled;
         }
 
         private void textSummary_TextChanged(object sender, EventArgs e) {
@@ -243,11 +247,19 @@ namespace Atlassian.plvs.dialogs.jira {
         }
 
         private void buttonCreate_Click(object sender, EventArgs e) {
+            createIssue(true);
+        }
+
+        private void buttonCreateAndClose_Click(object sender, EventArgs e) {
+            createIssue(false);
+        }
+
+        private void createIssue(bool keepDialogOpen) {
             saveSelectedValues();
             JiraIssue issue = createIssueTemplate();
             setAllEnabled(false);
             buttonCancel.Enabled = false;
-            Thread t = new Thread(() => createIssueWorker(issue));
+            Thread t = new Thread(() => createIssueWorker(issue, keepDialogOpen));
             t.Start();
         }
 
@@ -310,21 +322,45 @@ namespace Atlassian.plvs.dialogs.jira {
             return issue;
         }
 
-        private void createIssueWorker(JiraIssue issue) {
+        private void createIssueWorker(JiraIssue issue, bool keepDialogOpen) {
             try {
                 string key = JiraServerFacade.Instance.createIssue(server, issue);
                 this.safeInvoke(new MethodInvoker(delegate {
-                                             setAllEnabled(true);
-                                             buttonCancel.Enabled = true;
-                                             Close();
-                                             AtlassianPanel.Instance.Jira.findAndOpenIssue(key, null);
-                                         }));
+                                                      setAllEnabled(true);
+                                                      buttonCancel.Enabled = true;
+                                                      if (!keepDialogOpen) {
+                                                          Close();
+                                                      } else {
+                                                          if (keepDialogOpen) {
+                                                              textSummary.Text = "";
+                                                              textDescription.Text = "";
+                                                          }
+                                                      }
+                                                      AtlassianPanel.Instance.Jira.findAndOpenIssue(key, delegate {
+                                                          if (keepDialogOpen) {
+                                                              bringDialogToFront();
+                                                          }
+                                                      });
+                }));
             } catch (Exception e) {
                 this.safeInvoke(new MethodInvoker(delegate {
-                                             PlvsUtils.showError("Unable to create issue", e);
-                                             setAllEnabled(true);
-                                             buttonCancel.Enabled = true;
-                                         }));
+                                                      PlvsUtils.showError("Unable to create issue", e);
+                                                      setAllEnabled(true);
+                                                      buttonCancel.Enabled = true;
+                                                  }));
+            }
+        }
+
+        // I have no idea why just calling BringToFront does not work, but it does not. Go figure
+        private void bringDialogToFront() {
+            try {
+                TopMost = true;
+                System.Windows.Forms.Timer t = new System.Windows.Forms.Timer { Interval = 100 };
+                t.Tick += (s, e) => { TopMost = false; t.Stop(); };
+                t.Start();
+            } catch (Exception e) {
+                // in case somebody closes the dialog before the timer fires up
+                Debug.WriteLine("CreateIssue.bringDialogToFront() - exception: " + e.Message);
             }
         }
 
