@@ -9,7 +9,7 @@ namespace Atlassian.plvs.markers.vs2010.marginglyph {
     [Name("JiraIssueGlyph")]
     [Order(After = "VsTextMarker")]
     [ContentType("code")]
-    [TagType(typeof(JiraIssueTag))]
+    [TagType(typeof(JiraIssueLineGlyphTag))]
     internal sealed class JiraIssueGlyphFactoryProvider : IGlyphFactoryProvider {
         public IGlyphFactory GetGlyphFactory(IWpfTextView view, IWpfTextViewMargin margin) {
             return new JiraIssueGlyphFactory();

@@ -296,9 +296,13 @@
     <Compile Include="markers\vs2010\quickinfo\JiraIssueQuickInfoControllerProvider.cs" />
     <Compile Include="markers\vs2010\quickinfo\JiraIssueQuickInfoProvider.cs" />
     <Compile Include="markers\vs2010\quickinfo\JiraIssueQuickInfoSource.cs" />
-    <Compile Include="markers\vs2010\texttag\JiraIssueTag.cs" />
-    <Compile Include="markers\vs2010\texttag\JiraIssueTagger.cs" />
+    <Compile Include="markers\vs2010\marginglyph\JiraIssueLineGlyphTagger.cs" />
+    <Compile Include="markers\vs2010\marginglyph\JiraIssueLineGlyphTagProvider.cs" />
+    <Compile Include="markers\vs2010\marginglyph\JiraIssueLineGlyphTag.cs" />
+    <Compile Include="markers\vs2010\texttag\JiraIssueTextTag.cs" />
+    <Compile Include="markers\vs2010\texttag\JiraIssueTextTagger.cs" />
     <Compile Include="markers\vs2010\texttag\JiraIssueTagProvider.cs" />
+    <Compile Include="markers\vs2010\LineTagger.cs" />
     <Compile Include="markers\vs2010\texttag\LinkUpdateWorkaround.cs" />
     <Compile Include="models\AbstractServerModel.cs" />
     <Compile Include="api\bamboo\BambooServer.cs" />
