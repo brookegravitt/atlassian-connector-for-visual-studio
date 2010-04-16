@@ -459,6 +459,13 @@ namespace Atlassian.plvs {
             }
         }
         
+        internal static System.Drawing.Bitmap icon_addattachment {
+            get {
+                object obj = ResourceManager.GetObject("icon_addattachment", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap ide_plugin_16 {
             get {
                 object obj = ResourceManager.GetObject("ide_plugin_16", resourceCulture);
