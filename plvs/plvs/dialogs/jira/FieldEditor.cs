@@ -44,7 +44,7 @@ namespace Atlassian.plvs.dialogs.jira {
 
             field = new JiraField(fieldId, null);
 
-            Thread t = new Thread(fillFieldWrap);
+            Thread t = PlvsUtils.createThread(fillFieldWrap);
             t.Start();
         }
 
@@ -183,7 +183,7 @@ namespace Atlassian.plvs.dialogs.jira {
             List<string> values = editorProvider.getValues();
             field.Values = values;
 
-            Thread t = new Thread(applyChanges);
+            Thread t = PlvsUtils.createThread(applyChanges);
             t.Start();
         }
 

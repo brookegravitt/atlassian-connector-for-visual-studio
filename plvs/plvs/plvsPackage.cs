@@ -1,7 +1,11 @@
 ﻿using System;
 using System.ComponentModel.Design;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
+using System.Windows.Forms;
 using Atlassian.plvs.attributes;
+using Atlassian.plvs.dialogs;
 using Atlassian.plvs.eventsinks;
 using Atlassian.plvs.scm;
 using Atlassian.plvs.store;
@@ -135,6 +139,8 @@ namespace Atlassian.plvs {
                 return;
             }
 
+            installCrashHandler();
+
             OleMenuCommandService mcs = GetService(typeof (IMenuCommandService)) as OleMenuCommandService;
             if (null != mcs) {
 
@@ -205,6 +211,25 @@ namespace Atlassian.plvs {
 #endif
 
             ((IServiceContainer)this).AddService(typeof(AnkhSvnJiraConnector), new ServiceCreatorCallback(CreateAnkhSvnConnector), true);
+        }
+
+        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
+        private static void installCrashHandler() {
+            AppDomain domain = AppDomain.CurrentDomain;
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+            Application.ThreadException += applicationThreadException;
+            domain.UnhandledException += unhandledExceptionHandler;
+        }
+
+        static void applicationThreadException(object sender, System.Threading.ThreadExceptionEventArgs e) {
+            UnhandledExceptionDialog dlg = new UnhandledExceptionDialog(e.Exception);
+            dlg.ShowDialog();
+        }
+
+        private static void unhandledExceptionHandler(object sender, UnhandledExceptionEventArgs e) {
+            Exception ex = (Exception) e.ExceptionObject;
+            UnhandledExceptionDialog dlg = new UnhandledExceptionDialog(ex);
+            dlg.ShowDialog();
         }
 
         private object CreateAnkhSvnConnector(IServiceContainer container, Type servicetype) {

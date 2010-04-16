@@ -11,6 +11,7 @@ using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.models.bamboo;
 using Atlassian.plvs.ui.bamboo.treemodels;
+using Atlassian.plvs.util;
 using Atlassian.plvs.util.jira;
 using Timer=System.Timers.Timer;
 
@@ -155,7 +156,7 @@ namespace Atlassian.plvs.ui.bamboo {
         void pollTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
             lastPollTime = null;
             nextPollTime = null;
-            Thread t = new Thread(() => pollRunner(true));
+            Thread t = PlvsUtils.createThread(() => pollRunner(true));
             t.Start();
         }
 
@@ -294,7 +295,7 @@ namespace Atlassian.plvs.ui.bamboo {
         }
 
         private void buttonPoll_Click(object sender, EventArgs e) {
-            Thread t = new Thread(() => pollRunner(false));
+            Thread t = PlvsUtils.createThread(() => pollRunner(false));
             t.Start();
         }
 
@@ -315,7 +316,7 @@ namespace Atlassian.plvs.ui.bamboo {
             runOnSelectedNode(delegate(BambooBuild b) {
                                   string key = BambooBuildUtils.getPlanKey(b);
                                   status.setInfo("Adding build " + key + " to the build queue...");
-                                  Thread t = new Thread(() => runBuildWorker(b, key));
+                                  Thread t = PlvsUtils.createThread(() => runBuildWorker(b, key));
                                   t.Start();
                               });
         }

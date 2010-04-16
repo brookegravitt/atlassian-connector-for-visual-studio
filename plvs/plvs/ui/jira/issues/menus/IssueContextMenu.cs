@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Aga.Controls.Tree;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models.jira;
+using Atlassian.plvs.util;
 using Atlassian.plvs.util.jira;
 
 namespace Atlassian.plvs.ui.jira.issues.menus {
@@ -44,7 +45,7 @@ namespace Atlassian.plvs.ui.jira.issues.menus {
             Items.Clear();
             Items.AddRange(items);
 
-            Thread loaderThread = new Thread(() => addIssueActionItems(++menuOpenGeneration));
+            Thread loaderThread = PlvsUtils.createThread(() => addIssueActionItems(++menuOpenGeneration));
             loaderThread.Start();
         }
 

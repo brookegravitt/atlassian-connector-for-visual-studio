@@ -11,15 +11,15 @@ using Atlassian.plvs.ui;
 namespace Atlassian.plvs.util.jira {
     public sealed class IssueActionRunner {
         public static void runAction(Control owner, JiraNamedEntity action, JiraIssueListModel model, JiraIssue issue, StatusLabel status) {
-            Thread runner = new Thread(new ThreadStart(delegate {
-                                                           try {
-                                                               status.setInfo("Retrieving fields for action \"" + action.Name + "\"...");
-                                                               List<JiraField> fields = JiraServerFacade.Instance.getFieldsForAction(issue, action.Id);
-                                                               runAction(owner, action, model, issue, fields, status);
-                                                           } catch (Exception e) {
-                                                               status.setError("Failed to run action " + action.Name + " on issue " + issue.Key, e);
-                                                           }
-                                                       }));
+            Thread runner = PlvsUtils.createThread(delegate {
+                                                       try {
+                                                           status.setInfo("Retrieving fields for action \"" + action.Name + "\"...");
+                                                           List<JiraField> fields = JiraServerFacade.Instance.getFieldsForAction(issue, action.Id);
+                                                           runAction(owner, action, model, issue, fields, status);
+                                                       } catch (Exception e) {
+                                                           status.setError("Failed to run action " + action.Name + " on issue " + issue.Key, e);
+                                                       }
+                                                   });
             runner.Start();
         }
 

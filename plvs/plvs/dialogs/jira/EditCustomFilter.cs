@@ -246,7 +246,7 @@ namespace Atlassian.plvs.dialogs.jira {
                 JiraProjectListViewItem project = listViewProjects.SelectedItems[0] as JiraProjectListViewItem;
                 if (project != lastSelected) {
                     lastSelected = project;
-                    Thread runner = new Thread(() => setProjectRelatedValuesRunner(project != null ? project.Project : null));
+                    Thread runner = PlvsUtils.createThread(() => setProjectRelatedValuesRunner(project != null ? project.Project : null));
                     runner.Start();
                 }
             } else {

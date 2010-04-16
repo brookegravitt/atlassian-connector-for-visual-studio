@@ -8,6 +8,7 @@ using Atlassian.plvs.models.bamboo;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.store;
 using Atlassian.plvs.ui.jira;
+using Atlassian.plvs.util;
 using Atlassian.plvs.windows;
 using EnvDTE;
 using Microsoft.VisualStudio;
@@ -64,6 +65,7 @@ namespace Atlassian.plvs.eventsinks {
                 JiraCustomFilter.load();
 
                 DTE dte = (DTE)package.GetService(typeof(DTE));
+                PlvsUtils.Dte = dte;
 
                 ToolWindowManager.Instance.AtlassianWindow = createAtlassianWindow();
 

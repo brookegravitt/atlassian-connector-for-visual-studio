@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.ui.jira {
     public partial class JiraTextAreaWithWikiPreview : UserControl {
@@ -45,7 +46,7 @@ namespace Atlassian.plvs.ui.jira {
                 return;
             }
             webPreview.DocumentText = getThrobberHtml();
-            Thread t = new Thread(() => getMarkup(textMarkup.Text));
+            Thread t = PlvsUtils.createThread(() => getMarkup(textMarkup.Text));
             t.Start();
         }
 
