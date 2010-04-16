@@ -90,6 +90,9 @@ namespace Atlassian.plvs.ui.jira {
 
             maybeAddMazioMenu();
 
+            buttonUploadNew.Image = Resources.icon_addattachment;
+            buttonUploadNew.DisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
+
             issueSummary.ScriptErrorsSuppressed = true;
 
             reinitializeAttachmentView(null);

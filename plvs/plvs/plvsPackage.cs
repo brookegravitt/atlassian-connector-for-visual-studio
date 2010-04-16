@@ -213,12 +213,21 @@ namespace Atlassian.plvs {
             ((IServiceContainer)this).AddService(typeof(AnkhSvnJiraConnector), new ServiceCreatorCallback(CreateAnkhSvnConnector), true);
         }
 
+        private static bool handlerInstalled;
+
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         private static void installCrashHandler() {
-            AppDomain domain = AppDomain.CurrentDomain;
-            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-            Application.ThreadException += applicationThreadException;
-            domain.UnhandledException += unhandledExceptionHandler;
+            if (handlerInstalled) return;
+
+            try {
+                AppDomain domain = AppDomain.CurrentDomain;
+                Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+                Application.ThreadException += applicationThreadException;
+                domain.UnhandledException += unhandledExceptionHandler;
+                handlerInstalled = true;
+            } catch (Exception e) {
+                Debug.WriteLine("plvsPackage: Unable to install catch-all exception handler: " + e);
+            }
         }
 
         static void applicationThreadException(object sender, System.Threading.ThreadExceptionEventArgs e) {
