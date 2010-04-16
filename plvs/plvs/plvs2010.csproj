@@ -825,6 +825,7 @@
     <Content Include="Resources\icons\icn_plan_disabled.gif" />
     <Content Include="Resources\icons\icn_plan_failed.gif" />
     <Content Include="Resources\icons\icn_plan_passed.gif" />
+    <Content Include="Resources\icons\icon_addattachment.png" />
     <Content Include="Resources\icons\ico_clonefilter.png" />
     <Content Include="Resources\icons\ico_copytoclipboard.png" />
     <Content Include="Resources\icons\ico_editinbrowser.png" />
