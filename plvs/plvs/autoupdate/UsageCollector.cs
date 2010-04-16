@@ -112,7 +112,7 @@ namespace Atlassian.plvs.autoupdate {
         }
 
         public void sendOptInOptOut(bool usage) {
-            Thread t = new Thread(() => sendOptInOptOutWorker(usage));
+            Thread t = PlvsUtils.createThread(() => sendOptInOptOutWorker(usage));
             t.Start();
         }
 

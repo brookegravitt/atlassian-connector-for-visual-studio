@@ -31,7 +31,7 @@ namespace Atlassian.plvs.dialogs {
             linkErrorDetails.Visible = false;
             linkErrorDetails.Enabled = false;
 
-            worker = new Thread(testConnection);
+            worker = PlvsUtils.createThread(testConnection);
             worker.Start();
         }
 

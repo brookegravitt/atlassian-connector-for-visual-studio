@@ -111,7 +111,7 @@ namespace Atlassian.plvs.dialogs.jira {
             }
 
             Close();
-            Thread t = new Thread(() => logWorkWorker(a));
+            Thread t = PlvsUtils.createThread(() => logWorkWorker(a));
             t.Start();
         }
 

@@ -116,7 +116,7 @@ namespace Atlassian.plvs.explorer {
 
             bool add = (e.KeyState & 8) == 8 && (e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy;
 
-            Thread t = new Thread(() => dropActionWorker(key.Value, guid.Value, add));
+            Thread t = PlvsUtils.createThread(() => dropActionWorker(key.Value, guid.Value, add));
             t.Start();
         }
 

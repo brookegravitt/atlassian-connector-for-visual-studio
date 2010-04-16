@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
 #if VS2010
 using System.Windows.Media.Imaging;
@@ -21,6 +22,7 @@ using Atlassian.plvs.dialogs;
 using Atlassian.plvs.models;
 using Atlassian.plvs.models.jira;
 using EnvDTE;
+using Timer = System.Windows.Forms.Timer;
 
 namespace Atlassian.plvs.util {
     public static class PlvsUtils {
@@ -322,5 +324,20 @@ namespace Atlassian.plvs.util {
         public static string getServerNodeName<T>(AbstractServerModel<T> model, T server) where T : Server {
             return server.Name + (model.DefaultServerGuid.Equals(server.GUID) ? " (default)" : "");
         }
+
+        public static System.Threading.Thread createThread(ThreadStart threadStart) {
+            ThreadStart ts = delegate {
+                                 try {
+                                     threadStart.Invoke();
+                                 } catch (Exception e) {
+                                     UnhandledExceptionDialog dlg = new UnhandledExceptionDialog(e);
+                                     dlg.ShowDialog();
+                                 }
+                             };
+            System.Threading.Thread t = new System.Threading.Thread(ts);
+            return t;
+        }
+
+        public static DTE Dte { get; set; }
     }
 }

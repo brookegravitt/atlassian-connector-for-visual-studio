@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
+using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.explorer.treeNodes {
     class ProjectsNode : AbstractNavigableTreeNodeWithServer {
@@ -25,7 +26,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
         public override void onClick(StatusLabel status) {
             if (projectsLoaded) return;
             projectsLoaded = true;
-            Thread t = new Thread(() => loadProjects(status));
+            Thread t = PlvsUtils.createThread(() => loadProjects(status));
             t.Start();
         }
 

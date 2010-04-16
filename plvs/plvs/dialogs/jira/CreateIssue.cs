@@ -103,7 +103,7 @@ namespace Atlassian.plvs.dialogs.jira {
 
         private void startProjectUpdateThread() {
             JiraProject project = (JiraProject) comboProjects.SelectedItem;
-            Thread t = new Thread(() => projectUpdateWorker(project));
+            Thread t = PlvsUtils.createThread(() => projectUpdateWorker(project));
             t.Start();
         }
 
@@ -259,7 +259,7 @@ namespace Atlassian.plvs.dialogs.jira {
             JiraIssue issue = createIssueTemplate();
             setAllEnabled(false);
             buttonCancel.Enabled = false;
-            Thread t = new Thread(() => createIssueWorker(issue, keepDialogOpen));
+            Thread t = PlvsUtils.createThread(() => createIssueWorker(issue, keepDialogOpen));
             t.Start();
         }
 

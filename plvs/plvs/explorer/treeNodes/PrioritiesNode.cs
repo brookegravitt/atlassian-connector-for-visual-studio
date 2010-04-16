@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
+using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.explorer.treeNodes {
     class PrioritiesNode : AbstractNavigableTreeNodeWithServer {
@@ -25,7 +26,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
         public override void onClick(StatusLabel status) {
             if (prioritiesLoaded) return;
             prioritiesLoaded = true;
-            Thread t = new Thread(() => loadPriorities(Facade, status));
+            Thread t = PlvsUtils.createThread(() => loadPriorities(Facade, status));
             t.Start();
         }
 

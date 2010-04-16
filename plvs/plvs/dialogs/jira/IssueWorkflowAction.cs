@@ -73,7 +73,7 @@ namespace Atlassian.plvs.dialogs.jira {
         }
 
         private void initializeFields() {
-            Thread t = new Thread(initializeThreadWorker);
+            Thread t = PlvsUtils.createThread(initializeThreadWorker);
             t.Start();
             ShowDialog();
         }
@@ -270,22 +270,22 @@ namespace Atlassian.plvs.dialogs.jira {
             setThrobberVisible(true);
 
             ICollection<JiraField> updatedFields = mergeFieldsFromEditors();
-            Thread t = new Thread(new ThreadStart(delegate {
-                                                      try {
-                                                          JiraServerFacade.Instance.runIssueActionWithParams(
-                                                              issue, action, updatedFields, textComment.Text.Length > 0 ? textComment.Text : null);
-                                                          var newIssue = JiraServerFacade.Instance.getIssue(issue.Server, issue.Key);
-                                                          UsageCollector.Instance.bumpJiraIssuesOpen();
-                                                          status.setInfo("Action \"" + action.Name + "\" successfully run on issue " + issue.Key);
-                                                          this.safeInvoke(new MethodInvoker(delegate {
-                                                                                       Close();
-                                                                                       model.updateIssue(newIssue);
-                                                                                   }));
-                                                      }
-                                                      catch (Exception ex) {
-                                                          this.safeInvoke(new MethodInvoker(() => showErrorAndResumeEditing(ex)));
-                                                      }
-                                                  }));
+            Thread t = PlvsUtils.createThread(delegate {
+                                                  try {
+                                                      JiraServerFacade.Instance.runIssueActionWithParams(
+                                                          issue, action, updatedFields, textComment.Text.Length > 0 ? textComment.Text : null);
+                                                      var newIssue = JiraServerFacade.Instance.getIssue(issue.Server, issue.Key);
+                                                      UsageCollector.Instance.bumpJiraIssuesOpen();
+                                                      status.setInfo("Action \"" + action.Name + "\" successfully run on issue " + issue.Key);
+                                                      this.safeInvoke(new MethodInvoker(delegate {
+                                                                                            Close();
+                                                                                            model.updateIssue(newIssue);
+                                                                                        }));
+                                                  }
+                                                  catch (Exception ex) {
+                                                      this.safeInvoke(new MethodInvoker(() => showErrorAndResumeEditing(ex)));
+                                                  }
+                                              });
             t.Start();
         }
 

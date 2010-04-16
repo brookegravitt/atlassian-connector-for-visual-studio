@@ -72,7 +72,7 @@ namespace Atlassian.plvs.autoupdate {
             }
 
             Exception ex;
-            Thread t = new Thread(() => runSingleUpdateQuery(url, true, out ex));
+            Thread t = PlvsUtils.createThread(() => runSingleUpdateQuery(url, true, out ex));
             t.Start();
         }
 
@@ -90,27 +90,27 @@ namespace Atlassian.plvs.autoupdate {
             if (GlobalSettings.ReportUsage) {
                 url = UsageCollector.Instance.getUsageReportingUrl(url);
             }
-            Thread t = new Thread(new ThreadStart(delegate {
-                Exception ex;
-                if (runSingleUpdateQuery(url, false, out ex)) {
-                    parent.Invoke(new MethodInvoker(delegate { showUpdateDialog(); onFinished(); }));
-                } else {
-                    if (ex != null) {
-                        parent.Invoke(new MethodInvoker(delegate {
-                                                            PlvsUtils.showError(
-                                                                "Unable to retrieve autoupdate information", ex);
-                                                            onFinished();
-                                                        }));
-                    } else {
-                        parent.Invoke(new MethodInvoker(delegate {
-                                                                MessageBox.Show("You have the latest connector version installed",
-                                                                                Constants.INFO_CAPTION, MessageBoxButtons.OK,
-                                                                                MessageBoxIcon.Information);
-                                                                onFinished();
-                                                            }));
-                    }
-                }
-            }));
+            Thread t = PlvsUtils.createThread(delegate {
+                                                  Exception ex;
+                                                  if (runSingleUpdateQuery(url, false, out ex)) {
+                                                      parent.Invoke(new MethodInvoker(delegate { showUpdateDialog(); onFinished(); }));
+                                                  } else {
+                                                      if (ex != null) {
+                                                          parent.Invoke(new MethodInvoker(delegate {
+                                                                                              PlvsUtils.showError(
+                                                                                                  "Unable to retrieve autoupdate information", ex);
+                                                                                              onFinished();
+                                                                                          }));
+                                                      } else {
+                                                          parent.Invoke(new MethodInvoker(delegate {
+                                                                                              MessageBox.Show("You have the latest connector version installed",
+                                                                                                              Constants.INFO_CAPTION, MessageBoxButtons.OK,
+                                                                                                              MessageBoxIcon.Information);
+                                                                                              onFinished();
+                                                                                          }));
+                                                      }
+                                                  }
+                                              });
             t.Start();
         }
 

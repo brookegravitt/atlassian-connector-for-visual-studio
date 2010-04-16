@@ -122,8 +122,7 @@ namespace Atlassian.plvs.ui.jira {
 
                 toolStripAttachmentsMenu.Items.Add("Attach Mazio Screenshot...", mazioImage,
                                                    delegate {
-                                                       Thread t = new Thread(() =>
-                                                       {
+                                                       Thread t = PlvsUtils.createThread(() => {
                                                            string token = facade.getSoapToken(issue.Server);
                                                            if (token == null) return;
                                                            Invoke(new MethodInvoker(() => runMazio(token)));
@@ -253,27 +252,27 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void runRefreshThread() {
-            Thread worker = new Thread(new ThreadStart(delegate {
-                                                           try {
-                                                               status.setInfo("Retrieving issue details...");
-                                                               issue = facade.getIssue(issue.Server, issue.Key);
-                                                               status.setInfo("Issue details retrieved");
+            Thread worker = PlvsUtils.createThread(delegate {
+                                                       try {
+                                                           status.setInfo("Retrieving issue details...");
+                                                           issue = facade.getIssue(issue.Server, issue.Key);
+                                                           status.setInfo("Issue details retrieved");
 
-                                                               // PLVS-133 - this should never happen but does?
-                                                               if (model == null) {
-                                                                   Invoke(new MethodInvoker(() 
-                                                                       =>
-                                                                       PlvsUtils.showError("Issue List Model was null, please report this as a bug", 
-                                                                       new Exception("IssueDetailsPanel.runRefreshThread()"))));
-                                                                   model = JiraIssueListModelImpl.Instance;
-                                                               }
-
-                                                               Invoke(new MethodInvoker(() => model.updateIssue(issue)));
-                                                           } catch (Exception e) {
-                                                               status.setError("Failed to retrieve issue details", e);
+                                                           // PLVS-133 - this should never happen but does?
+                                                           if (model == null) {
+                                                               Invoke(new MethodInvoker(() 
+                                                                                        =>
+                                                                                        PlvsUtils.showError("Issue List Model was null, please report this as a bug", 
+                                                                                                            new Exception("IssueDetailsPanel.runRefreshThread()"))));
+                                                               model = JiraIssueListModelImpl.Instance;
                                                            }
-                                                           rebuildAllPanels(true);
-                                                       }));
+
+                                                           Invoke(new MethodInvoker(() => model.updateIssue(issue)));
+                                                       } catch (Exception e) {
+                                                           status.setError("Failed to retrieve issue details", e);
+                                                       }
+                                                       rebuildAllPanels(true);
+                                                   });
             worker.Start();
         }
 
@@ -455,7 +454,7 @@ namespace Atlassian.plvs.ui.jira {
 
                 issueLinksLoaded = false;
 
-                Thread t = new Thread(queryLinksAndDisplay);
+                Thread t = PlvsUtils.createThread(queryLinksAndDisplay);
                 t.Start();
             } else {
                 if (issueTabs.TabPages.Contains(tabLinks)) {
@@ -483,7 +482,7 @@ namespace Atlassian.plvs.ui.jira {
                         subsToQuery.Add(key);
                     }
                 }
-                Thread t = new Thread(() => querySubtasksAndDisplay(subsInModel, subsToQuery));
+                Thread t = PlvsUtils.createThread(() => querySubtasksAndDisplay(subsInModel, subsToQuery));
                 t.Start();
             } else {
                 if (issueTabs.TabPages.Contains(tabSubtasks)) {
@@ -580,18 +579,18 @@ namespace Atlassian.plvs.ui.jira {
             dlg.ShowDialog();
             if (dlg.DialogResult != DialogResult.OK) return;
 
-            Thread addCommentThread = new Thread(new ThreadStart(delegate {
-                                                                     try {
-                                                                         status.setInfo("Adding comment to issue...");
-                                                                         facade.addComment(issue, dlg.CommentBody);
-                                                                         status.setInfo("Comment added, refreshing view...");
-                                                                         UsageCollector.Instance.bumpJiraIssuesOpen();
-                                                                         runRefreshThread();
-                                                                     }
-                                                                     catch (Exception ex) {
-                                                                         status.setError("Adding comment failed", ex);
-                                                                     }
-                                                                 }));
+            Thread addCommentThread = PlvsUtils.createThread(delegate {
+                                                                 try {
+                                                                     status.setInfo("Adding comment to issue...");
+                                                                     facade.addComment(issue, dlg.CommentBody);
+                                                                     status.setInfo("Comment added, refreshing view...");
+                                                                     UsageCollector.Instance.bumpJiraIssuesOpen();
+                                                                     runRefreshThread();
+                                                                 }
+                                                                 catch (Exception ex) {
+                                                                     status.setError("Adding comment failed", ex);
+                                                                 }
+                                                             });
             addCommentThread.Start();
         }
 
@@ -842,7 +841,7 @@ namespace Atlassian.plvs.ui.jira {
             dropDownIssueActions.DropDownItems.Add(new ToolStripMenuItem
                                                    {Text = "Loading issue actions...", Enabled = false});
             dropDownIssueActions.ToolTipText = "";
-            Thread loaderThread = new Thread(addIssueActionItems);
+            Thread loaderThread = PlvsUtils.createThread(addIssueActionItems);
             loaderThread.Start();
         }
 
@@ -1037,7 +1036,7 @@ namespace Atlassian.plvs.ui.jira {
             }
 
             status.setInfo("Uploading attachment \"" + fileName + "\"...");
-            Thread t = new Thread(() => uploadAttachmentWorker(fileName, att));
+            Thread t = PlvsUtils.createThread(() => uploadAttachmentWorker(fileName, att));
             t.Start();
         }
 
