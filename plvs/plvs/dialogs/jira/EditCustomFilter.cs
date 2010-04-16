@@ -263,6 +263,7 @@ namespace Atlassian.plvs.dialogs.jira {
         private void setProjectRelatedValuesRunner(JiraProject project) {
             try {
                 List<JiraNamedEntity> issueTypes = JiraServerFacade.Instance.getIssueTypes(server, project);
+                issueTypes.AddRange(JiraServerFacade.Instance.getSubtaskIssueTypes(server, project));
                 List<JiraNamedEntity> comps = JiraServerFacade.Instance.getComponents(server, project);
                 List<JiraNamedEntity> versions = JiraServerFacade.Instance.getVersions(server, project);
 
