@@ -75,6 +75,28 @@ namespace Atlassian.plvs.ui.jira {
             activeIssueManager = new JiraActiveIssueManager(statusStrip);
             statusStrip.Items.Add(jiraStatus);
             statusStrip.Items.Add(getMoreIssues);
+            activeIssueManager.ActiveIssueChanged += activeIssueManager_ActiveIssueChanged;
+        }
+
+        private void activeIssueManager_ActiveIssueChanged(object sender, EventArgs e) {
+            updateStartStopButton();
+        }
+
+        private void updateStartStopButton() {
+            JiraActiveIssueManager.ActiveIssue activeIssue = activeIssueManager.CurrentActiveIssue;
+
+            TreeNodeAdv node = issuesTree.SelectedNode;
+            if (node == null || !(node.Tag is IssueNode)) {
+                return;
+            }
+            JiraIssue issue = (node.Tag as IssueNode).Issue;
+            if (activeIssue == null || !issue.Key.Equals(activeIssue.key) || !issue.Server.GUID.ToString().Equals(activeIssue.serverGuid)) {
+                buttonStartStopWork.Image = Resources.ico_activateissue;
+                buttonStartStopWork.Text = "Start Work";
+            } else {
+                buttonStartStopWork.Image = Resources.ico_inactiveissue;
+                buttonStartStopWork.Text = "Stop Work";
+            }
         }
 
         public event EventHandler<EventArgs> AddNewServerLinkClicked;
@@ -96,6 +118,47 @@ namespace Atlassian.plvs.ui.jira {
 
         private const string RETRIEVING_ISSUES_FAILED = "Retrieving issues failed";
 
+        private class ActiveIssueMenuItem : ToolStripMenuItem {
+            private readonly JiraActiveIssueManager mgr;
+            private readonly JiraIssueTree tree;
+
+            public ActiveIssueMenuItem(JiraActiveIssueManager mgr, JiraIssueTree issueTree) {
+                this.mgr = mgr;
+                tree = issueTree;
+
+                Click += activeIssueMenuItemClick;
+            }
+
+            void activeIssueMenuItemClick(object sender, EventArgs e) {
+                TreeNodeAdv node = tree.SelectedNode;
+                if (node == null || !(node.Tag is IssueNode)) {
+                    return;
+                }
+                JiraIssue issue = (node.Tag as IssueNode).Issue;
+                mgr.toggleActiveState(issue);
+            }
+
+            public override string Text { get {
+                    TreeNodeAdv node = tree.SelectedNode;
+                    if (node == null || !(node.Tag is IssueNode)) {
+                        return "Should not happen";
+                    }
+                    JiraIssue issue = (node.Tag as IssueNode).Issue;
+                    return mgr.isActive(issue) ? "Stop Work" : "Start Work";
+                }
+            }
+
+            public override Image Image { get {
+                    TreeNodeAdv node = tree.SelectedNode;
+                    if (node == null || !(node.Tag is IssueNode)) {
+                        return null;
+                    }
+                    JiraIssue issue = (node.Tag as IssueNode).Issue;
+                    return mgr.isActive(issue) ? Resources.ico_inactiveissue : Resources.ico_activateissue;
+                }
+            }
+        }
+
         private void initIssuesTree() {
             if (issuesTree != null) {
                 issueTreeContainer.ContentPanel.Controls.Remove(issuesTree);
@@ -115,6 +178,7 @@ namespace Atlassian.plvs.ui.jira {
                                   {
                                       new ToolStripMenuItem("Open in IDE", Resources.ico_editinide,
                                                             new EventHandler(openIssue)),
+                                      new ActiveIssueMenuItem(activeIssueManager, issuesTree),
                                       new ToolStripMenuItem("View in Browser", Resources.view_in_browser,
                                                             new EventHandler(browseIssue)),
                                       new ToolStripMenuItem("Edit in Browser", Resources.ico_editinbrowser,
@@ -244,6 +308,8 @@ namespace Atlassian.plvs.ui.jira {
             buttonRemoveFilter.Enabled = filtersTree.SelectedNode is JiraCustomFilterTreeNode;
             buttonAddFilter.Enabled = filtersTree.NodeWithServerSelected && metadataFetched;
             buttonServerExplorer.Enabled = filtersTree.NodeWithServerSelected;
+            buttonStartStopWork.Enabled = issueSelected;
+            updateStartStopButton();
         }
 
         private delegate void IssueAction(JiraIssue issue);
@@ -905,6 +971,10 @@ namespace Atlassian.plvs.ui.jira {
             } catch (Exception ex) {
                 Debug.WriteLine("TabJira.buttonHelp_Click() - exception: " + ex.Message);
             }
+        }
+
+        private void buttonStartStopWork_Click(object sender, EventArgs e) {
+            runSelectedIssueAction(activeIssueManager.toggleActiveState);
         }
     }
 }
