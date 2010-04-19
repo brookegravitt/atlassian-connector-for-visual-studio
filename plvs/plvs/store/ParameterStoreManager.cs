@@ -11,7 +11,8 @@ namespace Atlassian.plvs.store {
         public enum StoreType {
             JIRA_SERVERS = 1,
             SETTINGS = 2,
-            BAMBOO_SERVERS = 3
+            BAMBOO_SERVERS = 3,
+            ACTIVE_ISSUES = 4
         }
 
         private readonly Dictionary<StoreType, ParameterStore> stores = new Dictionary<StoreType, ParameterStore>();
@@ -20,6 +21,7 @@ namespace Atlassian.plvs.store {
             stores[StoreType.JIRA_SERVERS] = new ParameterStore();
             stores[StoreType.BAMBOO_SERVERS] = new ParameterStore();
             stores[StoreType.SETTINGS] = new ParameterStore();
+            stores[StoreType.ACTIVE_ISSUES] = new ParameterStore();
         }
 
         private static readonly ParameterStoreManager INSTANCE = new ParameterStoreManager();

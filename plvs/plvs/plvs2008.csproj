@@ -315,6 +315,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ui\jira\fields\ResolutionEditorProvider.cs" />
+    <Compile Include="ui\jira\JiraActiveIssueManager.cs" />
     <Compile Include="ui\jira\JiraProjectListViewItem.cs" />
     <Compile Include="ui\jira\fields\DateFieldEditorProvider.cs" />
     <Compile Include="ui\jira\fields\FixedHeightFieldEditorProvider.cs" />
@@ -772,11 +773,13 @@
     <Content Include="Resources\icons\icn_plan_failed.gif" />
     <Content Include="Resources\icons\icn_plan_passed.gif" />
     <Content Include="Resources\icons\icon_addattachment.png" />
+    <Content Include="Resources\icons\ico_activateissue.png" />
     <Content Include="Resources\icons\ico_clonefilter.png" />
     <None Include="Resources\icons\ico_copytoclipboard.png" />
     <None Include="Resources\icons\ico_editinbrowser.png" />
     <None Include="Resources\icons\ico_editinide.png" />
     <None Include="Resources\icons\ico_groupsubtasks.png" />
+    <Content Include="Resources\icons\ico_inactiveissue.png" />
     <Content Include="Resources\icons\ico_jira_custom_filter.png" />
     <Content Include="Resources\icons\ico_jira_filter.png" />
     <Content Include="Resources\icons\ico_jira_preset_filter.png" />
@@ -785,6 +788,7 @@
     <None Include="Resources\icons\ico_logworkonissue.png" />
     <None Include="Resources\icons\ico_updateavailable.png" />
     <None Include="Resources\icons\ico_updatenotavailable.png" />
+    <Content Include="Resources\icons\ico_pauseissue.png" />
     <Content Include="Resources\icons\ide_plugin_16.bmp" />
     <Content Include="Resources\icons\ide_plugin_16.ico" />
     <Content Include="Resources\icons\ide_plugin_300.png" />
