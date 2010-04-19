@@ -43,6 +43,7 @@ namespace Atlassian.plvs.ui.jira {
 
         private int currentGeneration;
         private bool metadataFetched;
+        private JiraActiveIssueManager activeIssueManager;
 
         public TabJira() {
             InitializeComponent();
@@ -65,6 +66,15 @@ namespace Atlassian.plvs.ui.jira {
             buttonServerExplorer.Enabled = GlobalSettings.JiraServerExplorerEnabled;
 
             GlobalSettings.SettingsChanged += globalSettingsSettingsChanged;
+
+            initializeActiveIssueToolStrip();
+        }
+
+        private void initializeActiveIssueToolStrip() {
+            statusStrip.Items.Clear();
+            activeIssueManager = new JiraActiveIssueManager(statusStrip);
+            statusStrip.Items.Add(jiraStatus);
+            statusStrip.Items.Add(getMoreIssues);
         }
 
         public event EventHandler<EventArgs> AddNewServerLinkClicked;
@@ -484,6 +494,8 @@ namespace Atlassian.plvs.ui.jira {
                                                  filtersTree.ExpandAll();
                                                  filtersTree.restoreLastSelectedFilterItem();
                                                  updateIssueListButtons();
+
+                                                 activeIssueManager.init();
                                              }));
             } catch (Exception e) {
                 status.setError("Failed to load JIRA server information", e);

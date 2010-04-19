@@ -368,6 +368,13 @@ namespace Atlassian.plvs {
             }
         }
         
+        internal static System.Drawing.Bitmap ico_activateissue {
+            get {
+                object obj = ResourceManager.GetObject("ico_activateissue", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap ico_clonefilter {
             get {
                 object obj = ResourceManager.GetObject("ico_clonefilter", resourceCulture);
@@ -399,6 +406,13 @@ namespace Atlassian.plvs {
         internal static System.Drawing.Bitmap ico_groupsubtasks {
             get {
                 object obj = ResourceManager.GetObject("ico_groupsubtasks", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap ico_inactiveissue {
+            get {
+                object obj = ResourceManager.GetObject("ico_inactiveissue", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -441,6 +455,13 @@ namespace Atlassian.plvs {
         internal static System.Drawing.Bitmap ico_logworkonissue {
             get {
                 object obj = ResourceManager.GetObject("ico_logworkonissue", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap ico_pauseissue {
+            get {
+                object obj = ResourceManager.GetObject("ico_pauseissue", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

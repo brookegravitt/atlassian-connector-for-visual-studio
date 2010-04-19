@@ -28,7 +28,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TabJira));
             this.jiraContainer = new System.Windows.Forms.ToolStripContainer();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.jiraStatus = new System.Windows.Forms.ToolStripStatusLabel();
@@ -57,8 +56,8 @@
             this.buttonCreate = new System.Windows.Forms.ToolStripButton();
             this.buttonSearch = new System.Windows.Forms.ToolStripButton();
             this.buttonRefresh = new System.Windows.Forms.ToolStripButton();
-            this.filtersTreeToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.buttonHelp = new System.Windows.Forms.ToolStripButton();
+            this.filtersTreeToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.jiraContainer.BottomToolStripPanel.SuspendLayout();
             this.jiraContainer.ContentPanel.SuspendLayout();
             this.jiraContainer.SuspendLayout();
@@ -270,7 +269,7 @@
             this.buttonHelp});
             this.toolStrip2.Location = new System.Drawing.Point(3, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(623, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(594, 25);
             this.toolStrip2.TabIndex = 0;
             // 
             // labelNarrow
@@ -393,7 +392,7 @@
             // buttonHelp
             // 
             this.buttonHelp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonHelp.Image = Resources.about;
+            this.buttonHelp.Image = global::Atlassian.plvs.Resources.about;
             this.buttonHelp.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonHelp.Name = "buttonHelp";
             this.buttonHelp.Size = new System.Drawing.Size(23, 22);
