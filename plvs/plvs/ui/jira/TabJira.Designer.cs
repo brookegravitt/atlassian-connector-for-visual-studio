@@ -55,7 +55,10 @@
             this.buttonEditInBrowser = new System.Windows.Forms.ToolStripButton();
             this.buttonCreate = new System.Windows.Forms.ToolStripButton();
             this.buttonSearch = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.buttonRefresh = new System.Windows.Forms.ToolStripButton();
+            this.buttonStartStopWork = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.buttonHelp = new System.Windows.Forms.ToolStripButton();
             this.filtersTreeToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.jiraContainer.BottomToolStripPanel.SuspendLayout();
@@ -84,11 +87,11 @@
             // jiraContainer.ContentPanel
             // 
             this.jiraContainer.ContentPanel.Controls.Add(this.jiraSplitter);
-            this.jiraContainer.ContentPanel.Size = new System.Drawing.Size(852, 289);
+            this.jiraContainer.ContentPanel.Size = new System.Drawing.Size(903, 289);
             this.jiraContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.jiraContainer.Location = new System.Drawing.Point(0, 0);
             this.jiraContainer.Name = "jiraContainer";
-            this.jiraContainer.Size = new System.Drawing.Size(852, 336);
+            this.jiraContainer.Size = new System.Drawing.Size(903, 336);
             this.jiraContainer.TabIndex = 0;
             this.jiraContainer.Text = "toolStripContainer1";
             // 
@@ -100,7 +103,8 @@
             this.getMoreIssues});
             this.statusStrip.Location = new System.Drawing.Point(0, 0);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(852, 22);
+            this.statusStrip.ShowItemToolTips = true;
+            this.statusStrip.Size = new System.Drawing.Size(903, 22);
             this.statusStrip.SizingGrip = false;
             this.statusStrip.TabIndex = 0;
             // 
@@ -132,8 +136,8 @@
             // jiraSplitter.Panel2
             // 
             this.jiraSplitter.Panel2.Controls.Add(this.issueTreeContainer);
-            this.jiraSplitter.Size = new System.Drawing.Size(852, 289);
-            this.jiraSplitter.SplitterDistance = 222;
+            this.jiraSplitter.Size = new System.Drawing.Size(903, 289);
+            this.jiraSplitter.SplitterDistance = 235;
             this.jiraSplitter.TabIndex = 0;
             // 
             // filterTreeContainer
@@ -142,11 +146,11 @@
             // filterTreeContainer.ContentPanel
             // 
             this.filterTreeContainer.ContentPanel.Controls.Add(this.filtersTree);
-            this.filterTreeContainer.ContentPanel.Size = new System.Drawing.Size(222, 264);
+            this.filterTreeContainer.ContentPanel.Size = new System.Drawing.Size(235, 264);
             this.filterTreeContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.filterTreeContainer.Location = new System.Drawing.Point(0, 0);
             this.filterTreeContainer.Name = "filterTreeContainer";
-            this.filterTreeContainer.Size = new System.Drawing.Size(222, 289);
+            this.filterTreeContainer.Size = new System.Drawing.Size(235, 289);
             this.filterTreeContainer.TabIndex = 0;
             this.filterTreeContainer.Text = "toolStripContainer2";
             // 
@@ -162,7 +166,7 @@
             this.filtersTree.Location = new System.Drawing.Point(0, 0);
             this.filtersTree.Name = "filtersTree";
             this.filtersTree.SelectedImageIndex = 0;
-            this.filtersTree.Size = new System.Drawing.Size(222, 264);
+            this.filtersTree.Size = new System.Drawing.Size(235, 264);
             this.filtersTree.TabIndex = 0;
             this.filtersTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.filtersTree_AfterSelect);
             // 
@@ -236,11 +240,11 @@
             // 
             // issueTreeContainer.ContentPanel
             // 
-            this.issueTreeContainer.ContentPanel.Size = new System.Drawing.Size(626, 264);
+            this.issueTreeContainer.ContentPanel.Size = new System.Drawing.Size(664, 264);
             this.issueTreeContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.issueTreeContainer.Location = new System.Drawing.Point(0, 0);
             this.issueTreeContainer.Name = "issueTreeContainer";
-            this.issueTreeContainer.Size = new System.Drawing.Size(626, 289);
+            this.issueTreeContainer.Size = new System.Drawing.Size(664, 289);
             this.issueTreeContainer.TabIndex = 0;
             this.issueTreeContainer.Text = "toolStripContainer2";
             // 
@@ -265,11 +269,14 @@
             this.buttonEditInBrowser,
             this.buttonCreate,
             this.buttonSearch,
+            this.toolStripSeparator2,
             this.buttonRefresh,
+            this.buttonStartStopWork,
+            this.toolStripSeparator1,
             this.buttonHelp});
             this.toolStrip2.Location = new System.Drawing.Point(3, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(594, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(660, 25);
             this.toolStrip2.TabIndex = 0;
             // 
             // labelNarrow
@@ -379,6 +386,11 @@
             this.buttonSearch.Text = "Find Issue";
             this.buttonSearch.Click += new System.EventHandler(this.buttonSearch_Click);
             // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
             // buttonRefresh
             // 
             this.buttonRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -388,6 +400,21 @@
             this.buttonRefresh.Size = new System.Drawing.Size(23, 22);
             this.buttonRefresh.Text = "Refresh Issues";
             this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
+            // 
+            // buttonStartStopWork
+            // 
+            this.buttonStartStopWork.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonStartStopWork.Image = global::Atlassian.plvs.Resources.ico_activateissue;
+            this.buttonStartStopWork.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonStartStopWork.Name = "buttonStartStopWork";
+            this.buttonStartStopWork.Size = new System.Drawing.Size(23, 22);
+            this.buttonStartStopWork.Text = "Start/Stop Work";
+            this.buttonStartStopWork.Click += new System.EventHandler(this.buttonStartStopWork_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // buttonHelp
             // 
@@ -406,7 +433,7 @@
             this.BackColor = System.Drawing.SystemColors.Control;
             this.Controls.Add(this.jiraContainer);
             this.Name = "TabJira";
-            this.Size = new System.Drawing.Size(852, 336);
+            this.Size = new System.Drawing.Size(903, 336);
             this.jiraContainer.BottomToolStripPanel.ResumeLayout(false);
             this.jiraContainer.BottomToolStripPanel.PerformLayout();
             this.jiraContainer.ContentPanel.ResumeLayout(false);
@@ -466,5 +493,8 @@
         private System.Windows.Forms.ToolStripButton buttonGroupSubtasks;
         private System.Windows.Forms.ToolStripButton buttonServerExplorer;
         private System.Windows.Forms.ToolStripButton buttonHelp;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripButton buttonStartStopWork;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
     }
 }
