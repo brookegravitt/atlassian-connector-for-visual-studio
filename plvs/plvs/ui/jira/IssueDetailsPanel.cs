@@ -42,6 +42,7 @@ namespace Atlassian.plvs.ui.jira {
         private JiraIssue issue;
         private readonly TabControl tabWindow;
         private readonly TabPage myTab;
+        private readonly JiraActiveIssueManager activeIssueManager;
 
         private bool issueCommentsLoaded;
         private bool issueDescriptionLoaded;
@@ -58,8 +59,11 @@ namespace Atlassian.plvs.ui.jira {
         private WebBrowser issueDescription;
         private WebBrowserWithLabel webAttachmentView;
 
-        public IssueDetailsPanel(JiraIssueListModel model, Solution solution, JiraIssue issue, TabControl tabWindow,
-                                 TabPage myTab, ToolWindowStateMonitor toolWindowStateMonitor) {
+        public IssueDetailsPanel(
+            JiraIssueListModel model, Solution solution, JiraIssue issue, 
+            TabControl tabWindow, TabPage myTab, ToolWindowStateMonitor 
+            toolWindowStateMonitor, JiraActiveIssueManager activeIssueManager) {
+
             this.model = model;
             this.solution = solution;
 
@@ -71,6 +75,7 @@ namespace Atlassian.plvs.ui.jira {
 
             this.tabWindow = tabWindow;
             this.myTab = myTab;
+            this.activeIssueManager = activeIssueManager;
 
             dropDownIssueActions.DropDownItems.Add("dummy");
 
@@ -96,6 +101,18 @@ namespace Atlassian.plvs.ui.jira {
             issueSummary.ScriptErrorsSuppressed = true;
 
             reinitializeAttachmentView(null);
+        }
+
+        private void activeIssueManager_ActiveIssueChanged(object sender, EventArgs e) {
+            updateStartStopWorkButton();
+        }
+
+        private void updateStartStopWorkButton() {
+            bool thisIssueActive = activeIssueManager.CurrentActiveIssue != null
+                                   && activeIssueManager.CurrentActiveIssue.key.Equals(issue.Key)
+                                   && activeIssueManager.CurrentActiveIssue.serverGuid.Equals(issue.Server.GUID.ToString());
+            buttonStartStopProgress.Image = thisIssueActive ? Resources.ico_inactiveissue : Resources.ico_activateissue;
+            buttonStartStopProgress.Text = thisIssueActive ? "Stop Work" : "Start Work";
         }
 
         [DllImport("shell32.dll", CharSet = CharSet.Auto)]
@@ -191,6 +208,7 @@ namespace Atlassian.plvs.ui.jira {
 
         private void init() {
             addModelListeners();
+            updateStartStopWorkButton();
 
             rebuildAllPanels(false);
             status.setInfo("No issue details yet");
@@ -212,11 +230,14 @@ namespace Atlassian.plvs.ui.jira {
         private void addModelListeners() {
             model.IssueChanged += model_IssueChanged;
             model.ModelChanged += model_ModelChanged;
+
+            activeIssueManager.ActiveIssueChanged += activeIssueManager_ActiveIssueChanged;
         }
 
         private void removeModelListeners() {
             model.IssueChanged -= model_IssueChanged;
             model.ModelChanged -= model_ModelChanged;
+            activeIssueManager.ActiveIssueChanged -= activeIssueManager_ActiveIssueChanged;
         }
 
         private void model_ModelChanged(object sender, EventArgs e) {
@@ -1104,6 +1125,10 @@ namespace Atlassian.plvs.ui.jira {
             FieldEditor editor = new FieldEditor("Edit Description", model, facade, issue, "description", Cursor.Position);
             editor.setCustomSize(new Size(400, 300));
             editor.ShowDialog();
+        }
+
+        private void buttonStartStopProgress_Click(object sender, EventArgs e) {
+            activeIssueManager.toggleActiveState(issue);
         }
     }
 }

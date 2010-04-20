@@ -16,7 +16,6 @@ namespace Atlassian.plvs.ui.jira {
 
         public Solution Solution { get; set; }
 
-
         public event EventHandler<EventArgs> ToolWindowShown;
         public event EventHandler<EventArgs> ToolWindowHidden;
 
@@ -35,13 +34,13 @@ namespace Atlassian.plvs.ui.jira {
             issueTabs.TabPages.Clear();
         }
 
-        public void openIssue(JiraIssue issue) {
+        public void openIssue(JiraIssue issue, JiraActiveIssueManager activeIssueManager) {
             FrameVisible = true;
 
             string key = getIssueTabKey(issue);
             if (!issueTabs.TabPages.ContainsKey(key)) {
                 TabPage issueTab = new TabPage {Name = key, Text = issue.Key};
-                IssueDetailsPanel issuePanel = new IssueDetailsPanel(model, Solution, issue, issueTabs, issueTab, this);
+                IssueDetailsPanel issuePanel = new IssueDetailsPanel(model, Solution, issue, issueTabs, issueTab, this, activeIssueManager);
                 RecentlyViewedIssuesModel.Instance.add(issue);
                 issueTab.Controls.Add(issuePanel);
                 issuePanel.Dock = DockStyle.Fill;
