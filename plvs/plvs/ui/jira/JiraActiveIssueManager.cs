@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.dialogs.jira;
 using Atlassian.plvs.models;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.store;
@@ -66,10 +67,10 @@ namespace Atlassian.plvs.ui.jira {
         public ActiveIssue CurrentActiveIssue { get; private set; }
         private readonly LinkedList<ActiveIssue> pastActiveIssues = new LinkedList<ActiveIssue>();
 
-        private const int ACTIVE_ISSUE_LIST_SIZE = 3;
+        private const int ACTIVE_ISSUE_LIST_SIZE = 10;
 
         private bool paused;
-        private int minutesInProgress;
+        public int MinutesInProgress { get; private set; }
 
         private const string NO_ISSUE_ACTIVE = "No Issue Active";
         private const string STOP_WORK = "Stop Work on Active Issue";
@@ -80,7 +81,7 @@ namespace Atlassian.plvs.ui.jira {
 
         private readonly Timer minuteTimer;
 
-        public JiraActiveIssueManager(ToolStrip container) {
+        public JiraActiveIssueManager(ToolStrip container, StatusLabel jiraStatus) {
             this.container = container;
             activeIssueDropDown = new ToolStripSplitButton();
             labelMinuteTimer = new ToolStripLabel();
@@ -95,6 +96,11 @@ namespace Atlassian.plvs.ui.jira {
                                      buttonPause.Image = paused ? Resources.ico_activateissue : Resources.ico_pauseissue;
                                  };
             buttonLogWork = new ToolStripButton(Resources.ico_logworkonissue) { Text = LOG_WORK, DisplayStyle = ToolStripItemDisplayStyle.Image };
+            buttonLogWork.Click += (s, e) => 
+                loadIssueAndRunAction((server, issue) => 
+                    container.safeInvoke(new MethodInvoker(() => 
+                        new LogWork(container, JiraIssueListModelImpl.Instance, JiraServerFacade.Instance, issue, jiraStatus, this).ShowDialog())), 
+                    CurrentActiveIssue);
             buttonComment = new ToolStripButton(Resources.new_comment) { Text = COMMENT, DisplayStyle = ToolStripItemDisplayStyle.Image };
 
             separator = new ToolStripSeparator();
@@ -143,7 +149,8 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void setTimeSpentString() {
-            labelMinuteTimer.Text = "Time spent: " + minutesInProgress + " minutes";
+            int hours = MinutesInProgress / 60;
+            labelMinuteTimer.Text = "Time spent: " + (hours > 0 ? hours + "h " : "") + MinutesInProgress % 60 + "m";
             if (paused) {
                 labelMinuteTimer.Text = labelMinuteTimer.Text + " (paused)";
             }
@@ -152,14 +159,14 @@ namespace Atlassian.plvs.ui.jira {
         private void updateMinutes() {
             if (CurrentActiveIssue == null || paused) return;
 
-            ++minutesInProgress;
+            ++MinutesInProgress;
             storeTimeSpent();
             setTimeSpentString();
         }
 
         private void storeTimeSpent() {
             ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.ACTIVE_ISSUES);
-            store.storeParameter(ACTIVE_ISSUE_TIMER_VALUE, minutesInProgress);
+            store.storeParameter(ACTIVE_ISSUE_TIMER_VALUE, MinutesInProgress);
         }
 
         private void setEnabled(bool enabled) {
@@ -187,7 +194,7 @@ namespace Atlassian.plvs.ui.jira {
             string activeIssueKey = store.loadParameter(ACTIVE_ISSUE_KEY, null);
             string activeIssueServerGuidStr = store.loadParameter(ACTIVE_ISSUE_SERVER_GUID, null);
             if (activeIssueKey != null && activeIssueServerGuidStr != null) {
-                minutesInProgress = store.loadParameter(ACTIVE_ISSUE_TIMER_VALUE, 0);
+                MinutesInProgress = store.loadParameter(ACTIVE_ISSUE_TIMER_VALUE, 0);
                 paused = store.loadParameter(ACTIVE_ISSUE_IS_PAUSED, 0) > 0;
                 if (paused) {
                     buttonPause.Text = RESUME_WORK;
@@ -209,6 +216,8 @@ namespace Atlassian.plvs.ui.jira {
             t.Start();
         }
 
+        private delegate void OnIssueLoaded(JiraServer server, JiraIssue issue);
+
         private void loadIssueInfosWorker(int gen) {
             if (CurrentActiveIssue != null) {
                 loadActiveIssueDetailsWorker(gen);
@@ -216,15 +225,19 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void loadActiveIssueDetailsWorker(int gen) {
-            JiraServer server = JiraServerModel.Instance.getServer(new Guid(CurrentActiveIssue.serverGuid));
+            loadIssueAndRunAction((server, issue) => container.safeInvoke(new MethodInvoker(delegate {
+                                                                                                if (gen != generation) return;
+                                                                                                setActiveIssueDropdownTextAndImage(server, issue);
+                                                                                            })), CurrentActiveIssue);
+        }
+
+        private static void loadIssueAndRunAction(OnIssueLoaded loaded, ActiveIssue issue) {
+            JiraServer server = JiraServerModel.Instance.getServer(new Guid(issue.serverGuid));
             if (server == null) return;
 
-            JiraIssue jiraIssue = JiraServerFacade.Instance.getIssue(server, CurrentActiveIssue.key);
+            JiraIssue jiraIssue = JiraServerFacade.Instance.getIssue(server, issue.key);
             if (jiraIssue != null) {
-                container.safeInvoke(new MethodInvoker(delegate {
-                                                           if (gen != generation) return;
-                                                           setActiveIssueDropdownTextAndImage(server, jiraIssue);
-                                                       }));
+                loaded(server, jiraIssue);
             }
         }
 
@@ -271,10 +284,12 @@ namespace Atlassian.plvs.ui.jira {
             store.storeParameter(PAST_ACTIVE_ISSUE_COUNT, pastActiveIssues.Count);
             int i = 0;
             foreach (ActiveIssue issue in pastActiveIssues) {
-                activeIssueDropDown.DropDown.Items.Add(new PastActiveIssueMenuItem(this, issue));
                 store.storeParameter(PAST_ACTIVE_ISSUE_KEY + i, issue.key);
                 store.storeParameter(PAST_ACTIVE_ISSUE_SERVER_GUID + i, issue.serverGuid);
                 ++i;
+            }
+            foreach (var issue in pastActiveIssues.Reverse()) {
+                activeIssueDropDown.DropDown.Items.Add(new PastActiveIssueMenuItem(this, issue));
             }
         }
 
@@ -318,7 +333,7 @@ namespace Atlassian.plvs.ui.jira {
             CurrentActiveIssue = new ActiveIssue(issue.key, issue.serverGuid);
             setEnabled(true);
             activeIssueDropDown.Text = CurrentActiveIssue.key;
-            minutesInProgress = 0;
+            MinutesInProgress = 0;
             storeTimeSpent();
             setTimeSpentString();
             storeActiveIssue();
@@ -374,6 +389,12 @@ namespace Atlassian.plvs.ui.jira {
             if (notifyListeners && ActiveIssueChanged != null) {
                 ActiveIssueChanged(this, null);
             }
+        }
+
+        public void resetTimeSpent() {
+            MinutesInProgress = 0;
+            storeTimeSpent();
+            setTimeSpentString();
         }
     }
 }

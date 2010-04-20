@@ -72,7 +72,7 @@ namespace Atlassian.plvs.ui.jira {
 
         private void initializeActiveIssueToolStrip() {
             statusStrip.Items.Clear();
-            ActiveIssueManager = new JiraActiveIssueManager(statusStrip);
+            ActiveIssueManager = new JiraActiveIssueManager(statusStrip, status);
             statusStrip.Items.Add(jiraStatus);
             statusStrip.Items.Add(getMoreIssues);
             ActiveIssueManager.ActiveIssueChanged += activeIssueManager_ActiveIssueChanged;
@@ -353,7 +353,7 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void logWorkOnSelectedIssue(JiraIssue issue) {
-            new LogWork(this, MODEL, Facade, issue, status).ShowDialog();
+            new LogWork(this, MODEL, Facade, issue, status, ActiveIssueManager).ShowDialog();
         }
 
         private void openIssue(object sender, EventArgs e) {

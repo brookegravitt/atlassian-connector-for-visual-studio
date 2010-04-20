@@ -7,6 +7,7 @@ using Atlassian.plvs.api.jira;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
+using Atlassian.plvs.ui.jira;
 using Atlassian.plvs.util;
 using Atlassian.plvs.util.jira;
 
@@ -17,15 +18,20 @@ namespace Atlassian.plvs.dialogs.jira {
         private readonly JiraServerFacade facade;
         private readonly JiraIssue issue;
         private readonly StatusLabel status;
+        private readonly JiraActiveIssueManager activeIssueManager;
 
         private DateTime endTime;
 
-        public LogWork(Control parent, JiraIssueListModel model, JiraServerFacade facade, JiraIssue issue, StatusLabel status) {
+        public LogWork(
+            Control parent, JiraIssueListModel model, JiraServerFacade facade, JiraIssue issue, 
+            StatusLabel status, JiraActiveIssueManager activeIssueManager) {
+
             this.parent = parent;
             this.model = model;
             this.facade = facade;
             this.issue = issue;
             this.status = status;
+            this.activeIssueManager = activeIssueManager;
             InitializeComponent();
 
             Text = "Log for for issue " + issue.Key;
@@ -41,6 +47,10 @@ namespace Atlassian.plvs.dialogs.jira {
             updateOkButtonState();
 
             StartPosition = FormStartPosition.CenterParent;
+            if (activeIssueManager.isActive(issue) && activeIssueManager.MinutesInProgress > 0) {
+                int hours = activeIssueManager.MinutesInProgress / 60;
+                textTimeSpent.Text = (hours > 0 ? hours + "h " : "") + activeIssueManager.MinutesInProgress % 60 + "m";
+            }
         }
 
         private void setEndTimeLabelText() {
@@ -116,16 +126,16 @@ namespace Atlassian.plvs.dialogs.jira {
         }
 
         private void logWorkAndAutoUpdateRemaining() {
-            facade.logWorkAndAutoUpdateRemaining(issue, JiraIssueUtils.addSpacesToTimeSpec(textTimeSpent.Text), getStartTime());
+            facade.logWorkAndAutoUpdateRemaining(issue, JiraIssueUtils.addSpacesToTimeSpec(textTimeSpent.Text.Trim()), getStartTime());
         }
 
         private void logWorkAndLeaveRemainingUnchanged() {
-            facade.logWorkAndLeaveRemainingUnchanged(issue, JiraIssueUtils.addSpacesToTimeSpec(textTimeSpent.Text), getStartTime());
+            facade.logWorkAndLeaveRemainingUnchanged(issue, JiraIssueUtils.addSpacesToTimeSpec(textTimeSpent.Text.Trim()), getStartTime());
         }
 
         private void logWorkAndUpdateRemainingManually() {
-            facade.logWorkAndUpdateRemainingManually(issue, JiraIssueUtils.addSpacesToTimeSpec(textTimeSpent.Text),
-                                                     getStartTime(), JiraIssueUtils.addSpacesToTimeSpec(textRemainingEstimate.Text));
+            facade.logWorkAndUpdateRemainingManually(issue, JiraIssueUtils.addSpacesToTimeSpec(textTimeSpent.Text.Trim()),
+                                                     getStartTime(), JiraIssueUtils.addSpacesToTimeSpec(textRemainingEstimate.Text.Trim()));
         }
 
         private void logWorkWorker(Action action) {
@@ -135,7 +145,12 @@ namespace Atlassian.plvs.dialogs.jira {
                 status.setInfo("Logged work for issue " + issue.Key);
                 UsageCollector.Instance.bumpJiraIssuesOpen();
                 JiraIssue updatedIssue = facade.getIssue(issue.Server, issue.Key);
-                parent.safeInvoke(new MethodInvoker(() => model.updateIssue(updatedIssue)));
+                parent.safeInvoke(new MethodInvoker(() => {
+                                                        model.updateIssue(updatedIssue);
+                                                        if (activeIssueManager.isActive(issue)) {
+                                                            activeIssueManager.resetTimeSpent();
+                                                        }
+                                                    }));
             } catch (Exception e) {
                 status.setError("Failed to log work for issue " + issue.Key, e);
             }
