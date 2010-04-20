@@ -90,7 +90,7 @@ namespace Atlassian.plvs.ui.jira {
                 return;
             }
             JiraIssue issue = (node.Tag as IssueNode).Issue;
-            if (activeIssue == null || !issue.Key.Equals(activeIssue.key) || !issue.Server.GUID.ToString().Equals(activeIssue.serverGuid)) {
+            if (activeIssue == null || !issue.Key.Equals(activeIssue.Key) || !issue.Server.GUID.ToString().Equals(activeIssue.ServerGuid)) {
                 buttonStartStopWork.Image = Resources.ico_activateissue;
                 buttonStartStopWork.Text = "Start Work";
             } else {
