@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs.jira;
 using Atlassian.plvs.models;
 using Atlassian.plvs.models.jira;
@@ -102,6 +103,10 @@ namespace Atlassian.plvs.ui.jira {
                         new LogWork(container, JiraIssueListModelImpl.Instance, JiraServerFacade.Instance, issue, jiraStatus, this).ShowDialog())), 
                     CurrentActiveIssue);
             buttonComment = new ToolStripButton(Resources.new_comment) { Text = COMMENT, DisplayStyle = ToolStripItemDisplayStyle.Image };
+            buttonComment.Click += (s, e) => 
+                loadIssueAndRunAction((server, issue) => 
+                    container.safeInvoke(new MethodInvoker(() => addComment(issue, jiraStatus))), 
+                    CurrentActiveIssue);
 
             separator = new ToolStripSeparator();
 
@@ -127,6 +132,28 @@ namespace Atlassian.plvs.ui.jira {
             minuteTimer = new Timer {Interval = 5000};
             minuteTimer.Tick += (s, e) => updateMinutes();
             minuteTimer.Start();
+        }
+
+        private void addComment(JiraIssue issue, StatusLabel jiraStatus) {
+            JiraServerFacade facade = JiraServerFacade.Instance;
+            NewIssueComment dlg = new NewIssueComment(issue, facade);
+            dlg.ShowDialog();
+            if (dlg.DialogResult != DialogResult.OK) return;
+
+            Thread addCommentThread =
+                PlvsUtils.createThread(delegate {
+                                           try {
+                                               jiraStatus.setInfo("Adding comment to issue...");
+                                               facade.addComment(issue, dlg.CommentBody);
+                                               issue = facade.getIssue(issue.Server, issue.Key);
+                                               jiraStatus.setInfo("Comment added");
+                                               UsageCollector.Instance.bumpJiraIssuesOpen();
+                                               container.safeInvoke(new MethodInvoker(() => JiraIssueListModelImpl.Instance.updateIssue(issue)));
+                                           } catch (Exception ex) {
+                                               jiraStatus.setError("Adding comment failed", ex);
+                                           }
+                                       });
+            addCommentThread.Start();
         }
 
         private static void findFinished(bool success, string message, Exception e) {
