@@ -817,7 +817,10 @@ namespace Atlassian.plvs.ui.jira {
         public delegate void FindFinished(bool success, string message, Exception e);
 
         public void findAndOpenIssue(string key, FindFinished onFinish) {
-            JiraServer server = CurrentlySelectedServerOrDefault;
+            findAndOpenIssue(key, CurrentlySelectedServerOrDefault, onFinish);
+        }
+
+        public void findAndOpenIssue(string key, JiraServer server, FindFinished onFinish) {
             if (server == null) {
                 if (onFinish != null) {
                     onFinish(false, "No JIRA server selected", null);
