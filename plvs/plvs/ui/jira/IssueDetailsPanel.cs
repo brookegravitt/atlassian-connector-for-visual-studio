@@ -911,7 +911,7 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void buttonLogWork_Click(object sender, EventArgs e) {
-            new LogWork(this, model, facade, issue, status).ShowDialog();
+            new LogWork(this, model, facade, issue, status, activeIssueManager).ShowDialog();
         }
 
         private void listViewAttachments_Click(object sender, EventArgs e) {
