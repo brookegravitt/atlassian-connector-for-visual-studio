@@ -54,7 +54,7 @@ namespace Atlassian.plvs.ui.jira {
             this.tabAttachments = new System.Windows.Forms.TabPage();
             this.splitContainerAttachments = new System.Windows.Forms.SplitContainer();
             this.toolStripContainer3 = new System.Windows.Forms.ToolStripContainer();
-            this.listViewAttachments = new global::Atlassian.plvs.ui.AutosizeListView();
+            this.listViewAttachments = new ui.AutosizeListView();
             this.columnName = new System.Windows.Forms.ColumnHeader();
             this.columnAuthor = new System.Windows.Forms.ColumnHeader();
             this.columnSize = new System.Windows.Forms.ColumnHeader();
@@ -70,6 +70,7 @@ namespace Atlassian.plvs.ui.jira {
             this.dropDownIssueActions = new System.Windows.Forms.ToolStripDropDownButton();
             this.label1 = new System.Windows.Forms.Label();
             this.toolTipAttachments = new System.Windows.Forms.ToolTip(this.components);
+            this.buttonStartStopProgress = new System.Windows.Forms.ToolStripButton();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -437,7 +438,6 @@ namespace Atlassian.plvs.ui.jira {
             // buttonUploadNew
             // 
             this.buttonUploadNew.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.buttonUploadNew.Image = ((System.Drawing.Image)(resources.GetObject("buttonUploadNew.Image")));
             this.buttonUploadNew.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonUploadNew.Name = "buttonUploadNew";
             this.buttonUploadNew.Size = new System.Drawing.Size(85, 22);
@@ -452,11 +452,12 @@ namespace Atlassian.plvs.ui.jira {
             this.buttonViewInBrowser,
             this.buttonRefresh,
             this.buttonClose,
+            this.buttonStartStopProgress,
             this.buttonLogWork,
             this.dropDownIssueActions});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(124, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(178, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonViewInBrowser
@@ -521,6 +522,16 @@ namespace Atlassian.plvs.ui.jira {
             this.label1.Size = new System.Drawing.Size(60, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Description";
+            // 
+            // buttonStartStopProgress
+            // 
+            this.buttonStartStopProgress.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonStartStopProgress.Image = ((System.Drawing.Image)(resources.GetObject("buttonStartStopProgress.Image")));
+            this.buttonStartStopProgress.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonStartStopProgress.Name = "buttonStartStopProgress";
+            this.buttonStartStopProgress.Size = new System.Drawing.Size(23, 22);
+            this.buttonStartStopProgress.Text = "Start Progress";
+            this.buttonStartStopProgress.Click += new System.EventHandler(this.buttonStartStopProgress_Click);
             // 
             // IssueDetailsPanel
             // 
@@ -608,5 +619,6 @@ namespace Atlassian.plvs.ui.jira {
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
         private System.Windows.Forms.TabPage tabLinks;
         private System.Windows.Forms.WebBrowser webLinkedIssues;
+        private System.Windows.Forms.ToolStripButton buttonStartStopProgress;
     }
 }

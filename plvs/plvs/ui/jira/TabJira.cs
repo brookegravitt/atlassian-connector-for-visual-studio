@@ -43,7 +43,7 @@ namespace Atlassian.plvs.ui.jira {
 
         private int currentGeneration;
         private bool metadataFetched;
-        private JiraActiveIssueManager activeIssueManager;
+        public JiraActiveIssueManager ActiveIssueManager { get; private set; }
 
         public TabJira() {
             InitializeComponent();
@@ -72,10 +72,10 @@ namespace Atlassian.plvs.ui.jira {
 
         private void initializeActiveIssueToolStrip() {
             statusStrip.Items.Clear();
-            activeIssueManager = new JiraActiveIssueManager(statusStrip);
+            ActiveIssueManager = new JiraActiveIssueManager(statusStrip);
             statusStrip.Items.Add(jiraStatus);
             statusStrip.Items.Add(getMoreIssues);
-            activeIssueManager.ActiveIssueChanged += activeIssueManager_ActiveIssueChanged;
+            ActiveIssueManager.ActiveIssueChanged += activeIssueManager_ActiveIssueChanged;
         }
 
         private void activeIssueManager_ActiveIssueChanged(object sender, EventArgs e) {
@@ -83,7 +83,7 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void updateStartStopButton() {
-            JiraActiveIssueManager.ActiveIssue activeIssue = activeIssueManager.CurrentActiveIssue;
+            JiraActiveIssueManager.ActiveIssue activeIssue = ActiveIssueManager.CurrentActiveIssue;
 
             TreeNodeAdv node = issuesTree.SelectedNode;
             if (node == null || !(node.Tag is IssueNode)) {
@@ -178,7 +178,7 @@ namespace Atlassian.plvs.ui.jira {
                                   {
                                       new ToolStripMenuItem("Open in IDE", Resources.ico_editinide,
                                                             new EventHandler(openIssue)),
-                                      new ActiveIssueMenuItem(activeIssueManager, issuesTree),
+                                      new ActiveIssueMenuItem(ActiveIssueManager, issuesTree),
                                       new ToolStripMenuItem("View in Browser", Resources.view_in_browser,
                                                             new EventHandler(browseIssue)),
                                       new ToolStripMenuItem("Edit in Browser", Resources.ico_editinbrowser,
@@ -376,8 +376,8 @@ namespace Atlassian.plvs.ui.jira {
             invokeSelectedIssueChanged();
         }
 
-        private static void openSelectedIssue(JiraIssue issue) {
-            IssueDetailsWindow.Instance.openIssue(issue);
+        private void openSelectedIssue(JiraIssue issue) {
+            IssueDetailsWindow.Instance.openIssue(issue, ActiveIssueManager);
         }
 
         private void issuesTree_StructureChanged(object sender, TreePathEventArgs e) {
@@ -561,7 +561,7 @@ namespace Atlassian.plvs.ui.jira {
                                                  filtersTree.restoreLastSelectedFilterItem();
                                                  updateIssueListButtons();
 
-                                                 activeIssueManager.init();
+                                                 ActiveIssueManager.init();
                                              }));
             } catch (Exception e) {
                 status.setError("Failed to load JIRA server information", e);
@@ -843,7 +843,7 @@ namespace Atlassian.plvs.ui.jira {
                                                      if (onFinish != null) {
                                                          onFinish(true, null, null);
                                                      }
-                                                     IssueDetailsWindow.Instance.openIssue(issue);
+                                                     IssueDetailsWindow.Instance.openIssue(issue, ActiveIssueManager);
                                                  }));
                 }
             } catch (Exception ex) {
@@ -977,7 +977,7 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void buttonStartStopWork_Click(object sender, EventArgs e) {
-            runSelectedIssueAction(activeIssueManager.toggleActiveState);
+            runSelectedIssueAction(ActiveIssueManager.toggleActiveState);
         }
     }
 }

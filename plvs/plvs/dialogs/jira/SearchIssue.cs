@@ -68,7 +68,7 @@ namespace Atlassian.plvs.dialogs.jira {
                     fetchAndOpenIssue(key);
                     return;
                 }
-                IssueDetailsWindow.Instance.openIssue(foundIssue);
+                IssueDetailsWindow.Instance.openIssue(foundIssue, AtlassianPanel.Instance.Jira.ActiveIssueManager);
             }
             else {
                 string url = Server.Url + "/secure/QuickSearch.jspa?searchString=" + HttpUtility.UrlEncode(query);
