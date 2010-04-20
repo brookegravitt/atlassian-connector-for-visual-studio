@@ -109,8 +109,8 @@ namespace Atlassian.plvs.ui.jira {
 
         private void updateStartStopWorkButton() {
             bool thisIssueActive = activeIssueManager.CurrentActiveIssue != null
-                                   && activeIssueManager.CurrentActiveIssue.key.Equals(issue.Key)
-                                   && activeIssueManager.CurrentActiveIssue.serverGuid.Equals(issue.Server.GUID.ToString());
+                                   && activeIssueManager.CurrentActiveIssue.Key.Equals(issue.Key)
+                                   && activeIssueManager.CurrentActiveIssue.ServerGuid.Equals(issue.Server.GUID.ToString());
             buttonStartStopProgress.Image = thisIssueActive ? Resources.ico_inactiveissue : Resources.ico_activateissue;
             buttonStartStopProgress.Text = thisIssueActive ? "Stop Work" : "Start Work";
         }

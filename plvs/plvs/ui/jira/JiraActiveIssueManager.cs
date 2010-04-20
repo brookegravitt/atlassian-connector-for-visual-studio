@@ -37,19 +37,19 @@ namespace Atlassian.plvs.ui.jira {
 
         public class ActiveIssue {
             public ActiveIssue(string key, string serverGuid) {
-                this.key = key;
-                this.serverGuid = serverGuid;
+                Key = key;
+                ServerGuid = serverGuid;
             }
 
-            public string key { get; private set; }
-            public string serverGuid { get; private set; }
+            public string Key { get; private set; }
+            public string ServerGuid { get; private set; }
             public string summary { get; set; }
             public Image icon { get; set; }
 
             public bool Equals(ActiveIssue other) {
                 if (ReferenceEquals(null, other)) return false;
                 if (ReferenceEquals(this, other)) return true;
-                return Equals(other.key, key) && Equals(other.serverGuid, serverGuid);
+                return Equals(other.Key, Key) && Equals(other.ServerGuid, ServerGuid);
             }
 
             public override bool Equals(object obj) {
@@ -60,7 +60,7 @@ namespace Atlassian.plvs.ui.jira {
 
             public override int GetHashCode() {
                 unchecked {
-                    return ((key != null ? key.GetHashCode() : 0)*397) ^ (serverGuid != null ? serverGuid.GetHashCode() : 0);
+                    return ((Key != null ? Key.GetHashCode() : 0)*397) ^ (ServerGuid != null ? ServerGuid.GetHashCode() : 0);
                 }
             }
         }
@@ -120,16 +120,16 @@ namespace Atlassian.plvs.ui.jira {
 
             activeIssueDropDown.ButtonClick += (s, e) => {
                                                    if (CurrentActiveIssue == null) return;
-                                                   JiraServer server = JiraServerModel.Instance.getServer(new Guid(CurrentActiveIssue.serverGuid));
+                                                   JiraServer server = JiraServerModel.Instance.getServer(new Guid(CurrentActiveIssue.ServerGuid));
                                                    if (server == null) return;
-                                                   AtlassianPanel.Instance.Jira.findAndOpenIssue(CurrentActiveIssue.key, server, findFinished);
+                                                   AtlassianPanel.Instance.Jira.findAndOpenIssue(CurrentActiveIssue.Key, server, findFinished);
                                                };
 
             activeIssueDropDown.ToolTipText = "Active Issue";
             setEnabled(false);
 
             JiraIssueListModelImpl.Instance.IssueChanged += issueChanged;
-            minuteTimer = new Timer {Interval = 5000};
+            minuteTimer = new Timer {Interval = ONE_MINUTE};
             minuteTimer.Tick += (s, e) => updateMinutes();
             minuteTimer.Start();
         }
@@ -164,8 +164,8 @@ namespace Atlassian.plvs.ui.jira {
 
         private void issueChanged(object sender, IssueChangedEventArgs e) {
             if (CurrentActiveIssue == null) return;
-            if (!e.Issue.Key.Equals(CurrentActiveIssue.key) ||
-                !e.Issue.Server.GUID.ToString().Equals(CurrentActiveIssue.serverGuid)) return;
+            if (!e.Issue.Key.Equals(CurrentActiveIssue.Key) ||
+                !e.Issue.Server.GUID.ToString().Equals(CurrentActiveIssue.ServerGuid)) return;
             ++generation;
             loadActiveIssueDetails();
         }
@@ -213,6 +213,8 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private static int generation;
+
+        private const int ONE_MINUTE = 60000;
         private const int MAX_SUMMARY_LENGTH = 20;
 
         public void init() {
@@ -259,10 +261,10 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private static void loadIssueAndRunAction(OnIssueLoaded loaded, ActiveIssue issue) {
-            JiraServer server = JiraServerModel.Instance.getServer(new Guid(issue.serverGuid));
+            JiraServer server = JiraServerModel.Instance.getServer(new Guid(issue.ServerGuid));
             if (server == null) return;
 
-            JiraIssue jiraIssue = JiraServerFacade.Instance.getIssue(server, issue.key);
+            JiraIssue jiraIssue = JiraServerFacade.Instance.getIssue(server, issue.Key);
             if (jiraIssue != null) {
                 loaded(server, jiraIssue);
             }
@@ -311,17 +313,21 @@ namespace Atlassian.plvs.ui.jira {
             store.storeParameter(PAST_ACTIVE_ISSUE_COUNT, pastActiveIssues.Count);
             int i = 0;
             foreach (ActiveIssue issue in pastActiveIssues) {
-                store.storeParameter(PAST_ACTIVE_ISSUE_KEY + i, issue.key);
-                store.storeParameter(PAST_ACTIVE_ISSUE_SERVER_GUID + i, issue.serverGuid);
+                store.storeParameter(PAST_ACTIVE_ISSUE_KEY + i, issue.Key);
+                store.storeParameter(PAST_ACTIVE_ISSUE_SERVER_GUID + i, issue.ServerGuid);
                 ++i;
             }
             foreach (var issue in pastActiveIssues.Reverse()) {
                 activeIssueDropDown.DropDown.Items.Add(new PastActiveIssueMenuItem(this, issue));
             }
+            loadPastActiveIssuesDetails();
         }
 
         private class PastActiveIssueMenuItem : ToolStripMenuItem {
-            public PastActiveIssueMenuItem(JiraActiveIssueManager mgr, ActiveIssue issue): base(issue.key) {
+            public ActiveIssue Issue { get; private set; }
+
+            public PastActiveIssueMenuItem(JiraActiveIssueManager mgr, ActiveIssue issue): base(issue.Key) {
+                Issue = issue;
                 Click += (s, e) => mgr.setActive(issue);
             }
         }
@@ -330,8 +336,8 @@ namespace Atlassian.plvs.ui.jira {
             if (CurrentActiveIssue == null) {
                 return false;
             }
-            return issue.Key.Equals(CurrentActiveIssue.key) &&
-                   issue.Server.GUID.ToString().Equals(CurrentActiveIssue.serverGuid);
+            return issue.Key.Equals(CurrentActiveIssue.Key) &&
+                   issue.Server.GUID.ToString().Equals(CurrentActiveIssue.ServerGuid);
         }
 
         public void toggleActiveState(JiraIssue issue) {
@@ -357,9 +363,9 @@ namespace Atlassian.plvs.ui.jira {
             } else {
                 savePastActiveIssuesAndSetupDropDown();
             }
-            CurrentActiveIssue = new ActiveIssue(issue.key, issue.serverGuid);
+            CurrentActiveIssue = new ActiveIssue(issue.Key, issue.ServerGuid);
             setEnabled(true);
-            activeIssueDropDown.Text = CurrentActiveIssue.key;
+            activeIssueDropDown.Text = CurrentActiveIssue.Key;
             MinutesInProgress = 0;
             storeTimeSpent();
             setTimeSpentString();
@@ -372,16 +378,52 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void loadActiveIssueDetails() {
-            JiraServer server = JiraServerModel.Instance.getServer(new Guid(CurrentActiveIssue.serverGuid));
-            if (server != null) {
-                JiraIssue issue = JiraIssueListModelImpl.Instance.getIssue(CurrentActiveIssue.key, server);
-                if (issue == null) {
-                    Thread t = PlvsUtils.createThread(() => loadActiveIssueDetailsWorker(generation));
-                    t.Start();
-                } else {
-                    setActiveIssueDropdownTextAndImage(server, issue);
-                }
+            JiraServer server = JiraServerModel.Instance.getServer(new Guid(CurrentActiveIssue.ServerGuid));
+            if (server == null) return;
+
+            JiraIssue issue = JiraIssueListModelImpl.Instance.getIssue(CurrentActiveIssue.Key, server);
+            if (issue == null) {
+                Thread t = PlvsUtils.createThread(() => loadActiveIssueDetailsWorker(generation));
+                t.Start();
+            } else {
+                setActiveIssueDropdownTextAndImage(server, issue);
             }
+        }
+
+        private void loadPastActiveIssuesDetails() {
+            Thread t = PlvsUtils.createThread(() => loadPastActiveIssuesDetailsWorker(generation));
+            t.Start();
+        }
+
+        private void loadPastActiveIssuesDetailsWorker(int gen) {
+            List<JiraIssue> issues = (from pastIssue in pastActiveIssues
+                                      let server = JiraServerModel.Instance.getServer(new Guid(pastIssue.ServerGuid))
+                                      where server != null
+                                      select getIssueFromModelOrServer(server, pastIssue.Key)
+                                      into issue where issue != null select issue).ToList();
+            container.safeInvoke(new MethodInvoker(() => {
+                                                       if (gen != generation) return;
+
+                                                       foreach (JiraIssue issue in issues) {
+                                                           JiraIssue issueCopy = issue;
+                                                           foreach (PastActiveIssueMenuItem it in
+                                                               activeIssueDropDown.DropDown.Items.Cast
+                                                                   <PastActiveIssueMenuItem>().Where(
+                                                                       it => 
+                                                                           it.Issue.Key.Equals(issueCopy.Key) 
+                                                                           && it.Issue.ServerGuid.Equals(issueCopy.Server.GUID.ToString()))) {
+                                                               
+                                                               it.Text = getShortIssueSummary(issue);
+                                                               ImageCache.ImageInfo imageInfo = ImageCache.Instance.getImage(issue.Server, issue.IssueTypeIconUrl);
+                                                               it.Image = imageInfo != null ? imageInfo.Img : null;
+                                                           }
+                                                       }
+                                                   }));
+        }
+
+        private static JiraIssue getIssueFromModelOrServer(JiraServer server, string issueKey) {
+            JiraIssue issue = JiraIssueListModelImpl.Instance.getIssue(issueKey, server);
+            return issue ?? JiraServerFacade.Instance.getIssue(server, issueKey);
         }
 
         private void setActiveIssueDropdownTextAndImage(JiraServer server, JiraIssue issue) {
@@ -393,8 +435,8 @@ namespace Atlassian.plvs.ui.jira {
         private void storeActiveIssue() {
             ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.ACTIVE_ISSUES);
             if (CurrentActiveIssue != null) {
-                store.storeParameter(ACTIVE_ISSUE_KEY, CurrentActiveIssue.key);
-                store.storeParameter(ACTIVE_ISSUE_SERVER_GUID, CurrentActiveIssue.serverGuid);
+                store.storeParameter(ACTIVE_ISSUE_KEY, CurrentActiveIssue.Key);
+                store.storeParameter(ACTIVE_ISSUE_SERVER_GUID, CurrentActiveIssue.ServerGuid);
             } else {
                 store.storeParameter(ACTIVE_ISSUE_KEY, null);
                 store.storeParameter(ACTIVE_ISSUE_SERVER_GUID, null);
