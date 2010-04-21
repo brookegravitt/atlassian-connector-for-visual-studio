@@ -72,7 +72,7 @@ namespace Atlassian.plvs.ui.jira.issues.menus {
                                                  action.Name, null,
                                                  new EventHandler(
                                                      delegate {
-                                                         IssueActionRunner.runAction(this, actionCopy, model, issue, status);
+                                                         IssueActionRunner.runAction(this, actionCopy, model, issue, status, null);
                                                      }));
                                              Items.Add(item);
                                          }
