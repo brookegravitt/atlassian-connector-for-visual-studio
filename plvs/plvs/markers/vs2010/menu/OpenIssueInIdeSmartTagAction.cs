@@ -40,7 +40,7 @@ namespace Atlassian.plvs.markers.vs2010.menu {
             bool found = false;
             foreach (JiraIssue issue in JiraIssueListModelImpl.Instance.Issues) {
                 if (!issue.Key.Equals(issueKey)) continue;
-                IssueDetailsWindow.Instance.openIssue(issue);
+                IssueDetailsWindow.Instance.openIssue(issue, AtlassianPanel.Instance.Jira.ActiveIssueManager);
                 found = true;
                 break;
             }
