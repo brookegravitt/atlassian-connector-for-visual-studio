@@ -10,12 +10,12 @@ using Atlassian.plvs.ui;
 
 namespace Atlassian.plvs.util.jira {
     public sealed class IssueActionRunner {
-        public static void runAction(Control owner, JiraNamedEntity action, JiraIssueListModel model, JiraIssue issue, StatusLabel status) {
+        public static void runAction(Control owner, JiraNamedEntity action, JiraIssueListModel model, JiraIssue issue, StatusLabel status, Action onFinish) {
             Thread runner = PlvsUtils.createThread(delegate {
                                                        try {
                                                            status.setInfo("Retrieving fields for action \"" + action.Name + "\"...");
                                                            List<JiraField> fields = JiraServerFacade.Instance.getFieldsForAction(issue, action.Id);
-                                                           runAction(owner, action, model, issue, fields, status);
+                                                           runAction(owner, action, model, issue, fields, status, onFinish);
                                                        } catch (Exception e) {
                                                            status.setError("Failed to run action " + action.Name + " on issue " + issue.Key, e);
                                                        }
@@ -23,8 +23,8 @@ namespace Atlassian.plvs.util.jira {
             runner.Start();
         }
 
-        private static void runAction(Control owner, JiraNamedEntity action, JiraIssueListModel model, 
-                                      JiraIssue issue, List<JiraField> fields, StatusLabel status) {
+        private static void runAction(Control owner, JiraNamedEntity action, JiraIssueListModel model,
+                                      JiraIssue issue, List<JiraField> fields, StatusLabel status, Action onFinish) {
 
             JiraIssue issueWithTime = JiraServerFacade.Instance.getIssue(issue.Server, issue.Key);
             issueWithTime.SecurityLevel = JiraServerFacade.Instance.getSecurityLevel(issue);
@@ -41,22 +41,23 @@ namespace Atlassian.plvs.util.jira {
             }
 
             if (fieldsWithValues == null || fieldsWithValues.Count == 0) {
-                runActionWithoutFields(owner, action, model, issue, status);
+                runActionWithoutFields(owner, action, model, issue, status, onFinish);
             } else {
-                owner.Invoke(new MethodInvoker(delegate {
-                                                   IssueWorkflowAction actionDlg = new IssueWorkflowAction(issue, action, model, fieldsWithValues, status);
-                                                   actionDlg.initAndShowDialog();
-                                               }));
+                owner.Invoke(new MethodInvoker(() => 
+                    new IssueWorkflowAction(issue, action, model, fieldsWithValues, status, onFinish).initAndShowDialog()));
             }
         }
 
-        private static void runActionWithoutFields(Control owner, JiraNamedEntity action, JiraIssueListModel model, JiraIssue issue, StatusLabel status) {
+        private static void runActionWithoutFields(
+            Control owner, JiraNamedEntity action, JiraIssueListModel model, 
+            JiraIssue issue, StatusLabel status, Action onFinish) {
+
             status.setInfo("Running action \"" + action.Name + "\" on issue " + issue.Key + "...");
             JiraServerFacade.Instance.runIssueActionWithoutParams(issue, action);
             status.setInfo("Action \"" + action.Name + "\" successfully run on issue " + issue.Key);
             var newIssue = JiraServerFacade.Instance.getIssue(issue.Server, issue.Key);
             UsageCollector.Instance.bumpJiraIssuesOpen();
-            owner.Invoke(new MethodInvoker(() => model.updateIssue(newIssue)));
+            owner.Invoke(new MethodInvoker(() => { model.updateIssue(newIssue); if (onFinish != null) onFinish(); }));
         }
     }
 }

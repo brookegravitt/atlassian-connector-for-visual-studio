@@ -1,25 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models.jira;
+using Atlassian.plvs.store;
 using Atlassian.plvs.ui;
 using Atlassian.plvs.ui.jira;
+using Atlassian.plvs.util.jira;
 
 namespace Atlassian.plvs.dialogs.jira {
     public class DeactivateIssue : LogWork {
+        private readonly ParameterStore store;
         private readonly Action onFinished;
         private readonly CheckBox checkBoxLogWork;
         private CheckBox checkBoxRunAction;
         private ComboBox cbActions;
+        private const string DEACTIVATE_ISSUE_LAST_ACTION = "deactivateIssueLastAction";
+        private const string DEACTIVATE_ISSUE_RUN_ACTION_CHECKED = "deactivateIssueRunActionChecked";
+        private const string DEACTIVATE_ISSUE_LOG_WORK_CHECKED = "deactivateIssueLogWorkChecked";
 
         public DeactivateIssue(
-            Control parent, JiraIssueListModel model, JiraServerFacade facade,
+            Control parent, JiraIssueListModel model, JiraServerFacade facade, ParameterStore store,
             JiraIssue issue, StatusLabel status, JiraActiveIssueManager activeIssueManager, 
             IEnumerable<JiraNamedEntity> actions, Action onFinished) 
             : base(parent, model, facade, issue, status, activeIssueManager) {
-            
+            this.store = store;
             this.onFinished = onFinished;
 
             setOkButtonName("Stop Work");
@@ -72,26 +79,41 @@ namespace Atlassian.plvs.dialogs.jira {
             ButtonOk.Location = new Point(ButtonOk.Location.X + 40, ButtonOk.Location.Y + 100);
             ButtonCancel.Location = new Point(ButtonCancel.Location.X + 40, ButtonCancel.Location.Y + 100);
             ResumeLayout(true);
+
+            checkBoxLogWork.Checked = store.loadParameter(DEACTIVATE_ISSUE_LOG_WORK_CHECKED, 0) > 0;
+            checkBoxRunAction.Checked = store.loadParameter(DEACTIVATE_ISSUE_RUN_ACTION_CHECKED, 0) > 0;
+            int actionId = store.loadParameter(DEACTIVATE_ISSUE_LAST_ACTION, 0);
+            foreach (var item in
+                from object item in cbActions.Items
+                let i = item as JiraNamedEntity
+                where i != null && i.Id == actionId
+                select item) {
+                
+                cbActions.SelectedItem = item;
+                break;
+            }
         }
 
         protected override void onOk(Action finished, bool closeDialogOnFinish) {
+            store.storeParameter(DEACTIVATE_ISSUE_LOG_WORK_CHECKED, checkBoxLogWork.Checked ? 1 : 0);
+            store.storeParameter(DEACTIVATE_ISSUE_RUN_ACTION_CHECKED, checkBoxRunAction.Checked ? 1 : 0);
             if (checkBoxLogWork.Checked && !checkBoxRunAction.Checked) {
                 base.onOk(onFinished, true);
             } else if (checkBoxLogWork.Checked && checkBoxRunAction.Checked) {
-                base.onOk(() => {
-                              // todo - run action
-                              Close();
-                              onFinished();
-                          }, false);
+                base.onOk(runDeactivateIssueAction, false);
             } else if (checkBoxRunAction.Checked) {
-                // todo - run action
-                Close();
-                onFinished();
+                runDeactivateIssueAction();
             } else {
-                // todo - run action
                 Close();
                 onFinished();
             }
+        }
+
+        private void runDeactivateIssueAction() {
+            JiraNamedEntity action = cbActions.SelectedItem as JiraNamedEntity;
+            if (action == null) return;
+            store.storeParameter(DEACTIVATE_ISSUE_LAST_ACTION, action.Id);
+            IssueActionRunner.runAction(this, action, model, issue, status, () => { Close(); onFinished(); });
         }
 
         protected override void updateOkButtonState() {

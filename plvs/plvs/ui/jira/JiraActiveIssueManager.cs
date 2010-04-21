@@ -448,6 +448,7 @@ namespace Atlassian.plvs.ui.jira {
                         List<JiraNamedEntity> actions = JiraServerFacade.Instance.getActionsForIssue(issue);
                         container.safeInvoke(new MethodInvoker(() => new DeactivateIssue(container, JiraIssueListModelImpl.Instance,
                                                                                          JiraServerFacade.Instance,
+                                                                                         ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.ACTIVE_ISSUES),
                                                                                          issue, jiraStatus, this, actions,
                                                                                          () => {
                                                                                              jiraStatus.setInfo("Work on issue " + CurrentActiveIssue.Key + " stopped");

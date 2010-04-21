@@ -903,7 +903,7 @@ namespace Atlassian.plvs.ui.jira {
                                                                             select new ToolStripMenuItem(action.Name, null, 
                                                                                 new EventHandler(
                                                                                     delegate {
-                                                                                        IssueActionRunner.runAction(this, actionCopy, model, issue, status);
+                                                                                        IssueActionRunner.runAction(this, actionCopy, model, issue, status, null);
                                                                                     }))) {
                                              dropDownIssueActions.DropDownItems.Add(item);
                                          }

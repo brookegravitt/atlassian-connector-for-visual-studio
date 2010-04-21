@@ -21,6 +21,7 @@ namespace Atlassian.plvs.dialogs.jira {
         private readonly JiraIssueListModel model;
         private readonly ICollection<JiraField> fields;
         private readonly StatusLabel status;
+        private readonly Action onFinish;
 
         private int verticalPosition;
         private int tabIndex;
@@ -45,7 +46,8 @@ namespace Atlassian.plvs.dialogs.jira {
         private List<JiraNamedEntity> comps = new List<JiraNamedEntity>();
 
         public IssueWorkflowAction(
-            JiraIssue issue, JiraNamedEntity action, JiraIssueListModel model, List<JiraField> fields, StatusLabel status) {
+            JiraIssue issue, JiraNamedEntity action, JiraIssueListModel model, 
+            List<JiraField> fields, StatusLabel status, Action onFinish) {
 
             this.issue = issue;
             this.action = action;
@@ -53,6 +55,7 @@ namespace Atlassian.plvs.dialogs.jira {
             this.fields = JiraActionFieldType.sortFieldList(fields);
 
             this.status = status;
+            this.onFinish = onFinish;
 
             InitializeComponent();
 
@@ -280,6 +283,7 @@ namespace Atlassian.plvs.dialogs.jira {
                                                       this.safeInvoke(new MethodInvoker(delegate {
                                                                                             Close();
                                                                                             model.updateIssue(newIssue);
+                                                                                            if (onFinish != null) onFinish();
                                                                                         }));
                                                   }
                                                   catch (Exception ex) {
