@@ -124,9 +124,9 @@ namespace Atlassian.plvs.dialogs.jira {
                 a = logWorkAndUpdateRemainingManually;
             }
 
-            foreach (Control control in Controls) {
-                control.Enabled = false;
-            }
+            logWorkPanel.Enabled = false;
+            buttonOk.Enabled = false;
+            buttonCancel.Enabled = false;
             Thread t = PlvsUtils.createThread(() => logWorkWorker(a, finished, closeDialogOnFinish));
             t.Start();
         }
@@ -191,7 +191,7 @@ namespace Atlassian.plvs.dialogs.jira {
         }
 
         private void logWorkKeyPress(object sender, KeyPressEventArgs e) {
-            if (e.KeyChar == (char)Keys.Escape) {
+            if (e.KeyChar == (char)Keys.Escape && buttonCancel.Enabled) {
                 Close();
             }
         }

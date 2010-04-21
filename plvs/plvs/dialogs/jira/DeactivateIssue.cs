@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -100,7 +101,12 @@ namespace Atlassian.plvs.dialogs.jira {
             if (checkBoxLogWork.Checked && !checkBoxRunAction.Checked) {
                 base.onOk(onFinished, true);
             } else if (checkBoxLogWork.Checked && checkBoxRunAction.Checked) {
-                base.onOk(runDeactivateIssueAction, false);
+                base.onOk(() => {
+                              checkBoxLogWork.Checked = false; 
+                              ButtonCancel.Enabled = true;
+                              ButtonOk.Enabled = true;
+                              runDeactivateIssueAction();
+                          }, false);
             } else if (checkBoxRunAction.Checked) {
                 runDeactivateIssueAction();
             } else {
