@@ -366,8 +366,8 @@ namespace Atlassian.plvs.api.jira {
                     + "Summary:\t" + (Summary.Length < 100 ? Summary : Summary.Substring(0, 100) + "...") + "\r\n"
                     + "Status:\t\t" + Status + "\r\n"
                     + "Priority:\t\t" + (Priority ?? "None") + "\r\n"
-                    + "Reporter:\t" + (Reporter ?? "None") + "\r\n"
-                    + "Assignee:\t" + (Assignee ?? "None") + "\r\n"
+                    + "Reporter:\t" + JiraServerCache.Instance.getUsers(Server).getUser(Reporter) + "\r\n"
+                    + "Assignee:\t" + JiraServerCache.Instance.getUsers(Server).getUser(Assignee) + "\r\n"
                     + "Resolution:\t" + (Resolution ?? "None") + "\r\n"
                     + "Created:\t\t" + JiraIssueUtils.getTimeStringFromIssueDateTime(CreationDate) + "\r\n"
                     + "Last Updated:\t" + JiraIssueUtils.getTimeStringFromIssueDateTime(UpdateDate);
