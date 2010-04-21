@@ -139,6 +139,9 @@
     <Compile Include="dialogs\jira\CreateIssue.Designer.cs">
       <DependentUpon>CreateIssue.cs</DependentUpon>
     </Compile>
+    <Compile Include="dialogs\jira\DeactivateIssue.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="dialogs\jira\EditCustomFilter.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -12,15 +12,19 @@ using Atlassian.plvs.util;
 using Atlassian.plvs.util.jira;
 
 namespace Atlassian.plvs.dialogs.jira {
-    public sealed partial class LogWork : Form {
+    public partial class LogWork : Form {
         private readonly Control parent;
-        private readonly JiraIssueListModel model;
-        private readonly JiraServerFacade facade;
-        private readonly JiraIssue issue;
-        private readonly StatusLabel status;
+        protected readonly JiraIssueListModel model;
+        protected readonly JiraServerFacade facade;
+        protected readonly JiraIssue issue;
+        protected readonly StatusLabel status;
         private readonly JiraActiveIssueManager activeIssueManager;
 
         private DateTime endTime;
+
+        protected Panel LogWorkPanel { get { return logWorkPanel; } }
+        protected Button ButtonOk { get { return buttonOk; } }
+        protected Button ButtonCancel { get { return buttonCancel; } }
 
         public LogWork(
             Control parent, JiraIssueListModel model, JiraServerFacade facade, JiraIssue issue, 
@@ -34,8 +38,6 @@ namespace Atlassian.plvs.dialogs.jira {
             this.activeIssueManager = activeIssueManager;
             InitializeComponent();
 
-            Text = "Log for for issue " + issue.Key;
-
             endTime = DateTime.Now;
 
             setEndTimeLabelText();
@@ -44,13 +46,11 @@ namespace Atlassian.plvs.dialogs.jira {
             radioAutoUpdate.Checked = true;
             textExplanation.Font = new Font(textExplanation.Font.FontFamily, textExplanation.Font.Size - 1);
 
-            updateOkButtonState();
-
             StartPosition = FormStartPosition.CenterParent;
-            if (activeIssueManager.isActive(issue) && activeIssueManager.MinutesInProgress > 0) {
-                int hours = activeIssueManager.MinutesInProgress / 60;
-                textTimeSpent.Text = (hours > 0 ? hours + "h " : "") + activeIssueManager.MinutesInProgress % 60 + "m";
-            }
+        }
+
+        protected void setOkButtonName(string name) {
+            buttonOk.Text = name;    
         }
 
         private void setEndTimeLabelText() {
@@ -84,7 +84,7 @@ namespace Atlassian.plvs.dialogs.jira {
             updateOkButtonState();
         }
 
-        private void updateOkButtonState() {
+        protected virtual void updateOkButtonState() {
             bool timeSpentOk;
             Regex regex = new Regex(Constants.TIME_TRACKING_REGEX);
             if (textTimeSpent.Text.Length > 0 && regex.IsMatch(textTimeSpent.Text)) {
@@ -110,6 +110,10 @@ namespace Atlassian.plvs.dialogs.jira {
         }
 
         private void buttonOk_Click(object sender, EventArgs e) {
+            onOk(null, true);
+        }
+
+        protected virtual void onOk(Action finished, bool closeDialogOnFinish) {
             Action a;
 
             if (radioAutoUpdate.Checked) {
@@ -120,8 +124,10 @@ namespace Atlassian.plvs.dialogs.jira {
                 a = logWorkAndUpdateRemainingManually;
             }
 
-            Close();
-            Thread t = PlvsUtils.createThread(() => logWorkWorker(a));
+            foreach (Control control in Controls) {
+                control.Enabled = false;
+            }
+            Thread t = PlvsUtils.createThread(() => logWorkWorker(a, finished, closeDialogOnFinish));
             t.Start();
         }
 
@@ -138,7 +144,7 @@ namespace Atlassian.plvs.dialogs.jira {
                                                      getStartTime(), JiraIssueUtils.addSpacesToTimeSpec(textRemainingEstimate.Text.Trim()));
         }
 
-        private void logWorkWorker(Action action) {
+        private void logWorkWorker(Action action, Action finished, bool closeDialogOnFinish) {
             try {
                 status.setInfo("Logging work for issue " + issue.Key + "...");
                 action();
@@ -154,6 +160,10 @@ namespace Atlassian.plvs.dialogs.jira {
             } catch (Exception e) {
                 status.setError("Failed to log work for issue " + issue.Key, e);
             }
+            parent.safeInvoke(new MethodInvoker(() => {
+                                                    if (closeDialogOnFinish) Close();
+                                                    if (finished != null) finished();
+                                                }));
         }
 
         private DateTime getStartTime() {
@@ -184,6 +194,20 @@ namespace Atlassian.plvs.dialogs.jira {
             if (e.KeyChar == (char)Keys.Escape) {
                 Close();
             }
+        }
+
+        private void logWorkLoad(object sender, EventArgs e) {
+            Text = getDialogName();
+            updateOkButtonState();
+
+            if (!activeIssueManager.isActive(issue) || activeIssueManager.MinutesInProgress <= 0) return;
+
+            int hours = activeIssueManager.MinutesInProgress / 60;
+            textTimeSpent.Text = (hours > 0 ? hours + "h " : "") + activeIssueManager.MinutesInProgress % 60 + "m";
+        }
+
+        protected virtual string getDialogName() {
+            return "Log Work for Issue " + issue.Key;
         }
     }
 }
