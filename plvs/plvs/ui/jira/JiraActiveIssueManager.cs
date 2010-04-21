@@ -92,7 +92,7 @@ namespace Atlassian.plvs.ui.jira {
             activeIssueDropDown = new ToolStripSplitButton();
             labelMinuteTimer = new ToolStripLabel();
             buttonStop = new ToolStripButton(Resources.ico_inactiveissue) {Text = STOP_WORK, DisplayStyle = ToolStripItemDisplayStyle.Image};
-            buttonStop.Click += (s, e) => deactivateActiveIssue(true);
+            buttonStop.Click += (s, e) => deactivateActiveIssue(true, null);
             buttonPause = new ToolStripButton(Resources.ico_pauseissue) { Text = PAUSE_WORK, DisplayStyle = ToolStripItemDisplayStyle.Image };
             buttonPause.Click += (s, e) => {
                                      paused = !paused;
@@ -347,7 +347,7 @@ namespace Atlassian.plvs.ui.jira {
 
         public void toggleActiveState(JiraIssue issue) {
             if (isActive(issue)) {
-                deactivateActiveIssue(true);
+                deactivateActiveIssue(true, null);
             } else {
                 setActive(issue);
             }
@@ -364,8 +364,14 @@ namespace Atlassian.plvs.ui.jira {
                 pastActiveIssues.Remove(i);
             }
             if (CurrentActiveIssue != null) {
-                deactivateActiveIssue(false);
+                deactivateActiveIssue(false, () => setActivePartDeux(issue, false));
             } else {
+                setActivePartDeux(issue, true);
+            }
+        }
+
+        private void setActivePartDeux(ActiveIssue issue, bool savePastIssues) {
+            if (savePastIssues) {
                 savePastActiveIssuesAndSetupDropDown();
             }
             CurrentActiveIssue = new ActiveIssue(issue.Key, issue.ServerGuid);
@@ -523,7 +529,7 @@ namespace Atlassian.plvs.ui.jira {
             }
         }
 
-        private void deactivateActiveIssue(bool notifyListeners) {
+        private void deactivateActiveIssue(bool notifyListeners, Action onFinished) {
             ++generation;
 
             runDeactivateIssueActions(() => {
@@ -537,9 +543,8 @@ namespace Atlassian.plvs.ui.jira {
                                           savePastActiveIssuesAndSetupDropDown();
                                           setEnabled(false);
                                           setNoIssueActiveInDropDown();
-                                          if (notifyListeners && ActiveIssueChanged != null) {
-                                              ActiveIssueChanged(this, null);
-                                          }
+                                          if (notifyListeners && ActiveIssueChanged != null) ActiveIssueChanged(this, null);
+                                          if (onFinished != null) onFinished();
                                       });
         }
 
