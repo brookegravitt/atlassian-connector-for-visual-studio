@@ -396,27 +396,58 @@ namespace Atlassian.plvs.ui.jira {
                 try {
                     int mods = 0;
                     JiraIssue issue = JiraServerFacade.Instance.getIssue(server, CurrentActiveIssue.Key);
-                    if (issue.Assignee == null || !issue.Assignee.Equals(server.UserName)) {
-                        jiraStatus.setInfo("Assigning issue to me...");
-                        JiraField assignee = new JiraField("assignee", null) { Values = new List<string> { server.UserName } };
-                        JiraServerFacade.Instance.updateIssue(issue, new List<JiraField> { assignee });
-                        ++mods;
+                    if (issue != null) {
+                        if (issue.Assignee == null || !issue.Assignee.Equals(server.UserName)) {
+                            jiraStatus.setInfo("Assigning issue to me...");
+                            JiraField assignee = new JiraField("assignee", null) { Values = new List<string> { server.UserName } };
+                            JiraServerFacade.Instance.updateIssue(issue, new List<JiraField> { assignee });
+                            ++mods;
+                        }
+                        List<JiraNamedEntity> actions = JiraServerFacade.Instance.getActionsForIssue(issue);
+                        foreach (JiraNamedEntity action in actions.Where(action => action.Id.Equals(START_PROGRESS_ACTION_ID))) {
+                            jiraStatus.setInfo("Setting issue in progress...");
+                            JiraServerFacade.Instance.runIssueActionWithoutParams(issue, action);
+                            ++mods;
+                            break;
+                        }
+                        if (mods > 0) {
+                            issue = JiraServerFacade.Instance.getIssue(server, CurrentActiveIssue.Key);
+                        }
                     }
-                    List<JiraNamedEntity> actions = JiraServerFacade.Instance.getActionsForIssue(issue);
-                    foreach (JiraNamedEntity action in actions.Where(action => action.Id.Equals(START_PROGRESS_ACTION_ID))) {
-                        jiraStatus.setInfo("Setting issue in progress...");
-                        JiraServerFacade.Instance.runIssueActionWithoutParams(issue, action);
-                        ++mods;
-                        break;
-                    }
-                    if (mods > 0) {
-                        issue = JiraServerFacade.Instance.getIssue(server, CurrentActiveIssue.Key);
-                    }
-                    jiraStatus.setInfo("Work on issue " + issue.Key + " started");
+                    jiraStatus.setInfo("Work on issue " + CurrentActiveIssue.Key + " started");
                     container.safeInvoke(new MethodInvoker(() => {
                                                                JiraIssueListModelImpl.Instance.updateIssue(issue);
                                                                onFinish();
                                                            }));
+                } catch (Exception e) {
+                    jiraStatus.setError(FAILED_TO_START_WORK, e);
+                    PlvsUtils.showError(FAILED_TO_START_WORK, e);
+                }
+            } else {
+                PlvsUtils.showError(FAILED_TO_START_WORK, new Exception("Unknown JIRA server"));
+            }
+        }
+
+        private void runDeactivateIssueActions(Action onFinish) {
+            Thread t = PlvsUtils.createThread(() => runDeactivateIssueActionsWorker(onFinish));
+            t.Start();
+        }
+
+        private void runDeactivateIssueActionsWorker(Action onFinish) {
+            JiraServer server = JiraServerModel.Instance.getServer(new Guid(CurrentActiveIssue.ServerGuid));
+            if (server != null) {
+                try {
+                    JiraIssue issue = JiraServerFacade.Instance.getIssue(server, CurrentActiveIssue.Key);
+                    if (issue != null) {
+                        List<JiraNamedEntity> actions = JiraServerFacade.Instance.getActionsForIssue(issue);
+                        container.safeInvoke(new MethodInvoker(() => new DeactivateIssue(container, JiraIssueListModelImpl.Instance,
+                                                                                         JiraServerFacade.Instance,
+                                                                                         issue, jiraStatus, this, actions,
+                                                                                         () => {
+                                                                                             jiraStatus.setInfo("Work on issue " + CurrentActiveIssue.Key + " stopped");
+                                                                                             onFinish();
+                                                                                         }).ShowDialog()));
+                    }
                 } catch (Exception e) {
                     jiraStatus.setError(FAILED_TO_START_WORK, e);
                     PlvsUtils.showError(FAILED_TO_START_WORK, e);
@@ -494,19 +525,22 @@ namespace Atlassian.plvs.ui.jira {
 
         private void deactivateActiveIssue(bool notifyListeners) {
             ++generation;
-            pastActiveIssues.AddFirst(CurrentActiveIssue);
-            while (pastActiveIssues.Count > ACTIVE_ISSUE_LIST_SIZE) {
-                pastActiveIssues.RemoveLast();
-            }
-            CurrentActiveIssue = null;
-            storeActiveIssue();
-            activeIssueDropDown.Image = null;
-            savePastActiveIssuesAndSetupDropDown();
-            setEnabled(false);
-            setNoIssueActiveInDropDown();
-            if (notifyListeners && ActiveIssueChanged != null) {
-                ActiveIssueChanged(this, null);
-            }
+
+            runDeactivateIssueActions(() => {
+                                          pastActiveIssues.AddFirst(CurrentActiveIssue);
+                                          while (pastActiveIssues.Count > ACTIVE_ISSUE_LIST_SIZE) {
+                                              pastActiveIssues.RemoveLast();
+                                          }
+                                          CurrentActiveIssue = null;
+                                          storeActiveIssue();
+                                          activeIssueDropDown.Image = null;
+                                          savePastActiveIssuesAndSetupDropDown();
+                                          setEnabled(false);
+                                          setNoIssueActiveInDropDown();
+                                          if (notifyListeners && ActiveIssueChanged != null) {
+                                              ActiveIssueChanged(this, null);
+                                          }
+                                      });
         }
 
         public void resetTimeSpent() {

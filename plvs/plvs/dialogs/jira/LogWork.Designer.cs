@@ -1,5 +1,5 @@
 ﻿namespace Atlassian.plvs.dialogs.jira {
-    sealed partial class LogWork {
+    partial class LogWork {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -37,12 +37,14 @@
             this.buttonChange = new System.Windows.Forms.Button();
             this.textExplanation = new System.Windows.Forms.TextBox();
             this.buttonCancel = new System.Windows.Forms.Button();
+            this.logWorkPanel = new System.Windows.Forms.Panel();
+            this.logWorkPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonOk
             // 
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonOk.Location = new System.Drawing.Point(365, 169);
+            this.buttonOk.Location = new System.Drawing.Point(370, 174);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(89, 23);
             this.buttonOk.TabIndex = 6;
@@ -53,7 +55,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 13);
+            this.label1.Location = new System.Drawing.Point(15, 17);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(61, 13);
             this.label1.TabIndex = 2;
@@ -61,7 +63,7 @@
             // 
             // textTimeSpent
             // 
-            this.textTimeSpent.Location = new System.Drawing.Point(79, 10);
+            this.textTimeSpent.Location = new System.Drawing.Point(82, 14);
             this.textTimeSpent.Name = "textTimeSpent";
             this.textTimeSpent.Size = new System.Drawing.Size(148, 20);
             this.textTimeSpent.TabIndex = 0;
@@ -70,7 +72,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(275, 13);
+            this.label2.Location = new System.Drawing.Point(278, 17);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(100, 13);
             this.label2.TabIndex = 4;
@@ -79,7 +81,7 @@
             // radioAutoUpdate
             // 
             this.radioAutoUpdate.AutoSize = true;
-            this.radioAutoUpdate.Location = new System.Drawing.Point(290, 36);
+            this.radioAutoUpdate.Location = new System.Drawing.Point(293, 40);
             this.radioAutoUpdate.Name = "radioAutoUpdate";
             this.radioAutoUpdate.Size = new System.Drawing.Size(85, 17);
             this.radioAutoUpdate.TabIndex = 1;
@@ -90,7 +92,7 @@
             // radioLeaveUnchanged
             // 
             this.radioLeaveUnchanged.AutoSize = true;
-            this.radioLeaveUnchanged.Location = new System.Drawing.Point(290, 59);
+            this.radioLeaveUnchanged.Location = new System.Drawing.Point(293, 63);
             this.radioLeaveUnchanged.Name = "radioLeaveUnchanged";
             this.radioLeaveUnchanged.Size = new System.Drawing.Size(114, 17);
             this.radioLeaveUnchanged.TabIndex = 2;
@@ -101,7 +103,7 @@
             // radioUpdateManually
             // 
             this.radioUpdateManually.AutoSize = true;
-            this.radioUpdateManually.Location = new System.Drawing.Point(290, 82);
+            this.radioUpdateManually.Location = new System.Drawing.Point(293, 86);
             this.radioUpdateManually.Name = "radioUpdateManually";
             this.radioUpdateManually.Size = new System.Drawing.Size(105, 17);
             this.radioUpdateManually.TabIndex = 3;
@@ -112,7 +114,7 @@
             // 
             // textRemainingEstimate
             // 
-            this.textRemainingEstimate.Location = new System.Drawing.Point(401, 81);
+            this.textRemainingEstimate.Location = new System.Drawing.Point(404, 85);
             this.textRemainingEstimate.Name = "textRemainingEstimate";
             this.textRemainingEstimate.Size = new System.Drawing.Size(148, 20);
             this.textRemainingEstimate.TabIndex = 4;
@@ -121,7 +123,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 138);
+            this.label3.Location = new System.Drawing.Point(15, 142);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(52, 13);
             this.label3.TabIndex = 9;
@@ -130,7 +132,7 @@
             // labelEndTime
             // 
             this.labelEndTime.AutoSize = true;
-            this.labelEndTime.Location = new System.Drawing.Point(91, 138);
+            this.labelEndTime.Location = new System.Drawing.Point(94, 142);
             this.labelEndTime.Name = "labelEndTime";
             this.labelEndTime.Size = new System.Drawing.Size(79, 13);
             this.labelEndTime.TabIndex = 10;
@@ -138,7 +140,7 @@
             // 
             // buttonChange
             // 
-            this.buttonChange.Location = new System.Drawing.Point(191, 133);
+            this.buttonChange.Location = new System.Drawing.Point(194, 137);
             this.buttonChange.Name = "buttonChange";
             this.buttonChange.Size = new System.Drawing.Size(75, 23);
             this.buttonChange.TabIndex = 5;
@@ -150,7 +152,7 @@
             // 
             this.textExplanation.BackColor = System.Drawing.SystemColors.Control;
             this.textExplanation.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textExplanation.Location = new System.Drawing.Point(39, 36);
+            this.textExplanation.Location = new System.Drawing.Point(42, 40);
             this.textExplanation.Multiline = true;
             this.textExplanation.Name = "textExplanation";
             this.textExplanation.ReadOnly = true;
@@ -161,7 +163,7 @@
             // buttonCancel
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCancel.Location = new System.Drawing.Point(460, 169);
+            this.buttonCancel.Location = new System.Drawing.Point(465, 174);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(89, 23);
             this.buttonCancel.TabIndex = 7;
@@ -169,23 +171,32 @@
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
+            // logWorkPanel
+            // 
+            this.logWorkPanel.BackColor = System.Drawing.SystemColors.Control;
+            this.logWorkPanel.Controls.Add(this.textExplanation);
+            this.logWorkPanel.Controls.Add(this.label1);
+            this.logWorkPanel.Controls.Add(this.textTimeSpent);
+            this.logWorkPanel.Controls.Add(this.buttonChange);
+            this.logWorkPanel.Controls.Add(this.label2);
+            this.logWorkPanel.Controls.Add(this.labelEndTime);
+            this.logWorkPanel.Controls.Add(this.radioAutoUpdate);
+            this.logWorkPanel.Controls.Add(this.label3);
+            this.logWorkPanel.Controls.Add(this.radioLeaveUnchanged);
+            this.logWorkPanel.Controls.Add(this.textRemainingEstimate);
+            this.logWorkPanel.Controls.Add(this.radioUpdateManually);
+            this.logWorkPanel.Location = new System.Drawing.Point(0, 0);
+            this.logWorkPanel.Name = "logWorkPanel";
+            this.logWorkPanel.Size = new System.Drawing.Size(566, 175);
+            this.logWorkPanel.TabIndex = 13;
+            // 
             // LogWork
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(561, 204);
+            this.ClientSize = new System.Drawing.Size(566, 209);
+            this.Controls.Add(this.logWorkPanel);
             this.Controls.Add(this.buttonCancel);
-            this.Controls.Add(this.textExplanation);
-            this.Controls.Add(this.buttonChange);
-            this.Controls.Add(this.labelEndTime);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.textRemainingEstimate);
-            this.Controls.Add(this.radioUpdateManually);
-            this.Controls.Add(this.radioLeaveUnchanged);
-            this.Controls.Add(this.radioAutoUpdate);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.textTimeSpent);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.buttonOk);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -194,9 +205,11 @@
             this.MinimizeBox = false;
             this.Name = "LogWork";
             this.Text = "LogWork";
+            this.Load += new System.EventHandler(this.logWorkLoad);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.logWorkKeyPress);
+            this.logWorkPanel.ResumeLayout(false);
+            this.logWorkPanel.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -215,5 +228,6 @@
         private System.Windows.Forms.Button buttonChange;
         private System.Windows.Forms.TextBox textExplanation;
         private System.Windows.Forms.Button buttonCancel;
+        private System.Windows.Forms.Panel logWorkPanel;
     }
 }
