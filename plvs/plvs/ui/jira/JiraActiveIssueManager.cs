@@ -17,6 +17,7 @@ using Timer = System.Windows.Forms.Timer;
 namespace Atlassian.plvs.ui.jira {
     public class JiraActiveIssueManager {
         private readonly ToolStrip container;
+        private readonly StatusLabel jiraStatus;
         private readonly ToolStripButton buttonComment;
         private readonly ToolStripButton buttonLogWork;
         private readonly ToolStripButton buttonPause;
@@ -79,11 +80,15 @@ namespace Atlassian.plvs.ui.jira {
         private const string RESUME_WORK = "Resume Work on Active Issue";
         private const string LOG_WORK = "Log Work on Active Issue";
         private const string COMMENT = "Comment on Active Issue";
+        private const string FAILED_TO_START_WORK = "Failed to start work on issue";
+
+        private const int START_PROGRESS_ACTION_ID = 4;
 
         private readonly Timer minuteTimer;
 
         public JiraActiveIssueManager(ToolStrip container, StatusLabel jiraStatus) {
             this.container = container;
+            this.jiraStatus = jiraStatus;
             activeIssueDropDown = new ToolStripSplitButton();
             labelMinuteTimer = new ToolStripLabel();
             buttonStop = new ToolStripButton(Resources.ico_inactiveissue) {Text = STOP_WORK, DisplayStyle = ToolStripItemDisplayStyle.Image};
@@ -105,7 +110,7 @@ namespace Atlassian.plvs.ui.jira {
             buttonComment = new ToolStripButton(Resources.new_comment) { Text = COMMENT, DisplayStyle = ToolStripItemDisplayStyle.Image };
             buttonComment.Click += (s, e) => 
                 loadIssueAndRunAction((server, issue) => 
-                    container.safeInvoke(new MethodInvoker(() => addComment(issue, jiraStatus))), 
+                    container.safeInvoke(new MethodInvoker(() => addComment(issue))), 
                     CurrentActiveIssue);
 
             separator = new ToolStripSeparator();
@@ -134,7 +139,7 @@ namespace Atlassian.plvs.ui.jira {
             minuteTimer.Start();
         }
 
-        private void addComment(JiraIssue issue, StatusLabel jiraStatus) {
+        private void addComment(JiraIssue issue) {
             JiraServerFacade facade = JiraServerFacade.Instance;
             NewIssueComment dlg = new NewIssueComment(issue, facade);
             dlg.ShowDialog();
@@ -364,16 +369,60 @@ namespace Atlassian.plvs.ui.jira {
                 savePastActiveIssuesAndSetupDropDown();
             }
             CurrentActiveIssue = new ActiveIssue(issue.Key, issue.ServerGuid);
-            setEnabled(true);
-            activeIssueDropDown.Text = CurrentActiveIssue.Key;
-            MinutesInProgress = 0;
-            storeTimeSpent();
-            setTimeSpentString();
-            storeActiveIssue();
-            activeIssueDropDown.Image = null;
-            loadActiveIssueDetails();
-            if (ActiveIssueChanged != null) {
-                ActiveIssueChanged(this, null);
+
+            runActivateIssueActions(() => {
+                                        setEnabled(true);
+                                        activeIssueDropDown.Text = CurrentActiveIssue.Key;
+                                        MinutesInProgress = 0;
+                                        storeTimeSpent();
+                                        setTimeSpentString();
+                                        storeActiveIssue();
+                                        activeIssueDropDown.Image = null;
+                                        loadActiveIssueDetails();
+                                        if (ActiveIssueChanged != null) {
+                                            ActiveIssueChanged(this, null);
+                                        }
+                                    });
+        }
+
+        private void runActivateIssueActions(Action onFinish) {
+            Thread t = PlvsUtils.createThread(() => runActivateIssueActionsWorker(onFinish));
+            t.Start();
+        }
+
+        private void runActivateIssueActionsWorker(Action onFinish) {
+            JiraServer server = JiraServerModel.Instance.getServer(new Guid(CurrentActiveIssue.ServerGuid));
+            if (server != null) {
+                try {
+                    int mods = 0;
+                    JiraIssue issue = JiraServerFacade.Instance.getIssue(server, CurrentActiveIssue.Key);
+                    if (issue.Assignee == null || !issue.Assignee.Equals(server.UserName)) {
+                        jiraStatus.setInfo("Assigning issue to me...");
+                        JiraField assignee = new JiraField("assignee", null) { Values = new List<string> { server.UserName } };
+                        JiraServerFacade.Instance.updateIssue(issue, new List<JiraField> { assignee });
+                        ++mods;
+                    }
+                    List<JiraNamedEntity> actions = JiraServerFacade.Instance.getActionsForIssue(issue);
+                    foreach (JiraNamedEntity action in actions.Where(action => action.Id.Equals(START_PROGRESS_ACTION_ID))) {
+                        jiraStatus.setInfo("Setting issue in progress...");
+                        JiraServerFacade.Instance.runIssueActionWithoutParams(issue, action);
+                        ++mods;
+                        break;
+                    }
+                    if (mods > 0) {
+                        issue = JiraServerFacade.Instance.getIssue(server, CurrentActiveIssue.Key);
+                    }
+                    jiraStatus.setInfo("Work on issue " + issue.Key + " started");
+                    container.safeInvoke(new MethodInvoker(() => {
+                                                               JiraIssueListModelImpl.Instance.updateIssue(issue);
+                                                               onFinish();
+                                                           }));
+                } catch (Exception e) {
+                    jiraStatus.setError(FAILED_TO_START_WORK, e);
+                    PlvsUtils.showError(FAILED_TO_START_WORK, e);
+                }
+            } else {
+                PlvsUtils.showError(FAILED_TO_START_WORK, new Exception("Unknown JIRA server"));
             }
         }
 

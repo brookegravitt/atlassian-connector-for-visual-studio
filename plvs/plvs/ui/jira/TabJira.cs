@@ -615,20 +615,22 @@ namespace Atlassian.plvs.ui.jira {
         public event EventHandler<EventArgs> SelectedServerChanged;
 
         private void restoreSelectedIssue(JiraIssue issue) {
-            if (issue == null) {
-                return;
-            }
+            this.safeInvoke(new MethodInvoker(() => {
+                                                  if (issue == null) {
+                                                      return;
+                                                  }
 
-            IEnumerable<TreeNodeAdv> nodes = issuesTree.AllNodes;
-            foreach (TreeNodeAdv node in nodes) {
-                IssueNode tag = node.Tag as IssueNode;
-                if (tag == null || !tag.Issue.Key.Equals(issue.Key) || !tag.Issue.Server.GUID.Equals(issue.Server.GUID)) {
-                    continue;
-                }
+                                                  IEnumerable<TreeNodeAdv> nodes = issuesTree.AllNodes;
+                                                  foreach (TreeNodeAdv node in nodes) {
+                                                      IssueNode tag = node.Tag as IssueNode;
+                                                      if (tag == null || !tag.Issue.Key.Equals(issue.Key) || !tag.Issue.Server.GUID.Equals(issue.Server.GUID)) {
+                                                          continue;
+                                                      }
 
-                issuesTree.SelectedNode = node;
-                break;
-            }
+                                                      issuesTree.SelectedNode = node;
+                                                      break;
+                                                  }
+                                              }));
         }
 
         private void reloadIssues() {
