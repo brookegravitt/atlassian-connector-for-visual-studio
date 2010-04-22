@@ -23,11 +23,11 @@ namespace Atlassian.plvs.scm {
         }
 
         private static string getCommentText() {
-            JiraIssue issue = AtlassianPanel.Instance.Jira.SelectedIssue;
-            if (issue == null) {
+            JiraActiveIssueManager.ActiveIssue issue = AtlassianPanel.Instance.Jira.ActiveIssueManager.CurrentActiveIssue;
+            if (issue == null || !issue.Enabled) {
                 return NO_ISSUE_SELECTED;
             }
-            return "Commit message is set to: \"" + issue.Key + " - " + issue.Summary + "\"";
+            return "Commit message is set to: \"" + issue.Key + (issue.Summary != null ? " - " + issue.Summary : "") + "\"";
         }
     }
 }
