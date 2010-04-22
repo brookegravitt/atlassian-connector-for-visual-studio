@@ -40,12 +40,14 @@ namespace Atlassian.plvs.ui.jira {
             public ActiveIssue(string key, string serverGuid) {
                 Key = key;
                 ServerGuid = serverGuid;
+                Enabled = true;
             }
 
             public string Key { get; private set; }
             public string ServerGuid { get; private set; }
-            public string summary { get; set; }
-            public Image icon { get; set; }
+            public string Summary { get; set; }
+            public Image Icon { get; set; }
+            public bool Enabled { get; set; }
 
             public bool Equals(ActiveIssue other) {
                 if (ReferenceEquals(null, other)) return false;
@@ -235,19 +237,29 @@ namespace Atlassian.plvs.ui.jira {
                     buttonPause.Image = Resources.ico_activateissue;
                 }
                 setTimeSpentString();
+                CurrentActiveIssue = null;
+                setEnabled(false);
                 ICollection<JiraServer> jiraServers = JiraServerModel.Instance.getAllEnabledServers();
-                if (jiraServers.Any(server => server.GUID.ToString().Equals(activeIssueServerGuidStr))) {
+                foreach (var server in jiraServers.Where(server => server.GUID.ToString().Equals(activeIssueServerGuidStr))) {
                     setEnabled(true);
                     CurrentActiveIssue = new ActiveIssue(activeIssueKey, activeIssueServerGuidStr);
+                    break;
                 }
             }
             loadPastActiveIssues(store);
-            if (CurrentActiveIssue != null) {
-                activeIssueDropDown.Text = activeIssueKey;
-            }
+            setDropDownTextFromCurrentActiveIssue();
 
             Thread t = PlvsUtils.createThread(() => loadIssueInfosWorker(generation));
             t.Start();
+        }
+
+        private void setDropDownTextFromCurrentActiveIssue() {
+            if (CurrentActiveIssue != null && CurrentActiveIssue.Enabled) {
+                activeIssueDropDown.Text = CurrentActiveIssue.Key;
+            } else {
+                setNoIssueActiveInDropDown();
+            }
+            activeIssueDropDown.Image = null;
         }
 
         private delegate void OnIssueLoaded(JiraServer server, JiraIssue issue);
@@ -286,16 +298,19 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void loadPastActiveIssues(ParameterStore store) {
+            pastActiveIssues.Clear();
             int pastIssueCount = Math.Min(store.loadParameter(PAST_ACTIVE_ISSUE_COUNT, 0), ACTIVE_ISSUE_LIST_SIZE);
             for (int i = 0; i < pastIssueCount; ++i) {
                 string key = store.loadParameter(PAST_ACTIVE_ISSUE_KEY + i, null);
                 string guid = store.loadParameter(PAST_ACTIVE_ISSUE_SERVER_GUID + i, null);
-                if (key != null && guid != null) {
-                    ICollection<JiraServer> jiraServers = JiraServerModel.Instance.getAllEnabledServers();
-                    if (jiraServers.Any(server => server.GUID.ToString().Equals(guid))) {
-                        ActiveIssue issue = new ActiveIssue(key, guid);
-                        pastActiveIssues.AddLast(issue);
-                    }
+                if (key == null || guid == null) continue;
+
+                ICollection<JiraServer> jiraServers = JiraServerModel.Instance.getAllServers();
+                foreach (ActiveIssue issue in from server in jiraServers
+                                              where server.GUID.ToString().Equals(guid)
+                                              select new ActiveIssue(key, guid) {Enabled = server.Enabled}) {
+                    pastActiveIssues.AddLast(issue);
+                    break;
                 }
             }
             savePastActiveIssuesAndSetupDropDown();
@@ -305,15 +320,16 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void setNoIssueActiveInDropDown() {
+            setEnabled(false);
             activeIssueDropDown.Enabled = true;
             activeIssueDropDown.Visible = true;
             activeIssueDropDown.Text = NO_ISSUE_ACTIVE;
+            activeIssueDropDown.Image = null;
             separator.Enabled = true;
             separator.Visible = true;
         }
 
         private void savePastActiveIssuesAndSetupDropDown() {
-            activeIssueDropDown.DropDown.Items.Clear();
             ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.ACTIVE_ISSUES);
             store.storeParameter(PAST_ACTIVE_ISSUE_COUNT, pastActiveIssues.Count);
             int i = 0;
@@ -322,7 +338,8 @@ namespace Atlassian.plvs.ui.jira {
                 store.storeParameter(PAST_ACTIVE_ISSUE_SERVER_GUID + i, issue.ServerGuid);
                 ++i;
             }
-            foreach (var issue in pastActiveIssues.Reverse()) {
+            activeIssueDropDown.DropDown.Items.Clear();
+            foreach (var issue in pastActiveIssues.Reverse().Where(issue => issue.Enabled)) {
                 activeIssueDropDown.DropDown.Items.Add(new PastActiveIssueMenuItem(this, issue));
             }
             loadPastActiveIssuesDetails();
@@ -378,7 +395,7 @@ namespace Atlassian.plvs.ui.jira {
 
             runActivateIssueActions(() => {
                                         setEnabled(true);
-                                        activeIssueDropDown.Text = CurrentActiveIssue.Key;
+                                        setDropDownTextFromCurrentActiveIssue();
                                         MinutesInProgress = 0;
                                         storeTimeSpent();
                                         setTimeSpentString();
@@ -485,7 +502,7 @@ namespace Atlassian.plvs.ui.jira {
         private void loadPastActiveIssuesDetailsWorker(int gen) {
             List<JiraIssue> issues = (from pastIssue in pastActiveIssues
                                       let server = JiraServerModel.Instance.getServer(new Guid(pastIssue.ServerGuid))
-                                      where server != null
+                                      where server != null && server.Enabled
                                       select getIssueFromModelOrServer(server, pastIssue.Key)
                                       into issue where issue != null select issue).ToList();
             container.safeInvoke(new MethodInvoker(() => {
@@ -514,9 +531,13 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void setActiveIssueDropdownTextAndImage(JiraServer server, JiraIssue issue) {
-            activeIssueDropDown.Text = getShortIssueSummary(issue);
-            ImageCache.ImageInfo imageInfo = ImageCache.Instance.getImage(server, issue.IssueTypeIconUrl);
-            activeIssueDropDown.Image = imageInfo != null ? imageInfo.Img : null;
+            if (CurrentActiveIssue != null && CurrentActiveIssue.Enabled) {
+                activeIssueDropDown.Text = getShortIssueSummary(issue);
+                ImageCache.ImageInfo imageInfo = ImageCache.Instance.getImage(server, issue.IssueTypeIconUrl);
+                activeIssueDropDown.Image = imageInfo != null ? imageInfo.Img : null;
+            } else {
+                setNoIssueActiveInDropDown();
+            }
         }
 
         private void storeActiveIssue() {
@@ -542,7 +563,6 @@ namespace Atlassian.plvs.ui.jira {
                                           storeActiveIssue();
                                           activeIssueDropDown.Image = null;
                                           savePastActiveIssuesAndSetupDropDown();
-                                          setEnabled(false);
                                           setNoIssueActiveInDropDown();
                                           if (notifyListeners && ActiveIssueChanged != null) ActiveIssueChanged(this, null);
                                           if (onFinished != null) onFinished();

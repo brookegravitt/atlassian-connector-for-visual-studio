@@ -17,10 +17,10 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
         protected override AbstractIssueGroupNode findGroupNode(JiraIssue issue) {
             if (!groupNodes.ContainsKey(issue.ProjectKey)) {
                 SortedDictionary<string, JiraProject> projects = JiraServerCache.Instance.getProjects(issue.Server);
-                JiraProject jiraProject = projects[issue.ProjectKey];
                 if (!projects.ContainsKey(issue.ProjectKey)) {
                     return null;
                 }
+                JiraProject jiraProject = projects[issue.ProjectKey];
                 groupNodes[issue.ProjectKey] = new ByProjectIssueGroupNode(jiraProject);
             }
             return groupNodes[issue.ProjectKey];
