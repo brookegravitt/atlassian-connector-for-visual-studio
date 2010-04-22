@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
@@ -281,9 +282,13 @@ namespace Atlassian.plvs.ui.jira {
             JiraServer server = JiraServerModel.Instance.getServer(new Guid(issue.ServerGuid));
             if (server == null) return;
 
-            JiraIssue jiraIssue = JiraServerFacade.Instance.getIssue(server, issue.Key);
-            if (jiraIssue != null) {
-                loaded(server, jiraIssue);
+            try {
+                JiraIssue jiraIssue = JiraServerFacade.Instance.getIssue(server, issue.Key);
+                if (jiraIssue != null) {
+                    loaded(server, jiraIssue);
+                }
+            } catch (Exception e) {
+                Debug.WriteLine("JiraActiveIssueManager.loadIssuAndRunAction() - exception: " + e);
             }
         }
 
@@ -526,8 +531,13 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private static JiraIssue getIssueFromModelOrServer(JiraServer server, string issueKey) {
-            JiraIssue issue = JiraIssueListModelImpl.Instance.getIssue(issueKey, server);
-            return issue ?? JiraServerFacade.Instance.getIssue(server, issueKey);
+            try {
+                JiraIssue issue = JiraIssueListModelImpl.Instance.getIssue(issueKey, server);
+                return issue ?? JiraServerFacade.Instance.getIssue(server, issueKey);
+            } catch (Exception e) {
+                Debug.WriteLine("JiraActiveIssueManager.getIssueFromModelOrServer() - exception: " + e);
+            }
+            return null;
         }
 
         private void setActiveIssueDropdownTextAndImage(JiraServer server, JiraIssue issue) {
