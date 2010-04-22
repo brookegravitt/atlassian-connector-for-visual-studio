@@ -1,5 +1,4 @@
 ﻿using System.Windows.Forms;
-using Atlassian.plvs.api.jira;
 using Atlassian.plvs.ui.jira;
 using Atlassian.plvs.windows;
 
