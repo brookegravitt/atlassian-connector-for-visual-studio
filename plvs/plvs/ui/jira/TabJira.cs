@@ -808,11 +808,11 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         public void searchIssue() {
-            TreeNodeWithJiraServer node = filtersTree.SelectedNode as TreeNodeWithJiraServer;
-            if (node == null) {
+            JiraServer server = CurrentlySelectedServerOrDefault;
+            if (server == null) {
                 return;
             }
-            SearchIssue dlg = new SearchIssue(node.Server, MODEL, status);
+            SearchIssue dlg = new SearchIssue(server, MODEL, status);
             dlg.ShowDialog(this);
         }
 
