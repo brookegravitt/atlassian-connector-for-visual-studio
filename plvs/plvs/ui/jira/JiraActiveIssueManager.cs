@@ -240,10 +240,8 @@ namespace Atlassian.plvs.ui.jira {
                 CurrentActiveIssue = null;
                 setEnabled(false);
                 ICollection<JiraServer> jiraServers = JiraServerModel.Instance.getAllEnabledServers();
-                foreach (var server in jiraServers.Where(server => server.GUID.ToString().Equals(activeIssueServerGuidStr))) {
-                    setEnabled(true);
+                if (jiraServers.Where(server => server.GUID.ToString().Equals(activeIssueServerGuidStr)).Any()) {
                     CurrentActiveIssue = new ActiveIssue(activeIssueKey, activeIssueServerGuidStr);
-                    break;
                 }
             }
             loadPastActiveIssues(store);
@@ -255,6 +253,7 @@ namespace Atlassian.plvs.ui.jira {
 
         private void setDropDownTextFromCurrentActiveIssue() {
             if (CurrentActiveIssue != null && CurrentActiveIssue.Enabled) {
+                setEnabled(true);
                 activeIssueDropDown.Text = CurrentActiveIssue.Key;
             } else {
                 setNoIssueActiveInDropDown();
@@ -315,19 +314,18 @@ namespace Atlassian.plvs.ui.jira {
                 }
             }
             savePastActiveIssuesAndSetupDropDown();
-            if (pastIssueCount > 0) {
-                setNoIssueActiveInDropDown();
-            }
+            setNoIssueActiveInDropDown();
         }
 
         private void setNoIssueActiveInDropDown() {
             setEnabled(false);
-            activeIssueDropDown.Enabled = true;
-            activeIssueDropDown.Visible = true;
+            Boolean enableDropDown = pastActiveIssues.Count > 0;
+            activeIssueDropDown.Enabled = enableDropDown;
+            activeIssueDropDown.Visible = enableDropDown;
             activeIssueDropDown.Text = NO_ISSUE_ACTIVE;
             activeIssueDropDown.Image = null;
-            separator.Enabled = true;
-            separator.Visible = true;
+            separator.Enabled = enableDropDown;
+            separator.Visible = enableDropDown;
         }
 
         private void savePastActiveIssuesAndSetupDropDown() {
