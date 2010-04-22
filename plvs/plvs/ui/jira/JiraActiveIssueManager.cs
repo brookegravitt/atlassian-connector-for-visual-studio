@@ -273,6 +273,7 @@ namespace Atlassian.plvs.ui.jira {
         private void loadActiveIssueDetailsWorker(int gen) {
             loadIssueAndRunAction((server, issue) => container.safeInvoke(new MethodInvoker(delegate {
                                                                                                 if (gen != generation) return;
+                                                                                                CurrentActiveIssue.Summary = issue.Summary;
                                                                                                 setActiveIssueDropdownTextAndImage(server, issue);
                                                                                             })), CurrentActiveIssue);
         }
@@ -490,6 +491,7 @@ namespace Atlassian.plvs.ui.jira {
                 Thread t = PlvsUtils.createThread(() => loadActiveIssueDetailsWorker(generation));
                 t.Start();
             } else {
+                CurrentActiveIssue.Summary = issue.Summary;
                 setActiveIssueDropdownTextAndImage(server, issue);
             }
         }
