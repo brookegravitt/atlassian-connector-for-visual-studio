@@ -227,6 +227,9 @@ namespace Atlassian.plvs.ui.jira {
 
         public void init() {
             ++generation;
+            setTimeSpentString();
+            CurrentActiveIssue = null;
+            setEnabled(false);
             ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.ACTIVE_ISSUES);
             string activeIssueKey = store.loadParameter(ACTIVE_ISSUE_KEY, null);
             string activeIssueServerGuidStr = store.loadParameter(ACTIVE_ISSUE_SERVER_GUID, null);
@@ -237,9 +240,6 @@ namespace Atlassian.plvs.ui.jira {
                     buttonPause.Text = RESUME_WORK;
                     buttonPause.Image = Resources.ico_activateissue;
                 }
-                setTimeSpentString();
-                CurrentActiveIssue = null;
-                setEnabled(false);
                 ICollection<JiraServer> jiraServers = JiraServerModel.Instance.getAllEnabledServers();
                 if (jiraServers.Where(server => server.GUID.ToString().Equals(activeIssueServerGuidStr)).Any()) {
                     CurrentActiveIssue = new ActiveIssue(activeIssueKey, activeIssueServerGuidStr);
