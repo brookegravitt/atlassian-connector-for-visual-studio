@@ -76,7 +76,7 @@ namespace Atlassian.plvs.ui.jira {
         private bool paused;
         public int MinutesInProgress { get; private set; }
 
-        private const string NO_ISSUE_ACTIVE = "No Issue Active";
+        public const string NO_ISSUE_ACTIVE = "No Issue Active";
         private const string STOP_WORK = "Stop Work on Active Issue";
         private const string PAUSE_WORK = "Pause Work on Active Issue";
         private const string RESUME_WORK = "Resume Work on Active Issue";

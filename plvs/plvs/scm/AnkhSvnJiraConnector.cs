@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Ankh.ExtensionPoints.IssueTracker;
-using Atlassian.plvs.api.jira;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.ui.jira;
 using Atlassian.plvs.util;
@@ -20,7 +19,9 @@ namespace Atlassian.plvs.scm {
         }
 
         public override string Name {
-            get { return ANKH_CONNECTOR_NAME; }
+            get {
+                return ANKH_CONNECTOR_NAME;
+            }
         }
 
         public override IssueRepositoryConfigurationPage ConfigurationPage {
@@ -44,11 +45,23 @@ namespace Atlassian.plvs.scm {
 
             public override Uri RepositoryUri { get { return new Uri("http://www.atlassian.com/software/jira"); } }
 
-            public override string Label { get { return "JIRA"; } }
+            public override string Label {
+                get {
+                    return "JIRA";
+                }
+            }
 
-            public override string RepositoryId { get { return "JIRA"; } }
+            public override string RepositoryId {
+                get {
+                    return "JIRA";
+                }
+            }
 
-            public override string ConnectorName { get { return ANKH_CONNECTOR_NAME; } }
+            public override string ConnectorName {
+                get {
+                    return ANKH_CONNECTOR_NAME;
+                }
+            }
 
             readonly Dictionary<string, object> customProperties = new Dictionary<string, object>();
 
@@ -57,7 +70,15 @@ namespace Atlassian.plvs.scm {
             }
 
             public IntPtr Handle {
-                get { return ctrl.Handle; }
+                get {
+                    return ctrl.Handle;
+                }
+            }
+
+            public override IWin32Window Window {
+                get {
+                    return ctrl;
+                }
             }
 
             public override void PreCommit(PreCommitArgs args) {
@@ -93,12 +114,24 @@ namespace Atlassian.plvs.scm {
             }
 
             public override IssueRepositorySettings Settings {
-                get { return ctrl.Settings; }
-                set { ctrl.Settings = value; }
+                get {
+                    return ctrl.Settings;
+                }
+                set {
+                    ctrl.Settings = value;
+                }
             }
 
             public IntPtr Handle {
-                get { return ctrl.Handle; }
+                get {
+                    return ctrl.Handle;
+                }
+            }
+
+            public override IWin32Window Window {
+                get {
+                    return ctrl;
+                }
             }
         }
     }
