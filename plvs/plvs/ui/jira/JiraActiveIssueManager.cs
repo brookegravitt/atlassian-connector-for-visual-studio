@@ -96,7 +96,7 @@ namespace Atlassian.plvs.ui.jira {
             activeIssueDropDown = new ToolStripSplitButton();
             labelMinuteTimer = new ToolStripLabel();
             buttonStop = new ToolStripButton(Resources.ico_inactiveissue) {Text = STOP_WORK, DisplayStyle = ToolStripItemDisplayStyle.Image};
-            buttonStop.Click += (s, e) => deactivateActiveIssue(true, null);
+            buttonStop.Click += (s, e) => deactivateActiveIssue(true, null, null);
             buttonPause = new ToolStripButton(Resources.ico_pauseissue) { Text = PAUSE_WORK, DisplayStyle = ToolStripItemDisplayStyle.Image };
             buttonPause.Click += (s, e) => {
                                      paused = !paused;
@@ -238,6 +238,7 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private static int generation;
+        private const string EXPLANATION_TEXT = "Work on issue {0} has to be stopped before you can start work issue {1}";
 
         private const int ONE_MINUTE = 60000;
         private const int MAX_SUMMARY_LENGTH = 20;
@@ -387,7 +388,7 @@ namespace Atlassian.plvs.ui.jira {
 
         public void toggleActiveState(JiraIssue issue) {
             if (isActive(issue)) {
-                deactivateActiveIssue(true, null);
+                deactivateActiveIssue(true, null, null);
             } else {
                 setActive(issue);
             }
@@ -404,7 +405,7 @@ namespace Atlassian.plvs.ui.jira {
                 pastActiveIssues.Remove(i);
             }
             if (CurrentActiveIssue != null) {
-                deactivateActiveIssue(false, () => setActivePartDeux(issue, false));
+                deactivateActiveIssue(false, issue.Key, () => setActivePartDeux(issue, false));
             } else {
                 setActivePartDeux(issue, true);
             }
@@ -477,26 +478,33 @@ namespace Atlassian.plvs.ui.jira {
             }
         }
 
-        private void runDeactivateIssueActions(Action onFinish) {
-            Thread t = PlvsUtils.createThread(() => runDeactivateIssueActionsWorker(onFinish));
+        private void runDeactivateIssueActions(string newActiveIssue, Action onFinish) {
+            Thread t = PlvsUtils.createThread(() => runDeactivateIssueActionsWorker(newActiveIssue, onFinish));
             t.Start();
         }
 
-        private void runDeactivateIssueActionsWorker(Action onFinish) {
+        private void runDeactivateIssueActionsWorker(string newActiveIssue, Action onFinish) {
             JiraServer server = JiraServerModel.Instance.getServer(new Guid(CurrentActiveIssue.ServerGuid));
             if (server != null) {
                 try {
                     JiraIssue issue = JiraServerFacade.Instance.getIssue(server, CurrentActiveIssue.Key);
                     if (issue != null) {
                         List<JiraNamedEntity> actions = JiraServerFacade.Instance.getActionsForIssue(issue);
-                        container.safeInvoke(new MethodInvoker(() => new DeactivateIssue(container, JiraIssueListModelImpl.Instance,
-                                                                                         JiraServerFacade.Instance,
-                                                                                         ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.ACTIVE_ISSUES),
-                                                                                         issue, jiraStatus, this, actions,
-                                                                                         () => {
-                                                                                             jiraStatus.setInfo("Work on issue " + CurrentActiveIssue.Key + " stopped");
-                                                                                             onFinish();
-                                                                                         }).ShowDialog()));
+                        container.safeInvoke(
+                            new MethodInvoker(
+                                () => new DeactivateIssue(newActiveIssue != null ? string.Format(EXPLANATION_TEXT, issue.Key, newActiveIssue) : null,
+                                                          container, 
+                                                          JiraIssueListModelImpl.Instance,
+                                                          JiraServerFacade.Instance,
+                                                          ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.ACTIVE_ISSUES),
+                                                          issue, 
+                                                          jiraStatus, 
+                                                          this, 
+                                                          actions, 
+                                                          () => {
+                                                              jiraStatus.setInfo("Work on issue " + CurrentActiveIssue.Key + " stopped");
+                                                              onFinish();
+                                                          }).ShowDialog()));
                     }
                 } catch (Exception e) {
                     jiraStatus.setError(FAILED_TO_START_WORK, e);
@@ -586,10 +594,10 @@ namespace Atlassian.plvs.ui.jira {
             }
         }
 
-        private void deactivateActiveIssue(bool notifyListeners, Action onFinished) {
+        private void deactivateActiveIssue(bool notifyListeners, string newActiveIssue, Action onFinished) {
             ++generation;
 
-            runDeactivateIssueActions(() => {
+            runDeactivateIssueActions(newActiveIssue, () => {
                                           pastActiveIssues.AddFirst(CurrentActiveIssue);
                                           while (pastActiveIssues.Count > ACTIVE_ISSUE_LIST_SIZE) {
                                               pastActiveIssues.RemoveLast();
