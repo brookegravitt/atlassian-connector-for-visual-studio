@@ -18,6 +18,7 @@ using Atlassian.plvs.ui.jira.issuefilternodes;
 using Atlassian.plvs.ui.jira.issues;
 using Atlassian.plvs.ui.jira.issues.treemodels;
 using Atlassian.plvs.util;
+using Atlassian.plvs.windows;
 using EnvDTE;
 using Process=System.Diagnostics.Process;
 using Thread=System.Threading.Thread;
@@ -433,7 +434,10 @@ namespace Atlassian.plvs.ui.jira {
                 Controls.Remove(linkAddJiraServer);
             }
 
+            AtlassianPanel.Instance.JiraTabVisible = JiraServerModel.Instance.getAllEnabledServers().Count > 0;
+
             if (JiraServerModel.Instance.getAllServers().Count == 0) {
+
                 linkAddJiraServer = new LinkLabel
                                     {
                                         Dock = DockStyle.Fill,
@@ -569,7 +573,7 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void searchingModel_ModelChanged(object sender, EventArgs e) {
-            Invoke(new MethodInvoker(delegate
+            this.safeInvoke(new MethodInvoker(delegate
                                          {
                                              if (!(filtersTree.FilterOrRecentlyViewedSelected)) {
                                                  return;
@@ -943,17 +947,27 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         public void reinitialize(DTE dte) {
-            PlvsUtils.updateKeyBindingsInformation(dte, new Dictionary<string, ToolStripItem>
+            if (dte != null) {
+                PlvsUtils.updateKeyBindingsInformation(dte, new Dictionary<string, ToolStripItem>
                                                         {
                                                             { "Tools.FindIssue", buttonSearch },
                                                             { "Tools.CreateIssue", buttonCreate }
                                                         });
+            }
 
             searchingModel.reinit(MODEL);
             registerIssueModelListener();
-            Invoke(new MethodInvoker(initIssuesTree));
-            reloadKnownJiraServers();
-            comboGroupBy.restoreSelectedIndex();
+            if (InvokeRequired) {
+                this.safeInvoke(new MethodInvoker(() => {
+                    initIssuesTree();
+                    reloadKnownJiraServers();
+                    comboGroupBy.restoreSelectedIndex();
+                }));
+            } else {
+                initIssuesTree();
+                reloadKnownJiraServers();
+                comboGroupBy.restoreSelectedIndex();
+            }
         }
 
         public void shutdown() {}

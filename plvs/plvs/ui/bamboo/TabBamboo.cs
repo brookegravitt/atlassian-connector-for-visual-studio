@@ -13,6 +13,7 @@ using Atlassian.plvs.models.bamboo;
 using Atlassian.plvs.ui.bamboo.treemodels;
 using Atlassian.plvs.util;
 using Atlassian.plvs.util.jira;
+using Atlassian.plvs.windows;
 using Timer=System.Timers.Timer;
 
 namespace Atlassian.plvs.ui.bamboo {
@@ -67,6 +68,7 @@ namespace Atlassian.plvs.ui.bamboo {
             pollTimer.Enabled = false;
             pollTimer.Start();
             notifyBuildStatus.Visible = BambooServerModel.Instance.getAllEnabledServers().Count > 0;
+            AtlassianPanel.Instance.BambooTabVisible = BambooServerModel.Instance.getAllEnabledServers().Count > 0;
 
             setNextPollTime();
 
@@ -74,7 +76,7 @@ namespace Atlassian.plvs.ui.bamboo {
             infoTimer.AutoReset = true;
             infoTimer.Start();
 
-            Invoke(new MethodInvoker(initBuildTree));
+            this.safeInvoke(new MethodInvoker(initBuildTree));
         }
 
         private void initBuildTree() {
