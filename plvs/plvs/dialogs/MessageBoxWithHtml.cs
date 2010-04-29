@@ -14,16 +14,20 @@ namespace Atlassian.plvs.dialogs {
         private Action copyToClipboardClicked;
 
         public static void showError(string title, string html, Action copyToClipboardClicked, ExceptionLinkCallback callback) {
-            MessageBoxWithHtml box = new MessageBoxWithHtml
-                                     {
-                                         Text = title,
-                                         labelIcon = {Image = SystemIcons.Error.ToBitmap()},
-                                         copyToClipboardClicked = copyToClipboardClicked,
-                                         callback = callback
-                                     };
-            box.webContent.DocumentText = getHtml(box.labelIcon.Font, html);
-//            box.webContent.IsWebBrowserContextMenuEnabled = true;
-            box.ShowDialog();
+            try {
+                MessageBoxWithHtml box = new MessageBoxWithHtml {
+                    Text = title,
+                    labelIcon = { Image = SystemIcons.Error.ToBitmap() },
+                    copyToClipboardClicked = copyToClipboardClicked,
+                    callback = callback
+                };
+                box.webContent.DocumentText = getHtml(box.labelIcon.Font, html);
+                //            box.webContent.IsWebBrowserContextMenuEnabled = true;
+                box.ShowDialog();
+            } catch (Exception e) {
+                Debug.WriteLine("MessageBoxWithHtml.showError() - exception: " + e);
+                MessageBox.Show(html, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private static string getHtml(Font font, string html) {

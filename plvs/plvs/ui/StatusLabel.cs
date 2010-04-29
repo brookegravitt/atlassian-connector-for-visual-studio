@@ -26,15 +26,17 @@ namespace Atlassian.plvs.ui {
 
         public void setError(string txt, ICollection<Exception> exceptions) {
             statusBar.safeInvoke(new MethodInvoker(delegate {
-                                                   targetLabel.BackColor = Color.LightPink;
-                                                   statusBar.BackColor = Color.LightPink;
-                                                   targetLabel.Text = txt;
-                                                   lastExceptions = exceptions;
-                                                   targetLabel.Visible = true;
-                                                   targetLabel.IsLink = true;
-                                                   targetLabel.Click += targetLabel_Click;
-                                                   targetLabel.Image = SystemIcons.Error.ToBitmap();
-                                               }));
+                                                       targetLabel.BackColor = Color.LightPink;
+                                                       statusBar.BackColor = Color.LightPink;
+                                                       targetLabel.Text = txt;
+                                                       lastExceptions = exceptions;
+                                                       targetLabel.Visible = true;
+                                                       targetLabel.IsLink = true;
+                                                       targetLabel.Click += targetLabel_Click;
+                                                       targetLabel.ImageAlign = ContentAlignment.MiddleRight;
+                                                       targetLabel.Image = SystemIcons.Error.ToBitmap();
+                                                       targetLabel.TextAlign = ContentAlignment.MiddleRight;
+                                                   }));
         }
 
         private void targetLabel_Click(object sender, EventArgs e) {
@@ -49,18 +51,20 @@ namespace Atlassian.plvs.ui {
             targetLabel.Text = "";
             targetLabel.IsLink = false;
             targetLabel.Image = null;
+            targetLabel.TextAlign = ContentAlignment.MiddleRight;
         }
 
         public void setInfo(string txt) {
             statusBar.safeInvoke(new MethodInvoker(delegate {
-                                                   lastExceptions = null;
-                                                   targetLabel.BackColor = SystemColors.Control;
-                                                   statusBar.BackColor = SystemColors.Control;
-                                                   targetLabel.Text = txt;
-                                                   targetLabel.Visible = true;
-                                                   targetLabel.IsLink = false;
-                                                   targetLabel.Image = null;
-                                               }));
+                                                       lastExceptions = null;
+                                                       targetLabel.BackColor = SystemColors.Control;
+                                                       statusBar.BackColor = SystemColors.Control;
+                                                       targetLabel.Text = txt;
+                                                       targetLabel.Visible = true;
+                                                       targetLabel.IsLink = false;
+                                                       targetLabel.Image = null;
+                                                       targetLabel.TextAlign = ContentAlignment.MiddleRight;
+                                                   }));
         }
     }
 }
