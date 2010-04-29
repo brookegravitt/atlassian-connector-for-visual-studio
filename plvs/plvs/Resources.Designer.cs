@@ -494,6 +494,13 @@ namespace Atlassian.plvs {
             }
         }
         
+        internal static System.Drawing.Bitmap ide_plugin_16_with_padding {
+            get {
+                object obj = ResourceManager.GetObject("ide_plugin_16_with_padding", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Icon ide_plugin_161 {
             get {
                 object obj = ResourceManager.GetObject("ide_plugin_161", resourceCulture);

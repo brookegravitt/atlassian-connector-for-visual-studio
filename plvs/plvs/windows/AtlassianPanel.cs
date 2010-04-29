@@ -28,6 +28,28 @@ namespace Atlassian.plvs.windows {
         public TabJira Jira { get { return tabJira; }}
         public TabBamboo Bamboo { get { return tabBamboo; }}
 
+        private bool jiraTabVisible;
+
+        public bool JiraTabVisible {
+            get { return jiraTabVisible; }
+            set { 
+                jiraTabVisible = value;
+                reinsertTabs();
+            }
+        }
+
+        private bool bambooTabVisible;
+
+        public bool BambooTabVisible {
+            get { return bambooTabVisible; }
+            set {
+                bambooTabVisible = value; 
+                reinsertTabs();
+            }
+        }
+
+        private LinkLabel linkAddServer;
+
         public AtlassianPanel() {
             InitializeComponent();
 
@@ -41,6 +63,43 @@ namespace Atlassian.plvs.windows {
 
             Jira.AddNewServerLinkClicked += jira_AddNewServerLinkClicked;
             Bamboo.AddNewServerLinkClicked += bamboo_AddNewServerLinkClicked;
+
+            reinsertTabs();
+        }
+
+        private void reinsertTabs() {
+            productTabs.TabPages.Clear();
+            if (JiraTabVisible) {
+                productTabs.TabPages.Add(tabIssues);
+            }
+            if (BambooTabVisible) {
+                productTabs.TabPages.Add(tabBuilds);
+            }
+            bool tabPanelVisible = productTabs.TabPages.Count > 0;
+            if (tabPanelVisible) {
+                if (linkAddServer != null && mainContainer.ContentPanel.Controls.Contains(linkAddServer)) {
+                    mainContainer.ContentPanel.Controls.Remove(linkAddServer);
+                }
+            } else {
+                if (linkAddServer == null || !mainContainer.ContentPanel.Controls.Contains(linkAddServer)) {
+                    linkAddServer = new LinkLabel {
+                        Dock = DockStyle.Fill,
+                        Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 238),
+                        Image = Resources.ide_plugin_16_with_padding,
+                        Location = new Point(0, 0),
+                        Name = "linkAddServers",
+                        Size = new Size(1120, 510),
+                        TabIndex = 0,
+                        TabStop = true,
+                        Text = "Add or Enable Servers",
+                        BackColor = Color.White,
+                        TextAlign = ContentAlignment.MiddleCenter
+                    };
+                    linkAddServer.Click += (s, e) => openProjectProperties(null);
+                    mainContainer.ContentPanel.Controls.Add(linkAddServer);
+                }
+            }
+            productTabs.Visible = tabPanelVisible;
         }
 
         private void bamboo_AddNewServerLinkClicked(object sender, EventArgs e) {
@@ -62,7 +121,7 @@ namespace Atlassian.plvs.windows {
             if (dialog.SomethingChanged) {
                 // todo: only do this for changed servers - add server model listeners
                 // currently this code blows :)
-                tabJira.reloadKnownJiraServers();
+                tabJira.reinitialize(null);
                 tabBamboo.reinitialize();
             }
         }

@@ -273,7 +273,9 @@ namespace Atlassian.plvs.ui.jira {
         private void loadActiveIssueDetailsWorker(int gen) {
             loadIssueAndRunAction((server, issue) => container.safeInvoke(new MethodInvoker(delegate {
                                                                                                 if (gen != generation) return;
-                                                                                                CurrentActiveIssue.Summary = issue.Summary;
+                                                                                                if (CurrentActiveIssue != null) {
+                                                                                                    CurrentActiveIssue.Summary = issue.Summary;
+                                                                                                }
                                                                                                 setActiveIssueDropdownTextAndImage(server, issue);
                                                                                             })), CurrentActiveIssue);
         }
@@ -396,6 +398,9 @@ namespace Atlassian.plvs.ui.jira {
                 savePastActiveIssuesAndSetupDropDown();
             }
             CurrentActiveIssue = new ActiveIssue(issue.Key, issue.ServerGuid);
+
+            paused = false;
+            savePausedState();
 
             runActivateIssueActions(() => {
                                         setEnabled(true);
