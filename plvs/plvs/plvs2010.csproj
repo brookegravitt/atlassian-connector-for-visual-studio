@@ -848,6 +848,7 @@
     <Content Include="Resources\icons\ico_updatenotavailable.png" />
     <Content Include="Resources\icons\ide_plugin_16.bmp" />
     <Content Include="Resources\icons\ide_plugin_16.ico" />
+    <Content Include="Resources\icons\ide_plugin_16_with_padding.png" />
     <Content Include="Resources\icons\ide_plugin_300.png" />
     <Content Include="Resources\icons\ide_plugin_32.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
