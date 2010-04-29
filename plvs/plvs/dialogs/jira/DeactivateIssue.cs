@@ -23,7 +23,7 @@ namespace Atlassian.plvs.dialogs.jira {
         private const string DEACTIVATE_ISSUE_LOG_WORK_CHECKED = "deactivateIssueLogWorkChecked";
 
         public DeactivateIssue(
-            Control parent, JiraIssueListModel model, JiraServerFacade facade, ParameterStore store,
+            string explanationText, Control parent, JiraIssueListModel model, JiraServerFacade facade, ParameterStore store,
             JiraIssue issue, StatusLabel status, JiraActiveIssueManager activeIssueManager, 
             IEnumerable<JiraNamedEntity> actions, Action onFinished) 
             : base(parent, model, facade, issue, status, activeIssueManager) {
@@ -36,7 +36,21 @@ namespace Atlassian.plvs.dialogs.jira {
 
             Controls.Remove(LogWorkPanel);
 
-            checkBoxLogWork = new CheckBox { AutoSize = true, Text = "Log Work", Location = new Point(10, 10) };
+            int explanationY = 0;
+            if (explanationText != null) {
+                Label l = new Label
+                          {
+                              Text = explanationText,
+                              Location = new Point(10, 10),
+                              AutoSize = false,
+                              Width = LogWorkPanel.Width,
+                              Height = 40,
+                              TextAlign = ContentAlignment.MiddleCenter
+                          };
+                Controls.Add(l);
+                explanationY = 50;
+            }
+            checkBoxLogWork = new CheckBox { AutoSize = true, Text = "Log Work", Location = new Point(10, 10 + explanationY) };
             checkBoxLogWork.CheckedChanged += (s, e) => {
                                                   LogWorkPanel.Enabled = checkBoxLogWork.Checked;
                                                   updateOkButtonState();
@@ -70,15 +84,15 @@ namespace Atlassian.plvs.dialogs.jira {
             cbActions.SelectedValueChanged += (s, e) => updateOkButtonState();
             cbActions.Enabled = checkBoxRunAction.Checked;
 
-            Size = new Size(Size.Width + 40, Size.Height + 100);
+            Size = new Size(Size.Width + 40, Size.Height + 100 + explanationY);
             
             Controls.Add(checkBoxLogWork);
             Controls.Add(group);
             Controls.Add(checkBoxRunAction);
             Controls.Add(cbActions);
 
-            ButtonOk.Location = new Point(ButtonOk.Location.X + 40, ButtonOk.Location.Y + 100);
-            ButtonCancel.Location = new Point(ButtonCancel.Location.X + 40, ButtonCancel.Location.Y + 100);
+            ButtonOk.Location = new Point(ButtonOk.Location.X + 40, ButtonOk.Location.Y + 100 + explanationY);
+            ButtonCancel.Location = new Point(ButtonCancel.Location.X + 40, ButtonCancel.Location.Y + 100 + explanationY);
             ResumeLayout(true);
 
             checkBoxLogWork.Checked = store.loadParameter(DEACTIVATE_ISSUE_LOG_WORK_CHECKED, 0) > 0;
