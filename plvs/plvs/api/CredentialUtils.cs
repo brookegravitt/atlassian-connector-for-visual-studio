@@ -11,6 +11,7 @@ namespace Atlassian.plvs.api {
             NetworkCredential creds = new NetworkCredential(getUserNameWithoutDomain(userName), password, getUserDomain(userName));
             credsCache.Add(new Uri(url), "Negotiate", creds);
             credsCache.Add(new Uri(url), "Ntlm", creds);
+            credsCache.Add(new Uri(url), "Digest", creds);
             credsCache.Add(new Uri(url), "Basic", creds);
             return credsCache;
         }

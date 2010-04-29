@@ -15,6 +15,9 @@ namespace Atlassian.plvs.markers.vs2010.marginglyph {
             internal IClassifierAggregatorService AggregatorService;
 
             public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag {
+#if NO_TAGGING
+                return null;
+#else
                 if (AtlassianPanel.Instance == null || AtlassianPanel.Instance.Jira == null) {
                     return null;
                 }
@@ -24,6 +27,7 @@ namespace Atlassian.plvs.markers.vs2010.marginglyph {
                 }
 
                 return new JiraIssueLineGlyphTagger(buffer, AggregatorService.GetClassifier(buffer)) as ITagger<T>;
+#endif
             }
         }
     }
