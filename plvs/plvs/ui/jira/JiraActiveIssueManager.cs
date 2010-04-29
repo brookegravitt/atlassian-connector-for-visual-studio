@@ -36,6 +36,7 @@ namespace Atlassian.plvs.ui.jira {
         private const string PAST_ACTIVE_ISSUE_KEY = "activeIssuePastIssueKey_";
 
         public event EventHandler<EventArgs> ActiveIssueChanged;
+        public event EventHandler<EventArgs> ToolbarWidthChanged;
 
         public class ActiveIssue {
             public ActiveIssue(string key, string serverGuid) {
@@ -103,6 +104,9 @@ namespace Atlassian.plvs.ui.jira {
                                      savePausedState();
                                      buttonPause.Text = paused ? RESUME_WORK : PAUSE_WORK;
                                      buttonPause.Image = paused ? Resources.ico_activateissue : Resources.ico_pauseissue;
+                                     if (ToolbarWidthChanged != null) {
+                                         ToolbarWidthChanged(this, null);
+                                     }
                                  };
             buttonLogWork = new ToolStripButton(Resources.ico_logworkonissue) { Text = LOG_WORK, DisplayStyle = ToolStripItemDisplayStyle.Image };
             buttonLogWork.Click += (s, e) => 
@@ -140,6 +144,16 @@ namespace Atlassian.plvs.ui.jira {
             minuteTimer = new Timer {Interval = ONE_MINUTE};
             minuteTimer.Tick += (s, e) => updateMinutes();
             minuteTimer.Start();
+        }
+
+        public int ToolbarWidth {
+            get {
+                if (!separator.Visible) {
+                    return 0;
+                }
+                return activeIssueDropDown.Width + (CurrentActiveIssue != null ? buttonStop.Width + buttonPause.Width + buttonLogWork.Width +
+                    buttonComment.Width + labelMinuteTimer.Width : 0) + separator.Width;
+            }
         }
 
         private void addComment(JiraIssue issue) {
@@ -197,6 +211,9 @@ namespace Atlassian.plvs.ui.jira {
             ++MinutesInProgress;
             storeTimeSpent();
             setTimeSpentString();
+            if (ToolbarWidthChanged != null) {
+                ToolbarWidthChanged(this, null);
+            }
         }
 
         private void storeTimeSpent() {
@@ -552,6 +569,9 @@ namespace Atlassian.plvs.ui.jira {
                 activeIssueDropDown.Image = imageInfo != null ? imageInfo.Img : null;
             } else {
                 setNoIssueActiveInDropDown();
+            }
+            if (ToolbarWidthChanged != null) {
+                ToolbarWidthChanged(this, null);
             }
         }
 

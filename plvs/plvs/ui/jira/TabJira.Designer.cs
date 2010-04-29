@@ -110,9 +110,11 @@
             // 
             // jiraStatus
             // 
+            this.jiraStatus.AutoSize = false;
             this.jiraStatus.Name = "jiraStatus";
-            this.jiraStatus.Size = new System.Drawing.Size(39, 17);
+            this.jiraStatus.Size = new System.Drawing.Size(200, 17);
             this.jiraStatus.Text = "Ready";
+            this.jiraStatus.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // getMoreIssues
             // 
@@ -276,7 +278,7 @@
             this.buttonHelp});
             this.toolStrip2.Location = new System.Drawing.Point(3, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(660, 25);
+            this.toolStrip2.Size = new System.Drawing.Size(629, 25);
             this.toolStrip2.TabIndex = 0;
             // 
             // labelNarrow
@@ -434,6 +436,7 @@
             this.Controls.Add(this.jiraContainer);
             this.Name = "TabJira";
             this.Size = new System.Drawing.Size(903, 336);
+            this.Resize += new System.EventHandler(this.tabJiraResize);
             this.jiraContainer.BottomToolStripPanel.ResumeLayout(false);
             this.jiraContainer.BottomToolStripPanel.PerformLayout();
             this.jiraContainer.ContentPanel.ResumeLayout(false);

@@ -68,6 +68,8 @@ namespace Atlassian.plvs.ui.jira {
 
             GlobalSettings.SettingsChanged += globalSettingsSettingsChanged;
 
+            getMoreIssues.VisibleChanged += (s, e) => resizeStatusBar();
+
             initializeActiveIssueToolStrip();
         }
 
@@ -77,10 +79,12 @@ namespace Atlassian.plvs.ui.jira {
             statusStrip.Items.Add(jiraStatus);
             statusStrip.Items.Add(getMoreIssues);
             ActiveIssueManager.ActiveIssueChanged += activeIssueManager_ActiveIssueChanged;
+            ActiveIssueManager.ToolbarWidthChanged += (s, e) => resizeStatusBar();
         }
 
         private void activeIssueManager_ActiveIssueChanged(object sender, EventArgs e) {
             updateStartStopButton();
+            resizeStatusBar();
         }
 
         private void updateStartStopButton() {
@@ -994,6 +998,15 @@ namespace Atlassian.plvs.ui.jira {
 
         private void buttonStartStopWork_Click(object sender, EventArgs e) {
             runSelectedIssueAction(ActiveIssueManager.toggleActiveState);
+        }
+
+        private void tabJiraResize(object sender, EventArgs e) {
+            resizeStatusBar();
+        }
+
+        private void resizeStatusBar() {
+            int height = jiraStatus.Height;
+            jiraStatus.Size = new Size(statusStrip.Width - (getMoreIssues.Visible ? getMoreIssues.Width : 0) - ActiveIssueManager.ToolbarWidth, height);
         }
     }
 }
