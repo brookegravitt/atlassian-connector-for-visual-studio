@@ -351,6 +351,9 @@ namespace Atlassian.plvs.ui.jira {
             activeIssueDropDown.Image = null;
             separator.Enabled = enableDropDown;
             separator.Visible = enableDropDown;
+            if (ToolbarWidthChanged != null) {
+                ToolbarWidthChanged(this, null);
+            }
         }
 
         private void savePastActiveIssuesAndSetupDropDown() {
