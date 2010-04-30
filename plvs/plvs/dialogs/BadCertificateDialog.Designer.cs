@@ -224,7 +224,6 @@
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(500, 280);
             this.Name = "BadCertificateDialog";
-            this.ShowInTaskbar = false;
             this.Text = "Unknown SSL Certificate";
             this.ResumeLayout(false);
             this.PerformLayout();
