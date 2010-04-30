@@ -132,16 +132,19 @@ namespace Atlassian.plvs.dialogs.jira {
         }
 
         private void logWorkAndAutoUpdateRemaining() {
-            facade.logWorkAndAutoUpdateRemaining(issue, JiraIssueUtils.addSpacesToTimeSpec(textTimeSpent.Text.Trim()), getStartTime());
+            facade.logWorkAndAutoUpdateRemaining(
+                issue, JiraIssueUtils.addSpacesToTimeSpec(textTimeSpent.Text.Trim()), getStartTime(), textComment.Text.Trim());
         }
 
         private void logWorkAndLeaveRemainingUnchanged() {
-            facade.logWorkAndLeaveRemainingUnchanged(issue, JiraIssueUtils.addSpacesToTimeSpec(textTimeSpent.Text.Trim()), getStartTime());
+            facade.logWorkAndLeaveRemainingUnchanged(
+                issue, JiraIssueUtils.addSpacesToTimeSpec(textTimeSpent.Text.Trim()), getStartTime(), textComment.Text.Trim());
         }
 
         private void logWorkAndUpdateRemainingManually() {
-            facade.logWorkAndUpdateRemainingManually(issue, JiraIssueUtils.addSpacesToTimeSpec(textTimeSpent.Text.Trim()),
-                                                     getStartTime(), JiraIssueUtils.addSpacesToTimeSpec(textRemainingEstimate.Text.Trim()));
+            facade.logWorkAndUpdateRemainingManually(
+                issue, JiraIssueUtils.addSpacesToTimeSpec(textTimeSpent.Text.Trim()), getStartTime(), 
+                JiraIssueUtils.addSpacesToTimeSpec(textRemainingEstimate.Text.Trim()), textComment.Text.Trim());
         }
 
         private void logWorkWorker(Action action, Action finished, bool closeDialogOnFinish) {

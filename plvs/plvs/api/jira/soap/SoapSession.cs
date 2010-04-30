@@ -323,10 +323,10 @@ namespace Atlassian.plvs.api.jira.soap {
 #endif
         }
 
-        public void logWorkAndAutoUpdateRemaining(string key, string timeSpent, DateTime startDate) {
+        public void logWorkAndAutoUpdateRemaining(string key, string timeSpent, DateTime startDate, string comment) {
 #if PLVS_133_WORKAROUND
             ConstructorInfo constructor = getRemoteWorklogConstructor(key);
-            object worklog = createWorklogObject(constructor, timeSpent, startDate);
+            object worklog = createWorklogObject(constructor, timeSpent, startDate, comment);
             service.addWorklogAndAutoAdjustRemainingEstimate(Token, key, worklog);
 #else
             RemoteWorklog worklog = new RemoteWorklog { timeSpent = timeSpent, startDate = startDate };
@@ -334,10 +334,10 @@ namespace Atlassian.plvs.api.jira.soap {
 #endif
         }
 
-        public void logWorkAndLeaveRemainingUnchanged(string key, string timeSpent, DateTime startDate) {
+        public void logWorkAndLeaveRemainingUnchanged(string key, string timeSpent, DateTime startDate, string comment) {
 #if PLVS_133_WORKAROUND
             ConstructorInfo constructor = getRemoteWorklogConstructor(key);
-            object worklog = createWorklogObject(constructor, timeSpent, startDate);
+            object worklog = createWorklogObject(constructor, timeSpent, startDate, comment);
             service.addWorklogAndRetainRemainingEstimate(Token, key, worklog);
 #else
             RemoteWorklog worklog = new RemoteWorklog { timeSpent = timeSpent, startDate = startDate };
@@ -345,10 +345,10 @@ namespace Atlassian.plvs.api.jira.soap {
 #endif
         }
 
-        public void logWorkAndUpdateRemainingManually(string key, string timeSpent, DateTime startDate, string remainingEstimate) {
+        public void logWorkAndUpdateRemainingManually(string key, string timeSpent, DateTime startDate, string remainingEstimate, string comment) {
 #if PLVS_133_WORKAROUND
             ConstructorInfo constructor = getRemoteWorklogConstructor(key);
-            object worklog = createWorklogObject(constructor, timeSpent, startDate);
+            object worklog = createWorklogObject(constructor, timeSpent, startDate, comment);
             service.addWorklogWithNewRemainingEstimate(Token, key, worklog, remainingEstimate);
 #else
             RemoteWorklog worklog = new RemoteWorklog { timeSpent = timeSpent, startDate = startDate };
@@ -409,10 +409,14 @@ namespace Atlassian.plvs.api.jira.soap {
             return elementType.GetConstructor(new Type[] { });
         }
 
-        private static object createWorklogObject(ConstructorInfo constructor, string timeSpent, DateTime startDate) {
+        private static object createWorklogObject(ConstructorInfo constructor, string timeSpent, DateTime startDate, string comment) {
             object worklog = constructor.Invoke(new object[] { });
             setObjectProperty(worklog, "timeSpent", timeSpent);
             setObjectProperty(worklog, "startDate", startDate);
+            if (!string.IsNullOrEmpty(comment)) {
+                setObjectProperty(worklog, "comment", comment);
+            }
+
             return worklog;
         }
 
