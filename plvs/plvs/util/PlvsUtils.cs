@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing.Printing;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Security;
 using System.Reflection;
@@ -21,6 +22,7 @@ using Atlassian.plvs.attributes;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.models;
 using Atlassian.plvs.models.jira;
+using Atlassian.plvs.windows;
 using EnvDTE;
 using Timer = System.Windows.Forms.Timer;
 
@@ -288,10 +290,51 @@ namespace Atlassian.plvs.util {
 #endif
 
         public static void installSslCertificateHandler() {
-            // This call solves PLVS-103
-            // the code taken from http://www.codeproject.com/KB/webservices/web_service_over_SSL.aspx
-            ServicePointManager.ServerCertificateValidationCallback =
-                delegate(Object obj, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors) { return (true); };
+            ServicePointManager.ServerCertificateValidationCallback = certValidationCallback;
+        }
+
+        private static readonly List<string> allowedCerts = new List<string>();
+        private static readonly List<string> rejectedCerts = new List<string>();
+
+        private static bool certValidationCallback(Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors) {
+            if (errors.Equals(SslPolicyErrors.None)) return true;
+            lock(rejectedCerts) {
+                if (rejectedCerts.Contains(certificate.GetCertHashString())) {
+                    return false;
+                }
+                if (allowedCerts.Contains(certificate.GetCertHashString())) {
+                    return true;
+                }
+
+                // PLVS-117: search for installed certs. If found, allow it, whether issuer is kosher or not 
+                // (this lets self-signed certs be treated as good enough)
+                X509Store store = new X509Store();
+                try {
+                    store.Open(OpenFlags.ReadOnly);
+                    if (store.Certificates.Cast<X509Certificate2>().Any(cert => cert.Equals(certificate))) {
+                        X509Certificate2 c2 = new X509Certificate2(certificate);
+                        if (DateTime.Now.CompareTo(c2.NotBefore) >= 0 && DateTime.Now.CompareTo(c2.NotAfter) <= 0) {
+                            allowedCerts.Add(certificate.GetCertHashString());
+                            return true;
+                        }
+                    }
+                } finally {
+                    store.Close();
+                }
+
+                BadCertificateDialog dlg = new BadCertificateDialog(sender, new X509Certificate2(certificate));
+                bool result = false;
+                AtlassianPanel.Instance.safeInvoke(new MethodInvoker(() => {
+                                                                         if (dlg.ShowDialog(AtlassianPanel.Instance) != DialogResult.Yes) {
+                                                                             rejectedCerts.Add(certificate.GetCertHashString());
+                                                                             result = false;
+                                                                         } else {
+                                                                             allowedCerts.Add(certificate.GetCertHashString());
+                                                                             result = true;
+                                                                         }
+                                                                     }));
+                return result;
+            }
         }
 
         public static void safeInvoke(this Control control, Delegate action) {
