@@ -38,13 +38,15 @@
             this.textExplanation = new System.Windows.Forms.TextBox();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.logWorkPanel = new System.Windows.Forms.Panel();
+            this.textComment = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.logWorkPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonOk
             // 
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonOk.Location = new System.Drawing.Point(370, 174);
+            this.buttonOk.Location = new System.Drawing.Point(370, 277);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(89, 23);
             this.buttonOk.TabIndex = 6;
@@ -158,12 +160,13 @@
             this.textExplanation.ReadOnly = true;
             this.textExplanation.Size = new System.Drawing.Size(227, 70);
             this.textExplanation.TabIndex = 12;
+            this.textExplanation.TabStop = false;
             this.textExplanation.Text = resources.GetString("textExplanation.Text");
             // 
             // buttonCancel
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCancel.Location = new System.Drawing.Point(465, 174);
+            this.buttonCancel.Location = new System.Drawing.Point(465, 277);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(89, 23);
             this.buttonCancel.TabIndex = 7;
@@ -174,6 +177,8 @@
             // logWorkPanel
             // 
             this.logWorkPanel.BackColor = System.Drawing.SystemColors.Control;
+            this.logWorkPanel.Controls.Add(this.label4);
+            this.logWorkPanel.Controls.Add(this.textComment);
             this.logWorkPanel.Controls.Add(this.textExplanation);
             this.logWorkPanel.Controls.Add(this.label1);
             this.logWorkPanel.Controls.Add(this.textTimeSpent);
@@ -187,14 +192,33 @@
             this.logWorkPanel.Controls.Add(this.radioUpdateManually);
             this.logWorkPanel.Location = new System.Drawing.Point(0, 0);
             this.logWorkPanel.Name = "logWorkPanel";
-            this.logWorkPanel.Size = new System.Drawing.Size(566, 175);
+            this.logWorkPanel.Size = new System.Drawing.Size(566, 276);
             this.logWorkPanel.TabIndex = 13;
+            // 
+            // textComment
+            // 
+            this.textComment.AcceptsReturn = true;
+            this.textComment.Location = new System.Drawing.Point(82, 171);
+            this.textComment.Multiline = true;
+            this.textComment.Name = "textComment";
+            this.textComment.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textComment.Size = new System.Drawing.Size(470, 91);
+            this.textComment.TabIndex = 13;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(15, 171);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(51, 13);
+            this.label4.TabIndex = 14;
+            this.label4.Text = "Comment";
             // 
             // LogWork
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(566, 209);
+            this.ClientSize = new System.Drawing.Size(566, 312);
             this.Controls.Add(this.logWorkPanel);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
@@ -229,5 +253,7 @@
         private System.Windows.Forms.TextBox textExplanation;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.Panel logWorkPanel;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox textComment;
     }
 }
