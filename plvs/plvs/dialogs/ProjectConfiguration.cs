@@ -194,15 +194,16 @@ namespace Atlassian.plvs.dialogs {
 
                 selectedNode.Remove();
                 jiraServerModel.removeServer(selectedNode.Server.GUID);
+                serverTree.SelectedNode = jiraRoot;
             } else if (serverTree.SelectedNode is BambooServerTreeNode) {
                 var selectedNode = (BambooServerTreeNode)serverTree.SelectedNode;
                 if (!confirmDelete(selectedNode.Server)) return;
 
                 selectedNode.Remove();
                 bambooServerModel.removeServer(selectedNode.Server.GUID);
+                serverTree.SelectedNode = bambooRoot;
             }
             serverTree.ExpandAll();
-            webServerDetails.DocumentText = "";
             SomethingChanged = true;
         }
 
