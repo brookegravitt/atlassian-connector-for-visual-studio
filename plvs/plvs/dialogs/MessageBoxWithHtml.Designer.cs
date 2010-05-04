@@ -100,6 +100,7 @@
             this.Name = "MessageBoxWithHtml";
             this.ShowInTaskbar = false;
             this.Text = "MessageBoxWithHtml";
+            this.Load += new System.EventHandler(this.messageBoxWithHtmlLoad);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.messageBoxWithHtmlKeyPress);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);

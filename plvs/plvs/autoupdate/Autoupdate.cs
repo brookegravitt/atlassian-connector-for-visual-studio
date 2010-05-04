@@ -9,6 +9,7 @@ using System.Xml.XPath;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.util;
 using Atlassian.plvs.windows;
+using Microsoft.Win32;
 using Timer=System.Timers.Timer;
 
 namespace Atlassian.plvs.autoupdate {
@@ -36,6 +37,13 @@ namespace Atlassian.plvs.autoupdate {
 
         private Autoupdate() {
             GlobalSettings.SettingsChanged += globalSettingsChanged;
+            SystemEvents.PowerModeChanged += systemEventsPowerModeChanged;
+        }
+
+        private void systemEventsPowerModeChanged(object sender, PowerModeChangedEventArgs e) {
+            if (!e.Mode.Equals(PowerModes.Resume)) return;
+            shutdown();
+            initialize();
         }
 
         private void globalSettingsChanged(object sender, EventArgs e) {
