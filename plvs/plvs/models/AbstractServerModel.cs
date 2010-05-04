@@ -151,7 +151,6 @@ namespace Atlassian.plvs.models {
 
                 using (sharedServersRegistryKey) {
                     int i = 1;
-                    int nonSharedServersCount = 0;
                     foreach (T s in getAllServers()) {
                         if (!s.IsShared) {
                             string var = SERVER_GUID + i;
@@ -168,7 +167,7 @@ namespace Atlassian.plvs.models {
                             store.storeParameter(var, s.Enabled ? 1 : 0);
 
                             saveCustomServerParameters(store, s);
-                            ++nonSharedServersCount;
+                            ++i;
                             
                             // just in case
                             if (sharedServersRegistryKey != null) {
@@ -194,10 +193,9 @@ namespace Atlassian.plvs.models {
                             }
                         }
                         CredentialsVault.Instance.saveCredentials(s);
-                        ++i;
                     }
 
-                    store.storeParameter(SERVER_COUNT, nonSharedServersCount);
+                    store.storeParameter(SERVER_COUNT, i);
                 }
 
 
