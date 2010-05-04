@@ -12,7 +12,7 @@
   <property name="download.url" value="http://docs.atlassian.com/atlassian-vs-plugin/Downloads" overwrite="false" />
   <property name="snapshot.xml.file" value="latestPossibleVersion.xml" overwrite="false" />
   <property name="scp.exe" value="c:/progra~1/putty/pscp.exe" overwrite="false" />
-  <property name="scp.key" value="c:/Users/kalamon/putty.keys/dac.private.ppk" overwrite="false" />
+  <property name="scp.key" value="c:/Users/kalamon/putty.keys/dac.new.bamboo.priv.ppk" overwrite="false" />
   <property name="scp.opts" value="-i ${scp.key} -noagent -q -batch" overwrite="false" />
   <property name="scp.login" value="jgorycki" overwrite="false" />
   <property name="nsis" value="c:/progra~1/nsis/makensis.exe" />
