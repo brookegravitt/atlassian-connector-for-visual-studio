@@ -11,6 +11,8 @@ namespace Atlassian.plvs.api {
         private bool enabled;
         private bool noProxy;
 
+        public bool IsShared { get; set; }
+
         public static Guid JiraServerTypeGuid = new Guid("0C644383-BC4C-406d-B325-CA0AB1815B38");
         public static Guid BambooServerTypeGuid = new Guid("1C7A224E-52C4-4575-9212-7D731C13CFE9");
 
@@ -89,11 +91,12 @@ namespace Atlassian.plvs.api {
 
         protected string serverBaseDetailsHtml() {
             StringBuilder sb = new StringBuilder();
-            sb.Append("<tr valign=top><td width=\"150\">Name</td><td>").Append(Name).Append("</td></tr>\r\n");
-            sb.Append("<tr valign=top><td width=\"150\">Enabled</td><td>").Append(Enabled ? "Yes" : "No").Append("</td></tr>\r\n");
-            sb.Append("<tr valign=top><td width=\"150\">URL</td><td><a href=\"").Append(Url).Append("\">").Append(Url).Append("</a></td></tr>\r\n");
-            sb.Append("<tr valign=top><td width=\"150\">User Name</td><td>").Append(UserName).Append("</td></tr>\r\n");
-            sb.Append("<tr valign=top><td width=\"150\">Use Proxy</td><td>").Append(NoProxy ? "No" : "Yes").Append("</td></tr>\r\n");
+            sb.Append("<tr valign=top><td width=\"200\">Name</td><td>").Append(Name).Append("</td></tr>\r\n");
+            sb.Append("<tr valign=top><td width=\"200\">Enabled</td><td>").Append(Enabled ? "Yes" : "No").Append("</td></tr>\r\n");
+            sb.Append("<tr valign=top><td width=\"200\">Shared Between Solutions</td><td>").Append(IsShared ? "Yes" : "No").Append("</td></tr>\r\n");
+            sb.Append("<tr valign=top><td width=\"200\">URL</td><td><a href=\"").Append(Url).Append("\">").Append(Url).Append("</a></td></tr>\r\n");
+            sb.Append("<tr valign=top><td width=\"200\">User Name</td><td>").Append(UserName).Append("</td></tr>\r\n");
+            sb.Append("<tr valign=top><td width=\"200\">Use Proxy</td><td>").Append(NoProxy ? "No" : "Yes").Append("</td></tr>\r\n");
             return sb.ToString();
         }
 

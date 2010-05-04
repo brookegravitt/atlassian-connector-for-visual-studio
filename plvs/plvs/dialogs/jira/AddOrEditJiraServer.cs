@@ -29,6 +29,7 @@ namespace Atlassian.plvs.dialogs.jira {
                     user.Text = server.UserName;
                     password.Text = server.Password;
                     checkEnabled.Checked = server.Enabled;
+                    checkShared.Checked = server.IsShared;
                     checkDontUseProxy.Checked = server.NoProxy;
                 }
             }
@@ -37,6 +38,7 @@ namespace Atlassian.plvs.dialogs.jira {
                 name.Text = "JIRA Server #" + invocations;
                 buttonAddOrEdit.Enabled = false;
                 checkEnabled.Checked = true;
+                checkShared.Checked = false;
                 checkDontUseProxy.Checked = false;
             }
 
@@ -68,6 +70,7 @@ namespace Atlassian.plvs.dialogs.jira {
             server.UserName = user.Text.Trim();
             server.Password = password.Text;
             server.Enabled = checkEnabled.Checked;
+            server.IsShared = checkShared.Checked;
             server.NoProxy = checkDontUseProxy.Checked;
         }
 
@@ -109,6 +112,10 @@ namespace Atlassian.plvs.dialogs.jira {
         }
 
         private void checkDontUseProxy_CheckedChanged(object sender, EventArgs e) {
+            checkIfValid();
+        }
+
+        private void checkShared_CheckedChanged(object sender, EventArgs e) {
             checkIfValid();
         }
     }
