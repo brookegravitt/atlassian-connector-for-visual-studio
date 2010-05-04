@@ -33,10 +33,10 @@ namespace Atlassian.plvs.api.bamboo {
             sb.Append(serverdetailsHtmlTableStart());
             sb.Append(serverBaseDetailsHtml());
 
-            sb.Append("<tr VALIGN=TOP><td width=\"150\">Monitor Favourite Plans</td><td>").Append(UseFavourites ? "Yes" : "No").Append("</td></tr>\r\n");
+            sb.Append("<tr VALIGN=TOP><td width=\"200\">Monitor Favourite Plans</td><td>").Append(UseFavourites ? "Yes" : "No").Append("</td></tr>\r\n");
             if (!UseFavourites) {
                 if (PlanKeys != null && PlanKeys.Count > 0) {
-                    sb.Append("<tr VALIGN=TOP><td width=\"150\">Monitored Plans</td><td>");
+                    sb.Append("<tr VALIGN=TOP><td width=\"200\">Monitored Plans</td><td>");
                     int i = 1;
                     foreach (var key in PlanKeys) {
                         sb.Append(key);

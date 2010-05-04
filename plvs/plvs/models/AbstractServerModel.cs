@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using Atlassian.plvs.api;
 using Atlassian.plvs.store;
+using Atlassian.plvs.util;
+using Microsoft.Win32;
 
 namespace Atlassian.plvs.models {
     public abstract class AbstractServerModel<T> where T : Server {
@@ -11,11 +13,11 @@ namespace Atlassian.plvs.models {
         private const string DEFAULT_SERVER_GUID = "defaultServerGuid_";
         private const string SERVER_COUNT = "serverCount";
         private const string SERVER_GUID = "serverGuid_";
-        private const string SERVER_NAME = "serverName_";
-        private const string SERVER_URL = "serverUrl_";
+        private const string SERVER_NAME = "serverName";
+        private const string SERVER_URL = "serverUrl";
         private const string SERVER_TYPE = "serverType_";
         private const string SERVER_ENABLED = "serverEnabled_";
-        private const string SERVER_DONT_USE_PROXY = "serverNoProxy_";
+        private const string SERVER_DONT_USE_PROXY = "serverNoProxy";
 
         public class ModelException : Exception {
             public ModelException(string message) : base(message) {}
@@ -27,6 +29,9 @@ namespace Atlassian.plvs.models {
         protected abstract Guid SupportedServerType { get; }
         protected abstract void loadCustomServerParameters(ParameterStore store, T server);
         protected abstract void saveCustomServerParameters(ParameterStore store, T server);
+        protected abstract void loadCustomServerParameters(RegistryKey key, T server);
+        protected abstract void saveCustomServerParameters(RegistryKey key, T server);
+
         protected abstract T createServer(Guid guid, string name, string url, string userName, string password, bool noProxy, bool enabled);
 
         private Guid defaultServerGuid;
@@ -76,8 +81,8 @@ namespace Atlassian.plvs.models {
             defaultServerGuid = defaultGuidString != null ? new Guid(defaultGuidString) : Guid.Empty;
 
             int count = store.loadParameter(SERVER_COUNT, -1);
-            if (count != -1) {
-                try {
+            try {
+                if (count != -1) {
                     for (int i = 1; i <= count; ++i) {
                         string guidStr = store.loadParameter(SERVER_GUID + i, null);
                         Guid guid = new Guid(guidStr);
@@ -87,13 +92,15 @@ namespace Atlassian.plvs.models {
                             continue;
                         }
 
-                        string sName = store.loadParameter(SERVER_NAME + guidStr, null);
-                        string url = store.loadParameter(SERVER_URL + guidStr, null);
+                        string sName = store.loadParameter(SERVER_NAME + "_" + guidStr, null);
+                        string url = store.loadParameter(SERVER_URL + "_" + guidStr, null);
 
                         T server = createServer(
                             guid, sName, url, null, null, 
-                            store.loadParameter(SERVER_DONT_USE_PROXY + guidStr, 0) > 0, 
-                            store.loadParameter(SERVER_ENABLED + guidStr, 1) > 0);
+                            store.loadParameter(SERVER_DONT_USE_PROXY + "_" + guidStr, 0) > 0, 
+                            store.loadParameter(SERVER_ENABLED + "_" + guidStr, 1) > 0);
+                        
+                        server.IsShared = false;
 
                         server.UserName = CredentialsVault.Instance.getUserName(server);
                         server.Password = CredentialsVault.Instance.getPassword(server);
@@ -102,41 +109,108 @@ namespace Atlassian.plvs.models {
 
                         addServer(server);
                     }
-                } catch (Exception e) {
-                    Debug.WriteLine(e);
                 }
+
+                RegistryKey key = getSharedServersRegistryKey();
+                if (key == null) return;
+                using (key) {
+                    foreach (var subKeyName in key.GetSubKeyNames()) {
+                        using (RegistryKey subKey = key.OpenSubKey(subKeyName)) {
+                            if (subKey == null) continue;
+                            T server = createServer(
+                                new Guid(subKeyName),
+                                (string)subKey.GetValue(SERVER_NAME),
+                                (string)subKey.GetValue(SERVER_URL),
+                                null, null,
+                                (int)subKey.GetValue(SERVER_DONT_USE_PROXY, 0) > 0,
+                                // enabled/disabled state is always per solution, even for shared servers
+                                store.loadParameter(SERVER_ENABLED + subKeyName, 1) > 0);
+
+                            server.UserName = CredentialsVault.Instance.getUserName(server);
+                            server.Password = CredentialsVault.Instance.getPassword(server);
+
+                            loadCustomServerParameters(subKey, server);
+
+                            server.IsShared = true;
+
+                            addServer(server);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                Debug.WriteLine(e);
             }
         }
 
         public void save() {
             try {
                 ParameterStore store = ParameterStoreManager.Instance.getStoreFor(StoreType);
-                store.storeParameter(SERVER_COUNT, serverMap.Values.Count);
 
                 store.storeParameter(DEFAULT_SERVER_GUID, defaultServerGuid.ToString());
+                RegistryKey sharedServersRegistryKey = getSharedServersRegistryKey();
 
-                int i = 1;
-                foreach (T s in getAllServers()) {
-                    string var = SERVER_GUID + i;
-                    store.storeParameter(var, s.GUID.ToString());
-                    var = SERVER_NAME + s.GUID;
-                    store.storeParameter(var, s.Name);
-                    var = SERVER_URL + s.GUID;
-                    store.storeParameter(var, s.Url);
-                    var = SERVER_TYPE + s.GUID;
-                    store.storeParameter(var, s.Type.ToString());
-                    var = SERVER_DONT_USE_PROXY + s.GUID;
-                    store.storeParameter(var, s.NoProxy ? 1 : 0);
-                    var = SERVER_ENABLED + s.GUID;
-                    store.storeParameter(var, s.Enabled ? 1 : 0);
+                using (sharedServersRegistryKey) {
+                    int i = 1;
+                    int nonSharedServersCount = 0;
+                    foreach (T s in getAllServers()) {
+                        if (!s.IsShared) {
+                            string var = SERVER_GUID + i;
+                            store.storeParameter(var, s.GUID.ToString());
+                            var = SERVER_NAME + "_" + s.GUID;
+                            store.storeParameter(var, s.Name);
+                            var = SERVER_URL + "_" + s.GUID;
+                            store.storeParameter(var, s.Url);
+                            var = SERVER_TYPE + s.GUID;
+                            store.storeParameter(var, s.Type.ToString());
+                            var = SERVER_DONT_USE_PROXY + "_" + s.GUID;
+                            store.storeParameter(var, s.NoProxy ? 1 : 0);
+                            var = SERVER_ENABLED + "_" + s.GUID;
+                            store.storeParameter(var, s.Enabled ? 1 : 0);
 
-                    saveCustomServerParameters(store, s);
+                            saveCustomServerParameters(store, s);
+                            ++nonSharedServersCount;
+                            
+                            // just in case
+                            if (sharedServersRegistryKey != null) {
+                                try {
+                                    sharedServersRegistryKey.DeleteSubKey(s.GUID.ToString());
+// ReSharper disable EmptyGeneralCatchClause
+                                } catch {
+// ReSharper restore EmptyGeneralCatchClause
+                                }
+                            }
+                        } else {
+                            if (sharedServersRegistryKey == null) continue;
+                            using (RegistryKey subKey = sharedServersRegistryKey.CreateSubKey(s.GUID.ToString())) {
+                                if (subKey == null) continue;
+                                
+                                subKey.SetValue(SERVER_NAME, s.Name);
+                                subKey.SetValue(SERVER_URL, s.Url);
+                                subKey.SetValue(SERVER_DONT_USE_PROXY, s.NoProxy ? 1 : 0);
+                                // enabled/disabled state is always per solution, even for shared servers
+                                store.storeParameter(SERVER_ENABLED + s.GUID, s.Enabled ? 1 : 0);
 
-                    CredentialsVault.Instance.saveCredentials(s);
-                    ++i;
+                                saveCustomServerParameters(subKey, s);
+                            }
+                        }
+                        CredentialsVault.Instance.saveCredentials(s);
+                        ++i;
+                    }
+
+                    store.storeParameter(SERVER_COUNT, nonSharedServersCount);
                 }
+
+
             } catch (Exception e) {
                 Debug.WriteLine(e);
+            }
+        }
+
+        public void setShared(T server, bool shared) {
+            lock(serverMap) {
+                if (serverMap.ContainsKey(server.GUID)) {
+                    serverMap[server.GUID].IsShared = shared;
+                }
             }
         }
 
@@ -159,17 +233,27 @@ namespace Atlassian.plvs.models {
         public void removeServer(Guid guid) {
             T s = getServer(guid);
             if (s == null) return;
-            removeServer(guid, false);
+            removeServer(s, false);
             CredentialsVault.Instance.deleteCredentials(s);
         }
 
-        public void removeServer(Guid guid, bool nothrow) {
+        private void removeServer(T server, bool nothrow) {
             lock (serverMap) {
-                if (serverMap.ContainsKey(guid)) {
-                    serverMap.Remove(guid);
+                if (serverMap.ContainsKey(server.GUID)) {
+                    serverMap.Remove(server.GUID);
+                    if (server.IsShared) {
+                        using (RegistryKey sharedServersRegistryKey = getSharedServersRegistryKey()) {
+                            if (sharedServersRegistryKey != null) {
+                                try {
+                                    sharedServersRegistryKey.DeleteSubKey(server.GUID.ToString());
+                                } catch (Exception e) {
+                                    Debug.WriteLine("AbstractServerModel.removeServer() - exception: " + e);
+                                }
+                            }
+                        }
+                    }
                     save();
-                }
-                else if (!nothrow) {
+                } else if (!nothrow) {
                     throw new ModelException("No such server");
                 }
             }
@@ -179,6 +263,10 @@ namespace Atlassian.plvs.models {
             lock (serverMap) {
                 serverMap.Clear();
             }
+        }
+
+        private RegistryKey getSharedServersRegistryKey() {
+            return Registry.CurrentUser.CreateSubKey(Constants.PAZU_REG_KEY + @"\Shared Servers\" + SupportedServerType);
         }
     }
 }

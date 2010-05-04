@@ -48,6 +48,7 @@ namespace Atlassian.plvs.dialogs.bamboo {
                     }
 
                     checkEnabled.Checked = server.Enabled;
+                    checkShared.Checked = server.IsShared;
                     checkDontUseProxy.Checked = server.NoProxy;
                 }
             } else {
@@ -60,6 +61,7 @@ namespace Atlassian.plvs.dialogs.bamboo {
                 checkedListBuilds.Enabled = false;
 
                 checkEnabled.Checked = true;
+                checkShared.Checked = false;
                 checkDontUseProxy.Checked = false;
             }
 
@@ -104,6 +106,7 @@ namespace Atlassian.plvs.dialogs.bamboo {
             server.UserName = user.Text.Trim();
             server.Password = password.Text;
             server.Enabled = checkEnabled.Checked;
+            server.IsShared = checkShared.Checked;
             server.NoProxy = checkDontUseProxy.Checked;
         }
 
@@ -161,6 +164,7 @@ namespace Atlassian.plvs.dialogs.bamboo {
             user.Enabled = false;
             password.Enabled = false;
             checkEnabled.Enabled = false;
+            checkShared.Enabled = false;
             checkDontUseProxy.Enabled = false;
 
             buttonGetBuilds.Enabled = false;
@@ -189,6 +193,7 @@ namespace Atlassian.plvs.dialogs.bamboo {
                                              user.Enabled = true;
                                              password.Enabled = true;
                                              checkEnabled.Enabled = true;
+                                             checkShared.Enabled = true;
                                              checkDontUseProxy.Enabled = true;
                                              checkIfValid();
                 }));
@@ -221,6 +226,10 @@ namespace Atlassian.plvs.dialogs.bamboo {
         }
 
         private void checkUseProxy_CheckedChanged(object sender, EventArgs e) {
+            checkIfValid();
+        }
+
+        private void checkShared_CheckedChanged(object sender, EventArgs e) {
             checkIfValid();
         }
     }
