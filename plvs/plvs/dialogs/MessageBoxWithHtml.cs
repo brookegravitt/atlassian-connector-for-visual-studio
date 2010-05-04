@@ -39,7 +39,8 @@ namespace Atlassian.plvs.dialogs {
 
         private MessageBoxWithHtml() {
             InitializeComponent();
-            StartPosition = FormStartPosition.CenterParent;
+            TopMost = true;
+            StartPosition = FormStartPosition.CenterScreen;
         }
 
         private void buttonOk_Click(object sender, EventArgs e) {
@@ -80,6 +81,17 @@ namespace Atlassian.plvs.dialogs {
             if (e.KeyValue == (char)Keys.Escape) {
                 Close();
             }
+        }
+
+        private void messageBoxWithHtmlLoad(object sender, EventArgs e) {
+            // cancel being topmost. This should make the dialog box not hide behind other windows
+            Timer t = new Timer {Interval = 500};
+            t.Tick += (s, ev) => {
+                          t.Stop();
+                          t.Dispose();
+                          TopMost = false;
+                      };
+            t.Start();
         }
     }
 }
