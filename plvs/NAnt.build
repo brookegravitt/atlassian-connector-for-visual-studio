@@ -7,9 +7,9 @@
   <property name="version" value="0.0.0" overwrite="false" readonly="false" />
   <property name="build.type" value="SNAPSHOT" overwrite="false" readonly="false" />
   <property name="build.stamp" value="00000000-0000" overwrite="false" readonly="false" />
-  <property name="upload.host" value="docs.atlassian.com" overwrite="false" />
-  <property name="upload.dir" value="/var/www/domains/atlassian.com/docs/htdocs/atlassian-vs-plugin" overwrite="false" />
-  <property name="download.url" value="http://docs.atlassian.com/atlassian-vs-plugin/Downloads" overwrite="false" />
+  <property name="upload.host" value="update.atlassian.com" overwrite="false" />
+  <property name="upload.dir" value="/var/www/domains/atlassian.com/update/htdocs/atlassian-vs-plugin" overwrite="false" />
+  <property name="download.url" value="http://update.atlassian.com/atlassian-vs-plugin/Downloads" overwrite="false" />
   <property name="snapshot.xml.file" value="latestPossibleVersion.xml" overwrite="false" />
   <property name="scp.exe" value="c:/progra~1/putty/pscp.exe" overwrite="false" />
   <property name="scp.key" value="c:/Users/kalamon/putty.keys/dac.new.bamboo.priv.ppk" overwrite="false" />
