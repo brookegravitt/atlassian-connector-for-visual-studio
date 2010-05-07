@@ -26,7 +26,7 @@ namespace Atlassian.plvs.autoupdate {
         }
 
         public const string STABLE_URL = "http://update.atlassian.com/atlassian-vs-plugin/latestStableVersion.xml";
-        private const string SNAPSHOT_URL = "http://docs.atlassian.com/atlassian-vs-plugin/latestPossibleVersion.xml";
+        private const string SNAPSHOT_URL = "http://update.atlassian.com/atlassian-vs-plugin/latestPossibleVersion.xml";
 
         public string NewVersionNumber { get; private set; }
         public string UpdateUrl { get; private set; }
