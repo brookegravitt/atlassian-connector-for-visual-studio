@@ -80,9 +80,9 @@ namespace Atlassian.plvs.models {
             string defaultGuidString = store.loadParameter(DEFAULT_SERVER_GUID, null);
             defaultServerGuid = defaultGuidString != null ? new Guid(defaultGuidString) : Guid.Empty;
 
-            int count = store.loadParameter(SERVER_COUNT, -1);
+            int count = store.loadParameter(SERVER_COUNT, 0);
             try {
-                if (count != -1) {
+                if (count > 0) {
                     for (int i = 1; i <= count; ++i) {
                         string guidStr = store.loadParameter(SERVER_GUID + i, null);
                         Guid guid = new Guid(guidStr);
@@ -107,7 +107,7 @@ namespace Atlassian.plvs.models {
 
                         loadCustomServerParameters(store, server);
 
-                        addServer(server);
+                        addServer(server, true);
                     }
                 }
 
@@ -133,7 +133,7 @@ namespace Atlassian.plvs.models {
 
                             server.IsShared = true;
 
-                            addServer(server);
+                            addServer(server, true);
                         }
                     }
                 }
@@ -150,9 +150,10 @@ namespace Atlassian.plvs.models {
                 RegistryKey sharedServersRegistryKey = getSharedServersRegistryKey();
 
                 using (sharedServersRegistryKey) {
-                    int i = 1;
+                    int i = 0;
                     foreach (T s in getAllServers()) {
                         if (!s.IsShared) {
+                            ++i;
                             string var = SERVER_GUID + i;
                             store.storeParameter(var, s.GUID.ToString());
                             var = SERVER_NAME + "_" + s.GUID;
@@ -167,7 +168,6 @@ namespace Atlassian.plvs.models {
                             store.storeParameter(var, s.Enabled ? 1 : 0);
 
                             saveCustomServerParameters(store, s);
-                            ++i;
                             
                             // just in case
                             if (sharedServersRegistryKey != null) {
@@ -213,8 +213,13 @@ namespace Atlassian.plvs.models {
         }
 
         public void addServer(T server) {
+            addServer(server, false);
+        }
+
+        public void addServer(T server, bool noThrow) {
             lock (serverMap) {
                 if (serverMap.ContainsKey(server.GUID)) {
+                    if (noThrow) return;
                     throw new ModelException("Server exists");
                 }
                 serverMap.Add(server.GUID, server);
