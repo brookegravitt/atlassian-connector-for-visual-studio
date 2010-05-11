@@ -19,8 +19,8 @@ namespace Atlassian.plvs.explorer.treeNodes {
             this.parent = parent;
         }
 
-        public override string getUrl(string authString) {
-            return Server.Url + "/secure/BrowseProjects.jspa?selectedCategory=all&" + authString ; 
+        public override string getUrl() {
+            return Server.Url + "/secure/BrowseProjects.jspa?selectedCategory=all"; 
         }
 
         public override void onClick(StatusLabel status) {

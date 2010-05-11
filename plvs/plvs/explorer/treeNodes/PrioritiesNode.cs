@@ -19,8 +19,8 @@ namespace Atlassian.plvs.explorer.treeNodes {
             this.parent = parent;
         }
 
-        public override string getUrl(string authString) {
-            return Server.Url + "?" + authString;
+        public override string getUrl() {
+            return Server.Url;
         }
 
         public override void onClick(StatusLabel status) {

@@ -39,8 +39,8 @@ namespace Atlassian.plvs.explorer.treeNodes {
             e.Cancel = false;
         }
 
-        public override string getUrl(string authString) {
-            return Server.Url + "?" + authString;
+        public override string getUrl() {
+            return Server.Url;
         }
 
         public override void onClick(StatusLabel status) {

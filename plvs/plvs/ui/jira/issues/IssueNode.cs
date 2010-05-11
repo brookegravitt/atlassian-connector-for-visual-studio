@@ -2,6 +2,7 @@
 using System.Drawing;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models;
+using Atlassian.plvs.models.jira;
 using Atlassian.plvs.util.jira;
 
 namespace Atlassian.plvs.ui.jira.issues {
@@ -18,7 +19,7 @@ namespace Atlassian.plvs.ui.jira.issues {
         }
 
         public override Image Icon {
-            get { return ImageCache.Instance.getImage(Issue.Server, Issue.IssueTypeIconUrl).Img; }
+            get { return JiraImageCache.Instance.getImage(Issue.Server, Issue.IssueTypeIconUrl).Img; }
         }
 
         public override string Name {
@@ -26,7 +27,7 @@ namespace Atlassian.plvs.ui.jira.issues {
         }
 
         public Image PriorityIcon {
-            get { return ImageCache.Instance.getImage(Issue.Server, Issue.PriorityIconUrl).Img; }
+            get { return JiraImageCache.Instance.getImage(Issue.Server, Issue.PriorityIconUrl).Img; }
         }
 
         public string StatusText {
@@ -34,7 +35,7 @@ namespace Atlassian.plvs.ui.jira.issues {
         }
 
         public Image StatusIcon {
-            get { return ImageCache.Instance.getImage(Issue.Server, Issue.StatusIconUrl).Img; }
+            get { return JiraImageCache.Instance.getImage(Issue.Server, Issue.StatusIconUrl).Img; }
         }
 
         public string Updated {

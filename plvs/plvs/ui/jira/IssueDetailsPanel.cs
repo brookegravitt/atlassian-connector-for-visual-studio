@@ -403,11 +403,11 @@ namespace Atlassian.plvs.ui.jira {
             string tableContents = string.Format(Resources.issue_summary_html,
                                                  editImagePath,
                                                  issue.Summary,
-                                                 ImageCache.Instance.getImage(issue.Server, issue.IssueTypeIconUrl).FileUrl ?? nothingImagePath,
+                                                 JiraImageCache.Instance.getImage(issue.Server, issue.IssueTypeIconUrl).FileUrl ?? nothingImagePath,
                                                  issue.IssueType,
-                                                 ImageCache.Instance.getImage(issue.Server, issue.StatusIconUrl).FileUrl ?? nothingImagePath,
+                                                 JiraImageCache.Instance.getImage(issue.Server, issue.StatusIconUrl).FileUrl ?? nothingImagePath,
                                                  issue.Status,
-                                                 ImageCache.Instance.getImage(issue.Server, issue.PriorityIconUrl).FileUrl ?? nothingImagePath,
+                                                 JiraImageCache.Instance.getImage(issue.Server, issue.PriorityIconUrl).FileUrl ?? nothingImagePath,
                                                  issue.Priority ?? "None",
                                                  env,
                                                  JiraServerCache.Instance.getUsers(issue.Server).getUser(issue.Assignee),
@@ -467,7 +467,7 @@ namespace Atlassian.plvs.ui.jira {
                 listViewAttachments.Items.Add(new JiraAttachmentListViewItem(issue, att));
             }
 
-            webAttachmentView.Browser.Navigate(new Uri("about:blank"));
+            reinitializeAttachmentView(null);
         }
 
         private void rebuildLinksPanel() {
@@ -922,7 +922,13 @@ namespace Atlassian.plvs.ui.jira {
 
             if (isInlineNavigable(item.Attachment.Name)) {
                 try {
-                    webAttachmentView.Browser.Navigate(item.Url + "?" + CredentialUtils.getOsAuthString(issue.Server));
+//                    string sessionCookie = facade.getExistingSessionCookie(issue.Server);
+//                    string headers = null;
+//                    if (sessionCookie != null) {
+//                        headers = "Cookie: " + JiraAuthenticatedClient.getSessionCookieString(sessionCookie);
+//                    }
+//                    webAttachmentView.Browser.Navigate(item.Url + (sessionCookie ?? ""), null, null, headers);
+                    webAttachmentView.Browser.Navigate(item.Url);
                 } catch (COMException ex) {
                     Debug.WriteLine("IssueDetailsPanel.listViewAttachments_Click() - exception caught: " + ex.Message);
                     reinitializeAttachmentView(() => showUnableToViewAttachmentPage(""));
@@ -962,7 +968,12 @@ namespace Atlassian.plvs.ui.jira {
             
             splitContainerAttachments.Panel2.Controls.Add(webAttachmentView);
             splitContainerAttachments.Panel2.ResumeLayout(true);
-            
+
+            string data = JiraAuthenticatedClient.getLoginPostData(issue.Server.UserName, issue.Server.Password);
+            const string header = "Content-Type: application/x-www-form-urlencoded";
+            webAttachmentView.Browser.Navigated += attachmentsBrowserInitialized;
+            webAttachmentView.Browser.Navigate(issue.Server.Url + "/login.jsp", null, Encoding.UTF8.GetBytes(data), header);
+
             if (onReinserted == null) return;
 
             // lame as hell. How can I tell when exactly it is kosher 
@@ -970,6 +981,11 @@ namespace Atlassian.plvs.ui.jira {
             Timer t = new Timer { Interval = 1000 };
             t.Tick += delegate { t.Stop(); onReinserted(); };
             t.Start();
+        }
+
+        private void attachmentsBrowserInitialized(object sender, WebBrowserNavigatedEventArgs e) {
+            webAttachmentView.Browser.Navigated -= attachmentsBrowserInitialized;
+            webAttachmentView.Browser.Navigate("about:blank");
         }
 
         private void attachmentsMenuOpening(object sender, System.ComponentModel.CancelEventArgs e) {
@@ -993,7 +1009,12 @@ namespace Atlassian.plvs.ui.jira {
             status.setInfo("Saving attachment \"" + item.Attachment.Name + "\"...");
             WebClient client = new WebClient();
             client.DownloadDataCompleted += ((sender, e) => downloadDataCompleted(item.Attachment.Name, e, stream));
-            client.DownloadDataAsync(new Uri(item.Url + "?" + CredentialUtils.getOsAuthString(issue.Server)));
+            string sessionCookie = facade.getExistingSessionCookie(issue.Server);
+            if (sessionCookie != null) {
+                JiraAuthenticatedClient.setSessionCookie(client.Headers, sessionCookie);
+            }
+
+            client.DownloadDataAsync(new Uri(item.Url));
         }
 
         private void downloadDataCompleted(string name, DownloadDataCompletedEventArgs e, Stream stream) {

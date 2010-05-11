@@ -19,7 +19,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
         protected JiraServerFacade Facade { get; private set; }
         public override sealed JiraServer Server { get; set; }
 
-        public abstract string getUrl(string authString);
+        public abstract string getUrl();
         public abstract void onClick(StatusLabel status);
 
         public virtual List<ToolStripItem> MenuItems { get { return null; }}

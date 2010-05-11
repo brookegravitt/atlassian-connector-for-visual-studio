@@ -12,8 +12,8 @@ namespace Atlassian.plvs.explorer.treeNodes {
             Server = server;
         }
 
-        public override string getUrl(string authString) {
-            return Server.Url + "/browse/" + project.Key + "?" + authString;
+        public override string getUrl() {
+            return Server.Url + "/browse/" + project.Key;
         }
 
         public override void onClick(StatusLabel status) { }

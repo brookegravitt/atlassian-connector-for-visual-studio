@@ -50,8 +50,8 @@ namespace Atlassian.plvs.explorer.treeNodes {
             DropZone.showDropZoneFor(Model, Server, Facade, new FixForDropZoneWorker(this));
         }
 
-        public override string getUrl(string authString) {
-            return Server.Url + "/browse/" + project.Key + "/fixforversion/" + version.Id + "?" + authString; 
+        public override string getUrl() {
+            return Server.Url + "/browse/" + project.Key + "/fixforversion/" + version.Id; 
         }
 
         public override void onClick(StatusLabel status) { }

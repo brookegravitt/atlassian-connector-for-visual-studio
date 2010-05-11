@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models;
+using Atlassian.plvs.models.jira;
 
 namespace Atlassian.plvs.ui.jira.issues.issuegroupnodes {
     abstract class AbstractByNamedEntityIssueGroupNode: AbstractIssueGroupNode {
@@ -15,7 +16,7 @@ namespace Atlassian.plvs.ui.jira.issues.issuegroupnodes {
         #region Overrides of AbstractIssueGroupNode
 
         public override Image Icon {
-            get { return ImageCache.Instance.getImage(server, entity.IconUrl).Img; }
+            get { return JiraImageCache.Instance.getImage(server, entity.IconUrl).Img; }
         }
 
         public override string getGroupName() {

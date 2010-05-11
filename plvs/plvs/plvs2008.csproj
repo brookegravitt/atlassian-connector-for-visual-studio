@@ -92,6 +92,7 @@
     <Compile Include="api\jira\JiraServerFacade.cs" />
     <Compile Include="api\jira\JiraUser.cs" />
     <Compile Include="api\jira\RssClient.cs" />
+    <Compile Include="api\LoginException.cs" />
     <Compile Include="api\Server.cs" />
     <Compile Include="api\jira\soap\SoapSession.cs">
     </Compile>
@@ -414,7 +415,7 @@
     <Compile Include="models\jira\presetFilters\JiraPresetFilterReportedByMe.cs" />
     <Compile Include="models\jira\presetFilters\JiraPresetFilterUnscheduled.cs" />
     <Compile Include="store\CredentialsVault.cs" />
-    <Compile Include="models\ImageCache.cs" />
+    <Compile Include="models\jira\JiraImageCache.cs" />
     <Compile Include="models\jira\JiraCustomFilter.cs" />
     <Compile Include="models\jira\JiraIssueListModel.cs" />
     <Compile Include="models\jira\JiraIssueListModelBuilder.cs" />

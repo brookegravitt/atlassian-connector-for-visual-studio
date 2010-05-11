@@ -61,6 +61,7 @@ namespace Atlassian.plvs.api {
             return domain;
         }
 
+#if OLDSKOOL_AUTH
         public static string getOsAuthString(Server server) {
             return getOsAuthString(server.UserName, server.Password);
         }
@@ -70,5 +71,6 @@ namespace Atlassian.plvs.api {
                 "os_username=" + HttpUtility.UrlEncode(getUserNameWithoutDomain(userName)) 
                 + "&os_password=" + HttpUtility.UrlEncode(password);
         }
+#endif
     }
 }
