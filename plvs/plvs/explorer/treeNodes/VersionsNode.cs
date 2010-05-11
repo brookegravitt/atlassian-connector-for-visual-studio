@@ -21,10 +21,8 @@ namespace Atlassian.plvs.explorer.treeNodes {
             this.project = project;
         }
 
-        public override string getUrl(string authString) {
-            return Server.Url + "/browse/" + project.Key
-                + "?" + authString 
-                + "#selectedTab=com.atlassian.jira.plugin.system.project%3Aversions-panel"; 
+        public override string getUrl() {
+            return Server.Url + "/browse/" + project.Key + "#selectedTab=com.atlassian.jira.plugin.system.project%3Aversions-panel"; 
         }
 
         public override void onClick(StatusLabel status) {

@@ -7,10 +7,11 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using Atlassian.plvs.api;
+using Atlassian.plvs.api.jira;
 using Atlassian.plvs.util;
 
-namespace Atlassian.plvs.models {
-    internal class ImageCache {
+namespace Atlassian.plvs.models.jira {
+    internal class JiraImageCache {
 
         public class ImageInfo {
             public ImageInfo(Image img, Uri fileUrl) {
@@ -22,9 +23,9 @@ namespace Atlassian.plvs.models {
             public string FileUrl { get; private set; }
         }
 
-        private static readonly ImageCache INSTANCE = new ImageCache();
+        private static readonly JiraImageCache INSTANCE = new JiraImageCache();
 
-        public static ImageCache Instance {
+        public static JiraImageCache Instance {
             get { return INSTANCE; }
         }
 
@@ -32,7 +33,7 @@ namespace Atlassian.plvs.models {
 
         private readonly string iconCacheDir;
         
-        public ImageCache() {
+        public JiraImageCache() {
             string dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             dir = Path.Combine(dir, "Atlassian Connector for Visual Studio\\Icons");
             if (!Directory.Exists(dir))
@@ -40,7 +41,7 @@ namespace Atlassian.plvs.models {
             iconCacheDir = dir;
         }
 
-        public ImageInfo getImage(Server server, string url) {
+        public ImageInfo getImage(JiraServer server, string url) {
             if (url == null) {
                 return new ImageInfo(Resources.nothing, null);
             }
@@ -72,10 +73,10 @@ namespace Atlassian.plvs.models {
             }
         }
 
-        private static HttpWebResponse getResponse(Server server, string url) {
-            string authUrl = server == null ? url : url + "?" + CredentialUtils.getOsAuthString(server);
-
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(authUrl);
+        private static HttpWebResponse getResponse(JiraServer server, string url) {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            string cookie = JiraServerFacade.Instance.createOrGetSessionCookie(server);
+            JiraAuthenticatedClient.setSessionCookie(request.Headers, cookie);
             request.KeepAlive = true;
 
             if (server != null) {

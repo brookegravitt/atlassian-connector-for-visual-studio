@@ -20,7 +20,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
 
             menuItems.Add(new ToolStripMenuItem(
                 "Open \"Set Priority to " + priority.Name + "\" Drop Zone", 
-                ImageCache.Instance.getImage(server, priority.IconUrl).Img, createDropZone));
+                JiraImageCache.Instance.getImage(server, priority.IconUrl).Img, createDropZone));
 
             ContextMenuStrip.Items.Add("dummy");
 
@@ -33,8 +33,8 @@ namespace Atlassian.plvs.explorer.treeNodes {
 
         public override List<ToolStripItem> MenuItems { get { return menuItems; } }
 
-        public override string getUrl(string authString) {
-            return Server.Url + "?" + authString; 
+        public override string getUrl() {
+            return Server.Url; 
         }
 
         public override void onClick(StatusLabel status) { }

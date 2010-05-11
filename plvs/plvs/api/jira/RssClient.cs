@@ -12,8 +12,7 @@ namespace Atlassian.plvs.api.jira {
     internal class RssClient : JiraAuthenticatedClient {
         private readonly JiraServer server;
 
-        public RssClient(JiraServer server)
-            : base(server.Url, server.UserName, server.Password) {
+        public RssClient(JiraServer server) : base(server.Url, server.UserName, server.Password, server.NoProxy) {
             this.server = server;
         }
 
@@ -25,7 +24,9 @@ namespace Atlassian.plvs.api.jira {
             url.Append("&pager/start=" + start);
             url.Append("&tempMax=" + max);
 
+#if OLDSKOOL_AUTH
             url.Append(appendAuthentication(false));
+#endif
 
             try {
                 using (Stream stream = getRssQueryResultStream(url)) {
@@ -39,15 +40,15 @@ namespace Atlassian.plvs.api.jira {
 
         public List<JiraIssue> getCustomFilterIssues(string queryString, string sortBy, string sortOrder, int start,
                                                      int max) {
-            StringBuilder url =
-                new StringBuilder(BaseUrl + "/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?" +
-                                  queryString);
+            StringBuilder url = new StringBuilder(BaseUrl + "/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?" + queryString);
             url.Append("&sorter/field=" + sortBy);
             url.Append("&sorter/order=" + sortOrder);
             url.Append("&pager/start=" + start);
             url.Append("&tempMax=" + max);
 
+#if OLDSKOOL_AUTH
             url.Append(appendAuthentication(false));
+#endif
 
             try {
                 using (Stream stream = getRssQueryResultStream(url)) {
@@ -63,7 +64,9 @@ namespace Atlassian.plvs.api.jira {
             StringBuilder url = new StringBuilder(BaseUrl + "/si/jira.issueviews:issue-xml/");
             url.Append(key).Append("/").Append(key).Append(".xml");
 
+#if OLDSKOOL_AUTH
             url.Append(appendAuthentication(true));
+#endif
 
             try {
                 using(Stream stream = getRssQueryResultStream(url)) {
@@ -86,6 +89,11 @@ namespace Atlassian.plvs.api.jira {
             req.Credentials = CredentialUtils.getCredentialsForUserAndPassword(url.ToString(), UserName, Password);
             req.Timeout = GlobalSettings.NetworkTimeout * 1000;
             req.ReadWriteTimeout = GlobalSettings.NetworkTimeout * 2000;
+
+#if !OLDSKOOL_AUTH
+            setSessionCookie(req);
+#endif
+
             HttpWebResponse resp = (HttpWebResponse) req.GetResponse();
             return resp.GetResponseStream();
         }

@@ -34,8 +34,8 @@ namespace Atlassian.plvs.explorer.treeNodes {
 
         public override List<ToolStripItem> MenuItems { get { return menuItems; } }
 
-        public override string getUrl(string authString) {
-            return Server.Url + "/secure/ViewProfile.jspa?name=" + user.Id + "&" + authString; 
+        public override string getUrl() {
+            return Server.Url + "/secure/ViewProfile.jspa?name=" + user.Id; 
         }
 
         public override void onClick(StatusLabel status) { }

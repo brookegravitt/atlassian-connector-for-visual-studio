@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models;
+using Atlassian.plvs.models.jira;
 
 namespace Atlassian.plvs.ui.jira.fields {
     public class NamedEntityComboEditorProvider : FixedHeightFieldEditorProvider {
@@ -28,7 +29,7 @@ namespace Atlassian.plvs.ui.jira.fields {
                 foreach (var entity in entities) {
                     ComboBoxWithImagesItem<JiraNamedEntity> item = new ComboBoxWithImagesItem<JiraNamedEntity>(entity, i);
                     if (useImages) {
-                        imageList.Images.Add(ImageCache.Instance.getImage(server, entity.IconUrl).Img);
+                        imageList.Images.Add(JiraImageCache.Instance.getImage(server, entity.IconUrl).Img);
                     }
                     combo.Items.Add(item);
                     if (selectedEntityId != JiraIssue.UNKNOWN && selectedEntityId == entity.Id) {

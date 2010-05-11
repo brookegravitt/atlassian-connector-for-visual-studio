@@ -150,7 +150,7 @@ namespace Atlassian.plvs.dialogs.jira {
             int i = 0;
 
             foreach (JiraNamedEntity prio in priorities) {
-                imageList.Images.Add(ImageCache.Instance.getImage(server, prio.IconUrl).Img);
+                imageList.Images.Add(JiraImageCache.Instance.getImage(server, prio.IconUrl).Img);
                 ListViewItem lvi = new JiraNamedEntityListViewItem(prio, i);
                 listViewPriorities.Items.Add(lvi);
                 ++i;
@@ -168,7 +168,7 @@ namespace Atlassian.plvs.dialogs.jira {
             int i = 0;
 
             foreach (int key in statuses.Keys) {
-                imageList.Images.Add(ImageCache.Instance.getImage(server, statuses[key].IconUrl).Img);
+                imageList.Images.Add(JiraImageCache.Instance.getImage(server, statuses[key].IconUrl).Img);
                 ListViewItem lvi = new JiraNamedEntityListViewItem(statuses[key], i);
                 listViewStatuses.Items.Add(lvi);
                 ++i;
@@ -195,7 +195,7 @@ namespace Atlassian.plvs.dialogs.jira {
                 issueTypes = JiraServerCache.Instance.getIssueTypes(server).Values;
             }
             foreach (JiraNamedEntity issueType in issueTypes) {
-                imageList.Images.Add(ImageCache.Instance.getImage(server, issueType.IconUrl).Img);
+                imageList.Images.Add(JiraImageCache.Instance.getImage(server, issueType.IconUrl).Img);
                 ListViewItem lvi = new JiraNamedEntityListViewItem(issueType, i);
                 listViewIssueTypes.Items.Add(lvi);
                 ++i;

@@ -556,7 +556,7 @@ namespace Atlassian.plvs.ui.jira {
                                                                            && it.Issue.ServerGuid.Equals(issueCopy.Server.GUID.ToString()))) {
                                                                
                                                                it.Text = getShortIssueSummary(issue);
-                                                               ImageCache.ImageInfo imageInfo = ImageCache.Instance.getImage(issue.Server, issue.IssueTypeIconUrl);
+                                                               JiraImageCache.ImageInfo imageInfo = JiraImageCache.Instance.getImage(issue.Server, issue.IssueTypeIconUrl);
                                                                it.Image = imageInfo != null ? imageInfo.Img : null;
                                                            }
                                                        }
@@ -576,7 +576,7 @@ namespace Atlassian.plvs.ui.jira {
         private void setActiveIssueDropdownTextAndImage(JiraServer server, JiraIssue issue) {
             if (CurrentActiveIssue != null && CurrentActiveIssue.Enabled) {
                 activeIssueDropDown.Text = getShortIssueSummary(issue);
-                ImageCache.ImageInfo imageInfo = ImageCache.Instance.getImage(server, issue.IssueTypeIconUrl);
+                JiraImageCache.ImageInfo imageInfo = JiraImageCache.Instance.getImage(server, issue.IssueTypeIconUrl);
                 activeIssueDropDown.Image = imageInfo != null ? imageInfo.Img : null;
             } else {
                 setNoIssueActiveInDropDown();
