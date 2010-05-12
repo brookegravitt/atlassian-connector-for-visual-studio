@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -9,10 +10,12 @@ namespace Atlassian.plvs.api.jira {
     internal class JiraAuthenticatedClient : IDisposable {
         private readonly bool dontUseProxy;
 
-        private const string NO_SESSION_COOKIE = "No session cookie found in response";
-        private const string JSESSIONID = "JSESSIONID=";
+        private const string NO_SESSION_COOKIE = "No session cookies found in response";
 
-        public string SessionCookie { get; set; }
+        private const string JSESSIONID = "JSESSIONID=";
+        private const string STUDIO_CROWD_TOKEN = "studio.crowd.tokenkey=";
+
+        public IDictionary<string, string> SessionTokens { get; set; }
 
         protected string UserName { get; private set; }
         protected string Password { get; private set; }
@@ -25,7 +28,7 @@ namespace Atlassian.plvs.api.jira {
             Password = password;
         }
 
-        public string login() {
+        public IDictionary<string, string> login() {
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(BaseUrl + "/login.jsp");
             req.Proxy = dontUseProxy ? null : GlobalSettings.Proxy;
             req.Credentials = CredentialUtils.getCredentialsForUserAndPassword(BaseUrl, UserName, Password);
@@ -51,18 +54,31 @@ namespace Atlassian.plvs.api.jira {
                     if (cookies == null) {
                         throw new LoginException(new Exception(NO_SESSION_COOKIE));
                     }
-                    int idxStart = cookies.ToUpper().IndexOf(JSESSIONID);
-                    if (idxStart == -1) {
+                    string jSessionId = getSessionToken(cookies, JSESSIONID);
+                    string studioCrowdToken = getSessionToken(cookies, STUDIO_CROWD_TOKEN);
+                    if (jSessionId == null && studioCrowdToken == null) {
                         throw new LoginException(new Exception(NO_SESSION_COOKIE));
                     }
-                    int idxEnd = cookies.IndexOf(";", idxStart);
-                    if (idxEnd == -1) {
-                        throw new LoginException(new Exception(NO_SESSION_COOKIE));
+                    Dictionary<string, string> tokens = new Dictionary<string, string>();
+                    if (jSessionId != null) {
+                        tokens[JSESSIONID] = jSessionId;
                     }
-                    SessionCookie = cookies.Substring(idxStart + JSESSIONID.Length, idxEnd - idxStart - JSESSIONID.Length);
-                    return SessionCookie;
+                    if (studioCrowdToken != null) {
+                        tokens[STUDIO_CROWD_TOKEN] = studioCrowdToken;
+                    }
+                    SessionTokens = tokens;
+                    return SessionTokens;
                 }
             }
+        }
+
+        private static string getSessionToken(string cookies, string tokenName) {
+            int idxStart = cookies.LastIndexOf(tokenName);
+            if (idxStart == -1) {
+                return null;
+            }
+            int idxEnd = cookies.IndexOf(";", idxStart);
+            return idxEnd == -1 ? null : cookies.Substring(idxStart + tokenName.Length, idxEnd - idxStart - tokenName.Length);
         }
 
 #if OLDSKOOL_AUTH
@@ -74,17 +90,23 @@ namespace Atlassian.plvs.api.jira {
         }
 #else
         protected void setSessionCookie(HttpWebRequest req) {
-            if (SessionCookie != null) {
-                req.Headers["Cookie"] = JSESSIONID + SessionCookie + ";";
+            if (SessionTokens != null) {
+                req.Headers["Cookie"] = getSessionCookieString(SessionTokens);
             }
         }
 
-        public static void setSessionCookie(WebHeaderCollection headers, string cookie) {
-            headers["Cookie"] = getSessionCookieString(cookie);
+        public static void setSessionCookie(WebHeaderCollection headers, IDictionary<string, string> tokens) {
+            headers["Cookie"] = getSessionCookieString(tokens);
         }
 
-        public static string getSessionCookieString(string cookie) {
-            return JSESSIONID + cookie + ";";
+        public static string getSessionCookieString(IDictionary<string, string> tokens) {
+            if (tokens == null) return null;
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var key in tokens.Keys) {
+                sb.Append(key).Append(tokens[key]).Append(';');
+            }
+            return sb.Length > 0 ? sb.ToString() : null;
         }
 
         public static string getLoginPostData(string userName, string password) {

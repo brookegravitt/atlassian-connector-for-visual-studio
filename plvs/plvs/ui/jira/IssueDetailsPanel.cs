@@ -7,14 +7,12 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Windows.Forms;
 using System.Diagnostics;
 using Atlassian.plvs.api;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs.jira;
-using Atlassian.plvs.models;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui.jira.issues;
 using Atlassian.plvs.util.jira;
@@ -922,12 +920,6 @@ namespace Atlassian.plvs.ui.jira {
 
             if (isInlineNavigable(item.Attachment.Name)) {
                 try {
-//                    string sessionCookie = facade.getExistingSessionCookie(issue.Server);
-//                    string headers = null;
-//                    if (sessionCookie != null) {
-//                        headers = "Cookie: " + JiraAuthenticatedClient.getSessionCookieString(sessionCookie);
-//                    }
-//                    webAttachmentView.Browser.Navigate(item.Url + (sessionCookie ?? ""), null, null, headers);
                     webAttachmentView.Browser.Navigate(item.Url);
                 } catch (COMException ex) {
                     Debug.WriteLine("IssueDetailsPanel.listViewAttachments_Click() - exception caught: " + ex.Message);
@@ -1009,7 +1001,7 @@ namespace Atlassian.plvs.ui.jira {
             status.setInfo("Saving attachment \"" + item.Attachment.Name + "\"...");
             WebClient client = new WebClient();
             client.DownloadDataCompleted += ((sender, e) => downloadDataCompleted(item.Attachment.Name, e, stream));
-            string sessionCookie = facade.getExistingSessionCookie(issue.Server);
+            IDictionary<string, string> sessionCookie = facade.getExistingSessionCookie(issue.Server);
             if (sessionCookie != null) {
                 JiraAuthenticatedClient.setSessionCookie(client.Headers, sessionCookie);
             }
