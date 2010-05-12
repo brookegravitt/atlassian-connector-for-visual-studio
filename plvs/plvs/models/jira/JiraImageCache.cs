@@ -75,7 +75,7 @@ namespace Atlassian.plvs.models.jira {
 
         private static HttpWebResponse getResponse(JiraServer server, string url) {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            string cookie = JiraServerFacade.Instance.createOrGetSessionCookie(server);
+            IDictionary<string, string> cookie = JiraServerFacade.Instance.createOrGetSessionCookie(server);
             JiraAuthenticatedClient.setSessionCookie(request.Headers, cookie);
             request.KeepAlive = true;
 

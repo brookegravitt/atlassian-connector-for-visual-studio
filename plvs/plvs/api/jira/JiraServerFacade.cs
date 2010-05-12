@@ -14,7 +14,7 @@ namespace Atlassian.plvs.api.jira {
         }
 
         private readonly Dictionary<string, string> soapTokenMap = new Dictionary<string, string>();
-        private readonly Dictionary<string, string> rssSessionCookieMap = new Dictionary<string, string>();
+        private readonly Dictionary<string, IDictionary<string, string>> rssSessionCookieMap = new Dictionary<string, IDictionary<string, string>>();
 
         private JiraServerFacade() {
             PlvsUtils.installSslCertificateHandler();
@@ -38,8 +38,8 @@ namespace Atlassian.plvs.api.jira {
             }
         }
 
-        public string createOrGetSessionCookie(JiraServer server) {
-            string cookie = getExistingSessionCookie(server);
+        public IDictionary<string, string> createOrGetSessionCookie(JiraServer server) {
+            IDictionary<string, string> cookie = getExistingSessionCookie(server);
             if (cookie != null) return cookie;
             lock(rssSessionCookieMap) {
                 using (RssClient rss = new RssClient(server)) {
@@ -50,7 +50,7 @@ namespace Atlassian.plvs.api.jira {
             }
         }
 
-        public string getExistingSessionCookie(JiraServer server) {
+        public IDictionary<string, string> getExistingSessionCookie(JiraServer server) {
             lock (rssSessionCookieMap) {
                 string key = getSessionOrTokenKey(server);
                 return rssSessionCookieMap.ContainsKey(key) ? rssSessionCookieMap[key] : null;
@@ -323,7 +323,7 @@ namespace Atlassian.plvs.api.jira {
             lock (rssSessionCookieMap) {
                 string key = getSessionOrTokenKey(server);
                 if (rssSessionCookieMap.ContainsKey(key)) {
-                    client.SessionCookie = rssSessionCookieMap[key];
+                    client.SessionTokens = rssSessionCookieMap[key];
                 } else {
                     rssSessionCookieMap[key] = client.login();
                 }
