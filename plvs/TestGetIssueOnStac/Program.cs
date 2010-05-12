@@ -72,7 +72,7 @@ namespace TestGetIssueOnStac {
         }
 
         private static void printUsage() {
-            Console.WriteLine("usage: prog <issue key> <use name> <password>");
+            Console.WriteLine("usage: prog <issue key> <user name> <password>");
             Environment.Exit(0);
         }
 
