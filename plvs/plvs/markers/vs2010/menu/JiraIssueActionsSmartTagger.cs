@@ -39,10 +39,12 @@ namespace Atlassian.plvs.markers.vs2010.menu {
         }
 
         private void globalSettingsChanged(object sender, EventArgs e) {
+            tagCache.Clear();
             updateTags();
         }
 
         private void jiraSelectedServerChanged(object sender, EventArgs e) {
+            tagCache.Clear();
             updateTags();
         }
 
