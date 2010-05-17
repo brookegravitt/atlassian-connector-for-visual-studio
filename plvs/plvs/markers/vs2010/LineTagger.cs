@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.dialogs;
 using Atlassian.plvs.util.jira;
 using Atlassian.plvs.windows;
 using Microsoft.VisualStudio.Text;
@@ -20,9 +21,18 @@ namespace Atlassian.plvs.markers.vs2010 {
             this.classifier = classifier;
 
             AtlassianPanel.Instance.Jira.SelectedServerChanged += jiraSelectedServerChanged;
+            GlobalSettings.SettingsChanged += globalSettingsChanged;
+        }
+
+        private void globalSettingsChanged(object sender, EventArgs e) {
+            updateTags();
         }
 
         private void jiraSelectedServerChanged(object sender, EventArgs e) {
+            updateTags();
+        }
+
+        private void updateTags() {
             var snapshot = buffer.CurrentSnapshot;
 
             EventHandler<SnapshotSpanEventArgs> handler = TagsChanged;
@@ -32,6 +42,10 @@ namespace Atlassian.plvs.markers.vs2010 {
         }
 
         IEnumerable<ITagSpan<T>> ITagger<T>.GetTags(NormalizedSnapshotSpanCollection spans) {
+            if (!GlobalSettings.shouldShowIssueLinks(buffer.CurrentSnapshot.LineCount)) {
+                yield break;
+            }
+
             JiraServer selectedServer = AtlassianPanel.Instance.Jira.CurrentlySelectedServerOrDefault;
             if (selectedServer == null) {
                 yield break;
@@ -75,6 +89,7 @@ namespace Atlassian.plvs.markers.vs2010 {
 
             if (disposing) {
                 AtlassianPanel.Instance.Jira.SelectedServerChanged -= jiraSelectedServerChanged;
+                GlobalSettings.SettingsChanged -= globalSettingsChanged;
             }
 
             disposed = true;

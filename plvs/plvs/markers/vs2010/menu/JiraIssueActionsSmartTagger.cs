@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.dialogs;
 using Atlassian.plvs.util;
 using Atlassian.plvs.util.jira;
 using Atlassian.plvs.windows;
@@ -26,9 +27,18 @@ namespace Atlassian.plvs.markers.vs2010.menu {
             this.view.LayoutChanged += layoutChanged;
             view.Caret.PositionChanged += caretPositionChanged;
             AtlassianPanel.Instance.Jira.SelectedServerChanged += jiraSelectedServerChanged;
+            GlobalSettings.SettingsChanged += globalSettingsChanged;
+        }
+
+        private void globalSettingsChanged(object sender, EventArgs e) {
+            updateTags();
         }
 
         private void jiraSelectedServerChanged(object sender, EventArgs e) {
+            updateTags();
+        }
+
+        private void updateTags() {
             if (view == null) {
                 return;
             }
@@ -41,6 +51,11 @@ namespace Atlassian.plvs.markers.vs2010.menu {
         }
 
         public IEnumerable<ITagSpan<JiraIssueActionsSmartTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
+
+            if (!GlobalSettings.shouldShowIssueLinks(view.TextSnapshot.LineCount)) {
+                yield break;
+            }
+
             JiraServer selectedServer = AtlassianPanel.Instance.Jira.CurrentlySelectedServerOrDefault;
             if (selectedServer == null) {
                 yield break;
@@ -112,6 +127,7 @@ namespace Atlassian.plvs.markers.vs2010.menu {
                 view.LayoutChanged -= layoutChanged;
                 view.Caret.PositionChanged -= caretPositionChanged;
                 AtlassianPanel.Instance.Jira.SelectedServerChanged -= jiraSelectedServerChanged;
+                GlobalSettings.SettingsChanged -= globalSettingsChanged;
                 view = null;
             }
 
