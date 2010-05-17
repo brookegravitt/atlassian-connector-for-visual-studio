@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.dialogs;
 using Atlassian.plvs.eventsinks;
 using Atlassian.plvs.util.jira;
 using Atlassian.plvs.windows;
@@ -89,6 +90,12 @@ namespace Atlassian.plvs.markers {
             textLines.GetLineCount(out lineCount);
 
             CommentStrings commentMarkers = getCommentMarkerStrings(textLines);
+
+            if (GlobalSettings.IssueLinksInEditorDisabled) {
+                if (GlobalSettings.IssueLinksInEditorDisabledForAllFiles || lineCount > GlobalSettings.MaxIssueLinksInEditorFileSize) {
+                    return;
+                }
+            }
 
             bool isInBlockComment = false;
             for (int lineNumber = 0; lineNumber < lineCount; ++lineNumber) {
