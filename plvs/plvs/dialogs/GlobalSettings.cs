@@ -472,5 +472,13 @@ namespace Atlassian.plvs.dialogs {
         private void numericMaxIssueLinksFileLength_ValueChanged(object sender, EventArgs e) {
             updateOkButton();
         }
+
+        public static bool shouldShowIssueLinks(int editorLineCount) {
+            if (!IssueLinksInEditorDisabled) return true;
+
+            if (IssueLinksInEditorDisabledForAllFiles) return false;
+
+            return editorLineCount < MaxIssueLinksInEditorFileSize;
+        }
     }
 }
