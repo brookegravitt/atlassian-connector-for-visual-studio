@@ -91,11 +91,7 @@ namespace Atlassian.plvs.markers {
 
             CommentStrings commentMarkers = getCommentMarkerStrings(textLines);
 
-            if (GlobalSettings.IssueLinksInEditorDisabled) {
-                if (GlobalSettings.IssueLinksInEditorDisabledForAllFiles || lineCount > GlobalSettings.MaxIssueLinksInEditorFileSize) {
-                    return;
-                }
-            }
+            if (!GlobalSettings.shouldShowIssueLinks(lineCount)) return;
 
             bool isInBlockComment = false;
             for (int lineNumber = 0; lineNumber < lineCount; ++lineNumber) {
