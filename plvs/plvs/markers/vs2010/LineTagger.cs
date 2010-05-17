@@ -16,12 +16,22 @@ namespace Atlassian.plvs.markers.vs2010 {
         private readonly IClassifier classifier;
         private bool disposed;
 
+        private readonly Dictionary<string, IEnumerable<ITagSpan<T>>> tagCache = new Dictionary<string, IEnumerable<ITagSpan<T>>>();
+
         internal LineTagger(ITextBuffer buffer, IClassifier classifier) {
             this.buffer = buffer;
             this.classifier = classifier;
 
+
             AtlassianPanel.Instance.Jira.SelectedServerChanged += jiraSelectedServerChanged;
             GlobalSettings.SettingsChanged += globalSettingsChanged;
+
+            buffer.Changed += buffer_Changed;
+        }
+
+        private void buffer_Changed(object sender, TextContentChangedEventArgs e) {
+//            DebugMon.Instance().addText(GetType().Name + " buffer_Changed(): " + buffer + " changed, clearing tag cache");
+            tagCache.Clear();
         }
 
         private void globalSettingsChanged(object sender, EventArgs e) {
@@ -42,6 +52,18 @@ namespace Atlassian.plvs.markers.vs2010 {
         }
 
         IEnumerable<ITagSpan<T>> ITagger<T>.GetTags(NormalizedSnapshotSpanCollection spans) {
+            string key = spans.ToString();
+            if (!tagCache.ContainsKey(key)) {
+//                DebugMon.Instance().addText(GetType().Name + ".GetTags(): spans: " + spans + " returning from tag cache");
+                tagCache[key] = getTagsInternal(spans);
+            }
+            return tagCache[key];
+        }
+
+        IEnumerable<ITagSpan<T>> getTagsInternal(IEnumerable<SnapshotSpan> spans) {
+
+//            DebugMon.Instance().addText(GetType().Name + ".getTagsInternal(): spans: " + spans);
+
             if (!GlobalSettings.shouldShowIssueLinks(buffer.CurrentSnapshot.LineCount)) {
                 yield break;
             }
@@ -90,6 +112,7 @@ namespace Atlassian.plvs.markers.vs2010 {
             if (disposing) {
                 AtlassianPanel.Instance.Jira.SelectedServerChanged -= jiraSelectedServerChanged;
                 GlobalSettings.SettingsChanged -= globalSettingsChanged;
+                buffer.Changed -= buffer_Changed;
             }
 
             disposed = true;
