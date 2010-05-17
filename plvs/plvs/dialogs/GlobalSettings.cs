@@ -13,6 +13,8 @@ namespace Atlassian.plvs.dialogs {
         private const int DEFAULT_BAMBOO_POLLING_INTERVAL = 60;
         private const int DEFAULT_ISSUE_BATCH_SIZE = 25;
         private const int DEFAULT_JIRA_TIMEOUT = 10;
+        private const int DEFAULT_MAX_ISSUE_LINKS_FILE_LEN = 10000;
+
         private const string REG_AUTOUPDATE = "AutoupdateEnabled";
         private const string REG_BAMBOO_POLLING_INTERVAL = "BambooPollingInterval";
         private const string REG_CHECK_SNAPSHOTS = "AutoupdateCheckSnapshots";
@@ -23,6 +25,8 @@ namespace Atlassian.plvs.dialogs {
         private const string REG_JIRA_SERVER_EXPLORER = "JiraServerExplorer";
         private const string REG_ANKH_SNV_ENABLED = "AnkhSVNIntegrationEnabled";
         private const string REG_NETWORK_TIMEOUT = "NetworkTimeout";
+        private const string REG_ISSUE_LINKS_DISABLED = "JiraIssueLinksInEditorDisabled";
+        private const string REG_ISSUE_LINKS_MAX_FILE_LENGTH = "JiraIssueLinksInEditorMaxFileLength";
 
         private const string REG_PROXY_TYPE = "ProxyType";
         private const string REG_PROXY_HOST = "ProxyHost";
@@ -67,6 +71,10 @@ namespace Atlassian.plvs.dialogs {
                 JiraServerExplorerEnabled = (int)root.GetValue(REG_JIRA_SERVER_EXPLORER, 0) > 0;
                 AnkhSvnIntegrationEnabled = (int) root.GetValue(REG_ANKH_SNV_ENABLED, 0) > 0;
                 NetworkTimeout = (int) root.GetValue(REG_NETWORK_TIMEOUT, 10);
+                IssueLinksInEditorDisabled = (int) root.GetValue(REG_ISSUE_LINKS_DISABLED, 0) > 0;
+                IssueLinksInEditorDisabledForAllFiles = (int) root.GetValue(REG_ISSUE_LINKS_DISABLED, 0) > 1;
+                MaxIssueLinksInEditorFileSize = (int) root.GetValue(REG_ISSUE_LINKS_MAX_FILE_LENGTH, DEFAULT_MAX_ISSUE_LINKS_FILE_LEN);
+
                 string proxy = (string) root.GetValue(REG_PROXY_TYPE, ProxyType.SYSTEM.GetStringValue());
                 if (proxy.Equals(ProxyType.CUSTOM.GetStringValue())) {
                     currentProxyType = ProxyType.CUSTOM;
@@ -90,6 +98,9 @@ namespace Atlassian.plvs.dialogs {
                 JiraServerExplorerEnabled = false;
                 AnkhSvnIntegrationEnabled = false;
                 NetworkTimeout = DEFAULT_JIRA_TIMEOUT;
+                IssueLinksInEditorDisabled = false;
+                IssueLinksInEditorDisabledForAllFiles = false;
+                MaxIssueLinksInEditorFileSize = DEFAULT_MAX_ISSUE_LINKS_FILE_LEN;
                 currentProxyType = ProxyType.SYSTEM;
                 proxyHost = "";
                 proxyPort = 0;
@@ -121,6 +132,9 @@ namespace Atlassian.plvs.dialogs {
         public static bool AnkhSvnIntegrationEnabled { get; private set; }
         public static int NetworkTimeout { get; private set; }
         public static IWebProxy Proxy { get { return getProxy(); } }
+        public static bool IssueLinksInEditorDisabled { get; private set; }
+        public static bool IssueLinksInEditorDisabledForAllFiles { get; private set; }
+        public static int MaxIssueLinksInEditorFileSize { get; private set; }
 
         private static IWebProxy getProxy() {
             switch (proxyTypeToSave) {
@@ -166,6 +180,13 @@ namespace Atlassian.plvs.dialogs {
             checkUseProxyAuth.Checked = proxyUseAuth;
             textProxyUserName.Text = proxyUser;
             textProxyPassword.Text = proxyPassword;
+
+            checkDisableIssueLinks.Checked = IssueLinksInEditorDisabled;
+            radioDisableIssueLinksForAllFiles.Checked = IssueLinksInEditorDisabledForAllFiles;
+            radioDisableIssueLinksForLargeFiles.Checked = !radioDisableIssueLinksForAllFiles.Checked;
+            radioDisableIssueLinksForAllFiles.Enabled = IssueLinksInEditorDisabled;
+            radioDisableIssueLinksForLargeFiles.Enabled = IssueLinksInEditorDisabled;
+            numericMaxIssueLinksFileLength.Value = MaxIssueLinksInEditorFileSize;
         }
 
         public static void checkFirstRun() {
@@ -227,6 +248,10 @@ namespace Atlassian.plvs.dialogs {
             proxyUser = textProxyUserName.Text;
             proxyPassword = textProxyPassword.Text;
 
+            IssueLinksInEditorDisabled = checkDisableIssueLinks.Checked;
+            IssueLinksInEditorDisabledForAllFiles = radioDisableIssueLinksForAllFiles.Checked;
+            MaxIssueLinksInEditorFileSize = (int) numericMaxIssueLinksFileLength.Value;
+
             saveValues();
 
             if (SettingsChanged != null) {
@@ -259,6 +284,11 @@ namespace Atlassian.plvs.dialogs {
                 root.SetValue(REG_PROXY_USE_AUTH, proxyUseAuth ? 1 : 0);
                 root.SetValue(REG_PROXY_USER, proxyUser);
                 root.SetValue(REG_PROXY_PASSWORD, DPApi.encrypt(proxyPassword, PASSWORD_ENTROPY));
+                int issueLinksDisabled = IssueLinksInEditorDisabled
+                                             ? (IssueLinksInEditorDisabledForAllFiles ? 2 : 1)
+                                             : 0;
+                root.SetValue(REG_ISSUE_LINKS_DISABLED, issueLinksDisabled);
+                root.SetValue(REG_ISSUE_LINKS_MAX_FILE_LENGTH, MaxIssueLinksInEditorFileSize);
             } catch (Exception e) {
                 MessageBox.Show("Unable to save values to registry: " + e.Message, Constants.ERROR_CAPTION,
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -307,6 +337,9 @@ namespace Atlassian.plvs.dialogs {
             changed |= proxyUseAuth != checkUseProxyAuth.Checked;
             changed |= !proxyUser.Equals(textProxyUserName.Text);
             changed |= !proxyPassword.Equals(textProxyPassword.Text);
+            changed |= IssueLinksInEditorDisabled != checkDisableIssueLinks.Checked;
+            changed |= IssueLinksInEditorDisabledForAllFiles != radioDisableIssueLinksForAllFiles.Checked;
+            changed |= MaxIssueLinksInEditorFileSize != numericMaxIssueLinksFileLength.Value;
 
             buttonOk.Enabled = changed;
         }
@@ -417,6 +450,27 @@ namespace Atlassian.plvs.dialogs {
             checkUseProxyAuth.Enabled = enabled;
             textProxyUserName.Enabled = enabled && checkUseProxyAuth.Checked;
             textProxyPassword.Enabled = enabled && checkUseProxyAuth.Checked;
+        }
+
+        private void checkDisableIssueLinks_CheckedChanged(object sender, EventArgs e) {
+            radioDisableIssueLinksForAllFiles.Enabled = checkDisableIssueLinks.Checked;
+            radioDisableIssueLinksForLargeFiles.Enabled = checkDisableIssueLinks.Checked;
+            numericMaxIssueLinksFileLength.Enabled = radioDisableIssueLinksForLargeFiles.Checked && checkDisableIssueLinks.Checked;
+            updateOkButton();
+        }
+
+        private void radioDisableIssueLinksForAllFiles_CheckedChanged(object sender, EventArgs e) {
+            numericMaxIssueLinksFileLength.Enabled = radioDisableIssueLinksForLargeFiles.Checked && checkDisableIssueLinks.Checked;
+            updateOkButton();
+        }
+
+        private void radioDisableIssueLInksForLargeFiles_CheckedChanged(object sender, EventArgs e) {
+            numericMaxIssueLinksFileLength.Enabled = radioDisableIssueLinksForLargeFiles.Checked && checkDisableIssueLinks.Checked;
+            updateOkButton();
+        }
+
+        private void numericMaxIssueLinksFileLength_ValueChanged(object sender, EventArgs e) {
+            updateOkButton();
         }
     }
 }
