@@ -1,26 +1,34 @@
-﻿using System;
-using Atlassian.plvs.api.jira;
-using Atlassian.plvs.windows;
+﻿using System.ComponentModel.Composition;
+using System.Windows.Media;
 using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
+using Microsoft.VisualStudio.Utilities;
 
 namespace Atlassian.plvs.markers.vs2010.texttag {
-    public class JiraIssueTextTag : IUrlTag {
+
+    [Export(typeof(EditorFormatDefinition))]
+    [ClassificationType(ClassificationTypeNames = "JiraIssueUnderlineClassification")]
+    [Name("JiraIssueUnderlineClassificationFormat")]
+    [UserVisible(true)]
+    [Order(After = Priority.High)]
+    internal sealed class UnderlineFormatDefinition : ClassificationFormatDefinition {
+        public UnderlineFormatDefinition() {
+            DisplayName = "JIRA Issue Underline";
+            TextDecorations = System.Windows.TextDecorations.Underline;
+            ForegroundColor = Colors.Blue;
+        }
+    }
+
+    public class JiraIssueTextTag : ClassificationTag {
+
         public SnapshotSpan Where { get; set; }
         public string IssueKey { get; private set; }
 
-        public JiraIssueTextTag(SnapshotSpan where, string issueKey) {
+        public JiraIssueTextTag(SnapshotSpan where, string issueKey)
+            : base(JiraIssueTagProvider.JiraIssueTaggerProvider.UnderlineClassification) {
             Where = where;
             IssueKey = issueKey;
-        }
-
-        public Uri Url {
-            get { return createUrl(IssueKey); }
-        }
-                
-        private static Uri createUrl(string key) {
-            JiraServer server = AtlassianPanel.Instance.Jira.CurrentlySelectedServerOrDefault;
-            return server != null ? new Uri(server.Url + "/browse/" + key) : new Uri("about:blank");
         }
     }
 }

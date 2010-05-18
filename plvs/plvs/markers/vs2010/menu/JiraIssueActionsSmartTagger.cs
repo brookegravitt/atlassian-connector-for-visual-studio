@@ -90,12 +90,16 @@ namespace Atlassian.plvs.markers.vs2010.menu {
             else
                 yield break;
 
+            SortedDictionary<string, JiraProject> projects = JiraServerCache.Instance.getProjects(selectedServer);
+
             foreach (SnapshotSpan span in spans) {
                 foreach (SnapshotSpan s in from classification in classifier.GetClassificationSpans(span)
                                            where classification.ClassificationType.Classification.ToLower().Contains("comment")
                                            let matches = JiraIssueUtils.ISSUE_REGEX.Matches(classification.Span.GetText())
                                            let c = classification
-                                           from s in matches.Cast<Match>().Where(match => match.Success).Select(match => new SnapshotSpan(c.Span.Start + match.Index, match.Length))
+                                           from s in matches.Cast<Match>().Where(match => match.Success 
+                                               && projects.ContainsKey(match.Groups[2].Value))
+                                                    .Select(match => new SnapshotSpan(c.Span.Start + match.Index, match.Length))
                                            select s) {
                     if (s.Start.Position <= point.Position && s.End.Position >= point.Position) {
                         yield return new TagSpan<JiraIssueActionsSmartTag>(s, new JiraIssueActionsSmartTag(getSmartTagActions(s)));

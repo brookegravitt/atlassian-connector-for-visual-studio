@@ -52,11 +52,16 @@ namespace Atlassian.plvs.markers.vs2010.quickinfo {
                            + "\r\nPriority: " + issue.Priority
                            + "\r\nReporter: " + JiraServerCache.Instance.getUsers(issue.Server).getUser(issue.Reporter)
                            + "\r\nAssignee: " + JiraServerCache.Instance.getUsers(issue.Server).getUser(issue.Assignee)
-                           + "\r\nLast Updated: " + issue.UpdateDate;
+                           + "\r\nLast Updated: " + issue.UpdateDate 
+                           + getCrtlClickText();
                 }
-                return "Issue Key: " + issueKey;
+                return "Issue Key: " + issueKey + getCrtlClickText();
             }
             return "Issue Key: " + issueKey + "\r\nNo JIRA server selected";
+        }
+
+        private static string getCrtlClickText() {
+            return "\r\n\r\nCTRL + click to open issue";
         }
 
         private bool disposed;
