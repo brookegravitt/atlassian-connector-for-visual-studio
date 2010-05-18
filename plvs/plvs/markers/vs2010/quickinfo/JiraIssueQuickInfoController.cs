@@ -21,6 +21,7 @@ namespace Atlassian.plvs.markers.vs2010.quickinfo {
         }
 
         private void OnTextViewMouseHover(object sender, MouseHoverEventArgs e) {
+
             SnapshotPoint? point = textView.BufferGraph.MapDownToFirstMatch(
                 new SnapshotPoint(textView.TextSnapshot, e.Position),
                 PointTrackingMode.Positive,

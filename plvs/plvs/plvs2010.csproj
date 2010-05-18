@@ -314,6 +314,8 @@
     <Compile Include="markers\vs2010\menu\JiraIssueActionsSmartTagProvider.cs" />
     <Compile Include="markers\vs2010\menu\OpenIssueInBrowserSmartTagAction.cs" />
     <Compile Include="markers\vs2010\menu\OpenIssueInIdeSmartTagAction.cs" />
+    <Compile Include="markers\vs2010\mouseandkeyboard\KeyProcessorProvider.cs" />
+    <Compile Include="markers\vs2010\mouseandkeyboard\MouseProcessorProvider.cs" />
     <Compile Include="markers\vs2010\quickinfo\JiraIssueQuickInfoController.cs" />
     <Compile Include="markers\vs2010\quickinfo\JiraIssueQuickInfoControllerProvider.cs" />
     <Compile Include="markers\vs2010\quickinfo\JiraIssueQuickInfoProvider.cs" />
