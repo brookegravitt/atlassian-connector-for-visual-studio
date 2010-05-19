@@ -449,7 +449,6 @@
     <Compile Include="util\bamboo\BambooBuildUtils.cs" />
     <Compile Include="util\Constants.cs" />
     <Compile Include="util\ExceptionBuilder.cs" />
-    <Compile Include="util\jira\BambooBuildUtils.cs" />
     <Compile Include="util\jira\IssueActionRunner.cs" />
     <Compile Include="util\XPathUtils.cs" />
     <Compile Include="ui\jira\TabJira.cs">
