@@ -9,6 +9,7 @@ using Atlassian.plvs.dialogs;
 using Atlassian.plvs.eventsinks;
 using Atlassian.plvs.scm;
 using Atlassian.plvs.store;
+using Atlassian.plvs.ui.bamboo;
 using Atlassian.plvs.ui.jira;
 using Atlassian.plvs.windows;
 using Microsoft.VisualStudio;
@@ -39,9 +40,12 @@ namespace Atlassian.plvs {
         Orientation = ToolWindowOrientation.Bottom)]
     [ProvideToolWindow(typeof (IssueDetailsToolWindow), Transient = true, Style = VsDockStyle.Tabbed,
         Orientation = ToolWindowOrientation.Bottom)]
+    [ProvideToolWindow(typeof(BuildDetailsToolWindow), Transient = true, Style = VsDockStyle.Tabbed,
+        Orientation = ToolWindowOrientation.Bottom)]
     [ProvideAutoLoad(UIContextGuids.NoSolution)]
     [ProvideToolWindowVisibility(typeof (AtlassianToolWindow), UIContextGuids.SolutionExists)]
     [ProvideToolWindowVisibility(typeof (IssueDetailsToolWindow), UIContextGuids.SolutionExists)]
+    [ProvideToolWindowVisibility(typeof(BuildDetailsToolWindow), UIContextGuids.SolutionExists)]
     [ProvideIssueRepositoryConnector(typeof(AnkhSvnJiraConnector), AnkhSvnJiraConnector.ANKH_CONNECTOR_NAME, typeof(PlvsPackage), "#113")]
     [Guid(GuidList.guidplvsPkgString)]
     public sealed class PlvsPackage : Package, IVsPersistSolutionOpts, IVsInstalledProduct {
@@ -69,15 +73,31 @@ namespace Atlassian.plvs {
         }
 
         private ToolWindowPane createIssueDetailsWindow() {
-            ToolWindowPane window = FindToolWindow(typeof (IssueDetailsToolWindow), 0, true);
+            IVsWindowFrame windowFrame;
+            ToolWindowPane window = createDetailsWindow(typeof (IssueDetailsToolWindow), out windowFrame);
+            IssueDetailsWindow.Instance.WindowFrame = window;
+            IVsWindowFrame2 wf2 = (IVsWindowFrame2)windowFrame;
+            uint cookie;
+            wf2.Advise(IssueDetailsWindow.Instance, out cookie);
+            return window;
+        }
+
+        private ToolWindowPane createBuildDetailsWindow() {
+            IVsWindowFrame windowFrame;
+            ToolWindowPane window = createDetailsWindow(typeof(BuildDetailsToolWindow), out windowFrame);
+            BuildDetailsWindow.Instance.WindowFrame = window;
+            IVsWindowFrame2 wf2 = (IVsWindowFrame2)windowFrame;
+            uint cookie;
+            wf2.Advise(BuildDetailsWindow.Instance, out cookie);
+            return window;
+        }
+
+        private ToolWindowPane createDetailsWindow(Type toolWindowType, out IVsWindowFrame windowFrame) {
+            ToolWindowPane window = FindToolWindow(toolWindowType, 0, true);
             if ((null == window) || (null == window.Frame)) {
                 throw new NotSupportedException(Resources.CanNotCreateWindow);
             }
-            IVsWindowFrame windowFrame = (IVsWindowFrame) window.Frame;
-            IssueDetailsWindow.Instance.WindowFrame = window;
-            IVsWindowFrame2 wf2 = (IVsWindowFrame2) windowFrame;
-            uint cookie;
-            wf2.Advise(IssueDetailsWindow.Instance, out cookie);
+            windowFrame = (IVsWindowFrame) window.Frame;
             ErrorHandler.ThrowOnFailure(windowFrame.Hide());
             return window;
         }
@@ -176,7 +196,7 @@ namespace Atlassian.plvs {
 
             }
 
-            SolutionEventSink solutionEventSink = new SolutionEventSink(this, createAtlassianWindow, createIssueDetailsWindow);
+            SolutionEventSink solutionEventSink = new SolutionEventSink(this, createAtlassianWindow, createIssueDetailsWindow, createBuildDetailsWindow);
 
             IVsSolution solution = (IVsSolution)GetService(typeof(SVsSolution));
             ErrorHandler.ThrowOnFailure(solution.AdviseSolutionEvents(solutionEventSink, out solutionEventCookie));

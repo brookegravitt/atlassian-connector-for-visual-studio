@@ -12,7 +12,6 @@ using Atlassian.plvs.ui.bamboo;
 using Atlassian.plvs.ui.jira;
 using Atlassian.plvs.util;
 using EnvDTE;
-using Constants=Atlassian.plvs.util.Constants;
 
 namespace Atlassian.plvs.windows {
     public partial class AtlassianPanel : ToolWindowFrame {

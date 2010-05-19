@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
 namespace Atlassian.plvs.ui {
-    public class ToolWindowFrame : UserControl {
+    public class ToolWindowFrame : UserControl, IVsWindowFrameNotify {
 
         public ToolWindowPane WindowFrame { get; set; }
 
@@ -21,5 +21,33 @@ namespace Atlassian.plvs.ui {
                 }
             }
         }
+
+        public int OnShow(int fShow) {
+            switch (fShow) {
+                case (int)__FRAMESHOW.FRAMESHOW_WinShown:
+                    notifyWindowVisibility(true);
+                    break;
+                case (int)__FRAMESHOW.FRAMESHOW_WinHidden:
+                    notifyWindowVisibility(false);
+                    break;
+            }
+
+            return VSConstants.S_OK;
+        }
+
+        protected virtual void notifyWindowVisibility(bool visible) {}
+
+        public int OnMove() {
+            return VSConstants.S_OK;
+        }
+
+        public int OnSize() {
+            return VSConstants.S_OK;
+        }
+
+        public int OnDockableChange(int fDockable) {
+            return VSConstants.S_OK;
+        }
+
     }
 }

@@ -7,6 +7,7 @@ using Atlassian.plvs.markers;
 using Atlassian.plvs.models.bamboo;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.store;
+using Atlassian.plvs.ui.bamboo;
 using Atlassian.plvs.ui.jira;
 using Atlassian.plvs.util;
 using Atlassian.plvs.windows;
@@ -22,11 +23,18 @@ namespace Atlassian.plvs.eventsinks {
         private readonly PlvsPackage package;
         private readonly CreateToolWindow createAtlassianWindow;
         private readonly CreateToolWindow createIssueDetailsWindow;
+        private readonly CreateToolWindow createBuildDetailsWindow;
 
-        public SolutionEventSink(PlvsPackage package, CreateToolWindow createAtlassianWindow, CreateToolWindow createIssueDetailsWindow) {
+        public SolutionEventSink(
+            PlvsPackage package, 
+            CreateToolWindow createAtlassianWindow, 
+            CreateToolWindow createIssueDetailsWindow, 
+            CreateToolWindow createBuildDetailsWindow) {
+
             this.package = package;
             this.createAtlassianWindow = createAtlassianWindow;
             this.createIssueDetailsWindow = createIssueDetailsWindow;
+            this.createBuildDetailsWindow = createBuildDetailsWindow;
         }
 
         public int OnAfterOpenProject(IVsHierarchy pHierarchy, int fAdded) {
@@ -72,8 +80,10 @@ namespace Atlassian.plvs.eventsinks {
                 AtlassianPanel.Instance.reinitialize(dte);
 
                 ToolWindowManager.Instance.IssueDetailsWindow = createIssueDetailsWindow();
+                ToolWindowManager.Instance.BuildDetailsWindow = createBuildDetailsWindow();
 
                 IssueDetailsWindow.Instance.Solution = dte.Solution;
+                BuildDetailsWindow.Instance.Solution = dte.Solution;
 
                 JiraEditorLinkManager.OnSolutionOpened();
                 Autoupdate.Instance.initialize();
@@ -101,6 +111,8 @@ namespace Atlassian.plvs.eventsinks {
                 JiraIssueListModelImpl.Instance.removeAllListeners();
                 IssueDetailsWindow.Instance.clearAllIssues();
                 IssueDetailsWindow.Instance.FrameVisible = false;
+                BuildDetailsWindow.Instance.clearAllBuilds();
+                BuildDetailsWindow.Instance.FrameVisible = false;
                 ToolWindowManager.Instance.AtlassianWindow = null;
                 Autoupdate.Instance.shutdown();
                 DropZone.closeAll();
