@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Aga.Controls.Tree;
 using Atlassian.plvs.api.bamboo;
+using Atlassian.plvs.util.bamboo;
 using Atlassian.plvs.util.jira;
 
 namespace Atlassian.plvs.ui.bamboo.treemodels {

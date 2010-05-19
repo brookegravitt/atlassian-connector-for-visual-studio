@@ -1,7 +1,7 @@
 ﻿using System;
 using Atlassian.plvs.api.bamboo;
 
-namespace Atlassian.plvs.util.jira {
+namespace Atlassian.plvs.util.bamboo {
     public static class BambooBuildUtils {
         
         public static string getPlanKey(BambooBuild build) {
