@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Atlassian.plvs.api.bamboo;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.util;
+using Atlassian.plvs.util.bamboo;
 using Atlassian.plvs.util.jira;
 using Process = System.Diagnostics.Process;
 using EnvDTE;
@@ -64,8 +65,19 @@ namespace Atlassian.plvs.ui.bamboo {
         }
 
         private void getLogRunner() {
-            Thread.Sleep(1000);
-            status.setInfo("Build log retrieved");    
+            try {
+                string buildLog = BambooServerFacade.Instance.getBuildLog(build);
+                StringBuilder sb = new StringBuilder();
+                sb.Append("<html>\n<head>\n").Append(Resources.summary_and_description_css);
+                sb.Append("\n</head>\n<body class=\"description\">\n");
+                sb.Append(buildLog.Replace("\n", "<br>").Replace("\r", ""));
+                sb.Append("</body></html>");
+
+                this.safeInvoke(new MethodInvoker(delegate { webLog.DocumentText = sb.ToString(); }));
+                status.setInfo("Build log retrieved");
+            } catch (Exception e) {
+                status.setError("Failed to retrieve build log", e);
+            }
         }
 
         private void displaySummary() {

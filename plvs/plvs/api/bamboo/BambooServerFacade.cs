@@ -57,6 +57,11 @@ namespace Atlassian.plvs.api.bamboo {
             wrapExceptionsVoid(session, () => session.runBuild(planKey));
         }
 
+        public string getBuildLog(BambooBuild build) {
+            RestSession session = createSessionAndLogin(build.Server);
+            return wrapExceptions(session, () => session.getBuildLog(build));
+        }
+
         public void dropAllSessions() {}
     }
 }

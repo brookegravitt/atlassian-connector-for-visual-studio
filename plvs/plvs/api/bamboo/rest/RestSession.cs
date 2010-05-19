@@ -8,6 +8,8 @@ using System.Web;
 using System.Xml.XPath;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.util;
+using Atlassian.plvs.util.bamboo;
+using Atlassian.plvs.util.jira;
 
 namespace Atlassian.plvs.api.bamboo.rest {
     public class RestSession {
@@ -270,15 +272,23 @@ namespace Atlassian.plvs.api.bamboo.rest {
                 + "?buildKey=" + planKey 
                 + "&auth=" + HttpUtility.UrlEncode(authToken, Encoding.UTF8);
 
-            Stream stream = getQueryResultStream(endpoint, false);
+            using (Stream stream = getQueryResultStream(endpoint, false)) {
+                XPathDocument doc = XPathUtils.getXmlDocument(stream);
 
-            XPathDocument doc = XPathUtils.getXmlDocument(stream);
-
-            string code = getRemoteExceptionMessages(doc);
-            if (code != null) {
-                throw new Exception(code);
+                string code = getRemoteExceptionMessages(doc);
+                if (code != null) {
+                    throw new Exception(code);
+                }
             }
 #endif
+        }
+
+        public string getBuildLog(BambooBuild build) {
+            string endpoint = server.Url + "/download/" + BambooBuildUtils.getPlanKey(build) + "/build_logs/" + build.Key + ".log";
+            using (Stream stream = getQueryResultStream(endpoint, true)) {
+                StreamReader reader = new StreamReader(stream);
+                return reader.ReadToEnd();
+            }
         }
 
         private Stream getQueryResultStream(string endpoint, bool setBasicAuth) {
