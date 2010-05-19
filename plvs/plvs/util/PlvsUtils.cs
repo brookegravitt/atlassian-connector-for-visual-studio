@@ -36,6 +36,14 @@ namespace Atlassian.plvs.util {
             return attribs.Length > 0 ? attribs[0].StringValue : null;
         }
 
+        public static string GetColorValue(this Enum value) {
+            Type type = value.GetType();
+            FieldInfo fieldInfo = type.GetField(value.ToString());
+            ColorValueAttribute[] attribs = fieldInfo.GetCustomAttributes(typeof(ColorValueAttribute), false) as ColorValueAttribute[];
+            if (attribs == null) return "#000000";
+            return attribs.Length > 0 ? attribs[0].ColorValue : "#000000";
+        }
+
         public static bool compareLists<T>(IList<T> lhs, IList<T> rhs) {
             if (lhs == null && rhs == null) return true;
             if (lhs == null || rhs == null) return false;

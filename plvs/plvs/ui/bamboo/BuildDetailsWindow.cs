@@ -18,6 +18,13 @@ namespace Atlassian.plvs.ui.bamboo {
             InitializeComponent();
 
             Instance = this;
+
+            ShownOrHidden += (s, e) => notifyWindowVisibility(e.Visible);
+
+            tabBuilds.ImageList = new ImageList();
+            tabBuilds.ImageList.Images.Add(Resources.icn_plan_passed);
+            tabBuilds.ImageList.Images.Add(Resources.icn_plan_failed);
+            tabBuilds.ImageList.Images.Add(Resources.icn_plan_disabled);
         }
 
         public void clearAllBuilds() {
@@ -33,20 +40,27 @@ namespace Atlassian.plvs.ui.bamboo {
             string key = getBuildTabKey(build);
             if (!tabBuilds.TabPages.ContainsKey(key)) {
                 TabPage buildTab = new TabPage { Name = key, Text = build.Key };
-//                IssueDetailsPanel issuePanel = new IssueDetailsPanel(model, Solution, issue, issueTabs, issueTab, this, activeIssueManager);
-//                tabBuilds.Controls.Add(issuePanel);
-//                issuePanel.Dock = DockStyle.Fill;
+                BuildDetailsPanel buildPanel = new BuildDetailsPanel(Solution, build, buildTab, this, buttonCloseClicked);
+                buildTab.Controls.Add(buildPanel);
+                buildPanel.Dock = DockStyle.Fill;
                 tabBuilds.TabPages.Add(buildTab);
             }
             tabBuilds.SelectTab(key);
             UsageCollector.Instance.bumpBambooBuildsOpen();
         }
 
+        private void buttonCloseClicked(TabPage tab) {
+            tabBuilds.TabPages.Remove(tab);
+            if (tabBuilds.TabPages.Count == 0) {
+                Instance.FrameVisible = false;
+            }
+        }
+
         private static string getBuildTabKey(BambooBuild build) {
             return build.Server.GUID + build.Key;
         }
 
-        protected override void notifyWindowVisibility(bool visible) {
+        private void notifyWindowVisibility(bool visible) {
             if (visible) {
                 if (ToolWindowShown != null) {
                     ToolWindowShown(this, new EventArgs());
@@ -55,6 +69,20 @@ namespace Atlassian.plvs.ui.bamboo {
                 if (ToolWindowHidden != null) {
                     ToolWindowHidden(this, new EventArgs());
                 }
+            }
+        }
+
+        public void setMyTabIconFromBuildResult(BambooBuild.BuildResult result, TabPage tab) {
+            switch (result) {
+                case BambooBuild.BuildResult.SUCCESSFUL:
+                    tab.ImageIndex = 0;
+                    break;
+                case BambooBuild.BuildResult.FAILED:
+                    tab.ImageIndex = 1;
+                    break;
+                default:
+                    tab.ImageIndex = 2;
+                    break;
             }
         }
     }

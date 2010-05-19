@@ -391,4 +391,7 @@
   <data name="BuildDetailsToolWindowTitle" xml:space="preserve">
     <value>Builds - Bamboo</value>
   </data>
+  <data name="build_summary_html" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\texts\build_summary_html.txt;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>

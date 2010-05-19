@@ -5,10 +5,13 @@ namespace Atlassian.plvs.api.bamboo {
     public class BambooBuild {
         public enum BuildResult {
             [StringValue("Successful")]
+            [ColorValue("339933")]
             SUCCESSFUL,
             [StringValue("Failed")]
+            [ColorValue("#ff0000")]
             FAILED,
             [StringValue("Unknown")]
+            [ColorValue("#808080")]
             UNKNOWN
         }
 
@@ -45,7 +48,5 @@ namespace Atlassian.plvs.api.bamboo {
         public int SuccessfulTests { get; private set; }
         public int FailedTests { get; private set; }
         public string Reason { get; private set; }
-
-
     }
 }

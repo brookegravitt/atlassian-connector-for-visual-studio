@@ -7,7 +7,6 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Windows.Forms;
 using System.Diagnostics;
 using Atlassian.plvs.api;
@@ -40,8 +39,8 @@ namespace Atlassian.plvs.ui.jira {
         private readonly StatusLabel status;
 
         private JiraIssue issue;
-        private readonly TabControl tabWindow;
         private readonly TabPage myTab;
+        private readonly Action<TabPage> buttonCloseClicked;
         private readonly JiraActiveIssueManager activeIssueManager;
 
         private bool issueCommentsLoaded;
@@ -60,9 +59,9 @@ namespace Atlassian.plvs.ui.jira {
         private WebBrowserWithLabel webAttachmentView;
 
         public IssueDetailsPanel(
-            JiraIssueListModel model, Solution solution, JiraIssue issue, 
-            TabControl tabWindow, TabPage myTab, ToolWindowStateMonitor 
-            toolWindowStateMonitor, JiraActiveIssueManager activeIssueManager) {
+            JiraIssueListModel model, Solution solution, JiraIssue issue, TabPage myTab, 
+            ToolWindowStateMonitor toolWindowStateMonitor, Action<TabPage> buttonCloseClicked, 
+            JiraActiveIssueManager activeIssueManager) {
 
             this.model = model;
             this.solution = solution;
@@ -73,8 +72,8 @@ namespace Atlassian.plvs.ui.jira {
 
             this.issue = issue;
 
-            this.tabWindow = tabWindow;
             this.myTab = myTab;
+            this.buttonCloseClicked = buttonCloseClicked;
             this.activeIssueManager = activeIssueManager;
 
             dropDownIssueActions.DropDownItems.Add("dummy");
@@ -634,9 +633,8 @@ namespace Atlassian.plvs.ui.jira {
         private void buttonClose_Click(object sender, EventArgs e) {
             removeModelListeners();
 
-            tabWindow.TabPages.Remove(myTab);
-            if (tabWindow.TabPages.Count == 0) {
-                IssueDetailsWindow.Instance.FrameVisible = false;
+            if (buttonCloseClicked != null) {
+                buttonCloseClicked(myTab);
             }
         }
 

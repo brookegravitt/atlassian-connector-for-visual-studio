@@ -13,7 +13,6 @@ namespace Atlassian.plvs.ui.bamboo {
             Build = build;
         }
 
-
         public Image Icon {
             get {
                 switch (Build.Result) {
