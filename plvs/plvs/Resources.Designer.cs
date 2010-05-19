@@ -218,6 +218,15 @@ namespace Atlassian.plvs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Build number: {0}.
+        /// </summary>
+        internal static string build_summary_html {
+            get {
+                return ResourceManager.GetString("build_summary_html", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Builds - Bamboo.
         /// </summary>
         internal static string BuildDetailsToolWindowTitle {

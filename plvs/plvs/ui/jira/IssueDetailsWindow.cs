@@ -18,12 +18,14 @@ namespace Atlassian.plvs.ui.jira {
             InitializeComponent();
 
             Instance = this;
+
+            ShownOrHidden += (s, e) => notifyWindowVisibility(e.Visible);
         }
 
         public event EventHandler<EventArgs> ToolWindowShown;
         public event EventHandler<EventArgs> ToolWindowHidden;
 
-        protected override void notifyWindowVisibility(bool visible) {
+        private void notifyWindowVisibility(bool visible) {
             if (visible) {
                 if (ToolWindowShown != null) {
                     ToolWindowShown(this, new EventArgs());
@@ -50,7 +52,7 @@ namespace Atlassian.plvs.ui.jira {
             string key = getIssueTabKey(issue);
             if (!issueTabs.TabPages.ContainsKey(key)) {
                 TabPage issueTab = new TabPage {Name = key, Text = issue.Key};
-                IssueDetailsPanel issuePanel = new IssueDetailsPanel(model, Solution, issue, issueTabs, issueTab, this, activeIssueManager);
+                IssueDetailsPanel issuePanel = new IssueDetailsPanel(model, Solution, issue, issueTab, this, buttonCloseClicked, activeIssueManager);
                 RecentlyViewedIssuesModel.Instance.add(issue);
                 issueTab.Controls.Add(issuePanel);
                 issuePanel.Dock = DockStyle.Fill;
@@ -58,6 +60,13 @@ namespace Atlassian.plvs.ui.jira {
             }
             issueTabs.SelectTab(key);
             UsageCollector.Instance.bumpJiraIssuesOpen();
+        }
+
+        private void buttonCloseClicked(TabPage tab) {
+            issueTabs.TabPages.Remove(tab);
+            if (issueTabs.TabPages.Count == 0) {
+                Instance.FrameVisible = false;
+            }
         }
 
         private static string getIssueTabKey(JiraIssue issue) {

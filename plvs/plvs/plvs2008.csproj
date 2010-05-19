@@ -313,6 +313,12 @@
     </Compile>
     <Compile Include="ui\bamboo\bamboonodes\BambooServerTreeNode.cs" />
     <Compile Include="ui\bamboo\bamboonodes\TreeNodeWithBambooServer.cs" />
+    <Compile Include="ui\bamboo\BuildDetailsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\bamboo\BuildDetailsPanel.Designer.cs">
+      <DependentUpon>BuildDetailsPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="ui\bamboo\BuildDetailsToolWindow.cs" />
     <Compile Include="ui\bamboo\BuildDetailsWindow.cs">
       <SubType>UserControl</SubType>
@@ -622,6 +628,9 @@
       <DependentUpon>AnkhSvnJiraConnectorControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="ui\bamboo\BuildDetailsPanel.resx">
+      <DependentUpon>BuildDetailsPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ui\bamboo\BuildDetailsWindow.resx">
       <DependentUpon>BuildDetailsWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -856,6 +865,7 @@
     <Content Include="Resources\icons\vs2010.bmp" />
     <Content Include="Resources\texts\attachment_download_html.txt" />
     <Content Include="Resources\texts\autoupdate_html.txt" />
+    <Content Include="Resources\texts\build_summary_html.txt" />
     <Content Include="Resources\texts\explorer_navigator_error_html.txt" />
     <Content Include="Resources\texts\issue_summary_parent_issue_html.txt" />
     <Content Include="Resources\texts\issue_summary_remaining_estimate_editable_html.txt" />
