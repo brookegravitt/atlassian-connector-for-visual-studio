@@ -218,6 +218,15 @@ namespace Atlassian.plvs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Builds - Bamboo.
+        /// </summary>
+        internal static string BuildDetailsToolWindowTitle {
+            get {
+                return ResourceManager.GetString("BuildDetailsToolWindowTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Can not create tool window..
         /// </summary>
         internal static string CanNotCreateWindow {

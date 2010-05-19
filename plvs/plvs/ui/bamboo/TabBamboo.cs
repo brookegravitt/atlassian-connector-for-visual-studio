@@ -118,6 +118,8 @@ namespace Atlassian.plvs.ui.bamboo {
                 updateBuildListButtons();
 
                 buildTree.SelectionChanged += buildTree_SelectionChanged;
+                buildTree.MouseDoubleClick += buildTree_MouseDoubleClick;
+                buildTree.KeyPress += buildTree_KeyPress;
 
                 int count = BambooServerModel.Instance.getAllEnabledServers().Count;
                 if (count == 0) {
@@ -128,7 +130,21 @@ namespace Atlassian.plvs.ui.bamboo {
             }
         }
 
-        void buildTree_SelectionChanged(object sender, EventArgs e) {
+        private void buildTree_KeyPress(object sender, KeyPressEventArgs e) {
+            if (e.KeyChar == (char) Keys.Enter) {
+                openSelectedBuild();
+            }
+        }
+
+        private void buildTree_MouseDoubleClick(object sender, MouseEventArgs e) {
+            openSelectedBuild();
+        }
+
+        private void openSelectedBuild() {
+            runOnSelectedNode(build => BuildDetailsWindow.Instance.openBuild(build));
+        }
+
+        private void buildTree_SelectionChanged(object sender, EventArgs e) {
             updateBuildListButtons();
         }
 

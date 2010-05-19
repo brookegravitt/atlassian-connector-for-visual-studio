@@ -129,6 +129,7 @@ Function un.Unregister2008
 	DeleteRegValue HKLM "Software\Microsoft\VisualStudio\9.0\Menus" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
 	DeleteRegKey HKLM "Software\Microsoft\VisualStudio\9.0\ToolWindows\{06c81945-10ef-4d72-8daf-32d29f7e9573}"
 	DeleteRegKey HKLM "Software\Microsoft\VisualStudio\9.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}"
+	DeleteRegKey HKLM "Software\Microsoft\VisualStudio\9.0\ToolWindows\{F9624C15-E757-4582-BF55-F2DB8146681C}"
 	DeleteRegKey HKLM "Software\Microsoft\VisualStudio\9.0\Services\{34D3D2C5-60CD-4d79-8BD8-7759EBB3C27A}"
 	DeleteRegKey HKLM "Software\Microsoft\VisualStudio\9.0\Text Editor\External Markers\{658DDF58-FC14-4db9-8110-B52A6845B6CF}"
 	DeleteRegKey HKLM "Software\Microsoft\VisualStudio\9.0\Text Editor\External Markers\{D7F03136-206D-4674-ADC7-DA0E9EE38869}"
@@ -336,12 +337,19 @@ Function Integrate2008
 		WriteRegDWORD HKLM "Software\Microsoft\VisualStudio\9.0\ToolWindows\{06c81945-10ef-4d72-8daf-32d29f7e9573}\Visibility" "{f1536ef8-92ec-443c-9ed7-fdadf150da82}" 0
 
 		WriteRegStr HKLM "Software\Microsoft\VisualStudio\9.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}" "" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
-		WriteRegStr HKLM "Software\Microsoft\VisualStudio\9.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}" "Name" "Atlassian.plvs.IssueDetailsToolWindow"
+		WriteRegStr HKLM "Software\Microsoft\VisualStudio\9.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}" "Name" "Atlassian.plvs.ui.jira.IssueDetailsToolWindow"
 		WriteRegStr HKLM "Software\Microsoft\VisualStudio\9.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}" "Orientation" "Bottom"
 		WriteRegStr HKLM "Software\Microsoft\VisualStudio\9.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}" "Style" "Tabbed"
 		WriteRegDWORD HKLM "Software\Microsoft\VisualStudio\9.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}" "DontForceCreate" 1
 
+		WriteRegStr HKLM "Software\Microsoft\VisualStudio\9.0\ToolWindows\{F9624C15-E757-4582-BF55-F2DB8146681C}" "" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
+		WriteRegStr HKLM "Software\Microsoft\VisualStudio\9.0\ToolWindows\{F9624C15-E757-4582-BF55-F2DB8146681C}" "Name" "Atlassian.plvs.ui.bamboo.BuildDetailsToolWindow"
+		WriteRegStr HKLM "Software\Microsoft\VisualStudio\9.0\ToolWindows\{F9624C15-E757-4582-BF55-F2DB8146681C}" "Orientation" "Bottom"
+		WriteRegStr HKLM "Software\Microsoft\VisualStudio\9.0\ToolWindows\{F9624C15-E757-4582-BF55-F2DB8146681C}" "Style" "Tabbed"
+		WriteRegDWORD HKLM "Software\Microsoft\VisualStudio\9.0\ToolWindows\{F9624C15-E757-4582-BF55-F2DB8146681C}" "DontForceCreate" 1
+
 		WriteRegDWORD HKLM "Software\Microsoft\VisualStudio\9.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}\Visibility" "{f1536ef8-92ec-443c-9ed7-fdadf150da82}" 0
+		WriteRegDWORD HKLM "Software\Microsoft\VisualStudio\9.0\ToolWindows\{F9624C15-E757-4582-BF55-F2DB8146681C}\Visibility" "{f1536ef8-92ec-443c-9ed7-fdadf150da82}" 0
 
 		WriteRegStr HKLM "Software\Microsoft\VisualStudio\9.0\Services\{34D3D2C5-60CD-4d79-8BD8-7759EBB3C27A}" "" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
 		WriteRegStr HKLM "Software\Microsoft\VisualStudio\9.0\Services\{34D3D2C5-60CD-4d79-8BD8-7759EBB3C27A}" "Name" "JIRA Link Service"
