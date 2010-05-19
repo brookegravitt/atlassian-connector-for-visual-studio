@@ -446,6 +446,7 @@
     <Compile Include="ui\WebBrowserWithLabel.Designer.cs">
       <DependentUpon>WebBrowserWithLabel.cs</DependentUpon>
     </Compile>
+    <Compile Include="util\bamboo\BambooBuildUtils.cs" />
     <Compile Include="util\Constants.cs" />
     <Compile Include="util\ExceptionBuilder.cs" />
     <Compile Include="util\jira\BambooBuildUtils.cs" />
