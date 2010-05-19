@@ -285,6 +285,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
         public string getBuildLog(BambooBuild build) {
             string endpoint = server.Url + "/download/" + BambooBuildUtils.getPlanKey(build) + "/build_logs/" + build.Key + ".log";
+            endpoint = endpoint + getBasicAuthParameter(endpoint);
             using (Stream stream = getQueryResultStream(endpoint, true)) {
                 StreamReader reader = new StreamReader(stream);
                 return reader.ReadToEnd();
