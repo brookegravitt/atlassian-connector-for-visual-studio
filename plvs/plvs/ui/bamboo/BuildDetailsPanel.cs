@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Web;
 using System.Windows.Forms;
 using Atlassian.plvs.api.bamboo;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.util;
 using Atlassian.plvs.util.bamboo;
-using Atlassian.plvs.util.jira;
 using Process = System.Diagnostics.Process;
 using EnvDTE;
 using Thread = System.Threading.Thread;
@@ -36,6 +37,9 @@ namespace Atlassian.plvs.ui.bamboo {
             parent.setMyTabIconFromBuildResult(build.Result, myTab);
 
             status = new StatusLabel(statusStrip, labelStatus);
+
+            webLog.WebBrowserShortcutsEnabled = true;
+            webLog.IsWebBrowserContextMenuEnabled = true;
         }
 
         protected override void OnLoad(EventArgs e) {
@@ -70,7 +74,7 @@ namespace Atlassian.plvs.ui.bamboo {
                 StringBuilder sb = new StringBuilder();
                 sb.Append("<html>\n<head>\n").Append(Resources.summary_and_description_css);
                 sb.Append("\n</head>\n<body class=\"description\">\n");
-                sb.Append(buildLog.Replace("\n", "<br>").Replace("\r", ""));
+                sb.Append(createAugmentedLog(HttpUtility.HtmlEncode(buildLog)));
                 sb.Append("</body></html>");
 
                 this.safeInvoke(new MethodInvoker(delegate { webLog.DocumentText = sb.ToString(); }));
@@ -78,6 +82,31 @@ namespace Atlassian.plvs.ui.bamboo {
             } catch (Exception e) {
                 status.setError("Failed to retrieve build log", e);
             }
+        }
+
+        private static readonly Regex fileAndLine = new Regex("(.*?)(&quot;)?([a-zA-Z]:.+?)(&quot;)?\\s*\\((\\d+)\\)(.*?)"); 
+
+        private static string createAugmentedLog(string log) {
+            string[] strings = log.Split(new[] {'\n'});
+            StringBuilder sb = new StringBuilder();
+            foreach (var s in strings) {
+                MatchCollection matches = fileAndLine.Matches(s);
+                if (matches.Count > 0) {
+                    foreach (Match match in matches) {
+                        sb.Append(match.Groups[1].Value)
+                            .Append("<a href=\"").Append(OPENFILE_ON_LINE_URL)
+                            .Append(match.Groups[3].Value).Append('@').Append(match.Groups[5].Value.Trim()).Append("\">")
+                            .Append(match.Groups[3].Value).Append('(').Append(match.Groups[5].Value).Append(")</a>")
+                            .Append(match.Groups[6]);
+                    }
+                    Match lastMatch = matches[matches.Count - 1];
+                    sb.Append(s.Substring(lastMatch.Index + lastMatch.Length));
+                } else {
+                    sb.Append(s.Trim());
+                }
+                sb.Append("<br>\n");
+            }
+            return sb.ToString();
         }
 
         private void displaySummary() {
@@ -157,6 +186,26 @@ namespace Atlassian.plvs.ui.bamboo {
 
         private void webSummary_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) {
             summaryLoaded = true;
+        }
+
+        private bool logCompleted;
+        
+        private const string OPENFILE_ON_LINE_URL = "openfileonline:";
+
+        private void webLog_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) {
+            logCompleted = true;
+        }
+
+        private void webLog_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
+            if (!logCompleted) return;
+
+            e.Cancel = true;
+            
+            if (e.Url.Equals("about:blank")) return;
+
+            if (e.Url.ToString().StartsWith(OPENFILE_ON_LINE_URL)) {
+                MessageBox.Show("Opening file: " + e.Url.ToString().Substring(OPENFILE_ON_LINE_URL.Length));
+            }
         }
     }
 }

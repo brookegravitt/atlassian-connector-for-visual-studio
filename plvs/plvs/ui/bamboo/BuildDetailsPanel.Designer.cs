@@ -130,7 +130,7 @@
             this.tabLog.Padding = new System.Windows.Forms.Padding(3);
             this.tabLog.Size = new System.Drawing.Size(655, 173);
             this.tabLog.TabIndex = 1;
-            this.tabLog.Text = "Log";
+            this.tabLog.Text = "Build Log";
             this.tabLog.UseVisualStyleBackColor = true;
             // 
             // webLog
@@ -144,6 +144,8 @@
             this.webLog.Size = new System.Drawing.Size(649, 167);
             this.webLog.TabIndex = 0;
             this.webLog.WebBrowserShortcutsEnabled = false;
+            this.webLog.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webLog_Navigating);
+            this.webLog.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webLog_DocumentCompleted);
             // 
             // toolStrip1
             // 
