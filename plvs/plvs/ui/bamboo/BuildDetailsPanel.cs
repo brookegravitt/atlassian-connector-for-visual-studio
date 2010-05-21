@@ -19,6 +19,10 @@ namespace Atlassian.plvs.ui.bamboo {
         private readonly TabPage myTab;
         private readonly Action<TabPage> buttonCloseClicked;
 
+        private const int MAX_PARSEABLE_LENGTH = 200;
+        private const int A_LOT = 10000000;
+        private const string OPENFILE_ON_LINE_URL = "openfileonline:";
+
         private readonly StatusLabel status;
 
         public BuildDetailsPanel(Solution solution, BambooBuild build, TabPage myTab,
@@ -51,7 +55,7 @@ namespace Atlassian.plvs.ui.bamboo {
         }
 
         private void toolWindowStateMonitor_ToolWindowShown(object sender, EventArgs e) {
-            init();
+//            init();
         }
 
         private void init() {
@@ -84,29 +88,64 @@ namespace Atlassian.plvs.ui.bamboo {
             }
         }
 
-        private static readonly Regex fileAndLine = new Regex("(.*?)(&quot;)?([a-zA-Z]:.+?)(&quot;)?\\s*\\((\\d+)\\)(.*?)"); 
+        private static readonly Regex FILE_AND_LINE = new Regex("(.*?)\\s(&quot;)?((([a-zA-Z]:)|(\\\\))?\\S+?)(&quot;)?\\s*\\(((\\d+)(,\\d+)?)\\)(.*?)"); 
 
         private static string createAugmentedLog(string log) {
             string[] strings = log.Split(new[] {'\n'});
-            StringBuilder sb = new StringBuilder();
+            StringBuilder logSb = new StringBuilder();
             foreach (var s in strings) {
-                MatchCollection matches = fileAndLine.Matches(s);
+                StringBuilder lineSb = new StringBuilder();
+                bool tooLong = s.Length > MAX_PARSEABLE_LENGTH;
+                string parseablePart = tooLong ? s.Substring(0, MAX_PARSEABLE_LENGTH) : s;
+                string restPart = tooLong ? s.Substring(MAX_PARSEABLE_LENGTH) : "";
+
+                MatchCollection matches = FILE_AND_LINE.Matches(parseablePart);
                 if (matches.Count > 0) {
                     foreach (Match match in matches) {
-                        sb.Append(match.Groups[1].Value)
-                            .Append("<a href=\"").Append(OPENFILE_ON_LINE_URL)
-                            .Append(match.Groups[3].Value).Append('@').Append(match.Groups[5].Value.Trim()).Append("\">")
-                            .Append(match.Groups[3].Value).Append('(').Append(match.Groups[5].Value).Append(")</a>")
-                            .Append(match.Groups[6]);
+                        string fileName = match.Groups[3].Value;
+                        if (!fileName.EndsWith(".sln") && !fileName.EndsWith("proj") && solutionContainsFile(fileName)) {
+                            string lineNumber = match.Groups[8].Value.Trim();
+                            lineSb.Append(match.Groups[1].Value)
+                                .Append(" <a href=\"").Append(OPENFILE_ON_LINE_URL)
+                                .Append(fileName).Append('@').Append(lineNumber).Append("\">")
+                                .Append(fileName).Append('(').Append(lineNumber).Append(")</a>")
+                                .Append(match.Groups[11]);
+                        } else {
+                            lineSb.Append(match.Groups[0]);
+                        }
                     }
                     Match lastMatch = matches[matches.Count - 1];
-                    sb.Append(s.Substring(lastMatch.Index + lastMatch.Length));
+                    lineSb.Append(parseablePart.Substring(lastMatch.Index + lastMatch.Length));
                 } else {
-                    sb.Append(s.Trim());
+                    lineSb.Append(parseablePart);
                 }
-                sb.Append("<br>\n");
+                lineSb.Append(restPart);
+                logSb.Append(colorLine(lineSb.ToString())).Append("<br>\r\n");
             }
-            return sb.ToString();
+            return logSb.ToString();
+        }
+
+        private static readonly Regex SUCCESS_REGEX = new Regex(@"(BUILD SUCCESSFUL)|(BUILD SUCCEEDED)|(\[INFO\])|(Build succeeded)");
+        private static readonly Regex FAILURE_REGEX = new Regex(@"(Build FAILED)|(BUILD FAILED)|(\[ERROR\])|([Ee]rror \w+\d+)");
+        private static readonly Regex WARNING_REGEX = new Regex(@"(\[WARNING\])|([Ww]arning \w+\d+)");
+
+        private static string colorLine(string line) {
+            string color = null;
+            if (FAILURE_REGEX.IsMatch(line)) {
+                color = BambooBuild.BuildResult.FAILED.GetColorValue();
+            } else if (WARNING_REGEX.IsMatch(line)) {
+                color = "#87721e";
+            } else if (SUCCESS_REGEX.IsMatch(line)) {
+                color = BambooBuild.BuildResult.SUCCESSFUL.GetColorValue();
+            }
+            return color != null ? "<span style=\"color:" + color + ";\">" + line + "</span>" : line;
+        }
+
+//        private static int fakeCtr;
+        private static bool solutionContainsFile(string fileName) {
+//            return fakeCtr++%2 > 0;
+            // todo
+            return true;
         }
 
         private void displaySummary() {
@@ -189,11 +228,23 @@ namespace Atlassian.plvs.ui.bamboo {
         }
 
         private bool logCompleted;
-        
-        private const string OPENFILE_ON_LINE_URL = "openfileonline:";
 
         private void webLog_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) {
             logCompleted = true;
+            if (webLog.Document != null && webLog.Document.Body != null) webLog.Document.Body.ScrollTop = A_LOT;
+        }
+
+        private bool scrolledDown;
+
+        private void tabControl_SelectedIndexChanged(object sender, EventArgs e) {
+            if (!tabControl.SelectedTab.Equals(tabLog)) return;
+            if (scrolledDown) return;
+            BeginInvoke(new MethodInvoker(delegate {
+                                              if (webLog.Document != null && webLog.Document.Body != null) {
+                                                  webLog.Document.Body.ScrollTop = A_LOT;
+                                                  scrolledDown = true;
+                                              }
+                                          }));
         }
 
         private void webLog_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
