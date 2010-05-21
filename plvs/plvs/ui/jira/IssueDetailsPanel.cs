@@ -21,8 +21,6 @@ using Atlassian.plvs.windows;
 using Atlassian.plvs.util;
 using EnvDTE;
 using Microsoft.Win32;
-using AtlassianConstants=Atlassian.plvs.util.Constants;
-using Constants=EnvDTE.Constants;
 using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 using Process=System.Diagnostics.Process;
 using SaveFileDialog = System.Windows.Forms.SaveFileDialog;
@@ -212,6 +210,8 @@ namespace Atlassian.plvs.ui.jira {
             rebuildAllPanels(false);
             status.setInfo("No issue details yet");
             runRefreshThread();
+
+            SolutionUtils.refillAllSolutionProjectItems(solution);
         }
 
         protected override void OnLoad(EventArgs e) {
@@ -677,64 +677,19 @@ namespace Atlassian.plvs.ui.jira {
             string line = e.Url.ToString();
 
             if (line.StartsWith(STACKLINE_URL_TYPE) && line.LastIndexOf(STACKLINE_LINE_NUMBER_SEPARATOR) != -1) {
-                List<ProjectItem> files = new List<ProjectItem>();
 
                 string file = line.Substring(STACKLINE_URL_TYPE.Length,
                                              line.LastIndexOf(STACKLINE_LINE_NUMBER_SEPARATOR) -
                                              STACKLINE_URL_TYPE.Length);
 
-                foreach (Project project in solution.Projects) {
-                    matchProjectItemChildren(file, files, project.ProjectItems);
-                }
-                if (files.Count == 0) {
-                    MessageBox.Show("No matching files found for " + file, AtlassianConstants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    Debug.WriteLine("No matching files found for " + file);
-                } else if (files.Count > 1) {
-                    MessageBox.Show("Multiple matching files found for " + file, AtlassianConstants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    Debug.WriteLine("Multiple matching files found for " + file);
-                } else {
-                    string lineNoStr = line.Substring(line.LastIndexOf(STACKLINE_LINE_NUMBER_SEPARATOR) + 1);
-                    try {
-                        int lineNo = int.Parse(lineNoStr);
-                        if (lineNo < 0) {
-                            throw new ArgumentException();
-                        }
-                        Debug.WriteLine("opening file " + file + " at line number " + lineNo);
+                string lineNoStr = line.Substring(line.LastIndexOf(STACKLINE_LINE_NUMBER_SEPARATOR) + 1);
 
-                        Window w = files[0].Open(Constants.vsViewKindCode);
-                        w.Visible = true;
-                        w.Document.Activate();
-                        TextSelection sel = w.DTE.ActiveDocument.Selection as TextSelection;
-                        if (sel != null) {
-                            sel.SelectAll();
-                            sel.MoveToLineAndOffset(lineNo, 1, false);
-                            sel.SelectLine();
-                        } else {
-                            throw new Exception("Cannot get text selection for the document");
-                        }
-                    } catch (Exception ex) {
-                        PlvsUtils.showError("Unable to open the specified file", ex);
-                        Debug.WriteLine(ex);
-                    }
-                }
+                SolutionUtils.openSolutionFile(file, lineNoStr, solution);
 
                 e.Cancel = true;
                 return true;
             }
             return false;
-        }
-
-        private static void matchProjectItemChildren(string file, ICollection<ProjectItem> files, ProjectItems items) {
-            if (items == null) return;
-
-            foreach (ProjectItem item in items) {
-//                Debug.WriteLine(item.Name);
-                if (file.EndsWith(item.Name)) {
-//                    Debug.WriteLine("@@@matched against " + file);
-                    files.Add(item);
-                }
-                matchProjectItemChildren(file, files, item.ProjectItems);
-            }
         }
 
         private void issueDescription_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
