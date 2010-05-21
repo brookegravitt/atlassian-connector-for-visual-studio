@@ -90,7 +90,10 @@ namespace Atlassian.plvs.ui.bamboo {
 
         private static readonly Regex FILE_AND_LINE = new Regex("(.*?)\\s(&quot;)?((([a-zA-Z]:)|(\\\\))?\\S+?)(&quot;)?\\s*\\(((\\d+)(,\\d+)?)\\)(.*?)"); 
 
-        private static string createAugmentedLog(string log) {
+        private string createAugmentedLog(string log) {
+
+            SolutionUtils.refillAllSolutionProjectItems(solution);
+
             string[] strings = log.Split(new[] {'\n'});
             StringBuilder logSb = new StringBuilder();
             foreach (var s in strings) {
@@ -103,7 +106,7 @@ namespace Atlassian.plvs.ui.bamboo {
                 if (matches.Count > 0) {
                     foreach (Match match in matches) {
                         string fileName = match.Groups[3].Value;
-                        if (!fileName.EndsWith(".sln") && !fileName.EndsWith("proj") && solutionContainsFile(fileName)) {
+                        if (!fileName.EndsWith(".sln") && !fileName.EndsWith("proj") && SolutionUtils.solutionContainsFile(fileName, solution)) {
                             string lineNumber = match.Groups[8].Value.Trim();
                             lineSb.Append(match.Groups[1].Value)
                                 .Append(" <a href=\"").Append(OPENFILE_ON_LINE_URL)
@@ -139,13 +142,6 @@ namespace Atlassian.plvs.ui.bamboo {
                 color = BambooBuild.BuildResult.SUCCESSFUL.GetColorValue();
             }
             return color != null ? "<span style=\"color:" + color + ";\">" + line + "</span>" : line;
-        }
-
-//        private static int fakeCtr;
-        private static bool solutionContainsFile(string fileName) {
-//            return fakeCtr++%2 > 0;
-            // todo
-            return true;
         }
 
         private void displaySummary() {
@@ -254,8 +250,13 @@ namespace Atlassian.plvs.ui.bamboo {
             
             if (e.Url.Equals("about:blank")) return;
 
-            if (e.Url.ToString().StartsWith(OPENFILE_ON_LINE_URL)) {
-                MessageBox.Show("Opening file: " + e.Url.ToString().Substring(OPENFILE_ON_LINE_URL.Length));
+            string url = e.Url.ToString();
+            if (url.StartsWith(OPENFILE_ON_LINE_URL)) {
+                string file = url.Substring(OPENFILE_ON_LINE_URL.Length, url.LastIndexOf('@') - OPENFILE_ON_LINE_URL.Length);
+
+                string lineNoStr = url.Substring(url.LastIndexOf('@') + 1);
+
+                SolutionUtils.openSolutionFile(file, lineNoStr, solution);
             }
         }
     }
