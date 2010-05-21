@@ -12,51 +12,58 @@ namespace Atlassian.plvs.util {
 
             matchProjectItems(fileName, files);
 
+            ProjectItem selectedProjectItem = null;
             if (files.Count == 0) {
                 MessageBox.Show("No matching files found for " + fileName, Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            } else if (files.Count > 1) {
-                MessageBox.Show("Multiple matching files found for " + fileName, Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            } else {
-                try {
-                    int? lineNo = null;
-                    int? columnNo = null;
-                    if (lineAndColumnNumber != null) {
-                        string lineNoStr = lineAndColumnNumber.Contains(",")
-                                               ? lineAndColumnNumber.Substring(0, lineAndColumnNumber.IndexOf(','))
-                                               : lineAndColumnNumber;
-                        string columnNumberStr = lineAndColumnNumber.Contains(",")
-                                                  ? lineAndColumnNumber.Substring(lineAndColumnNumber.IndexOf(',') + 1)
-                                                  : null;
-                        lineNo = int.Parse(lineNoStr);
-                        if (columnNumberStr != null) {
-                            columnNo = int.Parse(columnNumberStr);
-                        }
-                    }
-
-                    Window w = files[0].Open(DteConstants.vsViewKindCode);
-                    w.Visible = true;
-                    w.Document.Activate();
-                    TextSelection sel = w.DTE.ActiveDocument.Selection as TextSelection;
-                    if (sel != null) {
-                        sel.SelectAll();
-                        if (lineNo.HasValue) {
-                            // sometimes our current copy of the file is shorter than the line number that 
-                            // the compiler reports for errors and bad HRESULT is returned from COM in this case. 
-                            // Let's silently catch it here
-                            try {
-                                sel.MoveToDisplayColumn(lineNo.Value, columnNo.HasValue ? columnNo.Value : 0, false);
-                                sel.Cancel();
-                            } catch (Exception e) {
-                                sel.Cancel();
-                                PlvsUtils.showError("Unable to navigate to line " + lineNo.Value + " - no such line number in the file", e);
-                            }
-                        }
-                    } else {
-                        throw new Exception("Unable to retrieve text selection for the document");
-                    }
-                } catch (Exception ex) {
-                    PlvsUtils.showError("Unable to open the specified file", ex);
+            } else if (files.Count > 0) {
+                FileListPicker picker = new FileListPicker(files);
+                if (DialogResult.OK == picker.ShowDialog()) {
+                    selectedProjectItem = picker.SelectedFile;
                 }
+            } else {
+                selectedProjectItem = files[0]; a
+            }
+            if (selectedProjectItem == null) return;
+
+            try {
+                int? lineNo = null;
+                int? columnNo = null;
+                if (lineAndColumnNumber != null) {
+                    string lineNoStr = lineAndColumnNumber.Contains(",")
+                                           ? lineAndColumnNumber.Substring(0, lineAndColumnNumber.IndexOf(','))
+                                           : lineAndColumnNumber;
+                    string columnNumberStr = lineAndColumnNumber.Contains(",")
+                                              ? lineAndColumnNumber.Substring(lineAndColumnNumber.IndexOf(',') + 1)
+                                              : null;
+                    lineNo = int.Parse(lineNoStr);
+                    if (columnNumberStr != null) {
+                        columnNo = int.Parse(columnNumberStr);
+                    }
+                }
+
+                Window w = selectedProjectItem.Open(DteConstants.vsViewKindCode);
+                w.Visible = true;
+                w.Document.Activate();
+                TextSelection sel = w.DTE.ActiveDocument.Selection as TextSelection;
+                if (sel != null) {
+                    sel.SelectAll();
+                    if (lineNo.HasValue) {
+                        // sometimes our current copy of the file is shorter than the line number that 
+                        // the compiler reports for errors and bad HRESULT is returned from COM in this case. 
+                        // Let's silently catch it here
+                        try {
+                            sel.MoveToDisplayColumn(lineNo.Value, columnNo.HasValue ? columnNo.Value : 0, false);
+                            sel.Cancel();
+                        } catch (Exception e) {
+                            sel.Cancel();
+                            PlvsUtils.showError("Unable to navigate to line " + lineNo.Value + " - no such line number in the file", e);
+                        }
+                    }
+                } else {
+                    throw new Exception("Unable to retrieve text selection for the document");
+                }
+            } catch (Exception ex) {
+                PlvsUtils.showError("Unable to open the specified file", ex);
             }
         }
 
