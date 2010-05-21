@@ -40,16 +40,22 @@ namespace Atlassian.plvs.util {
                     if (sel != null) {
                         sel.SelectAll();
                         if (lineNo.HasValue) {
-                            sel.MoveToDisplayColumn(lineNo.Value, columnNo.HasValue ? columnNo.Value : 0);
-//                            sel.MoveToLineAndOffset(lineNo.Value - 1, columnNo.HasValue ? columnNo.Value : 1);
-//                            sel.SelectLine();
+                            // sometimes our current copy of the file is shorter than the line number that 
+                            // the compiler reports for errors and bad HRESULT is returned from COM in this case. 
+                            // Let's silently catch it here
+                            try {
+                                sel.MoveToDisplayColumn(lineNo.Value, columnNo.HasValue ? columnNo.Value : 0, false);
+                                sel.Cancel();
+                            } catch (Exception e) {
+                                sel.Cancel();
+                                PlvsUtils.showError("Unable to navigate to line " + lineNo.Value + " - no such line number in the file", e);
+                            }
                         }
                     } else {
-                        throw new Exception("Cannot get text selection for the document");
+                        throw new Exception("Unable to retrieve text selection for the document");
                     }
                 } catch (Exception ex) {
                     PlvsUtils.showError("Unable to open the specified file", ex);
-                    Debug.WriteLine(ex);
                 }
             }
         }
