@@ -15,13 +15,7 @@ namespace Atlassian.plvs.ui.jira {
             IssueType = -1;
             InitializeComponent();
 
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            string name = assembly.EscapedCodeBase;
-
-            if (name != null) {
-                name = name.Substring(0, name.LastIndexOf("/"));
-                throbberPath = name + "/ajax-loader.gif";
-            }
+            throbberPath = PlvsUtils.getThroberPath();
         }
 
         public override string Text {
@@ -45,7 +39,7 @@ namespace Atlassian.plvs.ui.jira {
                 webPreview.DocumentText = "";
                 return;
             }
-            webPreview.DocumentText = getThrobberHtml();
+            webPreview.DocumentText = PlvsUtils.getThrobberHtml(throbberPath, "Fetching preview...");
             Thread t = PlvsUtils.createThread(() => getMarkup(textMarkup.Text));
             t.Start();
         }
@@ -73,13 +67,6 @@ namespace Atlassian.plvs.ui.jira {
                 // let's not make a big deal out of errors here
                 Debug.WriteLine("JiraTextAreaWithWikiPreview.getMarkup() - exception: " + e.Message);
             }
-        }
-
-        private string getThrobberHtml() {
-            if (throbberPath == null) {
-                return "<html><head>" + Resources.summary_and_description_css + "</head><body class=\"summary\">Fetching preview...</body></html>";
-            }
-            return string.Format(Resources.throbber_html, throbberPath);
         }
 
         private void textMarkup_TextChanged(object sender, EventArgs e) {

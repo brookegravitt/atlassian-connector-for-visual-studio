@@ -390,5 +390,26 @@ namespace Atlassian.plvs.util {
         }
 
         public static DTE Dte { get; set; }
+
+        public static string getThroberPath() {
+            string throbberPath = null;
+
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            string name = assembly.EscapedCodeBase;
+
+            if (name != null) {
+                name = name.Substring(0, name.LastIndexOf("/"));
+                throbberPath = name + "/ajax-loader.gif";
+            }
+
+            return throbberPath;
+        }
+
+        public static string getThrobberHtml(string throbberPath, string text) {
+            if (throbberPath == null) {
+                return "<html><head>" + Resources.summary_and_description_css + "</head><body class=\"summary\">" + text + "</body></html>";
+            }
+            return string.Format(Resources.throbber_html, throbberPath);
+        }
     }
 }
