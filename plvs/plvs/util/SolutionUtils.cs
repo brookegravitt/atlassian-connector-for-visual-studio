@@ -15,13 +15,13 @@ namespace Atlassian.plvs.util {
             ProjectItem selectedProjectItem = null;
             if (files.Count == 0) {
                 MessageBox.Show("No matching files found for " + fileName, Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            } else if (files.Count > 0) {
+            } else if (files.Count > 1) {
                 FileListPicker picker = new FileListPicker(files);
                 if (DialogResult.OK == picker.ShowDialog()) {
                     selectedProjectItem = picker.SelectedFile;
                 }
             } else {
-                selectedProjectItem = files[0]; a
+                selectedProjectItem = files[0];
             }
             if (selectedProjectItem == null) return;
 

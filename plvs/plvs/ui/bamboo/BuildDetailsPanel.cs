@@ -42,8 +42,10 @@ namespace Atlassian.plvs.ui.bamboo {
 
             status = new StatusLabel(statusStrip, labelStatus);
 
-            webLog.WebBrowserShortcutsEnabled = true;
-            webLog.IsWebBrowserContextMenuEnabled = true;
+            string throbberPath = PlvsUtils.getThroberPath();
+
+//            webLog.WebBrowserShortcutsEnabled = true;
+//            webLog.IsWebBrowserContextMenuEnabled = true;
         }
 
         protected override void OnLoad(EventArgs e) {
@@ -226,21 +228,33 @@ namespace Atlassian.plvs.ui.bamboo {
         private bool logCompleted;
 
         private void webLog_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) {
-            logCompleted = true;
-            if (webLog.Document != null && webLog.Document.Body != null) webLog.Document.Body.ScrollTop = A_LOT;
+            if (throbberLoaded) {
+                logCompleted = true;
+                if (webLog.Document != null && webLog.Document.Body != null) webLog.Document.Body.ScrollTop = A_LOT;
+            } else {
+                throbberLoaded = true;
+            }
         }
 
+        private bool throbberLoaded = true;
         private bool scrolledDown;
 
         private void tabControl_SelectedIndexChanged(object sender, EventArgs e) {
             if (!tabControl.SelectedTab.Equals(tabLog)) return;
-            if (scrolledDown) return;
-            BeginInvoke(new MethodInvoker(delegate {
-                                              if (webLog.Document != null && webLog.Document.Body != null) {
-                                                  webLog.Document.Body.ScrollTop = A_LOT;
-                                                  scrolledDown = true;
-                                              }
-                                          }));
+
+            if (!logCompleted) {
+                throbberLoaded = false;
+                webLog.DocumentText = PlvsUtils.getThrobberHtml(PlvsUtils.getThroberPath(), "Fetching build log...");
+            } else {
+                throbberLoaded = true;
+                if (scrolledDown) return;
+                BeginInvoke(new MethodInvoker(delegate {
+                    if (webLog.Document != null && webLog.Document.Body != null) {
+                        webLog.Document.Body.ScrollTop = A_LOT;
+                        scrolledDown = true;
+                    }
+                }));
+            }
         }
 
         private void webLog_Navigating(object sender, WebBrowserNavigatingEventArgs e) {

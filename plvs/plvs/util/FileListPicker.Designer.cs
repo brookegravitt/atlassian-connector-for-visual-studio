@@ -30,11 +30,13 @@
             // 
             // listFiles
             // 
-            this.listFiles.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.listFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.listFiles.FormattingEnabled = true;
             this.listFiles.Location = new System.Drawing.Point(12, 34);
             this.listFiles.Name = "listFiles";
-            this.listFiles.Size = new System.Drawing.Size(639, 130);
+            this.listFiles.Size = new System.Drawing.Size(575, 82);
             this.listFiles.TabIndex = 0;
             this.listFiles.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listFiles_MouseDoubleClick);
             this.listFiles.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.listFiles_KeyPress);
@@ -44,15 +46,16 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(9, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(213, 13);
+            this.label1.Size = new System.Drawing.Size(500, 13);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Double-click a file in the list below to open it";
+            this.label1.Text = "Multiple files in the solution match the selected file. Double-click one of the f" +
+                "iles in the list below to open it";
             // 
             // FileListPicker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(664, 181);
+            this.ClientSize = new System.Drawing.Size(600, 145);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.listFiles);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
