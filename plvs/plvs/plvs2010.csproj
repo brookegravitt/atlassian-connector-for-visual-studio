@@ -449,6 +449,10 @@
     <Compile Include="util\bamboo\BambooBuildUtils.cs" />
     <Compile Include="util\Constants.cs" />
     <Compile Include="util\ExceptionBuilder.cs" />
+    <Compile Include="util\FileListPicker.cs" />
+    <Compile Include="util\FileListPicker.Designer.cs">
+      <DependentUpon>FileListPicker.cs</DependentUpon>
+    </Compile>
     <Compile Include="util\jira\IssueActionRunner.cs" />
     <Compile Include="util\SolutionUtils.cs" />
     <Compile Include="util\XPathUtils.cs" />
@@ -723,6 +727,9 @@
     <EmbeddedResource Include="ui\WebBrowserWithLabel.resx">
       <DependentUpon>WebBrowserWithLabel.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="util\FileListPicker.resx">
+      <DependentUpon>FileListPicker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="windows\AtlassianPanel.resx">
       <DependentUpon>AtlassianPanel.cs</DependentUpon>
