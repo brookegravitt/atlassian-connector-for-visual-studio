@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Atlassian.plvs.api.jira;
-using Atlassian.plvs.markers.vs2010.texttag;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.windows;
 using Microsoft.VisualStudio.Language.Intellisense;
@@ -25,11 +24,9 @@ namespace Atlassian.plvs.markers.vs2010.quickinfo {
                 return;
             }
             
-            JiraIssueTextTag textTag = provider.currentTextTag;
+            string issueKey = provider.CurrentIssueKey;
 
-            if (textTag != null) {
-                string issueKey = textTag.IssueKey;
-
+            if (issueKey != null) {
                 ITextSnapshot currentSnapshot = subjectTriggerPoint.Value.Snapshot;
                 SnapshotSpan querySpan = new SnapshotSpan(subjectTriggerPoint.Value, 0);
 

@@ -11,7 +11,7 @@ namespace Atlassian.plvs.markers.vs2010.texttag {
     [ClassificationType(ClassificationTypeNames = "JiraIssueUnderlineClassification")]
     [Name("JiraIssueUnderlineClassificationFormat")]
     [UserVisible(true)]
-    [Order(After = Priority.High)]
+    [Order(After = Priority.Low)]
     internal sealed class UnderlineFormatDefinition : ClassificationFormatDefinition {
         public UnderlineFormatDefinition() {
             DisplayName = "JIRA Issue Underline";

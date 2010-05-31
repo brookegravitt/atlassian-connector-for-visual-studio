@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
@@ -35,23 +34,25 @@ namespace Atlassian.plvs.markers.vs2010.mouseandkeyboard {
             this.view = view;
         }
 
+        public override void PreprocessMouseMove(MouseEventArgs e) {
+            e.Handled = false;
+        }
+
         public override void PreprocessMouseLeftButtonUp(MouseButtonEventArgs e) {
-            if (!MyKeyProcessor.isControlDown(view)) return;
+
+            if (!(Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))) return;
 
             JiraIssueTextTag textTag = getIssueTagUnderCursor(view, provider.TagAggregatorFactoryService);
 
             if (textTag == null) return;
 
             e.Handled = true;
-            Mouse.OverrideCursor = null;
-            Mouse.UpdateCursor();
 
-            MyKeyProcessor.setControlDown(view, provider.TagAggregatorFactoryService, false);
             AtlassianPanel.Instance.Jira.findAndOpenIssue(textTag.IssueKey, (success, message, ex) => {
-                                                                                if (!success) {
-                                                                                    PlvsUtils.showError(message, ex);
-                                                                                }
-                                                                            });
+                if (!success) {
+                    PlvsUtils.showError(message, ex);
+                }
+            });
         }
 
         public static JiraIssueTextTag getIssueTagUnderCursor(IWpfTextView view, IViewTagAggregatorFactoryService tagAggregatorFactory) {

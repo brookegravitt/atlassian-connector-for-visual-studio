@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Media;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.dialogs;
+using Atlassian.plvs.util;
 using Atlassian.plvs.util.jira;
 using Atlassian.plvs.windows;
 using Microsoft.VisualStudio.Language.Intellisense;
@@ -20,12 +22,14 @@ namespace Atlassian.plvs.markers.vs2010.menu {
 
         private readonly IClassifier classifier;
 
-        private readonly Dictionary<string, IEnumerable<ITagSpan<JiraIssueActionsSmartTag>>> tagCache =
-            new Dictionary<string, IEnumerable<ITagSpan<JiraIssueActionsSmartTag>>>();
+        private readonly TagCache tagCache;
 
         public JiraIssueActionsSmartTagger(ITextView view, IClassifier classifier) {
             this.view = view;
             this.classifier = classifier;
+
+            tagCache = new TagCache(view.TextBuffer, classifier, "PlvsJiraIssueActionsSmartTaggerTagCache");
+
             this.view.LayoutChanged += layoutChanged;
             view.Caret.PositionChanged += caretPositionChanged;
             AtlassianPanel.Instance.Jira.SelectedServerChanged += jiraSelectedServerChanged;
@@ -35,17 +39,15 @@ namespace Atlassian.plvs.markers.vs2010.menu {
 
         private void textBufferChanged(object sender, TextContentChangedEventArgs e) {
 //            DebugMon.Instance().addText(GetType().Name + " buffer_Changed(): " + view.TextBuffer + " changed, clearing tag cache");
-            tagCache.Clear();
+            tagCache.clearAndRunActionAfterTimeout(updateTags);
         }
 
         private void globalSettingsChanged(object sender, EventArgs e) {
-            tagCache.Clear();
-            updateTags();
+            tagCache.clearAndRunActionAfterTimeout(updateTags);
         }
 
         private void jiraSelectedServerChanged(object sender, EventArgs e) {
-            tagCache.Clear();
-            updateTags();
+            tagCache.clearAndRunActionAfterTimeout(updateTags);
         }
 
         private void updateTags() {
@@ -61,18 +63,14 @@ namespace Atlassian.plvs.markers.vs2010.menu {
         }
 
         public IEnumerable<ITagSpan<JiraIssueActionsSmartTag>> GetTags(NormalizedSnapshotSpanCollection spans) {
-            string key = spans.ToString();
-            if (!tagCache.ContainsKey(key)) {
-//                DebugMon.Instance().addText(GetType().Name + ".GetTags(): spans: " + spans + " returning from tag cache");
-                tagCache[key] = getTagsInternal(spans);
+            if (!tagCache.CacheFilled) {
+                tagCache.fill();
             }
-            return tagCache[key];
+
+            return getTagsFromCacheFor(spans);
         }
 
-        public IEnumerable<ITagSpan<JiraIssueActionsSmartTag>> getTagsInternal(NormalizedSnapshotSpanCollection spans) {
-
-//            DebugMon.Instance().addText(GetType().Name + ".GetTags(): spans: " + spans);
-
+        private IEnumerable<ITagSpan<JiraIssueActionsSmartTag>> getTagsFromCacheFor(IEnumerable<SnapshotSpan> spans) {
             if (!GlobalSettings.shouldShowIssueLinks(view.TextSnapshot.LineCount)) {
                 yield break;
             }
@@ -90,19 +88,13 @@ namespace Atlassian.plvs.markers.vs2010.menu {
             else
                 yield break;
 
-            SortedDictionary<string, JiraProject> projects = JiraServerCache.Instance.getProjects(selectedServer);
-
             foreach (SnapshotSpan span in spans) {
-                foreach (SnapshotSpan s in from classification in classifier.GetClassificationSpans(span)
-                                           where classification.ClassificationType.Classification.ToLower().Contains("comment")
-                                           let matches = JiraIssueUtils.ISSUE_REGEX.Matches(classification.Span.GetText())
-                                           let c = classification
-                                           from s in matches.Cast<Match>().Where(match => match.Success 
-                                               && projects.ContainsKey(match.Groups[2].Value))
-                                                    .Select(match => new SnapshotSpan(c.Span.Start + match.Index, match.Length))
-                                           select s) {
-                    if (s.Start.Position <= point.Position && s.End.Position >= point.Position) {
-                        yield return new TagSpan<JiraIssueActionsSmartTag>(s, new JiraIssueActionsSmartTag(getSmartTagActions(s)));
+                foreach (TagCache.TagEntry tagEntry in tagCache.Entries) {
+                    if (tagEntry.Start >= span.Start && tagEntry.End <= span.End) {
+                        SnapshotSpan result = new SnapshotSpan(tagEntry.Start, tagEntry.End);
+                        if (result.Start.Position <= point.Position && result.End.Position >= point.Position) {
+                            yield return new TagSpan<JiraIssueActionsSmartTag>(result, new JiraIssueActionsSmartTag(getSmartTagActions(result)));
+                        }
                     }
                 }
             }
@@ -113,6 +105,7 @@ namespace Atlassian.plvs.markers.vs2010.menu {
             List<ISmartTagAction> actionList = new List<ISmartTagAction>();
 
             ITrackingSpan trackingSpan = span.Snapshot.CreateTrackingSpan(span, SpanTrackingMode.EdgeInclusive);
+//            actionList.Add(new AAAction());
             actionList.Add(new OpenIssueInIdeSmartTagAction(trackingSpan));
             actionList.Add(new OpenIssueInBrowserSmartTagAction(trackingSpan));
             SmartTagActionSet actionSet = new SmartTagActionSet(actionList.AsReadOnly());

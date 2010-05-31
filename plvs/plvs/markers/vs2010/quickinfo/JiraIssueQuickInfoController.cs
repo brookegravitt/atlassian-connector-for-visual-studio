@@ -4,7 +4,6 @@ using Atlassian.plvs.markers.vs2010.texttag;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Tagging;
 
 namespace Atlassian.plvs.markers.vs2010.quickinfo {
     internal class JiraIssueQuickInfoController : IIntellisenseController {
@@ -21,7 +20,6 @@ namespace Atlassian.plvs.markers.vs2010.quickinfo {
         }
 
         private void OnTextViewMouseHover(object sender, MouseHoverEventArgs e) {
-
             SnapshotPoint? point = textView.BufferGraph.MapDownToFirstMatch(
                 new SnapshotPoint(textView.TextSnapshot, e.Position),
                 PointTrackingMode.Positive,
@@ -30,21 +28,19 @@ namespace Atlassian.plvs.markers.vs2010.quickinfo {
 
             if (point == null) return;
 
-            ITagAggregator<JiraIssueTextTag> aggregator = provider.TagAggregatorFactoryService.CreateTagAggregator<JiraIssueTextTag>(textView);
-            IEnumerable<IMappingTagSpan<JiraIssueTextTag>> spans = aggregator.GetTags(new SnapshotSpan(new SnapshotPoint(textView.TextSnapshot, 0),
-                                                                               textView.TextSnapshot.Length - 1));
+            if (!textView.TextBuffer.Properties.ContainsProperty(JiraIssueTextTagger.TEXT_TAGGER_CACHE_PROPERTY_NAME)) {
+                return;
+            }
+            IEnumerable<TagCache.TagEntry> tags = textView.TextBuffer.Properties.GetProperty(JiraIssueTextTagger.TEXT_TAGGER_CACHE_PROPERTY_NAME) as IEnumerable<TagCache.TagEntry>;
+            if (tags == null) return;
+            TagCache.TagEntry tagUnderCursor = tags.FirstOrDefault(tag => tag.Start <= point.Value.Position && tag.End >= point.Value.Position);
 
-            JiraIssueTextTag textTag = (from span in spans
-                                let t = span.Tag
-                                where t.Where.Start.Position <= point.Value.Position && t.Where.End.Position >= point.Value.Position
-                                select span.Tag).FirstOrDefault();
+            if (tagUnderCursor == null) return;
 
-            provider.InfoSourceProvider.currentTextTag = textTag;
-            
-            if (textTag == null) return;
+            provider.InfoSourceProvider.CurrentIssueKey = tagUnderCursor.IssueKey;
 
             ITrackingPoint triggerPoint = point.Value.Snapshot.CreateTrackingPoint(point.Value.Position, PointTrackingMode.Positive);
-            
+
             if (!provider.QuickInfoBroker.IsQuickInfoActive(textView)) {
                 provider.QuickInfoBroker.TriggerQuickInfo(textView, triggerPoint, true);
             }
