@@ -55,7 +55,7 @@ namespace Atlassian.plvs.markers.vs2010.mouseandkeyboard {
             });
         }
 
-        public static JiraIssueTextTag getIssueTagUnderCursor(IWpfTextView view, IViewTagAggregatorFactoryService tagAggregatorFactory) {
+        private static JiraIssueTextTag getIssueTagUnderCursor(IWpfTextView view, IViewTagAggregatorFactoryService tagAggregatorFactory) {
             Point position = Mouse.GetPosition(view.VisualElement);
             position = relativeToView(view, position);
 

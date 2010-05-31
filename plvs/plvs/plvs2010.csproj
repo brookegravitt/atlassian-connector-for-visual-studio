@@ -307,6 +307,7 @@
     <Compile Include="markers\vs2010\DebugMon.Designer.cs">
       <DependentUpon>DebugMon.cs</DependentUpon>
     </Compile>
+    <Compile Include="markers\vs2010\marginglyph\JiraIssueGlyphMouseProcessorProvider.cs" />
     <Compile Include="markers\vs2010\menu\JiraIssueActionsSmartTag.cs" />
     <Compile Include="markers\vs2010\marginglyph\JiraIssueGlyphFactory.cs" />
     <Compile Include="markers\vs2010\marginglyph\JiraIssueGlyphFactoryProvider.cs" />
@@ -915,7 +916,7 @@
     <Content Include="Resources\icons\minus.png" />
     <Content Include="Resources\icons\new_comment.png" />
     <Content Include="Resources\icons\nothing.png" />
-    <Content Include="Resources\icons\open_in_ide.png" />
+    <Resource Include="Resources\icons\open_in_ide.png" />
     <Content Include="Resources\icons\pazu.bmp" />
     <None Include="markers\Markers2008.reg" />
     <None Include="Resources\icons\pazu_32.bmp" />
@@ -936,7 +937,7 @@
     <Content Include="Resources\icons\unknown.png" />
     <Content Include="Resources\icons\update_unavailable.ico" />
     <Content Include="Resources\icons\update_unavailable.png" />
-    <Content Include="Resources\icons\view_in_browser.png" />
+    <Resource Include="Resources\icons\view_in_browser.png" />
     <None Include="Resources\texts\about_html.txt" />
     <None Include="Resources\texts\comments_css.txt" />
     <None Include="Resources\texts\summary_and_description_css.txt" />
