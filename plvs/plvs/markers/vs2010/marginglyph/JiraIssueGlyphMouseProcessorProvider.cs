@@ -2,17 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using Atlassian.plvs.api.jira;
-using Atlassian.plvs.markers.vs2010.texttag;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui.jira;
 using Atlassian.plvs.util;
@@ -46,7 +41,7 @@ namespace Atlassian.plvs.markers.vs2010.marginglyph {
             private readonly JiraIssueGlyphMouseProcessorProvider provider;
             private readonly IWpfTextView textView;
             private readonly IWpfTextViewMargin margin;
-            private const string RIGHT_CLICK_FOR_CONTEXT_MENU = "\r\n\r\nRight-click for context menu";
+            private const string RIGHT_CLICK_FOR_CONTEXT_MENU = "\r\n\r\nRight-click to open context menu";
 
             public MouseProcessor(JiraIssueGlyphMouseProcessorProvider provider, IWpfTextView textView, IWpfTextViewMargin margin) {
                 this.provider = provider;
@@ -71,12 +66,13 @@ namespace Atlassian.plvs.markers.vs2010.marginglyph {
                 }
                 ContextMenu contextMenu = new ContextMenu();
                 string txt;
-                if (tag.IssueKeys.Count == 1) {
-                    txt = "This line contains issue " + tag.IssueKeys[0] + RIGHT_CLICK_FOR_CONTEXT_MENU;
-                    addMenuItems(contextMenu, tag.IssueKeys[0], true);
+                IList<string> keys = tag.IssueKeys;
+                if (keys.Count == 1) {
+                    txt = "This line contains issue " + keys[0] + RIGHT_CLICK_FOR_CONTEXT_MENU;
+                    addMenuItems(contextMenu, keys[0], true);
                 } else {
                     StringBuilder sb = new StringBuilder();
-                    foreach (var key in tag.IssueKeys) {
+                    foreach (var key in keys) {
                         sb.Append(key).Append(", ");
                         MenuItem menuItem = new MenuItem {Header = key};
                         addMenuItems(menuItem, key, false);
