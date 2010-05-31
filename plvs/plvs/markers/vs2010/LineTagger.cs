@@ -55,13 +55,15 @@ namespace Atlassian.plvs.markers.vs2010 {
         }
 
         private IEnumerable<ITagSpan<T>> getTagsFromCacheFor(IEnumerable<SnapshotSpan> spans) {
+            List<ITagSpan<T>> result = new List<ITagSpan<T>>();
+
             if (!GlobalSettings.shouldShowIssueLinks(buffer.CurrentSnapshot.LineCount)) {
-                yield break;
+                return result;
             }
 
             JiraServer selectedServer = AtlassianPanel.Instance.Jira.CurrentlySelectedServerOrDefault;
             if (selectedServer == null) {
-                yield break;
+                return result;
             }
 
             int lastLine = -1;
@@ -70,10 +72,13 @@ namespace Atlassian.plvs.markers.vs2010 {
                     if (tagEntry.Start >= span.Start && tagEntry.End <= span.End) {
                         TagSpan<T> tag = getTagForKey(new SnapshotSpan(tagEntry.Start, tagEntry.End), tagEntry.IssueKey, lastLine);
                         lastLine = tagEntry.Start.GetContainingLine().LineNumber;
-                        if (tag != null) yield return tag;
+                        if (tag != null) {
+                            result.Add(tag);
+                        }
                     }
                 }    
             }
+            return result;
         }
 
         protected abstract TagSpan<T> getTagForKey(SnapshotSpan span, string issueKey, int lastLine);
