@@ -11,6 +11,7 @@ using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui.jira;
 using Atlassian.plvs.util;
+using Atlassian.plvs.util.jira;
 using Atlassian.plvs.windows;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -86,49 +87,16 @@ namespace Atlassian.plvs.markers.vs2010.marginglyph {
 
             private static void addMenuItems(ItemsControl menu, string key, bool displayKey) {
                 MenuItem item1 = new MenuItem { Header = "Open" + (displayKey ? " " + key : "") + " in IDE", Icon = getImagePath(Resources.open_in_ide) };
-                item1.Click += (s, e) => openIssue(key);
+                item1.Click += (s, e) => JiraIssueUtils.openInIde(key);
                 menu.Items.Add(item1);
                 MenuItem item2 = new MenuItem { Header = "View" + (displayKey ? " " + key : "") + " in the Browser", Icon = getImagePath(Resources.view_in_browser) };
-                item2.Click += (s, e) => browseIssue(key);
+                item2.Click += (s, e) => JiraIssueUtils.launchBrowser(key);
                 menu.Items.Add(item2);
             }
 
             private static Image getImagePath(System.Drawing.Image img) {
                 Image image = new Image {Source = PlvsUtils.bitmapSourceFromPngImage(img), Width = 16, Height = 16};
                 return image;
-            }
-
-            private static void openIssue(string issueKey) {
-                bool found = false;
-                foreach (JiraIssue issue in JiraIssueListModelImpl.Instance.Issues) {
-                    if (!issue.Key.Equals(issueKey)) continue;
-                    IssueDetailsWindow.Instance.openIssue(issue, AtlassianPanel.Instance.Jira.ActiveIssueManager);
-                    found = true;
-                    break;
-                }
-                if (!found) {
-                    AtlassianPanel.Instance.Jira.findAndOpenIssue(issueKey, findFinished);
-                }
-            }
-
-            private static void findFinished(bool success, string message, Exception e) {
-                if (!success) {
-                    PlvsUtils.showError(message, e);
-                }
-            }
-
-            private static void browseIssue(string issueKey) {
-                try {
-                    JiraServer server = AtlassianPanel.Instance.Jira.CurrentlySelectedServerOrDefault;
-                    if (server != null) {
-                        Process.Start(server.Url + "/browse/" + issueKey);
-                    } else {
-                        MessageBox.Show("No JIRA server selected", Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-// ReSharper disable EmptyGeneralCatchClause
-                } catch {
-// ReSharper restore EmptyGeneralCatchClause
-                }
             }
  
             private static JiraIssueLineGlyphTag getIssueGlyphTagUnderCursor(IWpfTextView view, IViewTagAggregatorFactoryService tagAggregatorFactory) {

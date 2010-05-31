@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Windows.Forms;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Media;
-using Atlassian.plvs.api.jira;
-using Atlassian.plvs.models.jira;
-using Atlassian.plvs.ui.jira;
 using Atlassian.plvs.util;
-using Atlassian.plvs.windows;
+using Atlassian.plvs.util.jira;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 
@@ -19,7 +14,7 @@ namespace Atlassian.plvs.markers.vs2010.menu {
         public OpenIssueInIdeSmartTagAction(ITrackingSpan span) {
             snapshot = span.TextBuffer.CurrentSnapshot;
             issueKey = span.GetText(snapshot);
-            menuText = "Open JIRA Issue in IDE";
+            menuText = "Open " + issueKey + " in IDE";
         }
 
         public string DisplayText {
@@ -37,22 +32,7 @@ namespace Atlassian.plvs.markers.vs2010.menu {
         }
 
         public void Invoke() {
-            bool found = false;
-            foreach (JiraIssue issue in JiraIssueListModelImpl.Instance.Issues) {
-                if (!issue.Key.Equals(issueKey)) continue;
-                IssueDetailsWindow.Instance.openIssue(issue, AtlassianPanel.Instance.Jira.ActiveIssueManager);
-                found = true;
-                break;
-            }
-            if (!found) {
-                AtlassianPanel.Instance.Jira.findAndOpenIssue(issueKey, findFinished);
-            }
-        }
-
-        private static void findFinished(bool success, string message, Exception e) {
-            if (!success) {
-                PlvsUtils.showError(message, e);
-            }
+            JiraIssueUtils.openInIde(issueKey);
         }
     }
 }
