@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Web;
-using Atlassian.plvs.api;
+using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.models.jira;
+using Atlassian.plvs.ui.jira;
+using Atlassian.plvs.windows;
 
 namespace Atlassian.plvs.util.jira {
     public sealed class JiraIssueUtils {
@@ -83,6 +87,42 @@ namespace Atlassian.plvs.util.jira {
                 return default(T);
             }
             return (T) property.GetValue(soapObject, null);
+        }
+
+        public static void openInIde(string issueKey) {
+            if (issueKey == null) return;
+
+            bool found = false;
+            foreach (JiraIssue issue in JiraIssueListModelImpl.Instance.Issues.Where(issue => issue.Key.Equals(issueKey))) {
+                IssueDetailsWindow.Instance.openIssue(issue, AtlassianPanel.Instance.Jira.ActiveIssueManager);
+                found = true;
+                break;
+            }
+            if (!found) {
+                AtlassianPanel.Instance.Jira.findAndOpenIssue(issueKey, findFinished);
+            }
+        }
+
+        private static void findFinished(bool success, string message, Exception e) {
+            if (!success) {
+                PlvsUtils.showError(message, e);
+            }
+        }
+
+        public static void launchBrowser(string issueKey) {
+            if (issueKey == null) {
+                return;
+            }
+            try {
+                JiraServer server = AtlassianPanel.Instance.Jira.CurrentlySelectedServerOrDefault;
+                if (server != null) {
+                    Process.Start(server.Url + "/browse/" + issueKey);
+                } else {
+                    MessageBox.Show("No JIRA server selected", Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+// ReSharper disable EmptyGeneralCatchClause
+            } catch { }
+// ReSharper restore EmptyGeneralCatchClause
         }
     }
 }
