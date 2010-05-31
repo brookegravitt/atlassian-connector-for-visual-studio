@@ -35,7 +35,10 @@ namespace Atlassian.plvs.markers.vs2010.quickinfo {
             if (tags == null) return;
             TagCache.TagEntry tagUnderCursor = tags.FirstOrDefault(tag => tag.Start <= point.Value.Position && tag.End >= point.Value.Position);
 
-            if (tagUnderCursor == null) return;
+            if (tagUnderCursor == null) {
+                provider.InfoSourceProvider.CurrentIssueKey = null;
+                return;
+            }
 
             provider.InfoSourceProvider.CurrentIssueKey = tagUnderCursor.IssueKey;
 

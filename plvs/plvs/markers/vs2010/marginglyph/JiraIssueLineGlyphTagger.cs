@@ -5,9 +5,11 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 namespace Atlassian.plvs.markers.vs2010.marginglyph {
     internal class JiraIssueLineGlyphTagger : LineTagger<JiraIssueLineGlyphTag> {
-        public JiraIssueLineGlyphTagger(ITextBuffer buffer, IClassifier classifier) : base(buffer, classifier, "PlvsJiraIssueLineGlyphTaggerTagCache") { }
 
         private JiraIssueLineGlyphTag lastTag;
+        public const string GLYPH_TAGGER_CACHE = "PlvsJiraIssueLineGlyphTaggerTagCache";
+
+        public JiraIssueLineGlyphTagger(ITextBuffer buffer, IClassifier classifier) : base(buffer, classifier, GLYPH_TAGGER_CACHE) { }
 
         protected override TagSpan<JiraIssueLineGlyphTag> getTagForKey(SnapshotSpan span, string issueKey, int lastLine) {
             int currentLine = span.Start.GetContainingLine().LineNumber;

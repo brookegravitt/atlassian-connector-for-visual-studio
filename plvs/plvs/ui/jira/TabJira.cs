@@ -860,7 +860,7 @@ namespace Atlassian.plvs.ui.jira {
                 status.setError("Failed to find issue " + key, ex);
                 Invoke(new MethodInvoker(delegate
                                              {
-                                                 string message = "Unable to find issue " + key + " on server \"" + server.Name;
+                                                 string message = "Unable to find issue " + key + " on server \"" + server.Name + "\"";
                                                  if (onFinish != null) {
                                                      onFinish(false, message, ex);
                                                  }
