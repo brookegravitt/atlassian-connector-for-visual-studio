@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.dialogs;
-using Atlassian.plvs.util.jira;
 using Atlassian.plvs.windows;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
@@ -13,16 +10,13 @@ using Microsoft.VisualStudio.Text.Tagging;
 namespace Atlassian.plvs.markers.vs2010 {
     internal abstract class LineTagger<T> : ITagger<T> where T : ITag {
         private readonly ITextBuffer buffer;
-        private readonly IClassifier classifier;
         private bool disposed;
 
-        // PLVS-178
-        private readonly Dictionary<string, IEnumerable<ITagSpan<T>>> tagCache = new Dictionary<string, IEnumerable<ITagSpan<T>>>();
+        private readonly TagCache tagCache;
 
-        internal LineTagger(ITextBuffer buffer, IClassifier classifier) {
+        internal LineTagger(ITextBuffer buffer, IClassifier classifier, string cachePropertyName) {
             this.buffer = buffer;
-            this.classifier = classifier;
-
+            tagCache = new TagCache(buffer, classifier, cachePropertyName);
 
             AtlassianPanel.Instance.Jira.SelectedServerChanged += jiraSelectedServerChanged;
             GlobalSettings.SettingsChanged += globalSettingsChanged;
@@ -31,18 +25,16 @@ namespace Atlassian.plvs.markers.vs2010 {
         }
 
         private void buffer_Changed(object sender, TextContentChangedEventArgs e) {
- //            DebugMon.Instance().addText(GetType().Name + " buffer_Changed(): " + buffer + " changed, clearing tag cache");
-            tagCache.Clear();
+//             DebugMon.Instance().addText(GetType().Name + " buffer_Changed(): " + buffer + " changed, clearing tag cache");
+            tagCache.clearAndRunActionAfterTimeout(updateTags);
         }
 
         private void globalSettingsChanged(object sender, EventArgs e) {
-            tagCache.Clear();
-            updateTags();
+            tagCache.clearAndRunActionAfterTimeout(updateTags);
         }
 
         private void jiraSelectedServerChanged(object sender, EventArgs e) {
-            tagCache.Clear();
-            updateTags();
+            tagCache.clearAndRunActionAfterTimeout(updateTags);
         }
 
         private void updateTags() {
@@ -55,19 +47,14 @@ namespace Atlassian.plvs.markers.vs2010 {
         }
 
         IEnumerable<ITagSpan<T>> ITagger<T>.GetTags(NormalizedSnapshotSpanCollection spans) {
-            // PLVS-178
-            string key = spans.ToString();
-            if (!tagCache.ContainsKey(key)) {
-//                DebugMon.Instance().addText(GetType().Name + ".GetTags(): spans: " + spans + " returning from tag cache");
-                tagCache[key] = getTagsInternal(spans);
+            if (!tagCache.CacheFilled) {
+                tagCache.fill();
             }
-            return tagCache[key];
+
+            return getTagsFromCacheFor(spans);
         }
 
-        IEnumerable<ITagSpan<T>> getTagsInternal(IEnumerable<SnapshotSpan> spans) {
-
-//            DebugMon.Instance().addText(GetType().Name + ".getTagsInternal(): spans: " + spans);
-
+        private IEnumerable<ITagSpan<T>> getTagsFromCacheFor(IEnumerable<SnapshotSpan> spans) {
             if (!GlobalSettings.shouldShowIssueLinks(buffer.CurrentSnapshot.LineCount)) {
                 yield break;
             }
@@ -78,30 +65,18 @@ namespace Atlassian.plvs.markers.vs2010 {
             }
 
             int lastLine = -1;
-            foreach (SnapshotSpan requestSpan in spans) {
-
-                var startLine = requestSpan.Start.GetContainingLine();
-                var endLine = (startLine.End >= requestSpan.End) ? startLine : requestSpan.End.GetContainingLine();
-                SnapshotSpan span = new SnapshotSpan(startLine.Start, endLine.End);
-
-                foreach (ClassificationSpan classification in classifier.GetClassificationSpans(span)) {
-                    if (!classification.ClassificationType.Classification.ToLower().Contains("comment")) continue;
-                    MatchCollection matches = JiraIssueUtils.ISSUE_REGEX.Matches(classification.Span.GetText());
-                    foreach (Match match in matches.Cast<Match>().Where(match => match.Success)) {
-                        SortedDictionary<string, JiraProject> projects = JiraServerCache.Instance.getProjects(selectedServer);
-                        if (!projects.ContainsKey(match.Groups[2].Value)) continue;
-
-                        SnapshotSpan snapshotSpan = new SnapshotSpan(classification.Span.Start + match.Index, match.Length);
-
-                        TagSpan<T> tagSpan = getTagSpan(match, snapshotSpan, classification, lastLine);
-                        lastLine = span.Start.GetContainingLine().LineNumber;
-                        if (tagSpan != null) yield return tagSpan;
+            foreach (SnapshotSpan span in spans) {
+                foreach (TagCache.TagEntry tagEntry in tagCache.Entries) {
+                    if (tagEntry.Start >= span.Start && tagEntry.End <= span.End) {
+                        TagSpan<T> tag = getTagForKey(new SnapshotSpan(tagEntry.Start, tagEntry.End), tagEntry.IssueKey, lastLine);
+                        lastLine = tagEntry.Start.GetContainingLine().LineNumber;
+                        if (tag != null) yield return tag;
                     }
-                }
+                }    
             }
         }
 
-        protected abstract TagSpan<T> getTagSpan(Match match, SnapshotSpan span, ClassificationSpan classification, int lastLine);
+        protected abstract TagSpan<T> getTagForKey(SnapshotSpan span, string issueKey, int lastLine);
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 
