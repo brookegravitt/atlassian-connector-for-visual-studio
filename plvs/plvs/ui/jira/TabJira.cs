@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Threading;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs;
@@ -27,6 +26,9 @@ namespace Atlassian.plvs.ui.jira {
     public partial class TabJira : UserControl, AddNewServerLink {
 
         private const string GROUP_SUBTASKS_UNDER_PARENT = "JiraIssueListGroupSubtasksUnderParent";
+        private const string FILTER_PANEL_VISIBLE = "JiraIssueListFilterPanelVisible";
+        private const string HIDE_FILTERS = "Hide Filters";
+        private const string SHOW_FILTERS = "Show Filters";
 
         private JiraIssueTree issuesTree;
 
@@ -45,6 +47,11 @@ namespace Atlassian.plvs.ui.jira {
         private int currentGeneration;
         private bool metadataFetched;
         public JiraActiveIssueManager ActiveIssueManager { get; private set; }
+
+        private ToolStripButton buttonShowHideFilters;
+
+        private bool initialFilterSelected;
+        private int baseSpliterDistance;
 
         public TabJira() {
             InitializeComponent();
@@ -70,11 +77,53 @@ namespace Atlassian.plvs.ui.jira {
 
             getMoreIssues.VisibleChanged += (s, e) => resizeStatusBar();
 
+            statusStrip.Items.Clear();
+            initializeShowHideFiltersButton(store.loadParameter(FILTER_PANEL_VISIBLE, 1) != 0);
             initializeActiveIssueToolStrip();
         }
 
+        private void initializeShowHideFiltersButton(bool visible) {
+            buttonShowHideFilters = new ToolStripButton {
+                                        Image = Resources.ico_jira_filter,
+                                        CheckOnClick = true,
+                                        Text = visible ? HIDE_FILTERS : SHOW_FILTERS,
+                                        DisplayStyle = ToolStripItemDisplayStyle.Image,
+                                        AutoToolTip = true,
+                                        Checked = visible
+                                    };
+            buttonShowHideFilters.Click += buttonShowHideFilters_Click;
+            statusStrip.Items.Add(buttonShowHideFilters);
+            statusStrip.Items.Add(new ToolStripSeparator());
+            baseSpliterDistance = jiraSplitter.SplitterDistance;
+            jiraSplitter.Panel1MinSize = visible ? 25 : 1;
+            // we can't just collapse the left panel right away, because issue list retrieval
+            // is triggered by a filter tree selection event. It turns out that this event is
+            // not fired until the tree is actually visible - seems like the tree control is not
+            // instantiated until the parent panel is uncollapsed. Or something.
+            // So I am cheating and make the filter tree "almost invisible" by making it 1 pixel narrow
+            if (!visible) {
+                jiraSplitter.SplitterDistance = 1;
+            }
+        }
+
+        private void buttonShowHideFilters_Click(object sender, EventArgs e) {
+            bool visible = buttonShowHideFilters.Checked;
+            buttonShowHideFilters.Text = visible ? HIDE_FILTERS : SHOW_FILTERS;
+            ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
+            store.storeParameter(FILTER_PANEL_VISIBLE, visible ? 1 : 0);
+            jiraSplitter.Panel1MinSize = visible ? 25 : 1;
+            if (initialFilterSelected) {
+                jiraSplitter.Panel1Collapsed = !visible;
+            }
+            if (visible) {
+                jiraSplitter.SplitterDistance = baseSpliterDistance;
+            } else {
+                baseSpliterDistance = jiraSplitter.SplitterDistance;
+                jiraSplitter.SplitterDistance = 1;
+            }
+        }
+
         private void initializeActiveIssueToolStrip() {
-            statusStrip.Items.Clear();
             ActiveIssueManager = new JiraActiveIssueManager(statusStrip, status);
             statusStrip.Items.Add(jiraStatus);
             statusStrip.Items.Add(getMoreIssues);
@@ -618,6 +667,13 @@ namespace Atlassian.plvs.ui.jira {
             if (SelectedServerChanged != null) {
                 SelectedServerChanged(this, new EventArgs());
             }
+
+            if (!initialFilterSelected) {
+                initialFilterSelected = true;
+                if (!buttonShowHideFilters.Checked) {
+                    jiraSplitter.Panel1Collapsed = true;
+                }
+            }
         }
 
         public event EventHandler<EventArgs> SelectedServerChanged;
@@ -1006,7 +1062,12 @@ namespace Atlassian.plvs.ui.jira {
 
         private void resizeStatusBar() {
             int height = jiraStatus.Height;
-            jiraStatus.Size = new Size(statusStrip.Width - (getMoreIssues.Visible ? getMoreIssues.Width : 0) - ActiveIssueManager.ToolbarWidth, height);
+            jiraStatus.Size = new Size(
+                statusStrip.Width 
+                - (getMoreIssues.Visible ? getMoreIssues.Width : 0) 
+                - ActiveIssueManager.ToolbarWidth 
+                - buttonShowHideFilters.Width - new ToolStripSeparator().Width, 
+                height);
         }
     }
 }
