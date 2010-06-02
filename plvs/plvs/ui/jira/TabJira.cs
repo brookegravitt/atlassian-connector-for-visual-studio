@@ -317,7 +317,7 @@ namespace Atlassian.plvs.ui.jira {
         private void comboGroupBy_SelectedIndexChanged(object sender, EventArgs e) {
             updateIssuesTreeModel();
             updateIssueListButtons();
-            expandIssuesTree();
+            issuesTree.restoreExpandCollapseStates();
         }
 
         private void updateIssuesTreeModel() {
@@ -435,23 +435,23 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void issuesTree_StructureChanged(object sender, TreePathEventArgs e) {
-            expandIssuesTree();
-            restoreSelectedIssue(lastSelectedIssue);
+            issuesTree.restoreExpandCollapseStates();
+            restoreExpandStatesAndSelectedIssue(lastSelectedIssue);
             invokeSelectedIssueChanged();
         }
 
         private void issueTreeModel_NodesInserted(object sender, TreeModelEventArgs e) {
-            restoreSelectedIssue(lastSelectedIssue);
+            restoreExpandStatesAndSelectedIssue(lastSelectedIssue);
             invokeSelectedIssueChanged();
         }
 
         private void issueTreeModel_NodesChanged(object sender, TreeModelEventArgs e) {
-            restoreSelectedIssue(lastSelectedIssue);
+            restoreExpandStatesAndSelectedIssue(lastSelectedIssue);
             invokeSelectedIssueChanged();
         }
 
         private void issueTreeModel_NodesRemoved(object sender, TreeModelEventArgs e) {
-            restoreSelectedIssue(lastSelectedIssue);
+            restoreExpandStatesAndSelectedIssue(lastSelectedIssue);
             invokeSelectedIssueChanged();
         }
 
@@ -510,6 +510,9 @@ namespace Atlassian.plvs.ui.jira {
                 jiraContainer.Visible = false;
                 Controls.Add(linkAddJiraServer);
             } else {
+
+                filtersTree.CollapseExpandManager = 
+                    new TreeNodeCollapseExpandStatusManager(ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS));
 
                 jiraContainer.Visible = true;
 
@@ -614,7 +617,7 @@ namespace Atlassian.plvs.ui.jira {
                                                  }
                                                  metadataFetched = true;
                                                  filtersTree.addRecentlyViewedNode();
-                                                 filtersTree.ExpandAll();
+                                                 filtersTree.restoreExpandCollapseStates();
                                                  filtersTree.restoreLastSelectedFilterItem();
                                                  updateIssueListButtons();
 
@@ -678,8 +681,10 @@ namespace Atlassian.plvs.ui.jira {
 
         public event EventHandler<EventArgs> SelectedServerChanged;
 
-        private void restoreSelectedIssue(JiraIssue issue) {
+        private void restoreExpandStatesAndSelectedIssue(JiraIssue issue) {
             this.safeInvoke(new MethodInvoker(() => {
+                                                  issuesTree.restoreExpandCollapseStates();
+
                                                   if (issue == null) {
                                                       return;
                                                   }
@@ -698,6 +703,10 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void reloadIssues() {
+
+            issuesTree.CollapseExpandManager =
+                new TreeNodeCollapseExpandStatusManager(ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS));
+
             JiraSavedFilterTreeNode savedFilterNode;
             RecentlyOpenIssuesTreeNode recentIssuesNode;
             JiraCustomFilterTreeNode customFilterNode;
@@ -710,13 +719,13 @@ namespace Atlassian.plvs.ui.jira {
             JiraIssue selectedIssue = SelectedIssue;
 
             if (savedFilterNode != null) {
-                issueLoadThread = reloadIssuesWithSavedFilter(savedFilterNode, () => restoreSelectedIssue(selectedIssue));
+                issueLoadThread = reloadIssuesWithSavedFilter(savedFilterNode, () => restoreExpandStatesAndSelectedIssue(selectedIssue));
             } else if (customFilterNode != null && !customFilterNode.Filter.Empty) {
-                issueLoadThread = reloadIssuesWithCustomFilter(customFilterNode, () => restoreSelectedIssue(selectedIssue));
+                issueLoadThread = reloadIssuesWithCustomFilter(customFilterNode, () => restoreExpandStatesAndSelectedIssue(selectedIssue));
             } else if (presetFilterNode != null) {
-                issueLoadThread = reloadIssuesWithPresetFilter(presetFilterNode, () => restoreSelectedIssue(selectedIssue));
+                issueLoadThread = reloadIssuesWithPresetFilter(presetFilterNode, () => restoreExpandStatesAndSelectedIssue(selectedIssue));
             } else if (recentIssuesNode != null) {
-                issueLoadThread = reloadIssuesWithRecentlyViewedIssues(() => restoreSelectedIssue(selectedIssue));
+                issueLoadThread = reloadIssuesWithRecentlyViewedIssues(() => restoreExpandStatesAndSelectedIssue(selectedIssue));
             }
 
             loadIssuesInThread(issueLoadThread);
@@ -830,11 +839,11 @@ namespace Atlassian.plvs.ui.jira {
             JiraIssue selectedIssue = SelectedIssue;
 
             if (savedFilterNode != null) {
-                issueLoadThread = updateIssuesWithSavedFilter(savedFilterNode, () => restoreSelectedIssue(selectedIssue));
+                issueLoadThread = updateIssuesWithSavedFilter(savedFilterNode, () => restoreExpandStatesAndSelectedIssue(selectedIssue));
             } else if (customFilterNode != null && !customFilterNode.Filter.Empty) {
-                issueLoadThread = updateIssuesWithCustomFilter(customFilterNode, () => restoreSelectedIssue(selectedIssue));
+                issueLoadThread = updateIssuesWithCustomFilter(customFilterNode, () => restoreExpandStatesAndSelectedIssue(selectedIssue));
             } else if (presetFilterNode != null) {
-                issueLoadThread = updateIssuesWithPresetFilter(presetFilterNode, () => restoreSelectedIssue(selectedIssue));
+                issueLoadThread = updateIssuesWithPresetFilter(presetFilterNode, () => restoreExpandStatesAndSelectedIssue(selectedIssue));
             }
 
             loadIssuesInThread(issueLoadThread);
