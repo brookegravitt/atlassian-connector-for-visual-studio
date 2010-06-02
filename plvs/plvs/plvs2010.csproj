@@ -441,6 +441,7 @@
     <Compile Include="ui\ToolWindowFrame.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="ui\TreeNodeCollapseExpandStatusManager.cs" />
     <Compile Include="ui\WebBrowserWithLabel.cs">
       <SubType>UserControl</SubType>
     </Compile>
