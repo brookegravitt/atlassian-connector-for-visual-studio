@@ -13,6 +13,8 @@ namespace Atlassian.plvs.ui.jira {
         private readonly StatusLabel status;
         private readonly JiraIssueListModel model;
 
+        public TreeNodeCollapseExpandStatusManager CollapseExpandManager { get; set; }
+
         private const int MARGIN = 16;
         private const int STATUS_WIDTH = 150;
         private const int UPDATED_WIDTH = 150;
@@ -40,7 +42,7 @@ namespace Atlassian.plvs.ui.jira {
             }
         }
 
-        private static ToolTipProvider toolTipProvider = new ToolTipProvider();
+        private static readonly ToolTipProvider toolTipProvider = new ToolTipProvider();
 
         public JiraIssueTree(Control parent, StatusLabel status, JiraIssueListModel model, int itemHeight, Font font) {
             this.parent = parent;
@@ -132,6 +134,9 @@ namespace Atlassian.plvs.ui.jira {
             colUpdated.TextAlign = HorizontalAlignment.Right;
 
             ItemDrag += jiraIssueTreeItemDrag;
+
+            Expanded += jiraIssueTreeExpanded;
+            Collapsed += jiraIssueTreeCollapsed;
         }
 
         public void addContextMenu(ToolStripItem[] items) {
@@ -177,6 +182,46 @@ namespace Atlassian.plvs.ui.jira {
             d.SetText("ISSUE:" + n.Issue.Key + ":SERVER:{" + n.Issue.Server.GUID + "}");
 
             DoDragDrop(d, DragDropEffects.Copy | DragDropEffects.Move);
+        }
+
+        private bool isRestoring;
+        
+        public void restoreExpandCollapseStates() {
+            if (CollapseExpandManager == null) {
+                ExpandAll();
+                return;
+            }
+            isRestoring = true;
+            foreach (var node in AllNodes) {
+                restoreExpandCollapseState(node);
+            }
+            isRestoring = false;
+        }
+
+        private void restoreExpandCollapseState(TreeNodeAdv node) {
+            if (CollapseExpandManager == null) return;
+            bool expanded = CollapseExpandManager.restoreNodeState(node.Tag);
+            if (expanded) node.Expand(true); else node.Collapse(true);
+        }
+
+        private void rememberExpandCollapseState(TreeNodeAdv node) {
+            if (CollapseExpandManager == null) return;
+
+            TreeNodeCollapseExpandStatusManager.TreeNodeRememberingCollapseState n = 
+                node.Tag as TreeNodeCollapseExpandStatusManager.TreeNodeRememberingCollapseState;
+            if (n == null) return;
+            n.NodeExpanded = node.IsExpanded;
+            CollapseExpandManager.rememberNodeState(node.Tag);
+        }
+
+        private void jiraIssueTreeCollapsed(object sender, TreeViewAdvEventArgs e) {
+            if (isRestoring) return;
+            rememberExpandCollapseState(e.Node);
+        }
+
+        private void jiraIssueTreeExpanded(object sender, TreeViewAdvEventArgs e) {
+            if (isRestoring) return;
+            rememberExpandCollapseState(e.Node);
         }
     }
 }

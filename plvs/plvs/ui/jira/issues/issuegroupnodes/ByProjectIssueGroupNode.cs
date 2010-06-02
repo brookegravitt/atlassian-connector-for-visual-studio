@@ -1,11 +1,13 @@
 ﻿using System.Drawing;
+using Atlassian.plvs.api.jira;
 
 namespace Atlassian.plvs.ui.jira.issues.issuegroupnodes {
-    class ByLastUpdatedIssueGroupNode: AbstractIssueGroupNode {
-        private readonly string name;
 
-        public ByLastUpdatedIssueGroupNode(string name) {
-            this.name = name;
+    class ByProjectIssueGroupNode : AbstractIssueGroupNode {
+        private readonly JiraProject project;
+
+        public ByProjectIssueGroupNode(JiraProject project) {
+            this.project = project;
         }
 
         #region Overrides of AbstractIssueGroupNode
@@ -15,7 +17,7 @@ namespace Atlassian.plvs.ui.jira.issues.issuegroupnodes {
         }
 
         public override string getGroupName() {
-            return name;
+            return project.Key + ": " + project.Name;
         }
 
         #endregion
