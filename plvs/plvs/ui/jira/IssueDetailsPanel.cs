@@ -15,6 +15,7 @@ using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs.jira;
 using Atlassian.plvs.models;
 using Atlassian.plvs.models.jira;
+using Atlassian.plvs.net;
 using Atlassian.plvs.ui.jira.issues;
 using Atlassian.plvs.util.jira;
 using Atlassian.plvs.windows;
@@ -590,10 +591,10 @@ namespace Atlassian.plvs.ui.jira {
             sb.Append("<tr>");
 
             // let's pray all issue icons are 16x16 :)
-            sb.Append("<td class=\"issueelement\" width=\"16px\">").Append("<img src=\"" + jiraIssue.IssueTypeIconUrl + "\"/>").Append("</td>");
+            sb.Append("<td class=\"issueelement\" width=\"16px\">").Append("<img src=\"" + (ImageCache.Instance.getImage(jiraIssue.Server, jiraIssue.IssueTypeIconUrl).FileUrl ?? nothingImagePath) + "\"/>").Append("</td>");
             sb.Append("<td class=\"issueelement\">").Append("<a href=\"").Append(targetlinktype).Append(jiraIssue.Key).Append("\">").Append(jiraIssue.Key).Append("</a></td>");
-            sb.Append("<td class=\"issueelement\" width=\"16px\">").Append("<img src=\"" + jiraIssue.PriorityIconUrl + "\" alt=\"" + jiraIssue.Priority + "\"/>").Append("</td>");
-            sb.Append("<td class=\"issueelement\" width=\"16px\">").Append("<img src=\"" + jiraIssue.StatusIconUrl + "\" alt=\"" + jiraIssue.Status + "\"/>").Append("</td>");
+            sb.Append("<td class=\"issueelement\" width=\"16px\">").Append("<img src=\"" + (ImageCache.Instance.getImage(jiraIssue.Server, jiraIssue.PriorityIconUrl).FileUrl ?? nothingImagePath) + "\" alt=\"" + jiraIssue.Priority + "\"/>").Append("</td>");
+            sb.Append("<td class=\"issueelement\" width=\"16px\">").Append("<img src=\"" + (ImageCache.Instance.getImage(jiraIssue.Server, jiraIssue.StatusIconUrl).FileUrl ?? nothingImagePath) + "\" alt=\"" + jiraIssue.Status + "\"/>").Append("</td>");
             sb.Append("<td class=\"issueelement\">").Append(jiraIssue.Summary).Append("</td></tr>\n");
         }
 
@@ -875,7 +876,7 @@ namespace Atlassian.plvs.ui.jira {
 
             if (isInlineNavigable(item.Attachment.Name)) {
                 try {
-                    webAttachmentView.Browser.Navigate(item.Url + "?" + CredentialUtils.getOsAuthString(issue.Server));
+                    webAttachmentView.Browser.navigateWithProxy(item.Url + "?" + CredentialUtils.getOsAuthString(issue.Server));
                 } catch (COMException ex) {
                     Debug.WriteLine("IssueDetailsPanel.listViewAttachments_Click() - exception caught: " + ex.Message);
                     reinitializeAttachmentView(() => showUnableToViewAttachmentPage(""));

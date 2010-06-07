@@ -7,7 +7,6 @@ using Atlassian.plvs.explorer.treeNodes;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
 using Atlassian.plvs.util;
-using Atlassian.plvs.util.jira;
 
 namespace Atlassian.plvs.explorer {
     public sealed partial class JiraServerExplorer : Form {
@@ -46,6 +45,8 @@ namespace Atlassian.plvs.explorer {
 
             webJira.Title = "";
             webJira.ErrorString = Resources.explorer_navigator_error_html;
+
+
         }
 
         public static void closeAll() {
