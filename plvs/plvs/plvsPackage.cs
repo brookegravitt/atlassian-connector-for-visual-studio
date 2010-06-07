@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using Atlassian.plvs.attributes;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.eventsinks;
+using Atlassian.plvs.net;
 using Atlassian.plvs.scm;
 using Atlassian.plvs.store;
 using Atlassian.plvs.ui.bamboo;
@@ -160,6 +161,8 @@ namespace Atlassian.plvs {
             }
 
             installCrashHandler();
+
+            ProxyListener.Instance.init();
 
             OleMenuCommandService mcs = GetService(typeof (IMenuCommandService)) as OleMenuCommandService;
             if (null != mcs) {
