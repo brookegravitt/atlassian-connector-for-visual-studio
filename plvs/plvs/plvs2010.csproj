@@ -350,6 +350,7 @@
     <Compile Include="models\jira\fields\TimeTrackingFiller.cs" />
     <Compile Include="models\jira\JiraActionFieldType.cs" />
     <Compile Include="api\jira\JiraUserCache.cs" />
+    <Compile Include="net\ProxyListener.cs" />
     <Compile Include="scm\AnkhSvnJiraActiveIssueControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
