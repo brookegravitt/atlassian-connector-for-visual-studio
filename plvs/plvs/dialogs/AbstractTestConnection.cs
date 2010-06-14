@@ -9,7 +9,7 @@ namespace Atlassian.plvs.dialogs {
     public abstract partial class AbstractTestConnection : Form {
         private readonly Server server;
         private bool testInProgress = true;
-        private readonly Thread worker;
+        private Thread worker;
 
         public abstract void testConnection();
 
@@ -30,7 +30,9 @@ namespace Atlassian.plvs.dialogs {
 
             linkErrorDetails.Visible = false;
             linkErrorDetails.Enabled = false;
+        }
 
+        private void abstractTestConnectionLoad(object sender, EventArgs e) {
             worker = PlvsUtils.createThread(testConnection);
             worker.Start();
         }
