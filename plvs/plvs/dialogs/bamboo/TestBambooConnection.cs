@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using Atlassian.plvs.api.bamboo;
+using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.dialogs.bamboo {
     class TestBambooConnection : AbstractTestConnection {
@@ -21,7 +22,7 @@ namespace Atlassian.plvs.dialogs.bamboo {
                 result = "Failed to connec to to server";
                 ex = e;
             }
-            Invoke(new MethodInvoker(() => stopTest(result, ex)));
+            this.safeInvoke(new MethodInvoker(() => stopTest(result, ex)));
         }
     }
 }
