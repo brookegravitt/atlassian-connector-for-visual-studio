@@ -261,6 +261,9 @@ namespace Atlassian.plvs.ui.jira {
                 ICollection<JiraServer> jiraServers = JiraServerModel.Instance.getAllEnabledServers();
                 if (jiraServers.Where(server => server.GUID.ToString().Equals(activeIssueServerGuidStr)).Any()) {
                     CurrentActiveIssue = new ActiveIssue(activeIssueKey, activeIssueServerGuidStr);
+                    if (ActiveIssueChanged != null) {
+                        ActiveIssueChanged(this, null);
+                    }
                 }
             }
             loadPastActiveIssues(store);
