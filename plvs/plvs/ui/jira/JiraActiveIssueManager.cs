@@ -254,7 +254,7 @@ namespace Atlassian.plvs.ui.jira {
             if (activeIssueKey != null && activeIssueServerGuidStr != null) {
                 MinutesInProgress = store.loadParameter(ACTIVE_ISSUE_TIMER_VALUE, 0);
                 paused = store.loadParameter(ACTIVE_ISSUE_IS_PAUSED, 0) > 0;
-                if (paused) {test
+                if (paused) {
                     buttonPause.Text = RESUME_WORK;
                     buttonPause.Image = Resources.ico_activateissue;
                 }
