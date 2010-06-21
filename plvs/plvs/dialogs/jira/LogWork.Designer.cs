@@ -38,8 +38,8 @@
             this.textExplanation = new System.Windows.Forms.TextBox();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.logWorkPanel = new System.Windows.Forms.Panel();
-            this.textComment = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.textComment = new System.Windows.Forms.TextBox();
             this.logWorkPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -133,16 +133,15 @@
             // 
             // labelEndTime
             // 
-            this.labelEndTime.AutoSize = true;
-            this.labelEndTime.Location = new System.Drawing.Point(94, 142);
+            this.labelEndTime.Location = new System.Drawing.Point(79, 142);
             this.labelEndTime.Name = "labelEndTime";
-            this.labelEndTime.Size = new System.Drawing.Size(79, 13);
+            this.labelEndTime.Size = new System.Drawing.Size(139, 13);
             this.labelEndTime.TabIndex = 10;
-            this.labelEndTime.Text = "18.01.10 11:33";
+            this.labelEndTime.Text = "16/06/2010 11:33 PM";
             // 
             // buttonChange
             // 
-            this.buttonChange.Location = new System.Drawing.Point(194, 137);
+            this.buttonChange.Location = new System.Drawing.Point(216, 137);
             this.buttonChange.Name = "buttonChange";
             this.buttonChange.Size = new System.Drawing.Size(75, 23);
             this.buttonChange.TabIndex = 5;
@@ -195,6 +194,15 @@
             this.logWorkPanel.Size = new System.Drawing.Size(566, 276);
             this.logWorkPanel.TabIndex = 13;
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(15, 171);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(51, 13);
+            this.label4.TabIndex = 14;
+            this.label4.Text = "Comment";
+            // 
             // textComment
             // 
             this.textComment.AcceptsReturn = true;
@@ -204,15 +212,6 @@
             this.textComment.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textComment.Size = new System.Drawing.Size(470, 91);
             this.textComment.TabIndex = 13;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(15, 171);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(51, 13);
-            this.label4.TabIndex = 14;
-            this.label4.Text = "Comment";
             // 
             // LogWork
             // 
