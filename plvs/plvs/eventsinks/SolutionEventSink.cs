@@ -77,7 +77,7 @@ namespace Atlassian.plvs.eventsinks {
 
                 ToolWindowManager.Instance.AtlassianWindow = createAtlassianWindow();
 
-                AtlassianPanel.Instance.reinitialize(dte);
+                AtlassianPanel.Instance.reinitialize(dte, package);
 
                 ToolWindowManager.Instance.IssueDetailsWindow = createIssueDetailsWindow();
                 ToolWindowManager.Instance.BuildDetailsWindow = createBuildDetailsWindow();
