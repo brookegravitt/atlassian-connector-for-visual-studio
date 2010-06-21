@@ -71,7 +71,15 @@ namespace Atlassian.plvs.net {
         }
 
         private void listenerRunner() {
-            listener.Start();
+            try {
+                listener.Start();
+            } catch (Exception e) {
+                Debug.WriteLine("ProxyListener.listenerRunner() - caught exception " + e.Message 
+                    + ", unfortunately I am unable to set the proxy for self-signed SSL servers. You are out of luck. Disable UAC and you will be ok");
+                listenerThread = null;
+                return;
+            }
+
             ev.Set();
             while (true) {
                 try {
