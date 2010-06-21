@@ -9,6 +9,7 @@ using Atlassian.plvs.models.bamboo;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
 using Atlassian.plvs.ui.bamboo;
+using Atlassian.plvs.ui.crucible;
 using Atlassian.plvs.ui.jira;
 using Atlassian.plvs.util;
 using EnvDTE;
@@ -24,8 +25,9 @@ namespace Atlassian.plvs.windows {
         private const string UPDATE_BALOON_TITLE = "Atlassian Connector for Visual Studio";
         private const int UPDATE_BALOON_TIMEOUT = 60000;
 
-        public TabJira Jira { get { return tabJira; }}
-        public TabBamboo Bamboo { get { return tabBamboo; }}
+        public TabJira Jira { get { return tabJira; } }
+        public TabBamboo Bamboo { get { return tabBamboo; } }
+        public TabCrucible Crucible { get { return tabCrucible; } }
 
         private bool jiraTabVisible;
 
@@ -43,6 +45,16 @@ namespace Atlassian.plvs.windows {
             get { return bambooTabVisible; }
             set {
                 bambooTabVisible = value; 
+                reinsertTabs();
+            }
+        }
+
+        private bool crucibleTabVisible;
+
+        public bool CrucibleTabVisible {
+            get { return crucibleTabVisible; }
+            set {
+                crucibleTabVisible = value;
                 reinsertTabs();
             }
         }
@@ -68,12 +80,17 @@ namespace Atlassian.plvs.windows {
 
         private void reinsertTabs() {
             productTabs.TabPages.Clear();
+
             if (JiraTabVisible) {
                 productTabs.TabPages.Add(tabIssues);
             }
             if (BambooTabVisible) {
                 productTabs.TabPages.Add(tabBuilds);
             }
+            if (CrucibleTabVisible) {
+                productTabs.TabPages.Add(tabReviews);
+            }
+
             bool tabPanelVisible = productTabs.TabPages.Count > 0;
             if (tabPanelVisible) {
                 if (linkAddServer != null && mainContainer.ContentPanel.Controls.Contains(linkAddServer)) {
@@ -194,7 +211,7 @@ namespace Atlassian.plvs.windows {
                                          }));
         }
 
-        public void reinitialize(DTE dte) {
+        public void reinitialize(DTE dte, PlvsPackage package) {
 
             PlvsUtils.updateKeyBindingsInformation(dte, new Dictionary<string, ToolStripItem>
                                             {
@@ -204,6 +221,7 @@ namespace Atlassian.plvs.windows {
 
             tabJira.reinitialize(dte);
             tabBamboo.reinitialize();
+            tabCrucible.reinitialize(dte, package);
         }
 
         public void shutdown() {
