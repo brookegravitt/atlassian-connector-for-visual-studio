@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -8,6 +9,8 @@ using Atlassian.plvs.api.bamboo;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.util;
 using Atlassian.plvs.util.bamboo;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell.Interop;
 using Process = System.Diagnostics.Process;
 using EnvDTE;
 using Thread = System.Threading.Thread;
@@ -15,6 +18,7 @@ using Thread = System.Threading.Thread;
 namespace Atlassian.plvs.ui.bamboo {
     public partial class BuildDetailsPanel : UserControl {
         private readonly Solution solution;
+        private readonly PlvsPackage package;
         private readonly BambooBuild build;
         private readonly TabPage myTab;
         private readonly Action<TabPage> buttonCloseClicked;
@@ -25,10 +29,11 @@ namespace Atlassian.plvs.ui.bamboo {
 
         private readonly StatusLabel status;
 
-        public BuildDetailsPanel(Solution solution, BambooBuild build, TabPage myTab,
+        public BuildDetailsPanel(Solution solution, PlvsPackage package, BambooBuild build, TabPage myTab,
             BuildDetailsWindow parent, Action<TabPage> buttonCloseClicked) {
             
             this.solution = solution;
+            this.package = package;
             this.build = build;
             this.myTab = myTab;
             this.buttonCloseClicked = buttonCloseClicked;
@@ -272,6 +277,96 @@ namespace Atlassian.plvs.ui.bamboo {
 
                 SolutionUtils.openSolutionFile(file, lineNoStr, solution);
             }
+        }
+
+        private static Guid guidCSLibrary = new Guid("58F1BAD0-2288-45b9-AC3A-D56398F7781D");
+        private static Guid guidVBLibrary = new Guid("414AC972-9829-4B6A-A8D7-A08152FEB8AA");
+        private static Guid guidCPPLibrary = new Guid("6C1AC90E-09FC-4F23-90FF-87F8CFC2A445");
+
+        // check responses to http://social.msdn.microsoft.com/Forums/en-US/vsx/thread/1d0b5eb6-bb9b-4bd5-b47c-514a57e687e0
+        // to understand how to navigate to methods
+        private void buttonRunTest_Click(object sender, EventArgs e) {
+            IVsClassView browser = package.GetService(typeof(SVsClassView)) as IVsClassView;
+			VSOBJECTINFO[] objInfo = new VSOBJECTINFO[1];
+
+//			objInfo[0].pguidLib = ptr;
+//			objInfo[0].pszLibName = this.Url;
+
+//            LoadFromObjectBrowserWindow();
+
+            foreach (Project project in solution.Projects) {
+                Guid guid = guidCSLibrary;
+                IntPtr ptr = Marshal.AllocCoTaskMem(guid.ToByteArray().Length);
+//                 get language from Project.Kind based on table here: http://www.mztools.com/Articles/2008/MZ2008017.aspx
+                objInfo[0].pguidLib = ptr;
+                objInfo[0].pszLibName = null;// project.Name;
+                objInfo[0].pszNspcName = null;//textNamespace.Text;
+                objInfo[0].pszClassName = null;//textClassName.Text;
+                objInfo[0].pszMemberName = textMethod.Text;
+                int hr = browser.NavigateTo(objInfo, 0);
+                Marshal.FreeCoTaskMem(ptr);
+                try {
+                    ErrorHandler.ThrowOnFailure(hr);
+                } catch (Exception ex) {
+                    Debug.WriteLine("msg=" + ex.Message + "\n" + ex);
+                }
+                if (VSConstants.S_OK == hr) break;
+            }
+//            SolutionUtils.openSolutionFile(textFileName.Text, textLineNumber.Text, solution);
+            solution.DTE.ExecuteCommand("Test.RunTestsInCurrentContext", "");
+        }
+
+        private void LoadFromObjectBrowserWindow() {
+            IVsNavigationTool vsNavigationTool = package.GetService(typeof(SVsObjBrowser)) as IVsNavigationTool;
+            IVsSelectedSymbols ppIVsSelectedSymbols;
+            uint pcItems;
+
+            vsNavigationTool.GetSelectedSymbols(out ppIVsSelectedSymbols);
+            ppIVsSelectedSymbols.GetCount(out pcItems);
+
+            if (pcItems != 1)
+                return;
+
+            IVsSelectedSymbol ppIVsSelectedSymbol;
+            IVsNavInfo ppNavInfo;
+            IVsEnumNavInfoNodes ppEnum;
+            IVsNavInfoNode[] nodes = new IVsNavInfoNode[1];
+            string @namespace = string.Empty;
+            string typeName = string.Empty;
+            uint pceltFetched;
+
+            ppIVsSelectedSymbols.GetItem(0, out ppIVsSelectedSymbol);
+            ppIVsSelectedSymbol.GetNavInfo(out ppNavInfo);
+            ppNavInfo.EnumPresentationNodes(0, out ppEnum);
+
+            while (ppEnum.Next(1, nodes, out pceltFetched) == 0) {
+                uint nodeType; nodes[0].get_Type(out nodeType);
+                string nodeName; nodes[0].get_Name(out nodeName);
+
+                switch ((_LIB_LISTTYPE)nodeType) {
+                    case _LIB_LISTTYPE.LLT_PHYSICALCONTAINERS:
+//                        RemoteController.Instance.LoadAssembly(nodeName);
+                        break;
+
+                    case _LIB_LISTTYPE.LLT_NAMESPACES:
+//                        @namespace = nodeName;
+                        break;
+
+                    case _LIB_LISTTYPE.LLT_CLASSES:
+                        typeName = nodeName;
+//                        RemoteController.Instance.Select("T:" + @namespace + "." + nodeName);
+                        break;
+
+                    case _LIB_LISTTYPE.LLT_MEMBERS:
+//                        SelectMember(@namespace, typeName, nodeName);
+                        break;
+                }
+            }
+        }
+
+        private void buttonDebugTest_Click(object sender, EventArgs e) {
+//            SolutionUtils.openSolutionFile(textClassName.Text, textMethod.Text, solution);
+//            solution.DTE.ExecuteCommand("Test.DebugTestsInCurrentContext", "");
         }
     }
 }

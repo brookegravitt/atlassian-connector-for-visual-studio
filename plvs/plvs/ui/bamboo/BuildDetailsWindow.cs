@@ -11,6 +11,8 @@ namespace Atlassian.plvs.ui.bamboo {
 
         public Solution Solution { get; set; }
 
+        public PlvsPackage Package { get; set; }
+
         public event EventHandler<EventArgs> ToolWindowShown;
         public event EventHandler<EventArgs> ToolWindowHidden;
 
@@ -40,7 +42,7 @@ namespace Atlassian.plvs.ui.bamboo {
             string key = getBuildTabKey(build);
             if (!tabBuilds.TabPages.ContainsKey(key)) {
                 TabPage buildTab = new TabPage { Name = key, Text = build.Key };
-                BuildDetailsPanel buildPanel = new BuildDetailsPanel(Solution, build, buildTab, this, buttonCloseClicked);
+                BuildDetailsPanel buildPanel = new BuildDetailsPanel(Solution, Package, build, buildTab, this, buttonCloseClicked);
                 buildTab.Controls.Add(buildPanel);
                 buildPanel.Dock = DockStyle.Fill;
                 tabBuilds.TabPages.Add(buildTab);
