@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -286,6 +287,7 @@ namespace Atlassian.plvs.ui.bamboo {
         // check responses to http://social.msdn.microsoft.com/Forums/en-US/vsx/thread/1d0b5eb6-bb9b-4bd5-b47c-514a57e687e0
         // to understand how to navigate to methods
         private void buttonRunTest_Click(object sender, EventArgs e) {
+#if false
             IVsClassView browser = package.GetService(typeof(SVsClassView)) as IVsClassView;
 			VSOBJECTINFO[] objInfo = new VSOBJECTINFO[1];
 
@@ -294,74 +296,102 @@ namespace Atlassian.plvs.ui.bamboo {
 
 //            LoadFromObjectBrowserWindow();
 
+            Guid guid = guidCSLibrary;
+            IntPtr ptr = Marshal.AllocCoTaskMem(guid.ToByteArray().Length);
+
+
+            VSOBJECTINFO vsobinf = new VSOBJECTINFO();
+            vsobinf.pszClassName = "ArrayList";
+            vsobinf.pszLibName = "mscorlib";
+            vsobinf.pszMemberName = string.Empty;
+            vsobinf.pszNspcName = "System.Collections";
+            vsobinf.dwCustom = 0;
+            vsobinf.pguidLib = ptr;
+            IVsObjBrowser vsObjBrowser = package.GetService(typeof(SVsObjBrowser)) as IVsObjBrowser;
+            int hr = vsObjBrowser.NavigateTo(new VSOBJECTINFO[] { vsobinf }, 0);
+            try {
+                ErrorHandler.ThrowOnFailure(hr);
+                Debug.WriteLine("vsObjBrowser.NavigateTo successful!!!!!!!!!!!!!!!");
+            } catch (Exception ex) {
+                Debug.WriteLine("msg=" + ex.Message);
+            }
+
+            return;
+
             foreach (Project project in solution.Projects) {
-                Guid guid = guidCSLibrary;
-                IntPtr ptr = Marshal.AllocCoTaskMem(guid.ToByteArray().Length);
 //                 get language from Project.Kind based on table here: http://www.mztools.com/Articles/2008/MZ2008017.aspx
                 objInfo[0].pguidLib = ptr;
-                objInfo[0].pszLibName = null;// project.Name;
-                objInfo[0].pszNspcName = null;//textNamespace.Text;
-                objInfo[0].pszClassName = null;//textClassName.Text;
+                objInfo[0].pszLibName = project.Name;
+                objInfo[0].pszNspcName = textNamespace.Text;
+                objInfo[0].pszClassName = textClassName.Text;
                 objInfo[0].pszMemberName = textMethod.Text;
-                int hr = browser.NavigateTo(objInfo, 0);
-                Marshal.FreeCoTaskMem(ptr);
+                hr = browser.NavigateTo(objInfo, 0);
                 try {
                     ErrorHandler.ThrowOnFailure(hr);
+                    Debug.WriteLine("NavigateTo successful!!!!!!!!!!!!!!!");
                 } catch (Exception ex) {
-                    Debug.WriteLine("msg=" + ex.Message + "\n" + ex);
+                    Debug.WriteLine("msg=" + ex.Message);
                 }
                 if (VSConstants.S_OK == hr) break;
             }
-//            SolutionUtils.openSolutionFile(textFileName.Text, textLineNumber.Text, solution);
-            solution.DTE.ExecuteCommand("Test.RunTestsInCurrentContext", "");
+            Marshal.FreeCoTaskMem(ptr);
+#endif
+            string fileName = null, lineNo = null;
+            foreach (Project project in solution.Projects) {
+                Debug.WriteLine("examining project: " + project.Name);
+                if (examineProjectItems(project.ProjectItems, textClassName.Text, textMethod.Text, ref fileName, ref lineNo)) {
+                    Debug.WriteLine("class and method found");
+                    SolutionUtils.openSolutionFile(fileName, lineNo, solution);
+                    solution.DTE.ExecuteCommand("Test.RunTestsInCurrentContext", "");
+                    return;
+                }
+//                IEnumerator enumerator = project.CodeModel.CodeElements.GetEnumerator();
+//                while (enumerator.MoveNext()) {
+//                    var codeElement = enumerator.Current;
+//                    Debug.WriteLine(codeElement);
+//                }
+            }
         }
 
-        private void LoadFromObjectBrowserWindow() {
-            IVsNavigationTool vsNavigationTool = package.GetService(typeof(SVsObjBrowser)) as IVsNavigationTool;
-            IVsSelectedSymbols ppIVsSelectedSymbols;
-            uint pcItems;
+        private bool examineProjectItems(ProjectItems projectItems, string classFqdn, string methodName, ref string fileName, ref string lineNo) {
+            if (projectItems == null || projectItems.Count == 0) return false;
+            foreach (ProjectItem item in projectItems) {
+                if (examineOneItem(item, classFqdn, methodName, ref fileName, ref lineNo)) return true;
+                if (examineProjectItems(item.ProjectItems, classFqdn, methodName, ref fileName, ref lineNo)) return true;
+            }
+            return false;
+        }
 
-            vsNavigationTool.GetSelectedSymbols(out ppIVsSelectedSymbols);
-            ppIVsSelectedSymbols.GetCount(out pcItems);
+        private bool examineOneItem(ProjectItem item, string classFqdn, string methodName, ref string fileName, ref string lineNo) {
+            Debug.WriteLine("    examining project item: " + item.Name);
+            FileCodeModel codeModel = item.FileCodeModel;
+            if (codeModel == null || codeModel.CodeElements == null) return false;
 
-            if (pcItems != 1)
-                return;
+            bool foundClass = false, foundMethod = false;
+            foreach (CodeElement element in codeModel.CodeElements) {
+                if (element.Kind == vsCMElement.vsCMElementNamespace) {
+                    Debug.WriteLine("        found namespace: " + element.Name + ", " + element.FullName);
 
-            IVsSelectedSymbol ppIVsSelectedSymbol;
-            IVsNavInfo ppNavInfo;
-            IVsEnumNavInfoNodes ppEnum;
-            IVsNavInfoNode[] nodes = new IVsNavInfoNode[1];
-            string @namespace = string.Empty;
-            string typeName = string.Empty;
-            uint pceltFetched;
-
-            ppIVsSelectedSymbols.GetItem(0, out ppIVsSelectedSymbol);
-            ppIVsSelectedSymbol.GetNavInfo(out ppNavInfo);
-            ppNavInfo.EnumPresentationNodes(0, out ppEnum);
-
-            while (ppEnum.Next(1, nodes, out pceltFetched) == 0) {
-                uint nodeType; nodes[0].get_Type(out nodeType);
-                string nodeName; nodes[0].get_Name(out nodeName);
-
-                switch ((_LIB_LISTTYPE)nodeType) {
-                    case _LIB_LISTTYPE.LLT_PHYSICALCONTAINERS:
-//                        RemoteController.Instance.LoadAssembly(nodeName);
-                        break;
-
-                    case _LIB_LISTTYPE.LLT_NAMESPACES:
-//                        @namespace = nodeName;
-                        break;
-
-                    case _LIB_LISTTYPE.LLT_CLASSES:
-                        typeName = nodeName;
-//                        RemoteController.Instance.Select("T:" + @namespace + "." + nodeName);
-                        break;
-
-                    case _LIB_LISTTYPE.LLT_MEMBERS:
-//                        SelectMember(@namespace, typeName, nodeName);
-                        break;
+                    foreach (CodeElement childElement in element.Children) {
+                        if (childElement.Kind == vsCMElement.vsCMElementClass && childElement.FullName.Equals(classFqdn)) foundClass = true;
+                        Debug.WriteLine("          child elements: " + childElement.Kind + ", " + childElement.Name + ", " + childElement.FullName + ", " + childElement.StartPoint.Line + ", " + childElement.EndPoint.Line);
+                        if (!foundClass) continue;
+                        fileName = item.Name;
+                        foreach (CodeElement grandChildElement in childElement.Children) {
+                            if (grandChildElement.Kind == vsCMElement.vsCMElementFunction && grandChildElement.Name.Equals(methodName))
+                                foundMethod = true;
+                            Debug.WriteLine("              child elements: " + grandChildElement.Kind + ", " + grandChildElement.Name + ", " + grandChildElement.FullName + ", " + grandChildElement.StartPoint.Line + ", " + grandChildElement.EndPoint.Line);
+                            if (foundMethod) {
+                                lineNo = "" + grandChildElement.StartPoint.Line + "," + grandChildElement.StartPoint.LineCharOffset;
+                                return true;
+                            }
+                        }
+                    }
+                } else {
+                    Debug.WriteLine("        " + element.Kind);
                 }
             }
+            return false;
         }
 
         private void buttonDebugTest_Click(object sender, EventArgs e) {

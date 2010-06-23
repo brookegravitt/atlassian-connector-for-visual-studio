@@ -5,8 +5,5 @@
   </TestList>
   <TestList name="s" id="f20a8d5a-5b07-44db-8402-d9cc8bd39681" parentListId="8c43106b-9dc1-4907-a29f-aa66a61bf5b6">
     <Description>s</Description>
-    <TestLinks>
-      <TestLink id="9931cb21-f084-cdac-6028-0ea541d89079" name="doStuffTest" storage="testspikeut\bin\debug\testspikeut.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
-    </TestLinks>
   </TestList>
 </TestLists>
