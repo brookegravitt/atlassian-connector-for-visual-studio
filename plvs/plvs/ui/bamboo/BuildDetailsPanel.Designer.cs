@@ -35,6 +35,15 @@
             this.buttonViewInBrowser = new System.Windows.Forms.ToolStripButton();
             this.buttonRun = new System.Windows.Forms.ToolStripButton();
             this.buttonClose = new System.Windows.Forms.ToolStripButton();
+            this.tabTests = new System.Windows.Forms.TabPage();
+            this.buttonDebugTest = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.textMethod = new System.Windows.Forms.TextBox();
+            this.textClassName = new System.Windows.Forms.TextBox();
+            this.buttonRunTest = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.textNamespace = new System.Windows.Forms.TextBox();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -44,6 +53,7 @@
             this.tabSummary.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.toolStrip1.SuspendLayout();
+            this.tabTests.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStripContainer1
@@ -91,6 +101,7 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl.Controls.Add(this.tabSummary);
             this.tabControl.Controls.Add(this.tabLog);
+            this.tabControl.Controls.Add(this.tabTests);
             this.tabControl.Location = new System.Drawing.Point(3, 3);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
@@ -191,6 +202,92 @@
             this.buttonClose.Text = "Close";
             this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
             // 
+            // tabTests
+            // 
+            this.tabTests.Controls.Add(this.label3);
+            this.tabTests.Controls.Add(this.textNamespace);
+            this.tabTests.Controls.Add(this.buttonDebugTest);
+            this.tabTests.Controls.Add(this.label2);
+            this.tabTests.Controls.Add(this.label1);
+            this.tabTests.Controls.Add(this.textMethod);
+            this.tabTests.Controls.Add(this.textClassName);
+            this.tabTests.Controls.Add(this.buttonRunTest);
+            this.tabTests.Location = new System.Drawing.Point(4, 22);
+            this.tabTests.Name = "tabTests";
+            this.tabTests.Size = new System.Drawing.Size(655, 173);
+            this.tabTests.TabIndex = 2;
+            this.tabTests.Text = "Tests";
+            this.tabTests.UseVisualStyleBackColor = true;
+            // 
+            // buttonDebugTest
+            // 
+            this.buttonDebugTest.Enabled = false;
+            this.buttonDebugTest.Location = new System.Drawing.Point(81, 113);
+            this.buttonDebugTest.Name = "buttonDebugTest";
+            this.buttonDebugTest.Size = new System.Drawing.Size(75, 23);
+            this.buttonDebugTest.TabIndex = 12;
+            this.buttonDebugTest.Text = "Debug Test";
+            this.buttonDebugTest.UseVisualStyleBackColor = true;
+            this.buttonDebugTest.Click += new System.EventHandler(this.buttonDebugTest_Click);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(16, 60);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(43, 13);
+            this.label2.TabIndex = 11;
+            this.label2.Text = "Method";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(16, 35);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(32, 13);
+            this.label1.TabIndex = 10;
+            this.label1.Text = "Class";
+            // 
+            // textMethod
+            // 
+            this.textMethod.Location = new System.Drawing.Point(97, 56);
+            this.textMethod.Name = "textMethod";
+            this.textMethod.Size = new System.Drawing.Size(282, 20);
+            this.textMethod.TabIndex = 9;
+            // 
+            // textClassName
+            // 
+            this.textClassName.Location = new System.Drawing.Point(97, 30);
+            this.textClassName.Name = "textClassName";
+            this.textClassName.Size = new System.Drawing.Size(282, 20);
+            this.textClassName.TabIndex = 8;
+            // 
+            // buttonRunTest
+            // 
+            this.buttonRunTest.Location = new System.Drawing.Point(81, 83);
+            this.buttonRunTest.Name = "buttonRunTest";
+            this.buttonRunTest.Size = new System.Drawing.Size(75, 23);
+            this.buttonRunTest.TabIndex = 7;
+            this.buttonRunTest.Text = "Run Test";
+            this.buttonRunTest.UseVisualStyleBackColor = true;
+            this.buttonRunTest.Click += new System.EventHandler(this.buttonRunTest_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(16, 7);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(64, 13);
+            this.label3.TabIndex = 14;
+            this.label3.Text = "Namespace";
+            // 
+            // textNamespace
+            // 
+            this.textNamespace.Location = new System.Drawing.Point(97, 4);
+            this.textNamespace.Name = "textNamespace";
+            this.textNamespace.Size = new System.Drawing.Size(282, 20);
+            this.textNamespace.TabIndex = 13;
+            // 
             // BuildDetailsPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -212,6 +309,8 @@
             this.tabLog.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
+            this.tabTests.ResumeLayout(false);
+            this.tabTests.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -230,5 +329,14 @@
         private System.Windows.Forms.WebBrowser webLog;
         private System.Windows.Forms.ToolStripButton buttonViewInBrowser;
         private System.Windows.Forms.ToolStripButton buttonRun;
+        private System.Windows.Forms.TabPage tabTests;
+        private System.Windows.Forms.Button buttonDebugTest;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox textMethod;
+        private System.Windows.Forms.TextBox textClassName;
+        private System.Windows.Forms.Button buttonRunTest;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox textNamespace;
     }
 }
