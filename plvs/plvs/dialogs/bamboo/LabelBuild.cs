@@ -60,7 +60,6 @@ namespace Atlassian.plvs.dialogs.bamboo {
             }
         }
 
-
         private void searchBuildKeyPress(object sender, KeyPressEventArgs e) {
             if (e.KeyChar == (char) Keys.Escape && buttonCancel.Enabled) {
                 Close();
