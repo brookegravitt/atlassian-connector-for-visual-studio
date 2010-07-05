@@ -62,6 +62,7 @@
             this.textComment.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textComment.Size = new System.Drawing.Size(495, 155);
             this.textComment.TabIndex = 2;
+            this.textComment.TextChanged += new System.EventHandler(this.textComment_TextChanged);
             // 
             // NewBuildComment
             // 

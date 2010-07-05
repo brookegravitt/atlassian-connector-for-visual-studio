@@ -14,7 +14,6 @@ using Atlassian.plvs.models.bamboo;
 using Atlassian.plvs.ui.bamboo.treemodels;
 using Atlassian.plvs.util;
 using Atlassian.plvs.util.bamboo;
-using Atlassian.plvs.util.jira;
 using Atlassian.plvs.windows;
 using Timer=System.Timers.Timer;
 
@@ -380,13 +379,19 @@ namespace Atlassian.plvs.ui.bamboo {
         }
 
         private void buttonLabelBuild_Click(object sender, EventArgs e) {
-            LabelBuild dlg = new LabelBuild(status);
-            dlg.ShowDialog();
+            runOnSelectedNode(delegate(BambooBuild b) {
+                string key = BambooBuildUtils.getPlanKey(b);
+                LabelBuild dlg = new LabelBuild(b, key, status);
+                dlg.ShowDialog();
+            });
         }
 
         private void buttonCommentBuild_Click(object sender, EventArgs e) {
-            NewBuildComment dlg = new NewBuildComment(status);
-            dlg.ShowDialog();
+            runOnSelectedNode(delegate(BambooBuild b) {
+                string key = BambooBuildUtils.getPlanKey(b);
+                NewBuildComment dlg = new NewBuildComment(b, key, status);
+                dlg.ShowDialog();
+            });
         }
 
         private void buttonFindBuild_Click(object sender, EventArgs e) {

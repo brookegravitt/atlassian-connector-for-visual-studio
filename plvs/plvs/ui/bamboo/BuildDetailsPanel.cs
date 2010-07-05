@@ -401,12 +401,12 @@ namespace Atlassian.plvs.ui.bamboo {
         }
 
         private void buttonLabel_Click(object sender, EventArgs e) {
-            LabelBuild dlg = new LabelBuild(status);
+            LabelBuild dlg = new LabelBuild(build, BambooBuildUtils.getPlanKey(build), status);
             dlg.ShowDialog();
         }
 
         private void buttonComment_Click(object sender, EventArgs e) {
-            NewBuildComment dlg = new NewBuildComment(status);
+            NewBuildComment dlg = new NewBuildComment(build, BambooBuildUtils.getPlanKey(build), status);
             dlg.ShowDialog();
         }
     }
