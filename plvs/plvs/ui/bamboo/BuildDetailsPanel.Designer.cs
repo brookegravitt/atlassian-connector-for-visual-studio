@@ -31,19 +31,21 @@
             this.webSummary = new System.Windows.Forms.WebBrowser();
             this.tabLog = new System.Windows.Forms.TabPage();
             this.webLog = new System.Windows.Forms.WebBrowser();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.buttonViewInBrowser = new System.Windows.Forms.ToolStripButton();
-            this.buttonRun = new System.Windows.Forms.ToolStripButton();
-            this.buttonClose = new System.Windows.Forms.ToolStripButton();
             this.tabTests = new System.Windows.Forms.TabPage();
+            this.label3 = new System.Windows.Forms.Label();
+            this.textNamespace = new System.Windows.Forms.TextBox();
             this.buttonDebugTest = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.textMethod = new System.Windows.Forms.TextBox();
             this.textClassName = new System.Windows.Forms.TextBox();
             this.buttonRunTest = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.textNamespace = new System.Windows.Forms.TextBox();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.buttonViewInBrowser = new System.Windows.Forms.ToolStripButton();
+            this.buttonRun = new System.Windows.Forms.ToolStripButton();
+            this.buttonLabel = new System.Windows.Forms.ToolStripButton();
+            this.buttonComment = new System.Windows.Forms.ToolStripButton();
+            this.buttonClose = new System.Windows.Forms.ToolStripButton();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -52,8 +54,8 @@
             this.tabControl.SuspendLayout();
             this.tabSummary.SuspendLayout();
             this.tabLog.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
             this.tabTests.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStripContainer1
@@ -159,49 +161,6 @@
             this.webLog.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webLog_Navigating);
             this.webLog.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webLog_DocumentCompleted);
             // 
-            // toolStrip1
-            // 
-            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
-            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.buttonViewInBrowser,
-            this.buttonRun,
-            this.buttonClose});
-            this.toolStrip1.Location = new System.Drawing.Point(3, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(72, 25);
-            this.toolStrip1.TabIndex = 0;
-            // 
-            // buttonViewInBrowser
-            // 
-            this.buttonViewInBrowser.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonViewInBrowser.Image = global::Atlassian.plvs.Resources.view_in_browser;
-            this.buttonViewInBrowser.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonViewInBrowser.Name = "buttonViewInBrowser";
-            this.buttonViewInBrowser.Size = new System.Drawing.Size(23, 22);
-            this.buttonViewInBrowser.Text = "View In Browser";
-            this.buttonViewInBrowser.Click += new System.EventHandler(this.buttonViewInBrowser_Click);
-            // 
-            // buttonRun
-            // 
-            this.buttonRun.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonRun.Image = global::Atlassian.plvs.Resources.run_build;
-            this.buttonRun.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonRun.Name = "buttonRun";
-            this.buttonRun.Size = new System.Drawing.Size(23, 22);
-            this.buttonRun.Text = "Run Build";
-            this.buttonRun.Click += new System.EventHandler(this.buttonRun_Click);
-            // 
-            // buttonClose
-            // 
-            this.buttonClose.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonClose.Image = global::Atlassian.plvs.Resources.close;
-            this.buttonClose.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonClose.Name = "buttonClose";
-            this.buttonClose.Size = new System.Drawing.Size(23, 22);
-            this.buttonClose.Text = "Close";
-            this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
-            // 
             // tabTests
             // 
             this.tabTests.Controls.Add(this.label3);
@@ -218,6 +177,22 @@
             this.tabTests.TabIndex = 2;
             this.tabTests.Text = "Tests";
             this.tabTests.UseVisualStyleBackColor = true;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(16, 7);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(64, 13);
+            this.label3.TabIndex = 14;
+            this.label3.Text = "Namespace";
+            // 
+            // textNamespace
+            // 
+            this.textNamespace.Location = new System.Drawing.Point(97, 4);
+            this.textNamespace.Name = "textNamespace";
+            this.textNamespace.Size = new System.Drawing.Size(282, 20);
+            this.textNamespace.TabIndex = 13;
             // 
             // buttonDebugTest
             // 
@@ -272,21 +247,70 @@
             this.buttonRunTest.UseVisualStyleBackColor = true;
             this.buttonRunTest.Click += new System.EventHandler(this.buttonRunTest_Click);
             // 
-            // label3
+            // toolStrip1
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(16, 7);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(64, 13);
-            this.label3.TabIndex = 14;
-            this.label3.Text = "Namespace";
+            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.buttonViewInBrowser,
+            this.buttonRun,
+            this.buttonLabel,
+            this.buttonComment,
+            this.buttonClose});
+            this.toolStrip1.Location = new System.Drawing.Point(3, 0);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(149, 25);
+            this.toolStrip1.TabIndex = 0;
             // 
-            // textNamespace
+            // buttonViewInBrowser
             // 
-            this.textNamespace.Location = new System.Drawing.Point(97, 4);
-            this.textNamespace.Name = "textNamespace";
-            this.textNamespace.Size = new System.Drawing.Size(282, 20);
-            this.textNamespace.TabIndex = 13;
+            this.buttonViewInBrowser.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonViewInBrowser.Image = global::Atlassian.plvs.Resources.view_in_browser;
+            this.buttonViewInBrowser.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonViewInBrowser.Name = "buttonViewInBrowser";
+            this.buttonViewInBrowser.Size = new System.Drawing.Size(23, 22);
+            this.buttonViewInBrowser.Text = "View In Browser";
+            this.buttonViewInBrowser.Click += new System.EventHandler(this.buttonViewInBrowser_Click);
+            // 
+            // buttonRun
+            // 
+            this.buttonRun.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonRun.Image = global::Atlassian.plvs.Resources.run_build;
+            this.buttonRun.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonRun.Name = "buttonRun";
+            this.buttonRun.Size = new System.Drawing.Size(23, 22);
+            this.buttonRun.Text = "Run Build";
+            this.buttonRun.Click += new System.EventHandler(this.buttonRun_Click);
+            // 
+            // buttonLabel
+            // 
+            this.buttonLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonLabel.Image = global::Atlassian.plvs.Resources.icn_label;
+            this.buttonLabel.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonLabel.Name = "buttonLabel";
+            this.buttonLabel.Size = new System.Drawing.Size(23, 22);
+            this.buttonLabel.Text = "Add Build Label";
+            this.buttonLabel.Click += new System.EventHandler(this.buttonLabel_Click);
+            // 
+            // buttonComment
+            // 
+            this.buttonComment.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonComment.Image = global::Atlassian.plvs.Resources.icn_comment;
+            this.buttonComment.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonComment.Name = "buttonComment";
+            this.buttonComment.Size = new System.Drawing.Size(23, 22);
+            this.buttonComment.Text = "Add Build Comment";
+            this.buttonComment.Click += new System.EventHandler(this.buttonComment_Click);
+            // 
+            // buttonClose
+            // 
+            this.buttonClose.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonClose.Image = global::Atlassian.plvs.Resources.close;
+            this.buttonClose.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonClose.Name = "buttonClose";
+            this.buttonClose.Size = new System.Drawing.Size(23, 22);
+            this.buttonClose.Text = "Close";
+            this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
             // 
             // BuildDetailsPanel
             // 
@@ -307,10 +331,10 @@
             this.tabControl.ResumeLayout(false);
             this.tabSummary.ResumeLayout(false);
             this.tabLog.ResumeLayout(false);
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
             this.tabTests.ResumeLayout(false);
             this.tabTests.PerformLayout();
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -338,5 +362,7 @@
         private System.Windows.Forms.Button buttonRunTest;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox textNamespace;
+        private System.Windows.Forms.ToolStripButton buttonLabel;
+        private System.Windows.Forms.ToolStripButton buttonComment;
     }
 }

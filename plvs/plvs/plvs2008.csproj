@@ -113,6 +113,24 @@
     <Compile Include="dialogs\BadCertificateDialog.Designer.cs">
       <DependentUpon>BadCertificateDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="dialogs\bamboo\LabelBuild.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\bamboo\LabelBuild.Designer.cs">
+      <DependentUpon>LabelBuild.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\bamboo\NewBuildComment.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\bamboo\NewBuildComment.Designer.cs">
+      <DependentUpon>NewBuildComment.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\bamboo\SearchBuild.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\bamboo\SearchBuild.Designer.cs">
+      <DependentUpon>SearchBuild.cs</DependentUpon>
+    </Compile>
     <Compile Include="dialogs\ExceptionViewer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -552,6 +570,17 @@
     <EmbeddedResource Include="dialogs\BadCertificateDialog.resx">
       <DependentUpon>BadCertificateDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\bamboo\LabelBuild.resx">
+      <DependentUpon>LabelBuild.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\bamboo\NewBuildComment.resx">
+      <DependentUpon>NewBuildComment.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\bamboo\SearchBuild.resx">
+      <DependentUpon>SearchBuild.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="dialogs\ExceptionViewer.resx">
       <DependentUpon>ExceptionViewer.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -818,10 +847,13 @@
     <Content Include="Resources\icons\dropzone.png" />
     <Content Include="Resources\icons\edit.png" />
     <Content Include="Resources\icons\expand_all.png" />
+    <None Include="Resources\icons\find-bamboo.png" />
     <Content Include="Resources\icons\find-jira.png" />
     <Content Include="Resources\icons\folder-bamboo.png" />
     <Content Include="Resources\icons\folder-jira.png" />
     <Content Include="Resources\icons\global_properties.png" />
+    <Content Include="Resources\icons\icn_comment.gif" />
+    <Content Include="Resources\icons\icn_label.gif" />
     <Content Include="Resources\icons\icn_plan_disabled.gif" />
     <Content Include="Resources\icons\icn_plan_failed.gif" />
     <Content Include="Resources\icons\icn_plan_passed.gif" />

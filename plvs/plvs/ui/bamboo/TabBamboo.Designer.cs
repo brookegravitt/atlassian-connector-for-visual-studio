@@ -24,16 +24,21 @@
         /// </summary>
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TabBamboo));
             this.toolStripContainer = new System.Windows.Forms.ToolStripContainer();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.buttonPoll = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.buttonViewInBrowser = new System.Windows.Forms.ToolStripButton();
+            this.buttonLabelBuild = new System.Windows.Forms.ToolStripButton();
+            this.buttonCommentBuild = new System.Windows.Forms.ToolStripButton();
             this.buttonRunBuild = new System.Windows.Forms.ToolStripButton();
-            this.notifyBuildStatus = new System.Windows.Forms.NotifyIcon(this.components);
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.buttonFindBuild = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.buttonHelp = new System.Windows.Forms.ToolStripButton();
+            this.notifyBuildStatus = new System.Windows.Forms.NotifyIcon(this.components);
             this.toolStripContainer.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer.SuspendLayout();
@@ -84,12 +89,18 @@
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.buttonPoll,
+            this.toolStripSeparator2,
             this.buttonViewInBrowser,
+            this.buttonLabelBuild,
+            this.buttonCommentBuild,
             this.buttonRunBuild,
+            this.toolStripSeparator1,
+            this.buttonFindBuild,
+            this.toolStripSeparator3,
             this.buttonHelp});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(126, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(213, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonPoll
@@ -102,6 +113,11 @@
             this.buttonPoll.Text = "Poll Now";
             this.buttonPoll.Click += new System.EventHandler(this.buttonPoll_Click);
             // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
             // buttonViewInBrowser
             // 
             this.buttonViewInBrowser.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -111,6 +127,26 @@
             this.buttonViewInBrowser.Size = new System.Drawing.Size(23, 22);
             this.buttonViewInBrowser.Text = "View Build In Browser";
             this.buttonViewInBrowser.Click += new System.EventHandler(this.buttonViewInBrowser_Click);
+            // 
+            // buttonLabelBuild
+            // 
+            this.buttonLabelBuild.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonLabelBuild.Image = global::Atlassian.plvs.Resources.icn_label;
+            this.buttonLabelBuild.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonLabelBuild.Name = "buttonLabelBuild";
+            this.buttonLabelBuild.Size = new System.Drawing.Size(23, 22);
+            this.buttonLabelBuild.Text = "Add Build Label";
+            this.buttonLabelBuild.Click += new System.EventHandler(this.buttonLabelBuild_Click);
+            // 
+            // buttonCommentBuild
+            // 
+            this.buttonCommentBuild.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonCommentBuild.Image = global::Atlassian.plvs.Resources.icn_comment;
+            this.buttonCommentBuild.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonCommentBuild.Name = "buttonCommentBuild";
+            this.buttonCommentBuild.Size = new System.Drawing.Size(23, 22);
+            this.buttonCommentBuild.Text = "Add Build Comment";
+            this.buttonCommentBuild.Click += new System.EventHandler(this.buttonCommentBuild_Click);
             // 
             // buttonRunBuild
             // 
@@ -122,20 +158,40 @@
             this.buttonRunBuild.Text = "Run Build";
             this.buttonRunBuild.Click += new System.EventHandler(this.buttonRunBuild_Click);
             // 
-            // notifyBuildStatus
+            // toolStripSeparator1
             // 
-            this.notifyBuildStatus.Text = "notifyIcon1";
-            this.notifyBuildStatus.Visible = true;
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // buttonFindBuild
+            // 
+            this.buttonFindBuild.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonFindBuild.Image = global::Atlassian.plvs.Resources.find_bamboo;
+            this.buttonFindBuild.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonFindBuild.Name = "buttonFindBuild";
+            this.buttonFindBuild.Size = new System.Drawing.Size(23, 22);
+            this.buttonFindBuild.Text = "Find Build";
+            this.buttonFindBuild.Click += new System.EventHandler(this.buttonFindBuild_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
             // 
             // buttonHelp
             // 
             this.buttonHelp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonHelp.Image = Resources.about;
+            this.buttonHelp.Image = global::Atlassian.plvs.Resources.about;
             this.buttonHelp.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonHelp.Name = "buttonHelp";
             this.buttonHelp.Size = new System.Drawing.Size(23, 22);
             this.buttonHelp.Text = "Help";
             this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
+            // 
+            // notifyBuildStatus
+            // 
+            this.notifyBuildStatus.Text = "notifyIcon1";
+            this.notifyBuildStatus.Visible = true;
             // 
             // TabBamboo
             // 
@@ -169,5 +225,11 @@
         private System.Windows.Forms.ToolStripButton buttonViewInBrowser;
         private System.Windows.Forms.ToolStripButton buttonRunBuild;
         private System.Windows.Forms.ToolStripButton buttonHelp;
+        private System.Windows.Forms.ToolStripButton buttonLabelBuild;
+        private System.Windows.Forms.ToolStripButton buttonCommentBuild;
+        private System.Windows.Forms.ToolStripButton buttonFindBuild;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
     }
 }

@@ -8,6 +8,7 @@ using System.Web;
 using System.Windows.Forms;
 using Atlassian.plvs.api.bamboo;
 using Atlassian.plvs.autoupdate;
+using Atlassian.plvs.dialogs.bamboo;
 using Atlassian.plvs.util;
 using Atlassian.plvs.util.bamboo;
 using Microsoft.VisualStudio;
@@ -353,7 +354,7 @@ namespace Atlassian.plvs.ui.bamboo {
             }
         }
 
-        private bool examineProjectItems(ProjectItems projectItems, string classFqdn, string methodName, ref string fileName, ref string lineNo) {
+        private static bool examineProjectItems(ProjectItems projectItems, string classFqdn, string methodName, ref string fileName, ref string lineNo) {
             if (projectItems == null || projectItems.Count == 0) return false;
             foreach (ProjectItem item in projectItems) {
                 if (examineOneItem(item, classFqdn, methodName, ref fileName, ref lineNo)) return true;
@@ -362,7 +363,7 @@ namespace Atlassian.plvs.ui.bamboo {
             return false;
         }
 
-        private bool examineOneItem(ProjectItem item, string classFqdn, string methodName, ref string fileName, ref string lineNo) {
+        private static bool examineOneItem(ProjectItem item, string classFqdn, string methodName, ref string fileName, ref string lineNo) {
             Debug.WriteLine("    examining project item: " + item.Name);
             FileCodeModel codeModel = item.FileCodeModel;
             if (codeModel == null || codeModel.CodeElements == null) return false;
@@ -397,6 +398,16 @@ namespace Atlassian.plvs.ui.bamboo {
         private void buttonDebugTest_Click(object sender, EventArgs e) {
 //            SolutionUtils.openSolutionFile(textClassName.Text, textMethod.Text, solution);
 //            solution.DTE.ExecuteCommand("Test.DebugTestsInCurrentContext", "");
+        }
+
+        private void buttonLabel_Click(object sender, EventArgs e) {
+            LabelBuild dlg = new LabelBuild(status);
+            dlg.ShowDialog();
+        }
+
+        private void buttonComment_Click(object sender, EventArgs e) {
+            NewBuildComment dlg = new NewBuildComment(status);
+            dlg.ShowDialog();
         }
     }
 }
