@@ -1,5 +1,5 @@
-﻿namespace Atlassian.plvs.dialogs.jira {
-    sealed partial class SearchIssue
+﻿namespace Atlassian.plvs.dialogs.bamboo {
+    sealed partial class LabelBuild
     {
         /// <summary>
         /// Required designer variable.
@@ -27,7 +27,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(jira.SearchIssue));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LabelBuild));
             this.buttonOk = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.textQueryString = new System.Windows.Forms.TextBox();
@@ -40,7 +40,7 @@
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
             this.buttonOk.TabIndex = 1;
-            this.buttonOk.Text = "Search";
+            this.buttonOk.Text = "Label";
             this.buttonOk.UseVisualStyleBackColor = true;
             this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
             // 
@@ -68,11 +68,11 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(9, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(126, 13);
+            this.label1.Size = new System.Drawing.Size(55, 13);
             this.label1.TabIndex = 3;
-            this.label1.Text = "Issue Key or Query String";
+            this.label1.Text = "Build label";
             // 
-            // SearchIssue
+            // LabelBuild
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -86,9 +86,9 @@
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "SearchIssue";
-            this.Text = "Find Issue";
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.searchIssueKeyPress);
+            this.Name = "LabelBuild";
+            this.Text = "Label Build";
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.searchBuildKeyPress);
             this.ResumeLayout(false);
             this.PerformLayout();
 

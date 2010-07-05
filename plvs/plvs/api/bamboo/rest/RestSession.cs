@@ -30,6 +30,9 @@ namespace Atlassian.plvs.api.bamboo.rest {
         private const string RUN_BUILD_ACTION_NEW_AND_IT_DOES_NOT_WORK = "/rest/api/latest/queue";
         private const string RUN_BUILD_ACTION_OLD = "/api/rest/executeBuild.action";
 
+       	private const string ADD_COMMENT_ACTION = "/api/rest/addCommentToBuildResults.action";
+        private const string ADD_LABEL_ACTION = "/api/rest/addLabelToBuildResults.action";
+
         private const string LOGIN_ACTION = "/api/rest/login.action";
     	private const string LOGOUT_ACTION = "/api/rest/logout.action";
 
@@ -281,6 +284,36 @@ namespace Atlassian.plvs.api.bamboo.rest {
                 }
             }
 #endif
+        }
+
+        public void addComment(string planKey, int buildNumber, string comment) {
+            string endpoint = server.Url + ADD_COMMENT_ACTION + "?auth=" + HttpUtility.UrlEncode(authToken, Encoding.UTF8)
+                    + "&buildKey=" + HttpUtility.UrlEncode(planKey) + "&buildNumber=" + buildNumber + "&content="
+                    + HttpUtility.UrlEncode(comment);
+
+            using (Stream stream = getQueryResultStream(endpoint, false)) {
+                XPathDocument doc = XPathUtils.getXmlDocument(stream);
+
+                string code = getRemoteExceptionMessages(doc);
+                if (code != null) {
+                    throw new Exception(code);
+                }
+            }
+        }
+
+        public void addLabel(string planKey, int buildNumber, string label) {
+            string endpoint = server.Url + ADD_LABEL_ACTION + "?auth=" + HttpUtility.UrlEncode(authToken, Encoding.UTF8)
+                    + "&buildKey=" + HttpUtility.UrlEncode(planKey) + "&buildNumber=" + buildNumber + "&label="
+                    + HttpUtility.UrlEncode(label);
+
+            using (Stream stream = getQueryResultStream(endpoint, false)) {
+                XPathDocument doc = XPathUtils.getXmlDocument(stream);
+
+                string code = getRemoteExceptionMessages(doc);
+                if (code != null) {
+                    throw new Exception(code);
+                }
+            }
         }
 
         public string getBuildLog(BambooBuild build) {

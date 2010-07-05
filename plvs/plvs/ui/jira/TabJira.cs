@@ -20,6 +20,7 @@ using Atlassian.plvs.util;
 using Atlassian.plvs.windows;
 using EnvDTE;
 using Process=System.Diagnostics.Process;
+using SearchIssue = Atlassian.plvs.dialogs.jira.SearchIssue;
 using Thread=System.Threading.Thread;
 
 namespace Atlassian.plvs.ui.jira {

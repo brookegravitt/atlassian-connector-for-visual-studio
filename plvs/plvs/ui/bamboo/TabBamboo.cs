@@ -9,6 +9,7 @@ using Aga.Controls.Tree;
 using Atlassian.plvs.api.bamboo;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs;
+using Atlassian.plvs.dialogs.bamboo;
 using Atlassian.plvs.models.bamboo;
 using Atlassian.plvs.ui.bamboo.treemodels;
 using Atlassian.plvs.util;
@@ -154,6 +155,8 @@ namespace Atlassian.plvs.ui.bamboo {
             BuildNode n = node == null ? null : node.Tag as BuildNode;
             buttonViewInBrowser.Enabled = n != null;
             buttonRunBuild.Enabled = n != null;
+            buttonCommentBuild.Enabled = n != null;
+            buttonLabelBuild.Enabled = n != null;
         }
 
         public void shutdown() {
@@ -374,6 +377,21 @@ namespace Atlassian.plvs.ui.bamboo {
             } catch (Exception ex) {
                 Debug.WriteLine("TabBamboo.buttonHelp_Click() - exception: " + ex.Message);
             }
+        }
+
+        private void buttonLabelBuild_Click(object sender, EventArgs e) {
+            LabelBuild dlg = new LabelBuild(status);
+            dlg.ShowDialog();
+        }
+
+        private void buttonCommentBuild_Click(object sender, EventArgs e) {
+            NewBuildComment dlg = new NewBuildComment(status);
+            dlg.ShowDialog();
+        }
+
+        private void buttonFindBuild_Click(object sender, EventArgs e) {
+            SearchBuild dlg = new SearchBuild(status);
+            dlg.ShowDialog();
         }
     }
 }

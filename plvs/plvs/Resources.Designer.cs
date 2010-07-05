@@ -218,7 +218,16 @@ namespace Atlassian.plvs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Build number: {0}.
+        ///   Looks up a localized string similar to &lt;table class=&quot;summary&quot;&gt;
+        ///
+        ///&lt;tr&gt;&lt;td class=&quot;labelcolumn&quot;&gt;Build Number&lt;/td&gt;&lt;td&gt;{0}&lt;/td&gt;&lt;/tr&gt;
+        ///&lt;tr&gt;&lt;td class=&quot;labelcolumn&quot;&gt;Build State&lt;/td&gt;&lt;td style=&quot;color:{8};&quot;&gt;{7}&lt;/td&gt;&lt;/tr&gt;
+        ///&lt;tr&gt;&lt;td class=&quot;labelcolumn&quot;&gt;Build Key&lt;/td&gt;&lt;td&gt;{1}&lt;/td&gt;&lt;/tr&gt;
+        ///&lt;tr&gt;&lt;td class=&quot;labelcolumn&quot;&gt;Build Reason&lt;/td&gt;&lt;td&gt;{2}&lt;/td&gt;&lt;/tr&gt;
+        ///&lt;tr&gt;&lt;td class=&quot;labelcolumn&quot;&gt;Tests&lt;/td&gt;&lt;td&gt;{3}&lt;/td&gt;&lt;/tr&gt;
+        ///&lt;tr&gt;&lt;td class=&quot;labelcolumn&quot;&gt;Completed&lt;/td&gt;&lt;td&gt;{4}&lt;/td&gt;&lt;/tr&gt;
+        ///&lt;tr&gt;&lt;td class=&quot;labelcolumn&quot;&gt;Duration&lt;/td&gt;&lt;td&gt;{5}&lt;/td&gt;&lt;/tr&gt;
+        ///&lt;tr&gt;&lt;td class=&quot;labelcolumn&quot;&gt;Server&lt;/ [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string build_summary_html {
             get {
@@ -337,6 +346,13 @@ namespace Atlassian.plvs {
             }
         }
         
+        internal static System.Drawing.Bitmap find_bamboo {
+            get {
+                object obj = ResourceManager.GetObject("find_bamboo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap find_jira {
             get {
                 object obj = ResourceManager.GetObject("find_jira", resourceCulture);
@@ -361,6 +377,20 @@ namespace Atlassian.plvs {
         internal static System.Drawing.Bitmap global_properties {
             get {
                 object obj = ResourceManager.GetObject("global_properties", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap icn_comment {
+            get {
+                object obj = ResourceManager.GetObject("icn_comment", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap icn_label {
+            get {
+                object obj = ResourceManager.GetObject("icn_label", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
