@@ -9,7 +9,6 @@ using System.Xml.XPath;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.util;
 using Atlassian.plvs.util.bamboo;
-using Atlassian.plvs.util.jira;
 
 namespace Atlassian.plvs.api.bamboo.rest {
     public class RestSession {
@@ -20,9 +19,11 @@ namespace Atlassian.plvs.api.bamboo.rest {
         private string password;
 
         private string cookie;
+        private string BUILDS_XML_SUBTREE = "/builds/builds";
         private const string LATEST_BUILDS_FOR_FAVOURITE_PLANS_ACTION = "/rest/api/latest/build?favourite&expand=builds.build";
 
         private const string LATEST_BUILDS_FOR_PLANS_ACTION = "/rest/api/latest/build/{0}?expand=builds[0].build";
+        private const string BUILD_BY_KEY_ACTION = "/rest/api/latest/build/{0}?expand=builds[0].build";
 
         private const string ALL_PLANS_ACTION = "/rest/api/latest/plan?expand=plans.plan";
         private const string FAVOURITE_PLANS_ACTION = "/rest/api/latest/plan?favourite&expand=plans.plan";
@@ -165,7 +166,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
         public ICollection<BambooBuild> getLatestBuildsForFavouritePlans() {
             string endpoint = server.Url + LATEST_BUILDS_FOR_FAVOURITE_PLANS_ACTION;
-            return getBuildsFromUrl(endpoint, true);
+            return getBuildsFromUrl(endpoint, true, BUILDS_XML_SUBTREE);
         }
     
         public ICollection<BambooBuild> getLatestBuildsForPlanKeys(ICollection<string> keys) {
@@ -173,7 +174,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
             foreach (string key in keys) {
                 string buildUrl = string.Format(LATEST_BUILDS_FOR_PLANS_ACTION, key);
                 string endpoint = server.Url + buildUrl;
-                ICollection<BambooBuild> builds = getBuildsFromUrl(endpoint, false);
+                ICollection<BambooBuild> builds = getBuildsFromUrl(endpoint, false, BUILDS_XML_SUBTREE);
                 if (builds != null) {
                     result.AddRange(builds);
                 }
@@ -181,11 +182,22 @@ namespace Atlassian.plvs.api.bamboo.rest {
             return result;
         }
 
-        private ICollection<BambooBuild> getBuildsFromUrl(string endpoint, bool withRecursion) {
-            return getBuildsFromUrlWithStartIndex(endpoint, 0, withRecursion);
+        public BambooBuild getBuildByKey(string buildKey) {
+            List<BambooBuild> result = new List<BambooBuild>();
+            string buildUrl = string.Format(BUILD_BY_KEY_ACTION, buildKey);
+            string endpoint = server.Url + buildUrl;
+            ICollection<BambooBuild> builds = getBuildsFromUrl(endpoint, false, "");
+            if (builds != null) {
+                result.AddRange(builds);
+            }
+            return result.Count == 0 ? null : result[0];
         }
 
-        private ICollection<BambooBuild> getBuildsFromUrlWithStartIndex(string endpoint, int start, bool withRecursion) {
+        private ICollection<BambooBuild> getBuildsFromUrl(string endpoint, bool withRecursion, string prefix) {
+            return getBuildsFromUrlWithStartIndex(endpoint, 0, withRecursion, prefix);
+        }
+
+        private ICollection<BambooBuild> getBuildsFromUrlWithStartIndex(string endpoint, int start, bool withRecursion, string prefix) {
 
             using (Stream stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint) + (withRecursion ? "&start-index=" + start : ""), true)) {
                 XPathDocument doc = XPathUtils.getXmlDocument(stream);
@@ -197,18 +209,24 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
                 XPathNavigator nav = doc.CreateNavigator();
 
-                XPathExpression expr = nav.Compile("/builds/builds");
-                XPathNodeIterator it = nav.Select(expr);
+                XPathExpression expr;
+                XPathNodeIterator it;
+
                 int totalBuildsCount = 0;
                 int maxResult = 0;
                 int startIndex = 0;
-                if (it.MoveNext()) {
-                    totalBuildsCount = int.Parse(XPathUtils.getAttributeSafely(it.Current, "size", "0"));
-                    maxResult = int.Parse(XPathUtils.getAttributeSafely(it.Current, "max-result", "0"));
-                    startIndex = int.Parse(XPathUtils.getAttributeSafely(it.Current, "start-index", "0"));
+
+                if (!string.IsNullOrEmpty(prefix)) {
+                    expr = nav.Compile(prefix);
+                    it = nav.Select(expr);
+                    if (it.MoveNext()) {
+                        totalBuildsCount = int.Parse(XPathUtils.getAttributeSafely(it.Current, "size", "0"));
+                        maxResult = int.Parse(XPathUtils.getAttributeSafely(it.Current, "max-result", "0"));
+                        startIndex = int.Parse(XPathUtils.getAttributeSafely(it.Current, "start-index", "0"));
+                    }
                 }
 
-                expr = nav.Compile("/builds/builds/build");
+                expr = nav.Compile(prefix + "/build");
                 it = nav.Select(expr);
 
                 List<BambooBuild> builds = new List<BambooBuild>();
@@ -251,7 +269,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
                 // Yes, recursion here. I hope it works as I think it should. If not, we are all doomed
                 if (withRecursion && totalBuildsCount > maxResult + startIndex) {
-                    builds.AddRange(getBuildsFromUrlWithStartIndex(endpoint, startIndex + maxResult, true));
+                    builds.AddRange(getBuildsFromUrlWithStartIndex(endpoint, startIndex + maxResult, true, BUILDS_XML_SUBTREE));
                 }
 
                 return builds;
