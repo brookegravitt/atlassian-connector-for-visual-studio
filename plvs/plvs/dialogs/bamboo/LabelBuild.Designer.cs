@@ -30,7 +30,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LabelBuild));
             this.buttonOk = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
-            this.textQueryString = new System.Windows.Forms.TextBox();
+            this.textLabel = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
@@ -54,14 +54,14 @@
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
             // 
-            // textQueryString
+            // textLabel
             // 
-            this.textQueryString.Location = new System.Drawing.Point(12, 34);
-            this.textQueryString.Name = "textQueryString";
-            this.textQueryString.Size = new System.Drawing.Size(286, 20);
-            this.textQueryString.TabIndex = 0;
-            this.textQueryString.TextChanged += new System.EventHandler(this.textQueryString_TextChanged);
-            this.textQueryString.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textQueryString_KeyPress);
+            this.textLabel.Location = new System.Drawing.Point(12, 34);
+            this.textLabel.Name = "textLabel";
+            this.textLabel.Size = new System.Drawing.Size(286, 20);
+            this.textLabel.TabIndex = 0;
+            this.textLabel.TextChanged += new System.EventHandler(this.textLabel_TextChanged);
+            this.textLabel.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textLabel_KeyPress);
             // 
             // label1
             // 
@@ -78,7 +78,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(310, 105);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.textQueryString);
+            this.Controls.Add(this.textLabel);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -98,7 +98,7 @@
 
         private System.Windows.Forms.Button buttonOk;
         private System.Windows.Forms.Button buttonCancel;
-        private System.Windows.Forms.TextBox textQueryString;
+        private System.Windows.Forms.TextBox textLabel;
         private System.Windows.Forms.Label label1;
     }
 }
