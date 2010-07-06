@@ -37,6 +37,7 @@
             this.icon = new System.Windows.Forms.DataGridViewImageColumn();
             this.key = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.status = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.rawBuild = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -58,7 +59,8 @@
             this.grid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.icon,
             this.key,
-            this.status});
+            this.status,
+            this.rawBuild});
             dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle4.BackColor = System.Drawing.Color.White;
             dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
@@ -178,6 +180,13 @@
             this.status.ReadOnly = true;
             this.status.Width = 5;
             // 
+            // rawBuild
+            // 
+            this.rawBuild.HeaderText = "";
+            this.rawBuild.Name = "rawBuild";
+            this.rawBuild.ReadOnly = true;
+            this.rawBuild.Visible = false;
+            // 
             // BambooBuildHistoryTable
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -208,5 +217,6 @@
         private System.Windows.Forms.DataGridViewImageColumn icon;
         private System.Windows.Forms.DataGridViewTextBoxColumn key;
         private System.Windows.Forms.DataGridViewTextBoxColumn status;
+        private System.Windows.Forms.DataGridViewTextBoxColumn rawBuild;
     }
 }
