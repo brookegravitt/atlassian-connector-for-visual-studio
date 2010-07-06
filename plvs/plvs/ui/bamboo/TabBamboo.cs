@@ -28,7 +28,11 @@ namespace Atlassian.plvs.ui.bamboo {
 
         private DateTime? nextPollTime;
 
+        private SplitContainer splitter;
+
         private BambooBuildTree buildTree;
+
+        private BambooBuildHistoryTable buildHistoryTable;
 
         private readonly StatusLabel status;
 
@@ -81,8 +85,8 @@ namespace Atlassian.plvs.ui.bamboo {
         }
 
         private void initBuildTree() {
-            if (buildTree != null) {
-                toolStripContainer.ContentPanel.Controls.Remove(buildTree);
+            if (splitter != null) {
+                toolStripContainer.ContentPanel.Controls.Remove(splitter);
             }
 
             if (linkAddBambooServers != null) {
@@ -112,9 +116,21 @@ namespace Atlassian.plvs.ui.bamboo {
             } else {
                 toolStripContainer.Visible = true;
 
+                splitter = new SplitContainer();
+                
                 buildTree = new BambooBuildTree { Model = new FlatBuildTreeModel() };
                 buildTree.Model = new FlatBuildTreeModel();
-                toolStripContainer.ContentPanel.Controls.Add(buildTree);
+                splitter.Panel1.Controls.Add(buildTree);
+
+                buildHistoryTable = new BambooBuildHistoryTable();
+                buildHistoryTable.showHistoryForBuild(null);
+
+                splitter.SplitterDistance = Width - 300;
+                splitter.Panel2.Controls.Add(buildHistoryTable);
+
+                splitter.Orientation = Orientation.Vertical;
+                splitter.Dock = DockStyle.Fill;
+                toolStripContainer.ContentPanel.Controls.Add(splitter);
 
                 updateBuildListButtons();
 
@@ -147,12 +163,14 @@ namespace Atlassian.plvs.ui.bamboo {
 
         private void buildTree_SelectionChanged(object sender, EventArgs e) {
             updateBuildListButtons();
+            BuildNode bn = getSelectedBuildNode();
+            buildHistoryTable.showHistoryForBuild(bn != null ? bn.Build : null);
         }
 
         private void updateBuildListButtons() {
-            TreeNodeAdv node = buildTree.SelectedNode;
-            BuildNode n = node == null ? null : node.Tag as BuildNode;
+            BuildNode n = getSelectedBuildNode();
             buttonViewInBrowser.Enabled = n != null;
+            buttonOpen.Enabled = n != null;
             buttonRunBuild.Enabled = n != null;
             buttonCommentBuild.Enabled = n != null;
             buttonLabelBuild.Enabled = n != null;
@@ -320,6 +338,10 @@ namespace Atlassian.plvs.ui.bamboo {
             t.Start();
         }
 
+        private void buttonOpen_Click(object sender, EventArgs e) {
+            runOnSelectedNode(build => BuildDetailsWindow.Instance.openBuild(build));
+        }
+
         private void buttonViewInBrowser_Click(object sender, EventArgs e) {
             runOnSelectedNode(delegate(BambooBuild b) {
                                   try {
@@ -355,11 +377,14 @@ namespace Atlassian.plvs.ui.bamboo {
         private delegate void SelectedBuildAction(BambooBuild b);
 
         private void runOnSelectedNode(SelectedBuildAction action) {
+            BuildNode n = getSelectedBuildNode();
+            if (n != null) action(n.Build);
+        }
+
+        private BuildNode getSelectedBuildNode() {
             TreeNodeAdv node = buildTree.SelectedNode;
             BuildNode n = node == null ? null : node.Tag as BuildNode;
-            if (n == null) return;
-
-            action(n.Build);
+            return n;
         }
 
         public event EventHandler<EventArgs> AddNewServerLinkClicked;

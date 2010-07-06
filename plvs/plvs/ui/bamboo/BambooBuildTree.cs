@@ -21,7 +21,7 @@ namespace Atlassian.plvs.ui.bamboo {
         private readonly NodeTextBox controlDuration = new NodeTextBox();
         private readonly NodeTextBox controlServer = new NodeTextBox();
 
-        private const int STATUS_AND_KEY_WIDTH = 200;
+        private const int STATUS_AND_KEY_WIDTH = 100;
         private const int TESTS_WIDTH = 200;
         private const int REASON_WIDTH = 300;
         private const int COMPLETED_WIDTH = 150;
@@ -101,14 +101,25 @@ namespace Atlassian.plvs.ui.bamboo {
             NodeControls.Add(controlDuration);
             NodeControls.Add(controlServer);
 
+            colServer.TextAlign = HorizontalAlignment.Right;
+
+            Resize += bambooBuildTreeResize;
+
+            resizeColumns();
+        }
+
+        private void bambooBuildTreeResize(object sender, EventArgs e) {
+            resizeColumns();
+        }
+
+        private void resizeColumns() {
+            const int total = STATUS_AND_KEY_WIDTH + TESTS_WIDTH + COMPLETED_WIDTH + DURATION_WIDTH + SERVER_WIDTH + 40;
             colStatusAndKey.Width = STATUS_AND_KEY_WIDTH;
             colTests.Width = TESTS_WIDTH;
-            colReason.Width = REASON_WIDTH;
+            colReason.Width = total < Width ? Width - total : REASON_WIDTH;
             colCompleted.Width = COMPLETED_WIDTH;
             colDuration.Width = DURATION_WIDTH;
             colServer.Width = SERVER_WIDTH;
-
-            colServer.TextAlign = HorizontalAlignment.Right;
         }
     }
 }
