@@ -249,10 +249,14 @@ namespace Atlassian.plvs.ui.bamboo {
 
             if (builds == null && exceptions == null) {
                 ((FlatBuildTreeModel) buildTree.Model).updateBuilds(null);
+                buildHistoryTable.showHistoryForBuild(null);
                 status.setInfo("No builds to poll found");
                 return;
             }
             ((FlatBuildTreeModel) buildTree.Model).updateBuilds(builds);
+            
+            BuildNode buildNode = getSelectedBuildNode();
+            buildHistoryTable.showHistoryForBuild(buildNode != null ? buildNode.Build : null );
 
             bool haveExceptions = exceptions != null && exceptions.Count > 0;
             if (haveExceptions) {
