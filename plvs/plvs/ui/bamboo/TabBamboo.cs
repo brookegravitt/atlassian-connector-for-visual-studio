@@ -122,7 +122,7 @@ namespace Atlassian.plvs.ui.bamboo {
                 buildTree.Model = new FlatBuildTreeModel();
                 splitter.Panel1.Controls.Add(buildTree);
 
-                buildHistoryTable = new BambooBuildHistoryTable();
+                buildHistoryTable = new BambooBuildHistoryTable(status);
                 buildHistoryTable.showHistoryForBuild(null);
 
                 splitter.SplitterDistance = Width - 300;

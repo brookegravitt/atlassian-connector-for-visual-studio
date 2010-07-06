@@ -19,11 +19,12 @@ namespace Atlassian.plvs.api.bamboo.rest {
         private string password;
 
         private string cookie;
-        private string BUILDS_XML_SUBTREE = "/builds/builds";
+        private const string BUILDS_XML_SUBTREE = "/builds/builds";
         private const string LATEST_BUILDS_FOR_FAVOURITE_PLANS_ACTION = "/rest/api/latest/build?favourite&expand=builds.build";
 
         private const string LATEST_BUILDS_FOR_PLANS_ACTION = "/rest/api/latest/build/{0}?expand=builds[0].build";
         private const string BUILD_BY_KEY_ACTION = "/rest/api/latest/build/{0}?expand=builds[0].build";
+        private const string LAST_N_BUILDS_ROM_PLAN = "/rest/api/latest/build/{0}?expand=builds[0:{1}].build";
 
         private const string ALL_PLANS_ACTION = "/rest/api/latest/plan?expand=plans.plan";
         private const string FAVOURITE_PLANS_ACTION = "/rest/api/latest/plan?favourite&expand=plans.plan";
@@ -191,6 +192,14 @@ namespace Atlassian.plvs.api.bamboo.rest {
                 result.AddRange(builds);
             }
             return result.Count == 0 ? null : result[0];
+        }
+
+        public ICollection<BambooBuild> getLastNBuildsForPlan(string planKey, int howMany) {
+            if (howMany <= 0) {
+                throw new ArgumentException("\"howMany\" parameter must be greater than 0");
+            }
+            string endpoint = server.Url + string.Format(LAST_N_BUILDS_ROM_PLAN, planKey, howMany - 1);
+            return getBuildsFromUrl(endpoint, false, BUILDS_XML_SUBTREE);
         }
 
         private ICollection<BambooBuild> getBuildsFromUrl(string endpoint, bool withRecursion, string prefix) {
