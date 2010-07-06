@@ -30,6 +30,7 @@
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.buttonPoll = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.buttonOpen = new System.Windows.Forms.ToolStripButton();
             this.buttonViewInBrowser = new System.Windows.Forms.ToolStripButton();
             this.buttonLabelBuild = new System.Windows.Forms.ToolStripButton();
             this.buttonCommentBuild = new System.Windows.Forms.ToolStripButton();
@@ -90,6 +91,7 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.buttonPoll,
             this.toolStripSeparator2,
+            this.buttonOpen,
             this.buttonViewInBrowser,
             this.buttonLabelBuild,
             this.buttonCommentBuild,
@@ -100,7 +102,7 @@
             this.buttonHelp});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(213, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(236, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonPoll
@@ -117,6 +119,16 @@
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
+            // buttonOpen
+            // 
+            this.buttonOpen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonOpen.Image = global::Atlassian.plvs.Resources.open_in_ide;
+            this.buttonOpen.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonOpen.Name = "buttonOpen";
+            this.buttonOpen.Size = new System.Drawing.Size(23, 22);
+            this.buttonOpen.Text = "Open Build";
+            this.buttonOpen.Click += new System.EventHandler(this.buttonOpen_Click);
             // 
             // buttonViewInBrowser
             // 
@@ -231,5 +243,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripButton buttonOpen;
     }
 }
