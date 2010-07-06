@@ -387,7 +387,9 @@
     <Compile Include="ui\AutosizeListView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ui\bamboo\BambooBuildHistoryTable.cs" />
+    <Compile Include="ui\bamboo\BambooBuildHistoryTable.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="ui\bamboo\BambooBuildHistoryTable.Designer.cs">
       <DependentUpon>BambooBuildHistoryTable.cs</DependentUpon>
     </Compile>
