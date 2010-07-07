@@ -339,6 +339,9 @@
     </Compile>
     <Compile Include="ui\bamboo\bamboonodes\BambooServerTreeNode.cs" />
     <Compile Include="ui\bamboo\bamboonodes\TreeNodeWithBambooServer.cs" />
+    <Compile Include="ui\bamboo\BambooTestResultTree.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ui\bamboo\BuildDetailsPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -359,7 +362,11 @@
     <Compile Include="ui\bamboo\TabBamboo.Designer.cs">
       <DependentUpon>TabBamboo.cs</DependentUpon>
     </Compile>
+    <Compile Include="ui\bamboo\TestClassNode.cs" />
+    <Compile Include="ui\bamboo\TestMethodNode.cs" />
+    <Compile Include="ui\bamboo\TestPackageNode.cs" />
     <Compile Include="ui\bamboo\treemodels\FlatBuildTreeModel.cs" />
+    <Compile Include="ui\bamboo\treemodels\TestResultTreeModel.cs" />
     <Compile Include="ui\ComboBoxWithImages.cs">
       <SubType>Component</SubType>
     </Compile>

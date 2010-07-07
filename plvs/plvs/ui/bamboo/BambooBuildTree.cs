@@ -35,7 +35,7 @@ namespace Atlassian.plvs.ui.bamboo {
             Dock = DockStyle.Fill;
             SelectionMode = TreeSelectionMode.Single;
             FullRowSelect = true;
-            GridLineStyle = GridLineStyle.Horizontal;
+            GridLineStyle = GridLineStyle.None;
             UseColumns = true;
 
             colStatusAndKey.Header = "Key and Status";

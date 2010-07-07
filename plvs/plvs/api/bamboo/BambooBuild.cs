@@ -5,7 +5,7 @@ namespace Atlassian.plvs.api.bamboo {
     public class BambooBuild {
         public enum BuildResult {
             [StringValue("Successful")]
-            [ColorValue("339933")]
+            [ColorValue("#339933")]
             SUCCESSFUL,
             [StringValue("Failed")]
             [ColorValue("#ff0000")]
