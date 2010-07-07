@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -15,7 +13,6 @@ using Atlassian.plvs.ui.bamboo.treemodels;
 using Atlassian.plvs.util;
 using Atlassian.plvs.util.bamboo;
 using Atlassian.plvs.windows;
-using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 using Process = System.Diagnostics.Process;
 using EnvDTE;
@@ -24,7 +21,6 @@ using Thread = System.Threading.Thread;
 namespace Atlassian.plvs.ui.bamboo {
     public partial class BuildDetailsPanel : UserControl {
         private readonly Solution solution;
-        private readonly PlvsPackage package;
         private readonly BambooBuild build;
         private readonly TabPage myTab;
         private readonly Action<TabPage> buttonCloseClicked;
@@ -38,48 +34,27 @@ namespace Atlassian.plvs.ui.bamboo {
 
         private readonly StatusLabel status;
 
-        public BuildDetailsPanel(Solution solution, PlvsPackage package, BambooBuild build, TabPage myTab,
-            BuildDetailsWindow parent, Action<TabPage> buttonCloseClicked) {
+        public BuildDetailsPanel(Solution solution, BambooBuild build, TabPage myTab, BuildDetailsWindow parent, Action<TabPage> buttonCloseClicked) {
             
             this.solution = solution;
-            this.package = package;
             this.build = build;
             this.myTab = myTab;
             this.buttonCloseClicked = buttonCloseClicked;
             
             InitializeComponent();
 
-            parent.ToolWindowShown += toolWindowStateMonitor_ToolWindowShown;
-            parent.ToolWindowHidden += toolWindowStateMonitor_ToolWindowHidden;
-
             parent.setMyTabIconFromBuildResult(build.Result, myTab);
 
             status = new StatusLabel(statusStrip, labelStatus);
-
-            string throbberPath = PlvsUtils.getThroberPath();
-
-//            webLog.WebBrowserShortcutsEnabled = true;
-//            webLog.IsWebBrowserContextMenuEnabled = true;
         }
 
         protected override void OnLoad(EventArgs e) {
             init();
         }
 
-        private void toolWindowStateMonitor_ToolWindowHidden(object sender, EventArgs e) {
-            uninit();
-        }
-
-        private void toolWindowStateMonitor_ToolWindowShown(object sender, EventArgs e) {
-//            init();
-        }
-
         private void init() {
             displaySummary();
             runGetLogThread();
-        }
-
-        private void uninit() {
         }
 
         private void runGetLogThread() {
