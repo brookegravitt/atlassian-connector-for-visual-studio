@@ -25,6 +25,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
         private const string LATEST_BUILDS_FOR_PLANS_ACTION = "/rest/api/latest/build/{0}?expand=builds[0].build";
         private const string BUILD_BY_KEY_ACTION = "/rest/api/latest/build/{0}?expand=builds[0].build";
         private const string LAST_N_BUILDS_ROM_PLAN = "/rest/api/latest/build/{0}?expand=builds[0:{1}].build";
+        private const string ALL_TESTS = "/rest/api/latest/build/{0}?expand=testResults.all";
 
         private const string ALL_PLANS_ACTION = "/rest/api/latest/plan?expand=plans.plan";
         private const string FAVOURITE_PLANS_ACTION = "/rest/api/latest/plan?favourite&expand=plans.plan";
@@ -181,6 +182,48 @@ namespace Atlassian.plvs.api.bamboo.rest {
                 }
             }
             return result;
+        }
+
+        public ICollection<BambooTest> getTestResults(string buildKey) {
+
+            string buildUrl = string.Format(ALL_TESTS, buildKey);
+            string endpoint = server.Url + buildUrl;
+
+            using (Stream stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint), true)) {
+                XPathDocument doc = XPathUtils.getXmlDocument(stream);
+
+                string code = getRestErrorStatusCode(doc);
+                if (code != null) {
+                    throw new Exception(code);
+                }
+
+                XPathNavigator nav = doc.CreateNavigator();
+
+                XPathExpression expr = nav.Compile("/build/testResults/all/testResult");
+                XPathNodeIterator it = nav.Select(expr);
+
+                List<BambooTest> tests = new List<BambooTest>();
+
+                while (it.MoveNext()) {
+                    string className = XPathUtils.getAttributeSafely(it.Current, "className", null);
+                    string methodName = XPathUtils.getAttributeSafely(it.Current, "methodName", null);
+                    string status = XPathUtils.getAttributeSafely(it.Current, "status", null);
+                    if (className == null || methodName == null || status == null) continue;
+                    BambooTest.TestResult res = BambooTest.TestResult.UNKNOWN;
+                    switch (status.ToLower()) {
+                        case "successful":
+                            res = BambooTest.TestResult.SUCCESSFUL;
+                            break;
+                        case "failed":
+                            res = BambooTest.TestResult.FAILED;
+                            break;
+                    }
+                    BambooTest test = new BambooTest(className, methodName, res);
+                    tests.Add(test);
+                }
+
+                return tests;
+            }
         }
 
         public BambooBuild getBuildByKey(string buildKey) {

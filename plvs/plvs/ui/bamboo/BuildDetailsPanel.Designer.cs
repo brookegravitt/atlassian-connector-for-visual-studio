@@ -46,6 +46,7 @@
             this.buttonLabel = new System.Windows.Forms.ToolStripButton();
             this.buttonComment = new System.Windows.Forms.ToolStripButton();
             this.buttonClose = new System.Windows.Forms.ToolStripButton();
+            this.textResults = new System.Windows.Forms.TextBox();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -163,6 +164,7 @@
             // 
             // tabTests
             // 
+            this.tabTests.Controls.Add(this.textResults);
             this.tabTests.Controls.Add(this.label3);
             this.tabTests.Controls.Add(this.textNamespace);
             this.tabTests.Controls.Add(this.buttonDebugTest);
@@ -259,7 +261,7 @@
             this.buttonClose});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(149, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(118, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonViewInBrowser
@@ -311,6 +313,15 @@
             this.buttonClose.Size = new System.Drawing.Size(23, 22);
             this.buttonClose.Text = "Close";
             this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
+            // 
+            // textResults
+            // 
+            this.textResults.Location = new System.Drawing.Point(395, 7);
+            this.textResults.Multiline = true;
+            this.textResults.Name = "textResults";
+            this.textResults.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textResults.Size = new System.Drawing.Size(247, 149);
+            this.textResults.TabIndex = 15;
             // 
             // BuildDetailsPanel
             // 
@@ -364,5 +375,6 @@
         private System.Windows.Forms.TextBox textNamespace;
         private System.Windows.Forms.ToolStripButton buttonLabel;
         private System.Windows.Forms.ToolStripButton buttonComment;
+        private System.Windows.Forms.TextBox textResults;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -94,6 +95,31 @@ namespace Atlassian.plvs.ui.bamboo {
                 status.setInfo("Build log retrieved");
             } catch (Exception e) {
                 status.setError("Failed to retrieve build log", e);
+            }
+            runGetTestsThread();
+        }
+
+        private void runGetTestsThread() {
+            status.setInfo("Retrieving build test results...");
+            Thread t = PlvsUtils.createThread(getTestsRunner);
+            t.Start();
+        }
+
+        private void getTestsRunner() {
+            try {
+                ICollection<BambooTest> tests = BambooServerFacade.Instance.getTestResults(build);
+                if (tests == null || tests.Count == 0) {
+                    this.safeInvoke(new MethodInvoker(delegate { textResults.Text = "No tests found in build " + build.Key; }));
+                } else {
+                    StringBuilder sb = new StringBuilder();
+                    foreach (BambooTest test in tests) {
+                        sb.Append(test.ClassName + "." + test.MethodName + ": " + test.Result.GetStringValue() + "\r\n");
+                    }
+                    this.safeInvoke(new MethodInvoker(delegate { textResults.Text = sb.ToString(); }));
+                }
+                status.setInfo("Test results retrieved");
+            } catch (Exception e) {
+                status.setError("Failed to retrieve test results", e);
             }
         }
 
