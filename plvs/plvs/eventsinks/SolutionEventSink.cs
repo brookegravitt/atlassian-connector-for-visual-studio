@@ -84,7 +84,6 @@ namespace Atlassian.plvs.eventsinks {
 
                 IssueDetailsWindow.Instance.Solution = dte.Solution;
                 BuildDetailsWindow.Instance.Solution = dte.Solution;
-                BuildDetailsWindow.Instance.Package = package;
 
                 JiraEditorLinkManager.OnSolutionOpened();
                 Autoupdate.Instance.initialize();
