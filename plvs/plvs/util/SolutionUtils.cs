@@ -7,7 +7,7 @@ using DteConstants = EnvDTE.Constants;
 
 namespace Atlassian.plvs.util {
     public static class SolutionUtils {
-        public static void openSolutionFile(string fileName, string lineAndColumnNumber, Solution solution) {
+        public static bool openSolutionFile(string fileName, string lineAndColumnNumber, Solution solution) {
             List<ProjectItem> files = new List<ProjectItem>();
 
             matchProjectItems(fileName, files);
@@ -23,7 +23,7 @@ namespace Atlassian.plvs.util {
             } else {
                 selectedProjectItem = files[0];
             }
-            if (selectedProjectItem == null) return;
+            if (selectedProjectItem == null) return false;
 
             try {
                 int? lineNo = null;
@@ -54,10 +54,13 @@ namespace Atlassian.plvs.util {
                         try {
                             sel.MoveToDisplayColumn(lineNo.Value, columnNo.HasValue ? columnNo.Value : 0, false);
                             sel.Cancel();
+                            return true;
                         } catch (Exception e) {
                             sel.Cancel();
                             PlvsUtils.showError("Unable to navigate to line " + lineNo.Value + " - no such line number in the file", e);
                         }
+                    } else {
+                        return true;
                     }
                 } else {
                     throw new Exception("Unable to retrieve text selection for the document");
@@ -65,6 +68,7 @@ namespace Atlassian.plvs.util {
             } catch (Exception ex) {
                 PlvsUtils.showError("Unable to open the specified file", ex);
             }
+            return false;
         }
 
         private static readonly List<ProjectItem> allProjectItems = new List<ProjectItem>();

@@ -10,8 +10,11 @@ using System.Windows.Forms;
 using Atlassian.plvs.api.bamboo;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs.bamboo;
+using Atlassian.plvs.store;
+using Atlassian.plvs.ui.bamboo.treemodels;
 using Atlassian.plvs.util;
 using Atlassian.plvs.util.bamboo;
+using Atlassian.plvs.windows;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 using Process = System.Diagnostics.Process;
@@ -26,9 +29,12 @@ namespace Atlassian.plvs.ui.bamboo {
         private readonly TabPage myTab;
         private readonly Action<TabPage> buttonCloseClicked;
 
+        private BambooTestResultTree testResultTree;
+
         private const int MAX_PARSEABLE_LENGTH = 200;
         private const int A_LOT = 10000000;
         private const string OPENFILE_ON_LINE_URL = "openfileonline:";
+        private const string SHOW_FAILED_TESTS_ONLY = "BambooBuildShowFailedTestsOnly";
 
         private readonly StatusLabel status;
 
@@ -109,18 +115,118 @@ namespace Atlassian.plvs.ui.bamboo {
             try {
                 ICollection<BambooTest> tests = BambooServerFacade.Instance.getTestResults(build);
                 if (tests == null || tests.Count == 0) {
-                    this.safeInvoke(new MethodInvoker(delegate { textResults.Text = "No tests found in build " + build.Key; }));
+                    this.safeInvoke(new MethodInvoker(delegate { toolStripContainerTests.Visible = false; }));
                 } else {
-                    StringBuilder sb = new StringBuilder();
-                    foreach (BambooTest test in tests) {
-                        sb.Append(test.ClassName + "." + test.MethodName + ": " + test.Result.GetStringValue() + "\r\n");
-                    }
-                    this.safeInvoke(new MethodInvoker(delegate { textResults.Text = sb.ToString(); }));
+                    this.safeInvoke(new MethodInvoker(() => createAndFillTestTree(tests)));
                 }
                 status.setInfo("Test results retrieved");
             } catch (Exception e) {
                 status.setError("Failed to retrieve test results", e);
             }
+        }
+
+        private void createAndFillTestTree(ICollection<BambooTest> tests) {
+            labelNoTestsFound.Visible = false;
+            toolStripContainerTests.Dock = DockStyle.Fill;
+
+            toolStripContainerTests.TopToolStripPanel.Controls.Add(testResultsToolStrip);
+            testResultsToolStrip.Dock = DockStyle.None;
+            testResultsToolStrip.GripStyle = ToolStripGripStyle.Hidden;
+            testResultsToolStrip.Items.AddRange(new ToolStripItem[] { buttonFailedOnly, buttonOpenTest, buttonRunTestInVs, buttonDebugTestInVs});
+            testResultsToolStrip.Location = new System.Drawing.Point(3, 0);
+            testResultsToolStrip.Size = new System.Drawing.Size(126, 25);
+            testResultsToolStrip.TabIndex = 0;
+            testResultsToolStrip.Visible = true;
+
+            ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
+            bool failedOnly = store.loadParameter(SHOW_FAILED_TESTS_ONLY, 0) > 0;
+
+            testResultTree = new BambooTestResultTree {Model = new TestResultTreeModel(tests, failedOnly)};
+            toolStripContainerTests.ContentPanel.Controls.Add(testResultTree);
+            testResultTree.SelectionChanged += testResultTree_SelectionChanged;
+            testResultTree.MouseDoubleClick += testResultTree_MouseDoubleClick;
+            testResultTree.KeyPress += testResultTree_KeyPress;
+
+            buttonFailedOnly.Checked = failedOnly;
+            buttonFailedOnly.CheckedChanged += buttonFailedOnly_CheckedChanged;
+
+            buttonOpenTest.Click += buttonOpenTest_Click;
+            buttonRunTestInVs.Click += buttonRunTestInVs_Click;
+            buttonDebugTestInVs.Click += buttonDebugTestInVs_Click;
+            updateTestButtons();
+        }
+
+        private void buttonDebugTestInVs_Click(object sender, EventArgs e) {
+            TestMethodNode method = getSelectedTestMethod();
+            if (method == null) return;
+            if (navigateToTestClassAndMethod(method.Test)) {
+                solution.DTE.ExecuteCommand("Test.DebugTestsInCurrentContext", "");
+            }
+        }
+
+        private void buttonRunTestInVs_Click(object sender, EventArgs e) {
+            TestMethodNode method = getSelectedTestMethod();
+            if (method == null) return;
+            if (navigateToTestClassAndMethod(method.Test)) {
+                solution.DTE.ExecuteCommand("Test.RunTestsInCurrentContext", "");
+            }
+        }
+
+        private void testResultTree_KeyPress(object sender, KeyPressEventArgs e) {
+            if (e.KeyChar == (int) Keys.Enter) {
+                openTestMethod(true);
+            }
+        }
+
+        private void testResultTree_MouseDoubleClick(object sender, MouseEventArgs e) {
+            openTestMethod(false);
+        }
+
+        private void buttonOpenTest_Click(object sender, EventArgs e) {
+            openTestMethod(false);
+        }
+
+        private void openTestMethod(bool refocusOnTestList) {
+            TestMethodNode method = getSelectedTestMethod();
+            if (method == null) return;
+            navigateToTestClassAndMethod(method.Test);
+            if (!refocusOnTestList) return;
+
+            // opening an editor seems to take a moment, let's delay refocusing for a moment
+            Timer t = new Timer {Interval = 500};
+            t.Tick += (s, e) => {
+                          t.Stop();
+                          IVsWindowFrame windowFrame = (IVsWindowFrame) ToolWindowManager.Instance.BuildDetailsWindow.Frame;
+                          windowFrame.Show();
+                      };
+            t.Start();
+        }
+
+        private TestMethodNode getSelectedTestMethod() {
+            if (testResultTree == null || testResultTree.SelectedNode == null) return null;
+            return testResultTree.SelectedNode.Tag as TestMethodNode;
+        }
+
+        private void buttonFailedOnly_CheckedChanged(object sender, EventArgs e) {
+            ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
+            store.storeParameter(SHOW_FAILED_TESTS_ONLY, buttonFailedOnly.Checked ? 1 : 0);
+            TestResultTreeModel model = testResultTree.Model as TestResultTreeModel;
+            if (model == null) return;
+            model.updateFailedOnly(buttonFailedOnly.Checked);
+        }
+
+        private void testResultTree_SelectionChanged(object sender, EventArgs e) {
+            updateTestButtons();
+        }
+
+        private void updateTestButtons() {
+            bool enabled = 
+                testResultTree != null 
+                && testResultTree.SelectedNode != null 
+                && testResultTree.SelectedNode.Tag is TestMethodNode;
+            buttonOpenTest.Enabled = enabled;
+            buttonRunTestInVs.Enabled = enabled;
+            buttonDebugTestInVs.Enabled = enabled;
         }
 
         private static readonly Regex FILE_AND_LINE = new Regex("(.*?)\\s(&quot;)?((([a-zA-Z]:)|(\\\\))?\\S+?)(&quot;)?\\s*\\(((\\d+)(,\\d+)?)\\)(.*?)"); 
@@ -307,77 +413,16 @@ namespace Atlassian.plvs.ui.bamboo {
             }
         }
 
-        private static Guid guidCSLibrary = new Guid("58F1BAD0-2288-45b9-AC3A-D56398F7781D");
-        private static Guid guidVBLibrary = new Guid("414AC972-9829-4B6A-A8D7-A08152FEB8AA");
-        private static Guid guidCPPLibrary = new Guid("6C1AC90E-09FC-4F23-90FF-87F8CFC2A445");
-
-        // check responses to http://social.msdn.microsoft.com/Forums/en-US/vsx/thread/1d0b5eb6-bb9b-4bd5-b47c-514a57e687e0
-        // to understand how to navigate to methods
-        private void buttonRunTest_Click(object sender, EventArgs e) {
-#if false
-            IVsClassView browser = package.GetService(typeof(SVsClassView)) as IVsClassView;
-			VSOBJECTINFO[] objInfo = new VSOBJECTINFO[1];
-
-//			objInfo[0].pguidLib = ptr;
-//			objInfo[0].pszLibName = this.Url;
-
-//            LoadFromObjectBrowserWindow();
-
-            Guid guid = guidCSLibrary;
-            IntPtr ptr = Marshal.AllocCoTaskMem(guid.ToByteArray().Length);
-
-
-            VSOBJECTINFO vsobinf = new VSOBJECTINFO();
-            vsobinf.pszClassName = "ArrayList";
-            vsobinf.pszLibName = "mscorlib";
-            vsobinf.pszMemberName = string.Empty;
-            vsobinf.pszNspcName = "System.Collections";
-            vsobinf.dwCustom = 0;
-            vsobinf.pguidLib = ptr;
-            IVsObjBrowser vsObjBrowser = package.GetService(typeof(SVsObjBrowser)) as IVsObjBrowser;
-            int hr = vsObjBrowser.NavigateTo(new VSOBJECTINFO[] { vsobinf }, 0);
-            try {
-                ErrorHandler.ThrowOnFailure(hr);
-                Debug.WriteLine("vsObjBrowser.NavigateTo successful!!!!!!!!!!!!!!!");
-            } catch (Exception ex) {
-                Debug.WriteLine("msg=" + ex.Message);
-            }
-
-            return;
-
-            foreach (Project project in solution.Projects) {
-//                 get language from Project.Kind based on table here: http://www.mztools.com/Articles/2008/MZ2008017.aspx
-                objInfo[0].pguidLib = ptr;
-                objInfo[0].pszLibName = project.Name;
-                objInfo[0].pszNspcName = textNamespace.Text;
-                objInfo[0].pszClassName = textClassName.Text;
-                objInfo[0].pszMemberName = textMethod.Text;
-                hr = browser.NavigateTo(objInfo, 0);
-                try {
-                    ErrorHandler.ThrowOnFailure(hr);
-                    Debug.WriteLine("NavigateTo successful!!!!!!!!!!!!!!!");
-                } catch (Exception ex) {
-                    Debug.WriteLine("msg=" + ex.Message);
-                }
-                if (VSConstants.S_OK == hr) break;
-            }
-            Marshal.FreeCoTaskMem(ptr);
-#endif
+        private bool navigateToTestClassAndMethod(BambooTest test) {
             string fileName = null, lineNo = null;
             foreach (Project project in solution.Projects) {
-                Debug.WriteLine("examining project: " + project.Name);
-                if (examineProjectItems(project.ProjectItems, textClassName.Text, textMethod.Text, ref fileName, ref lineNo)) {
-                    Debug.WriteLine("class and method found");
-                    SolutionUtils.openSolutionFile(fileName, lineNo, solution);
-                    solution.DTE.ExecuteCommand("Test.RunTestsInCurrentContext", "");
-                    return;
+//                Debug.WriteLine("examining project: " + project.Name);
+                if (examineProjectItems(project.ProjectItems, test.ClassName, test.MethodName, ref fileName, ref lineNo)) {
+//                    Debug.WriteLine("class and method found");
+                    return SolutionUtils.openSolutionFile(fileName, lineNo, solution);
                 }
-//                IEnumerator enumerator = project.CodeModel.CodeElements.GetEnumerator();
-//                while (enumerator.MoveNext()) {
-//                    var codeElement = enumerator.Current;
-//                    Debug.WriteLine(codeElement);
-//                }
             }
+            return false;
         }
 
         private static bool examineProjectItems(ProjectItems projectItems, string classFqdn, string methodName, ref string fileName, ref string lineNo) {
@@ -390,24 +435,24 @@ namespace Atlassian.plvs.ui.bamboo {
         }
 
         private static bool examineOneItem(ProjectItem item, string classFqdn, string methodName, ref string fileName, ref string lineNo) {
-            Debug.WriteLine("    examining project item: " + item.Name);
+//            Debug.WriteLine("    examining project item: " + item.Name);
             FileCodeModel codeModel = item.FileCodeModel;
             if (codeModel == null || codeModel.CodeElements == null) return false;
 
             bool foundClass = false, foundMethod = false;
             foreach (CodeElement element in codeModel.CodeElements) {
                 if (element.Kind == vsCMElement.vsCMElementNamespace) {
-                    Debug.WriteLine("        found namespace: " + element.Name + ", " + element.FullName);
+//                    Debug.WriteLine("        found namespace: " + element.Name + ", " + element.FullName);
 
                     foreach (CodeElement childElement in element.Children) {
                         if (childElement.Kind == vsCMElement.vsCMElementClass && childElement.FullName.Equals(classFqdn)) foundClass = true;
-                        Debug.WriteLine("          child elements: " + childElement.Kind + ", " + childElement.Name + ", " + childElement.FullName + ", " + childElement.StartPoint.Line + ", " + childElement.EndPoint.Line);
+//                        Debug.WriteLine("          child elements: " + childElement.Kind + ", " + childElement.Name + ", " + childElement.FullName + ", " + childElement.StartPoint.Line + ", " + childElement.EndPoint.Line);
                         if (!foundClass) continue;
                         fileName = item.Name;
                         foreach (CodeElement grandChildElement in childElement.Children) {
                             if (grandChildElement.Kind == vsCMElement.vsCMElementFunction && grandChildElement.Name.Equals(methodName))
                                 foundMethod = true;
-                            Debug.WriteLine("              child elements: " + grandChildElement.Kind + ", " + grandChildElement.Name + ", " + grandChildElement.FullName + ", " + grandChildElement.StartPoint.Line + ", " + grandChildElement.EndPoint.Line);
+//                            Debug.WriteLine("              child elements: " + grandChildElement.Kind + ", " + grandChildElement.Name + ", " + grandChildElement.FullName + ", " + grandChildElement.StartPoint.Line + ", " + grandChildElement.EndPoint.Line);
                             if (foundMethod) {
                                 lineNo = "" + grandChildElement.StartPoint.Line + "," + grandChildElement.StartPoint.LineCharOffset;
                                 return true;
@@ -415,15 +460,10 @@ namespace Atlassian.plvs.ui.bamboo {
                         }
                     }
                 } else {
-                    Debug.WriteLine("        " + element.Kind);
+//                    Debug.WriteLine("        " + element.Kind);
                 }
             }
             return false;
-        }
-
-        private void buttonDebugTest_Click(object sender, EventArgs e) {
-//            SolutionUtils.openSolutionFile(textClassName.Text, textMethod.Text, solution);
-//            solution.DTE.ExecuteCommand("Test.DebugTestsInCurrentContext", "");
         }
 
         private void buttonLabel_Click(object sender, EventArgs e) {
