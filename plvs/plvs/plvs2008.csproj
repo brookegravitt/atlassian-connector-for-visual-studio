@@ -362,9 +362,8 @@
     <Compile Include="ui\bamboo\TabBamboo.Designer.cs">
       <DependentUpon>TabBamboo.cs</DependentUpon>
     </Compile>
-    <Compile Include="ui\bamboo\TestClassNode.cs" />
+    <Compile Include="ui\bamboo\TestPackageOrClassNode.cs" />
     <Compile Include="ui\bamboo\TestMethodNode.cs" />
-    <Compile Include="ui\bamboo\TestPackageNode.cs" />
     <Compile Include="ui\bamboo\treemodels\FlatBuildTreeModel.cs" />
     <Compile Include="ui\bamboo\treemodels\TestResultTreeModel.cs" />
     <Compile Include="ui\ComboBoxWithImages.cs">
@@ -933,6 +932,8 @@
     <None Include="third party\ankh\LICENSE.rtf" />
     <Content Include="Resources\icons\vs2008.bmp" />
     <Content Include="Resources\icons\vs2010.bmp" />
+    <None Include="Resources\icons\VSObject_Class.png" />
+    <None Include="Resources\icons\VSObject_Namespace.png" />
     <Content Include="Resources\texts\attachment_download_html.txt" />
     <Content Include="Resources\texts\autoupdate_html.txt" />
     <Content Include="Resources\texts\build_summary_html.txt" />

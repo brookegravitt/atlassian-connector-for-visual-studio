@@ -129,6 +129,7 @@ namespace Atlassian.plvs.ui.bamboo {
             buttonRunTestInVs.Click += buttonRunTestInVs_Click;
             buttonDebugTestInVs.Click += buttonDebugTestInVs_Click;
             updateTestButtons();
+            testResultTree.ExpandAll();
         }
 
         private void buttonDebugTestInVs_Click(object sender, EventArgs e) {
@@ -167,14 +168,9 @@ namespace Atlassian.plvs.ui.bamboo {
             navigateToTestClassAndMethod(method.Test);
             if (!refocusOnTestList) return;
 
-            // opening an editor seems to take a moment, let's delay refocusing for a moment
-            Timer t = new Timer {Interval = 500};
-            t.Tick += (s, e) => {
-                          t.Stop();
-                          IVsWindowFrame windowFrame = (IVsWindowFrame) ToolWindowManager.Instance.BuildDetailsWindow.Frame;
-                          windowFrame.Show();
-                      };
-            t.Start();
+            // this seems to be the only way to refocus the bamboo toolwindow
+            IVsWindowFrame windowFrame = (IVsWindowFrame) ToolWindowManager.Instance.BuildDetailsWindow.Frame;
+            windowFrame.Show();
         }
 
         private TestMethodNode getSelectedTestMethod() {
@@ -187,7 +183,8 @@ namespace Atlassian.plvs.ui.bamboo {
             store.storeParameter(SHOW_FAILED_TESTS_ONLY, buttonFailedOnly.Checked ? 1 : 0);
             TestResultTreeModel model = testResultTree.Model as TestResultTreeModel;
             if (model == null) return;
-            model.updateFailedOnly(buttonFailedOnly.Checked);
+            model.FailedOnly = buttonFailedOnly.Checked;
+            testResultTree.ExpandAll();
         }
 
         private void testResultTree_SelectionChanged(object sender, EventArgs e) {
@@ -391,9 +388,7 @@ namespace Atlassian.plvs.ui.bamboo {
         private bool navigateToTestClassAndMethod(BambooTest test) {
             string fileName = null, lineNo = null;
             foreach (Project project in solution.Projects) {
-//                Debug.WriteLine("examining project: " + project.Name);
                 if (examineProjectItems(project.ProjectItems, test.ClassName, test.MethodName, ref fileName, ref lineNo)) {
-//                    Debug.WriteLine("class and method found");
                     return SolutionUtils.openSolutionFile(fileName, lineNo, solution);
                 }
             }
@@ -410,33 +405,34 @@ namespace Atlassian.plvs.ui.bamboo {
         }
 
         private static bool examineOneItem(ProjectItem item, string classFqdn, string methodName, ref string fileName, ref string lineNo) {
-//            Debug.WriteLine("    examining project item: " + item.Name);
             FileCodeModel codeModel = item.FileCodeModel;
             if (codeModel == null || codeModel.CodeElements == null) return false;
 
-            bool foundClass = false, foundMethod = false;
             foreach (CodeElement element in codeModel.CodeElements) {
-                if (element.Kind == vsCMElement.vsCMElementNamespace) {
-//                    Debug.WriteLine("        found namespace: " + element.Name + ", " + element.FullName);
+                if (examineClass(item, element, classFqdn, methodName, ref fileName, ref lineNo)) return true;
+                if (examineNamespace(item, element, classFqdn, methodName, ref fileName, ref lineNo)) return true;
+            }
+            return false;
+        }
 
-                    foreach (CodeElement childElement in element.Children) {
-                        if (childElement.Kind == vsCMElement.vsCMElementClass && childElement.FullName.Equals(classFqdn)) foundClass = true;
-//                        Debug.WriteLine("          child elements: " + childElement.Kind + ", " + childElement.Name + ", " + childElement.FullName + ", " + childElement.StartPoint.Line + ", " + childElement.EndPoint.Line);
-                        if (!foundClass) continue;
-                        fileName = item.Name;
-                        foreach (CodeElement grandChildElement in childElement.Children) {
-                            if (grandChildElement.Kind == vsCMElement.vsCMElementFunction && grandChildElement.Name.Equals(methodName))
-                                foundMethod = true;
-//                            Debug.WriteLine("              child elements: " + grandChildElement.Kind + ", " + grandChildElement.Name + ", " + grandChildElement.FullName + ", " + grandChildElement.StartPoint.Line + ", " + grandChildElement.EndPoint.Line);
-                            if (foundMethod) {
-                                lineNo = "" + grandChildElement.StartPoint.Line + "," + grandChildElement.StartPoint.LineCharOffset;
-                                return true;
-                            }
-                        }
-                    }
-                } else {
-//                    Debug.WriteLine("        " + element.Kind);
-                }
+        private static bool examineNamespace(ProjectItem item, CodeElement element, string classFqdn, string methodName, ref string fileName, ref string lineNo) {
+            if (element.Kind != vsCMElement.vsCMElementNamespace) return false;
+
+            foreach (CodeElement childElement in element.Children) {
+                if (examineClass(item, childElement, classFqdn, methodName, ref fileName, ref lineNo)) return true;
+                if (examineNamespace(item, childElement, classFqdn, methodName, ref fileName, ref lineNo)) return true;
+            }
+            return false;
+        }
+
+        private static bool examineClass(ProjectItem item, CodeElement element, string classFqdn, string methodName, ref string fileName, ref string lineNo) {
+            if (element.Kind != vsCMElement.vsCMElementClass || !element.FullName.Equals(classFqdn)) return false;
+            fileName = item.Name;
+            foreach (CodeElement grandChildElement in element.Children) {
+                if (grandChildElement.Kind != vsCMElement.vsCMElementFunction || !grandChildElement.Name.Equals(methodName)) continue;
+
+                lineNo = "" + grandChildElement.StartPoint.Line + "," + grandChildElement.StartPoint.LineCharOffset;
+                return true;
             }
             return false;
         }
