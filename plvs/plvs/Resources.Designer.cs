@@ -916,5 +916,19 @@ namespace Atlassian.plvs {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        internal static System.Drawing.Bitmap VSObject_Class {
+            get {
+                object obj = ResourceManager.GetObject("VSObject_Class", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap VSObject_Namespace {
+            get {
+                object obj = ResourceManager.GetObject("VSObject_Namespace", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }
