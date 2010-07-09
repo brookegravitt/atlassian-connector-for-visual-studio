@@ -412,4 +412,7 @@
   <data name="MIDDLE_CLICK_TO_CLOSE" xml:space="preserve">
     <value>Click with middle mouse button to close the tab</value>
   </data>
+  <data name="small_throbber" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\icons\small_throbber;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

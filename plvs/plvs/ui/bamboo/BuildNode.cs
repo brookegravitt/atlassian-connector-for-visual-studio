@@ -13,6 +13,10 @@ namespace Atlassian.plvs.ui.bamboo {
             Build = build;
         }
 
+        public bool? IsInProgress {
+            get { return Build.State == BambooBuild.PlanState.IN_QUEUE || Build.State == BambooBuild.PlanState.BUILDING; }
+        }
+
         public Image Icon {
             get {
                 switch (Build.Result) {

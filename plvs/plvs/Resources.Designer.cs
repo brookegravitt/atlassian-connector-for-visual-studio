@@ -755,6 +755,13 @@ namespace Atlassian.plvs {
             }
         }
         
+        internal static byte[] small_throbber {
+            get {
+                object obj = ResourceManager.GetObject("small_throbber", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap status_plugin {
             get {
                 object obj = ResourceManager.GetObject("status_plugin", resourceCulture);

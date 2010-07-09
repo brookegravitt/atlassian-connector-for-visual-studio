@@ -355,6 +355,9 @@
     <Compile Include="ui\bamboo\BuildDetailsWindow.Designer.cs">
       <DependentUpon>BuildDetailsWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="ui\bamboo\NodeBuildInProgressIcon.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ui\bamboo\BuildNode.cs" />
     <Compile Include="ui\bamboo\TabBamboo.cs">
       <SubType>UserControl</SubType>
@@ -914,6 +917,8 @@
     <Content Include="Resources\icons\refresh.png" />
     <Content Include="Resources\icons\run-build.png" />
     <Content Include="Resources\icons\search-jira.png" />
+    <None Include="Resources\icons\small_throbber" />
+    <None Include="Resources\icons\small_throbber.gif" />
     <Content Include="Resources\icons\status_plugin.gif" />
     <Content Include="Resources\icons\status_plugin.ico" />
     <Content Include="Resources\icons\status_plugin.png" />

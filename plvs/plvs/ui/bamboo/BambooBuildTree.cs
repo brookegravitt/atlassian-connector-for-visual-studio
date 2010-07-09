@@ -14,6 +14,7 @@ namespace Atlassian.plvs.ui.bamboo {
         private readonly TreeColumn colDuration = new TreeColumn();
         private readonly TreeColumn colServer = new TreeColumn();
         private readonly NodeIcon controlIcon = new NodeIcon();
+        private readonly NodeBuildInProgressIcon inProgressIcon;
         private readonly NodeTextBox controlBuildKey = new NodeTextBox();
         private readonly NodeTextBox controlTests = new NodeTextBox();
         private readonly NodeTextBox controlReason = new NodeTextBox();
@@ -50,6 +51,12 @@ namespace Atlassian.plvs.ui.bamboo {
             controlIcon.ParentColumn = colStatusAndKey;
             controlIcon.DataPropertyName = "Icon";
             controlIcon.LeftMargin = i++;
+
+            inProgressIcon = new NodeBuildInProgressIcon(this) {
+                                 ParentColumn = colStatusAndKey,
+                                 DataPropertyName = "IsInProgress",
+                                 LeftMargin = i++
+                             };
 
             controlBuildKey.ParentColumn = colStatusAndKey;
             controlBuildKey.DataPropertyName = "Key";
@@ -96,6 +103,7 @@ namespace Atlassian.plvs.ui.bamboo {
             Columns.Add(colServer);
 
             NodeControls.Add(controlIcon);
+            NodeControls.Add(inProgressIcon);
             NodeControls.Add(controlBuildKey);
             NodeControls.Add(controlTests);
             NodeControls.Add(controlReason);
