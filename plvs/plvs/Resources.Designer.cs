@@ -662,6 +662,15 @@ namespace Atlassian.plvs {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to Click with middle mouse button to close the tab.
+        /// </summary>
+        internal static string MIDDLE_CLICK_TO_CLOSE {
+            get {
+                return ResourceManager.GetString("MIDDLE_CLICK_TO_CLOSE", resourceCulture);
+            }
+        }
+        
         internal static System.Drawing.Bitmap minus {
             get {
                 object obj = ResourceManager.GetObject("minus", resourceCulture);

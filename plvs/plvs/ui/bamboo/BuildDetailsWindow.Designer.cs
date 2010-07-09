@@ -32,8 +32,10 @@
             this.tabBuilds.Location = new System.Drawing.Point(0, 0);
             this.tabBuilds.Name = "tabBuilds";
             this.tabBuilds.SelectedIndex = 0;
+            this.tabBuilds.ShowToolTips = true;
             this.tabBuilds.Size = new System.Drawing.Size(803, 294);
             this.tabBuilds.TabIndex = 0;
+            this.tabBuilds.MouseClick += new System.Windows.Forms.MouseEventHandler(this.tabBuilds_MouseClick);
             // 
             // BuildDetailsWindow
             // 

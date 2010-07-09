@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Forms;
 using Atlassian.plvs.api.bamboo;
 using Atlassian.plvs.autoupdate;
@@ -43,6 +44,7 @@ namespace Atlassian.plvs.ui.bamboo {
                 BuildDetailsPanel buildPanel = new BuildDetailsPanel(Solution, build, buildTab, this, buttonCloseClicked);
                 buildTab.Controls.Add(buildPanel);
                 buildPanel.Dock = DockStyle.Fill;
+                buildTab.ToolTipText = Resources.MIDDLE_CLICK_TO_CLOSE;
                 tabBuilds.TabPages.Add(buildTab);
             }
             tabBuilds.SelectTab(key);
@@ -84,6 +86,14 @@ namespace Atlassian.plvs.ui.bamboo {
                     tab.ImageIndex = 2;
                     break;
             }
+        }
+
+        private void tabBuilds_MouseClick(object sender, MouseEventArgs e) {
+            if (e.Button != MouseButtons.Middle) return;
+
+            var tabs = tabBuilds.TabPages;
+            tabs.Remove(tabs.Cast<TabPage>().Where((t, i) => tabBuilds.GetTabRect(i).Contains(e.Location)).First());
+            if (tabBuilds.TabPages.Count == 0) Instance.FrameVisible = false;
         }
     }
 }
