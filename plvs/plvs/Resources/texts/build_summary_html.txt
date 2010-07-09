@@ -8,5 +8,7 @@
 <tr><td class="labelcolumn">Completed</td><td>{4}</td></tr>
 <tr><td class="labelcolumn">Duration</td><td>{5}</td></tr>
 <tr><td class="labelcolumn">Server</td><td>{6}</td></tr>
+<tr><td class="labelcolumn">Artifacts</td><td>{9}</td></tr>
+<tr><td class="labelcolumn">JIRA Issues</td><td>{10}</td></tr>
 
 </table>

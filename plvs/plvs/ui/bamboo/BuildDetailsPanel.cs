@@ -6,10 +6,13 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Windows.Forms;
 using Atlassian.plvs.api.bamboo;
+using Atlassian.plvs.api.jira;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs.bamboo;
+using Atlassian.plvs.models.jira;
 using Atlassian.plvs.store;
 using Atlassian.plvs.ui.bamboo.treemodels;
+using Atlassian.plvs.ui.jira;
 using Atlassian.plvs.util;
 using Atlassian.plvs.util.bamboo;
 using Atlassian.plvs.windows;
@@ -22,6 +25,10 @@ namespace Atlassian.plvs.ui.bamboo {
     public partial class BuildDetailsPanel : UserControl {
         private readonly Solution solution;
         private readonly BambooBuild build;
+
+        private BambooBuild buildWithDetails;
+        private bool unableToRetrieveDetails;
+
         private readonly TabPage myTab;
         private readonly Action<TabPage> buttonCloseClicked;
 
@@ -31,6 +38,9 @@ namespace Atlassian.plvs.ui.bamboo {
         private const int A_LOT = 10000000;
         private const string OPENFILE_ON_LINE_URL = "openfileonline:";
         private const string SHOW_FAILED_TESTS_ONLY = "BambooBuildShowFailedTestsOnly";
+
+        private const string RETRIEVING_DETAILS = "Retrieving...";
+        private const string OPENISSUE_URL_TYPE = "openissue:";
 
         private readonly StatusLabel status;
 
@@ -54,6 +64,23 @@ namespace Atlassian.plvs.ui.bamboo {
 
         private void init() {
             displaySummary();
+            runGetBuildDetailsThread();
+        }
+
+        private void runGetBuildDetailsThread() {
+            status.setInfo("Retrieving build details...");
+            Thread t = PlvsUtils.createThread(getBuildDetailsRunner);
+            t.Start();
+        }
+
+        private void getBuildDetailsRunner() {
+            try {
+                buildWithDetails = BambooServerFacade.Instance.getBuildByKey(build.Server, build.Key);
+            } catch(Exception e) {
+                status.setError("Failed to retrieve build details", e);
+                unableToRetrieveDetails = true;
+            }
+            this.safeInvoke(new MethodInvoker(displaySummary));
             runGetLogThread();
         }
 
@@ -258,6 +285,8 @@ namespace Atlassian.plvs.ui.bamboo {
         }
 
         private void displaySummary() {
+            summaryLoaded = false;
+
             StringBuilder sb = new StringBuilder();
 
             BuildNode bn = new BuildNode(build);
@@ -273,10 +302,45 @@ namespace Atlassian.plvs.ui.bamboo {
                         build.Duration, 
                         getServerHtml(), 
                         build.Result, 
-                        build.Result.GetColorValue()))
+                        build.Result.GetColorValue(),
+                        getArtifactsHtml(),
+                        getRelatedIssuesHtml()))
                 .Append("\n</body>\n</html>\n");
 
             webSummary.DocumentText = sb.ToString();
+        }
+
+        private string getRelatedIssuesHtml() {
+            if (buildWithDetails == null) return RETRIEVING_DETAILS;
+            if (unableToRetrieveDetails) return getUnableToRetrieve();
+            if (buildWithDetails.RelatedIssues == null || buildWithDetails.RelatedIssues.Count == 0) return "No related JIRA issues";
+            StringBuilder sb = new StringBuilder();
+            foreach (BambooBuild.RelatedIssue issue in buildWithDetails.RelatedIssues) {
+                ICollection<JiraServer> jiraServers = JiraServerModel.Instance.getAllEnabledServers();
+                string url = issue.Url;
+                foreach (JiraServer jiraServer in jiraServers) {
+                    if (issue.Url.StartsWith(jiraServer.Url)) {                        
+                        url = OPENISSUE_URL_TYPE + issue.Key + "@" + jiraServer.GUID;
+                        break;
+                    }
+                }
+                sb.Append("<a href=\"").Append(url).Append("\">").Append(issue.Key).Append("</a>, ");
+            }
+            return sb.ToString(0, sb.Length - 2);
+        }
+
+        private string getArtifactsHtml() {
+            if (buildWithDetails == null) return RETRIEVING_DETAILS;
+            if (buildWithDetails.Artifacts == null || buildWithDetails.Artifacts.Count == 0) return "No build artifacts";
+            StringBuilder sb = new StringBuilder();
+            foreach (BambooBuild.Artifact artifact in buildWithDetails.Artifacts) {
+                sb.Append("<a href=\"").Append(artifact.Url).Append("\">").Append(artifact.Name).Append("</a>, ");
+            }
+            return sb.ToString(0, sb.Length - 2);
+        }
+
+        private static string getUnableToRetrieve() {
+            return "<span style=\"color:" + BambooBuild.BuildResult.FAILED.GetColorValue() + ";\">Unable to retrieve</span>";
         }
 
         private object getServerHtml() {
@@ -325,11 +389,28 @@ namespace Atlassian.plvs.ui.bamboo {
 
             if (e.Url.Equals("about:blank")) return;
 
-            try {
-                Process.Start(e.Url.ToString());
-            } catch (Exception ex) {
-                Debug.WriteLine("webSummary_Navigating - exception: " + ex.Message);
+            if (e.Url.ToString().StartsWith(OPENISSUE_URL_TYPE)) {
+                openIssue(e.Url.ToString().Substring(OPENISSUE_URL_TYPE.Length));
+            } else {
+                viewUrlInTheBrowser(e.Url.ToString());
             }
+        }
+
+        private static void viewUrlInTheBrowser(string url) {
+            try {
+                Process.Start(url);
+            } catch (Exception ex) {
+                Debug.WriteLine("viewUrlInTheBrowser - exception: " + ex.Message);
+            }
+        }
+
+        private static void openIssue(string url) {
+            string[] strings = url.Split(new[] { '@' });
+            JiraServer jiraServer = JiraServerModel.Instance.getServer(new Guid(strings[1]));
+            if (jiraServer == null) return;
+            AtlassianPanel.Instance.Jira.findAndOpenIssue(strings[0], jiraServer, (s, m, e) => {
+                                                                                      if (!s) viewUrlInTheBrowser(jiraServer.Url + "/browse/" + strings[0]);
+                                                                                  });
         }
 
         private void webSummary_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) {
