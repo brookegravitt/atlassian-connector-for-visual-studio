@@ -23,7 +23,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
         private const string LATEST_BUILDS_FOR_FAVOURITE_PLANS_ACTION = "/rest/api/latest/build?favourite&expand=builds.build";
 
         private const string LATEST_BUILDS_FOR_PLANS_ACTION = "/rest/api/latest/build/{0}?expand=builds[0].build";
-        private const string BUILD_BY_KEY_ACTION = "/rest/api/latest/build/{0}?expand=builds[0].build";
+        private const string BUILD_BY_KEY_ACTION = "/rest/api/latest/build/{0}?expand=artifacts.artifact,jiraIssues.jiraIssue";
         private const string LAST_N_BUILDS_ROM_PLAN = "/rest/api/latest/build/{0}?expand=builds[0:{1}].build";
         private const string ALL_TESTS = "/rest/api/latest/build/{0}?expand=testResults.all";
 
@@ -294,6 +294,9 @@ namespace Atlassian.plvs.api.bamboo.rest {
                     int successfulTestCount = 0;
                     int failedTestCount = 0;
                     string buildReason = null;
+                    List<BambooBuild.Artifact> artifacts = new List<BambooBuild.Artifact>();
+                    List<BambooBuild.RelatedIssue> relatedIssues = new List<BambooBuild.RelatedIssue>();
+
                     do {
                         switch (it.Current.Name) {
                             case "buildRelativeTime":
@@ -311,13 +314,34 @@ namespace Atlassian.plvs.api.bamboo.rest {
                             case "buildReason":
                                 buildReason = it.Current.Value;
                                 break;
+                            case "artifacts":
+                                if (it.Current.HasChildren) {
+                                    XPathNavigator chnav = it.Clone().Current;
+                                    chnav.MoveToFirstChild();
+                                    do {
+                                        BambooBuild.Artifact artifact = getArtifact(chnav);
+                                        if (artifact != null) artifacts.Add(artifact);
+                                    } while (chnav.MoveToNext());
+                                }
+                                break;
+                            case "jiraIssues":
+                                if (it.Current.HasChildren) {
+                                    XPathNavigator chnav = it.Clone().Current;
+                                    chnav.MoveToFirstChild();
+                                    do {
+                                        BambooBuild.RelatedIssue issue = getRelatedIssue(chnav);
+                                        if (issue != null) relatedIssues.Add(issue);
+                                    } while (chnav.MoveToNext());
+                                }
+                                break;
                         }
                     } while (it.Current.MoveToNext());
                     if (key == null) continue;
+
                     BambooBuild.PlanState planState = getPlanState ? getPlanStateForBuild(key) : BambooBuild.PlanState.IDLE;
                     BambooBuild build = new BambooBuild(server,
                         key, BambooBuild.stringToResult(state), number, buildRelativeTime,
-                        buildDurationDescription, successfulTestCount, failedTestCount, buildReason, planState);
+                        buildDurationDescription, successfulTestCount, failedTestCount, buildReason, planState, artifacts, relatedIssues);
                     builds.Add(build);
                 }
 
@@ -328,6 +352,45 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
                 return builds;
             }
+        }
+
+        private static BambooBuild.Artifact getArtifact(XPathNavigator artifact) {
+            if (!artifact.HasChildren) return null;
+            XPathNavigator art = artifact.Clone();
+            art.MoveToFirstChild();
+            string name = null;
+            string link = null;
+            do {
+                switch (art.Name) {
+                    case "name":
+                        name = art.Value;
+                        break;
+                    case "link":
+                        link = XPathUtils.getAttributeSafely(art, "href", null);
+                        break;
+                }
+            } while (art.MoveToNext());
+            if (name == null | link == null) return null;
+            BambooBuild.Artifact a = new BambooBuild.Artifact(name, link);
+            return a;
+        }
+
+        private static BambooBuild.RelatedIssue getRelatedIssue(XPathNavigator issue) {
+            string key = XPathUtils.getAttributeSafely(issue, "key", null);
+            if (key == null || !issue.HasChildren) return null;
+            XPathNavigator art = issue.Clone();
+            art.MoveToFirstChild();
+            string url = null;
+            do {
+                switch (art.Name) {
+                    case "url":
+                        url = XPathUtils.getAttributeSafely(art, "href", null);
+                        break;
+                }
+            } while (art.MoveToNext());
+            if (url == null) return null;
+            BambooBuild.RelatedIssue i = new BambooBuild.RelatedIssue(key, url);
+            return i;
         }
 
         private BambooBuild.PlanState getPlanStateForBuild(string buildKey) {
