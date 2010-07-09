@@ -36,8 +36,10 @@
             this.issueTabs.Location = new System.Drawing.Point(0, 0);
             this.issueTabs.Name = "issueTabs";
             this.issueTabs.SelectedIndex = 0;
+            this.issueTabs.ShowToolTips = true;
             this.issueTabs.Size = new System.Drawing.Size(866, 320);
             this.issueTabs.TabIndex = 0;
+            this.issueTabs.MouseClick += new System.Windows.Forms.MouseEventHandler(this.issueTabs_MouseClick);
             // 
             // IssueDetailsWindow
             // 
