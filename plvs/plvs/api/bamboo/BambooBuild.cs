@@ -15,6 +15,13 @@ namespace Atlassian.plvs.api.bamboo {
             UNKNOWN
         }
 
+        public enum PlanState {
+            UNKNOWN,
+            IDLE,
+            IN_QUEUE,
+            BUILDING
+        }
+
         public static BuildResult stringToResult(string str) {
             if (BuildResult.SUCCESSFUL.GetStringValue().Equals(str)) {
                 return BuildResult.SUCCESSFUL;
@@ -27,7 +34,7 @@ namespace Atlassian.plvs.api.bamboo {
 
         public BambooBuild(
             BambooServer server, string key, BuildResult result, int number, string relativeTime, 
-            string duration, int successfulTests, int failedTests, string reason) {
+            string duration, int successfulTests, int failedTests, string reason, PlanState state) {
             Server = server;
             Key = key;
             Result = result;
@@ -37,6 +44,7 @@ namespace Atlassian.plvs.api.bamboo {
             SuccessfulTests = successfulTests;
             FailedTests = failedTests;
             Reason = reason;
+            State = state;
         }
 
         public BambooServer Server { get; private set; }
@@ -48,5 +56,6 @@ namespace Atlassian.plvs.api.bamboo {
         public int SuccessfulTests { get; private set; }
         public int FailedTests { get; private set; }
         public string Reason { get; private set; }
+        public PlanState State { get; private set; }
     }
 }

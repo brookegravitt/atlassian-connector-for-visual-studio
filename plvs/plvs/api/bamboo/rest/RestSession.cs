@@ -29,6 +29,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
         private const string ALL_PLANS_ACTION = "/rest/api/latest/plan?expand=plans.plan";
         private const string FAVOURITE_PLANS_ACTION = "/rest/api/latest/plan?favourite&expand=plans.plan";
+        private const string PLAN_DETAILS = "/rest/api/latest/plan/{0}";
 
         private const string RUN_BUILD_ACTION_NEW_AND_IT_DOES_NOT_WORK = "/rest/api/latest/queue";
         private const string RUN_BUILD_ACTION_OLD = "/api/rest/executeBuild.action";
@@ -168,7 +169,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
         public ICollection<BambooBuild> getLatestBuildsForFavouritePlans() {
             string endpoint = server.Url + LATEST_BUILDS_FOR_FAVOURITE_PLANS_ACTION;
-            return getBuildsFromUrl(endpoint, true, BUILDS_XML_SUBTREE);
+            return getBuildsFromUrl(endpoint, true, true, BUILDS_XML_SUBTREE);
         }
     
         public ICollection<BambooBuild> getLatestBuildsForPlanKeys(ICollection<string> keys) {
@@ -176,7 +177,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
             foreach (string key in keys) {
                 string buildUrl = string.Format(LATEST_BUILDS_FOR_PLANS_ACTION, key);
                 string endpoint = server.Url + buildUrl;
-                ICollection<BambooBuild> builds = getBuildsFromUrl(endpoint, false, BUILDS_XML_SUBTREE);
+                ICollection<BambooBuild> builds = getBuildsFromUrl(endpoint, true, false, BUILDS_XML_SUBTREE);
                 if (builds != null) {
                     result.AddRange(builds);
                 }
@@ -230,7 +231,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
             List<BambooBuild> result = new List<BambooBuild>();
             string buildUrl = string.Format(BUILD_BY_KEY_ACTION, buildKey);
             string endpoint = server.Url + buildUrl;
-            ICollection<BambooBuild> builds = getBuildsFromUrl(endpoint, false, "");
+            ICollection<BambooBuild> builds = getBuildsFromUrl(endpoint, false, false, "");
             if (builds != null) {
                 result.AddRange(builds);
             }
@@ -242,14 +243,14 @@ namespace Atlassian.plvs.api.bamboo.rest {
                 throw new ArgumentException("\"howMany\" parameter must be greater than 0");
             }
             string endpoint = server.Url + string.Format(LAST_N_BUILDS_ROM_PLAN, planKey, howMany - 1);
-            return getBuildsFromUrl(endpoint, false, BUILDS_XML_SUBTREE);
+            return getBuildsFromUrl(endpoint, false, false, BUILDS_XML_SUBTREE);
         }
 
-        private ICollection<BambooBuild> getBuildsFromUrl(string endpoint, bool withRecursion, string prefix) {
-            return getBuildsFromUrlWithStartIndex(endpoint, 0, withRecursion, prefix);
+        private ICollection<BambooBuild> getBuildsFromUrl(string endpoint, bool getPlanState, bool withRecursion, string prefix) {
+            return getBuildsFromUrlWithStartIndex(endpoint, 0, getPlanState, withRecursion, prefix);
         }
 
-        private ICollection<BambooBuild> getBuildsFromUrlWithStartIndex(string endpoint, int start, bool withRecursion, string prefix) {
+        private ICollection<BambooBuild> getBuildsFromUrlWithStartIndex(string endpoint, int start, bool getPlanState, bool withRecursion, string prefix) {
 
             using (Stream stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint) + (withRecursion ? "&start-index=" + start : ""), true)) {
                 XPathDocument doc = XPathUtils.getXmlDocument(stream);
@@ -313,19 +314,59 @@ namespace Atlassian.plvs.api.bamboo.rest {
                         }
                     } while (it.Current.MoveToNext());
                     if (key == null) continue;
+                    BambooBuild.PlanState planState = getPlanState ? getPlanStateForBuild(key) : BambooBuild.PlanState.IDLE;
                     BambooBuild build = new BambooBuild(server,
                         key, BambooBuild.stringToResult(state), number, buildRelativeTime,
-                        buildDurationDescription, successfulTestCount, failedTestCount, buildReason);
+                        buildDurationDescription, successfulTestCount, failedTestCount, buildReason, planState);
                     builds.Add(build);
                 }
 
                 // Yes, recursion here. I hope it works as I think it should. If not, we are all doomed
                 if (withRecursion && totalBuildsCount > maxResult + startIndex) {
-                    builds.AddRange(getBuildsFromUrlWithStartIndex(endpoint, startIndex + maxResult, true, BUILDS_XML_SUBTREE));
+                    builds.AddRange(getBuildsFromUrlWithStartIndex(endpoint, startIndex + maxResult, getPlanState, true, BUILDS_XML_SUBTREE));
                 }
 
                 return builds;
             }
+        }
+
+        private BambooBuild.PlanState getPlanStateForBuild(string buildKey) {
+            BambooBuild.PlanState state = BambooBuild.PlanState.UNKNOWN;
+
+            string endpoint = server.Url + string.Format(PLAN_DETAILS, BambooBuildUtils.getPlanKey(buildKey));
+            using (Stream stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint), true)) {
+                XPathDocument doc = XPathUtils.getXmlDocument(stream);
+
+                string code = getRestErrorStatusCode(doc);
+                if (code != null) {
+                    throw new Exception(code);
+                }
+
+                XPathNavigator nav = doc.CreateNavigator();
+
+                XPathExpression expr = nav.Compile("/plan/isInBuildQueue");
+                XPathNodeIterator it = nav.Select(expr);
+                string inQueue = "false";
+                string isBuilding = "false";
+                if (it.Count > 0) {
+                    it.MoveNext();
+                    inQueue = it.Current.Value;
+                }
+                expr = nav.Compile("/plan/isBuilding");
+                it = nav.Select(expr);
+                if (it.Count > 0) {
+                    it.MoveNext();
+                    isBuilding = it.Current.Value;
+                }
+                if (inQueue.Equals("true")) {
+                    state = BambooBuild.PlanState.IN_QUEUE;
+                } else if (isBuilding.Equals("true")) {
+                    state = BambooBuild.PlanState.BUILDING;
+                } else {
+                    state = BambooBuild.PlanState.IDLE;
+                }
+            }
+            return state;
         }
 
         public void runBuild(string planKey) {

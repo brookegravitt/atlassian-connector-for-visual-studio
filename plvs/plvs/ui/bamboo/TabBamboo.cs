@@ -373,6 +373,8 @@ namespace Atlassian.plvs.ui.bamboo {
                 Facade.runBuild(b.Server, key);
                 status.setInfo("Added build " + key + " to the build queue");
                 UsageCollector.Instance.bumpBambooBuildsOpen();
+                Thread t = PlvsUtils.createThread(() => pollRunner(true));
+                t.Start();
             } catch (Exception ex) {
                 status.setError("Failed to add build " + key + " to the build queue", ex);
             }
