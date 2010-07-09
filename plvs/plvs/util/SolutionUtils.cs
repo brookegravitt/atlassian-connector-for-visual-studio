@@ -100,8 +100,14 @@ namespace Atlassian.plvs.util {
                 Debug.WriteLine("************ SolutionUtils.matchProjectItems() - empty project item list, have you forgotten to call refillAllSolutionProjectItems()?");
             }
             foreach (ProjectItem item in allProjectItems) {
-                if (file.EndsWith(item.Name)) {
-                    files.Add(item);
+                if (file.Contains("\\")) {
+                    if (file.EndsWith("\\" + item.Name)) {
+                        files.Add(item);
+                    }
+                } else {
+                    if (file.Equals(item.Name)) {
+                        files.Add(item);
+                    }
                 }
             }
         }

@@ -416,7 +416,9 @@
       <DependentUpon>BuildDetailsWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="ui\bamboo\BuildNode.cs" />
-    <Compile Include="ui\bamboo\NodeBuildInProgressIcon.cs" />
+    <Compile Include="ui\bamboo\NodeBuildInProgressIcon.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ui\bamboo\TabBamboo.cs">
       <SubType>UserControl</SubType>
     </Compile>
