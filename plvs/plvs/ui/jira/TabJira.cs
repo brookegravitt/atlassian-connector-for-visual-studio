@@ -81,6 +81,7 @@ namespace Atlassian.plvs.ui.jira {
             statusStrip.Items.Clear();
             initializeShowHideFiltersButton(store.loadParameter(FILTER_PANEL_VISIBLE, 1) != 0);
             initializeActiveIssueToolStrip();
+            resizeStatusBar();
         }
 
         private void initializeShowHideFiltersButton(bool visible) {
@@ -1075,7 +1076,7 @@ namespace Atlassian.plvs.ui.jira {
             jiraStatus.Size = new Size(
                 statusStrip.Width 
                 - (getMoreIssues.Visible ? getMoreIssues.Width : 0) 
-                - ActiveIssueManager.ToolbarWidth 
+                - (ActiveIssueManager != null ? ActiveIssueManager.ToolbarWidth : 0)
                 - buttonShowHideFilters.Width - new ToolStripSeparator().Width, 
                 height);
         }

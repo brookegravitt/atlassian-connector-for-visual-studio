@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -585,6 +585,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\BadCertificateDialog.resx">
       <DependentUpon>BadCertificateDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\bamboo\LabelBuild.resx">
       <DependentUpon>LabelBuild.cs</DependentUpon>
@@ -592,6 +593,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\bamboo\NewBuildComment.resx">
       <DependentUpon>NewBuildComment.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\bamboo\SearchBuild.resx">
       <DependentUpon>SearchBuild.cs</DependentUpon>
@@ -667,6 +669,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\UnhandledExceptionDialog.resx">
       <DependentUpon>UnhandledExceptionDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="explorer\AddUser.resx">
       <DependentUpon>AddUser.cs</DependentUpon>
@@ -690,12 +693,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ui\bamboo\BambooBuildHistoryTable.resx">
       <DependentUpon>BambooBuildHistoryTable.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ui\bamboo\BuildDetailsPanel.resx">
       <DependentUpon>BuildDetailsPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ui\bamboo\BuildDetailsWindow.resx">
       <DependentUpon>BuildDetailsWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ui\bamboo\TabBamboo.resx">
       <DependentUpon>TabBamboo.cs</DependentUpon>
@@ -703,6 +709,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ui\crucible\TabCrucible.resx">
       <DependentUpon>TabCrucible.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ui\jira\JiraTextAreaWithWikiPreview.resx">
       <DependentUpon>JiraTextAreaWithWikiPreview.cs</DependentUpon>
@@ -730,6 +737,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="util\FileListPicker.resx">
       <DependentUpon>FileListPicker.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="windows\AtlassianPanel.resx">
       <DependentUpon>AtlassianPanel.cs</DependentUpon>
