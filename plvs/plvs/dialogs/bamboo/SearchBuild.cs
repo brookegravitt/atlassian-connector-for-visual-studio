@@ -71,7 +71,6 @@ namespace Atlassian.plvs.dialogs.bamboo {
                     errors.Add(e);
                 }
             }
-            DialogResult = DialogResult.OK;
             this.safeInvoke(new MethodInvoker(delegate {
                                                   if (foundBuilds.Count > 0) {
                                                       status.setInfo("");
@@ -85,6 +84,7 @@ namespace Atlassian.plvs.dialogs.bamboo {
                                                       PlvsUtils.showError("Build key " + buildKey + " not found", null);
                                                       status.setInfo("Build key " + buildKey + " not found");
                                                   }
+                                                  DialogResult = DialogResult.OK;
                                                   Close();
                                               }));
         }
