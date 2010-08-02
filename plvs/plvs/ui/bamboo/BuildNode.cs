@@ -45,7 +45,8 @@ namespace Atlassian.plvs.ui.bamboo {
 
         public string Reason {
             get {
-                return Build.Reason.Length > PROBABLE_GARBAGE_REASON_LENGTH ? "[garbage received?]" : stripHtml(Build.Reason);
+                string txt = Build.Reason.Length > PROBABLE_GARBAGE_REASON_LENGTH ? "[garbage received?]" : stripHtml(Build.Reason);
+                return txt.Replace("&", "&&");
             }
         }
 

@@ -19,7 +19,7 @@ namespace Atlassian.plvs.ui.jira.issues.issuegroupnodes {
         }
 
         public override string getGroupName() {
-            return entity.Name;
+            return entity.Name.Replace("&", "&&");
         }
 
         #endregion

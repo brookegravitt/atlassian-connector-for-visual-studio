@@ -22,7 +22,7 @@ namespace Atlassian.plvs.ui.jira.issues {
         }
 
         public override string Name {
-            get { return Issue.Key + " - " + Issue.Summary; }
+            get { return Issue.Key + " - " + Issue.Summary.Replace("&", "&&"); }
         }
 
         public Image PriorityIcon {
