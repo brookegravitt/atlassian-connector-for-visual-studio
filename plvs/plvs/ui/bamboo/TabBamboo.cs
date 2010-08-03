@@ -118,7 +118,7 @@ namespace Atlassian.plvs.ui.bamboo {
 
                 splitter = new SplitContainer();
                 
-                buildTree = new BambooBuildTree { Model = new FlatBuildTreeModel() };
+                buildTree = new BambooBuildTree(splitter) { Model = new FlatBuildTreeModel() };
                 buildTree.Model = new FlatBuildTreeModel();
                 splitter.Panel1.Controls.Add(buildTree);
 

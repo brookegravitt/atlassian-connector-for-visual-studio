@@ -157,7 +157,7 @@ namespace Atlassian.plvs.ui.jira {
             colStatus.WidthChanged += columnWidthChanged;
         }
 
-        void columnWidthChanged(object sender, EventArgs e) {
+        private void columnWidthChanged(object sender, EventArgs e) {
             saveColumnWidths();
             setSummaryColumnWidth();
         }
