@@ -3,9 +3,11 @@ using System.Drawing;
 using System.Windows.Forms;
 using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
+using Atlassian.plvs.store;
 
 namespace Atlassian.plvs.ui.bamboo {
     public sealed class BambooBuildTree : TreeViewAdv {
+        private readonly Control parent;
 
         private readonly TreeColumn colStatusAndKey = new TreeColumn();
         private readonly TreeColumn colTests = new TreeColumn();
@@ -22,16 +24,30 @@ namespace Atlassian.plvs.ui.bamboo {
         private readonly NodeTextBox controlDuration = new NodeTextBox();
         private readonly NodeTextBox controlServer = new NodeTextBox();
 
-        private const int STATUS_AND_KEY_WIDTH = 200;
-        private const int TESTS_WIDTH = 200;
-        private const int REASON_WIDTH = 300;
-        private const int COMPLETED_WIDTH = 150;
-        private const int DURATION_WIDTH = 150;
-        private const int SERVER_WIDTH = 200;
+        private const string BAMBOO_STATUS_COLUMN_WIDTH = "BambooStatusColumnWidth";
+        private const string BAMBOO_TESTS_COLUMN_WIDTH = "BambooTestsColumnWidth";
+        private const string BAMBOO_COMPLETED_COLUMN_WIDTH = "BambooCompletedColumnWidth";
+        private const string BAMBOO_DURATION_COLUMN_WIDTH = "BambooDurationColumnWidth";
+        private const string BAMBOO_SERVER_COLUMN_WIDTH = "BambooServerColumnWidth";
+
+        private int statusWidth;
+        private int testsWidth;
+        private int completedWidth;
+        private int durationWidth;
+        private int serverWidth;
+
+        private const int STATUS_AND_KEY_WIDTH_DEFAULT = 200;
+        private const int TESTS_WIDTH_DEFAULT = 200;
+        private const int COMPLETED_WIDTH_DEFAULT = 150;
+        private const int DURATION_WIDTH_DEFAULT = 150;
+        private const int SERVER_WIDTH_DEFAULT = 200;
+
+        private const int MIN_COLUMN_WIDTH = 50;
 
         private const int MARGIN = 24;
 
-        public BambooBuildTree() {
+        public BambooBuildTree(SplitContainer splitter) {
+            parent = splitter.Panel1;
 
             Dock = DockStyle.Fill;
             SelectionMode = TreeSelectionMode.Single;
@@ -113,9 +129,56 @@ namespace Atlassian.plvs.ui.bamboo {
 
             colServer.TextAlign = HorizontalAlignment.Right;
 
-            Resize += bambooBuildTreeResize;
+            parent.Resize += bambooBuildTreeResize;
+            splitter.Resize += bambooBuildTreeResize;
+            splitter.SplitterMoved += bambooBuildTreeResize;
 
+
+            colStatusAndKey.MinColumnWidth = MIN_COLUMN_WIDTH;
+            colTests.MinColumnWidth = MIN_COLUMN_WIDTH;
+            colCompleted.MinColumnWidth = MIN_COLUMN_WIDTH;
+            colDuration.MinColumnWidth = MIN_COLUMN_WIDTH;
+            colServer.MinColumnWidth = MIN_COLUMN_WIDTH;
+
+            loadColumnWidths();
             resizeColumns();
+
+            colStatusAndKey.WidthChanged += columnWidthChanged;
+            colTests.WidthChanged += columnWidthChanged;
+            colCompleted.WidthChanged += columnWidthChanged;
+            colDuration.WidthChanged += columnWidthChanged;
+            colServer.WidthChanged += columnWidthChanged;
+        }
+
+        private void loadColumnWidths() {
+            ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
+
+            statusWidth = store.loadParameter(BAMBOO_STATUS_COLUMN_WIDTH, STATUS_AND_KEY_WIDTH_DEFAULT);
+            testsWidth = store.loadParameter(BAMBOO_TESTS_COLUMN_WIDTH, TESTS_WIDTH_DEFAULT);
+            completedWidth = store.loadParameter(BAMBOO_COMPLETED_COLUMN_WIDTH, COMPLETED_WIDTH_DEFAULT);
+            durationWidth = store.loadParameter(BAMBOO_DURATION_COLUMN_WIDTH, DURATION_WIDTH_DEFAULT);
+            serverWidth = store.loadParameter(BAMBOO_SERVER_COLUMN_WIDTH, SERVER_WIDTH_DEFAULT);
+        }
+
+        private void saveColumnWidths() {
+            statusWidth = colStatusAndKey.Width;
+            testsWidth = colTests.Width;
+            completedWidth = colCompleted.Width;
+            durationWidth = colDuration.Width;
+            serverWidth = colServer.Width;
+
+            ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
+
+            store.storeParameter(BAMBOO_STATUS_COLUMN_WIDTH, statusWidth);
+            store.storeParameter(BAMBOO_TESTS_COLUMN_WIDTH, testsWidth);
+            store.storeParameter(BAMBOO_COMPLETED_COLUMN_WIDTH, completedWidth);
+            store.storeParameter(BAMBOO_DURATION_COLUMN_WIDTH, durationWidth);
+            store.storeParameter(BAMBOO_SERVER_COLUMN_WIDTH, serverWidth);
+        }
+
+        private void columnWidthChanged(object sender, EventArgs e) {
+            saveColumnWidths();
+            resizeReasonColumn();
         }
 
         private void bambooBuildTreeResize(object sender, EventArgs e) {
@@ -123,13 +186,21 @@ namespace Atlassian.plvs.ui.bamboo {
         }
 
         private void resizeColumns() {
-            const int total = STATUS_AND_KEY_WIDTH + TESTS_WIDTH + COMPLETED_WIDTH + DURATION_WIDTH + SERVER_WIDTH + MARGIN;
-            colStatusAndKey.Width = STATUS_AND_KEY_WIDTH;
-            colTests.Width = TESTS_WIDTH;
-            colReason.Width = total < Width ? Width - total : REASON_WIDTH;
-            colCompleted.Width = COMPLETED_WIDTH;
-            colDuration.Width = DURATION_WIDTH;
-            colServer.Width = SERVER_WIDTH;
+            colStatusAndKey.Width = statusWidth;
+            colTests.Width = testsWidth;
+            colCompleted.Width = completedWidth;
+            colDuration.Width = durationWidth;
+            colServer.Width = serverWidth;
+
+            resizeReasonColumn();
+        }
+
+        private void resizeReasonColumn() {
+            int total = statusWidth + testsWidth + completedWidth + durationWidth + serverWidth + MARGIN;
+            int reasonWidth = total < parent.Width ? parent.Width - total : MIN_COLUMN_WIDTH;
+            colReason.Width = reasonWidth;
+            colReason.MinColumnWidth = reasonWidth;
+            colReason.MaxColumnWidth = reasonWidth;
         }
     }
 }
