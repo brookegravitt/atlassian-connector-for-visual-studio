@@ -220,7 +220,7 @@ namespace Atlassian.plvs.ui.jira {
                 issueTreeContainer.ContentPanel.Controls.Remove(issuesTree);
             }
 
-            issuesTree = new JiraIssueTree(jiraSplitter.Panel2, status, searchingModel, filtersTree.ItemHeight, filtersTree.Font);
+            issuesTree = new JiraIssueTree(jiraSplitter, status, searchingModel, filtersTree.ItemHeight, filtersTree.Font);
 
             ToolStripMenuItem copyToClipboardItem = new ToolStripMenuItem("Copy to Clipboard", Resources.ico_copytoclipboard)
                                                     {
