@@ -18,6 +18,7 @@ namespace gadget {
 
         private readonly Button flyoutButton;
         private readonly Label settingsUpdateLabel;
+        private readonly Label tickerLabel;
 
         private int settingsCommitCount;
 
@@ -45,6 +46,13 @@ namespace gadget {
             flyoutButton.Click += flyoutButton_Click;
 
             settingsUpdateLabel = new Label(Document.GetElementById("settingsText"));
+            tickerLabel = new Label(Document.GetElementById("ticker"));
+
+            Window.SetInterval(OnTimer, 2000);
+        }
+
+        private void OnTimer() {
+            tickerLabel.Text = new DateTime().Format("T");    
         }
 
         private void flyoutButton_Click(object sender, EventArgs e) {
