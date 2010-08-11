@@ -22,7 +22,7 @@ namespace gadget {
         private FlyoutScriptlet() {
             DOMElement body = Document.Body;
             body.Style.Width = "400";
-            body.Style.Height = "400";
+            body.Style.Height = "600";
             body.Style.BackgroundColor = "#eeeeee";
 
             buttonClose = new Button(Document.GetElementById("buttonClose"));
@@ -33,8 +33,13 @@ namespace gadget {
             Gadget.Flyout.Show = false;
         }
 
-        public static void setText(string text) {
+        public static void setIssueDetailsText(string text) {
             DOMElement element = Gadget.Flyout.Document.GetElementById("issueDetails");
+            element.InnerHTML = text;
+        }
+
+        public static void setIssueKeyAndType(string text) {
+            DOMElement element = Gadget.Flyout.Document.GetElementById("issueKeyLink");
             element.InnerHTML = text;
         }
 
