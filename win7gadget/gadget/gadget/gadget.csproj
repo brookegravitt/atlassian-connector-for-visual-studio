@@ -57,6 +57,7 @@
     <Content Include="Content\Gadget.xml" />
     <Content Include="Content\Gadget.png" />
     <Content Include="Content\GadgetIcon.png" />
+    <Content Include="Content\JiraLogo.png" />
     <Content Include="Content\logo-atlassian.png" />
     <Content Include="Content\logo-jira.gif" />
     <Content Include="Content\Logo.png" />

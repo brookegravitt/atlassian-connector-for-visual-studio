@@ -5,15 +5,16 @@
   <link rel="stylesheet" href="Core.css" type="text/css" />
   <link rel="stylesheet" href="Gadget.css" type="text/css" />
 </head>
-<body id="gadget" class="docked" unselectable="unselectable" scroll="yes">
+<body id="gadget" class="docked" unselectable="unselectable" scroll="yes" style="margin:1em;">
   <script type="text/javascript" src="sscorlib.js"></script>
   <script type="text/javascript" src="ssfx.Core.js"></script>
   <script type="text/javascript" src="ssfx.UI.Forms.js"></script>
   <script type="text/javascript" src="ssgadgets.js"></script>
   <script type="text/javascript" src="gadget.js"></script>
   
-  <div style="position:absolute;top:1em;height:2em;right:1em;background-color:Red;"><input type="button" id="pollNowButton" value="Poll Now" /></div>
-  <div style="position:absolute;top:4em;height:100%;padding-bottom:4em;margin-left:1em;margin-right:1em;background-color:Green;" id="jiraResponse"></div>
+  <div style="position:absolute;top:1em;left:1em;"><img src="JiraLogo.png" /></div>
+  <div style="position:absolute;top:1em;height:2em;right:1em;"><input type="button" id="pollNowButton" value="Poll Now" /></div>
+  <div style="position:absolute;top:7em;left:1em;right:1em;bottom:3em;" id="jiraResponse"></div>
   <div id="debug" style="position:absolute;bottom:1em;left:0;width:100%;text-align:center;"></div>
 </body>
 </html>

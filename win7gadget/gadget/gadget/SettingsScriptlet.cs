@@ -21,7 +21,7 @@ namespace gadget {
             DOMElement body = Document.Body;
             body.Style.Width = "300";
             body.Style.Height = "300";
-            body.Style.BackgroundColor = "#0000ff";
+//            body.Style.BackgroundColor = "#0000ff";
         }
 
         public static void Main(Dictionary arguments) {

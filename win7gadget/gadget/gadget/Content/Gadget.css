@@ -6,32 +6,56 @@
 
 .docked 
 {
-	background-color : Yellow;
+	background-color:#eeeeee;
 }
 
 .undocked 
 {
-	 background-color :Yellow;
+	 background-color:#eeeeee;
 }
 
 #jiraResponse 
 {
-	background-color: Yellow;
-	overflow:auto;
+	background-color: #eeeeee;
 	text-align:left;
+	padding-right:30px;
+	border:3px;
+	border-style:solid;
+	border-color:#cccccc;
+	
+	scrollbar-base-color: White; 
+	scrollbar-arrow-color: #eeeeee; 
+	scrollbar-3dlight-color: #bbbbbb; 
+	scrollbar-darkshadow-color: #bbbbbb; 
+	scrollbar-face-color: #cccccc; 
+	scrollbar-highlight-color: #bbbbbb; 
+	scrollbar-shadow-color: #bbbbbb; 
+	scrollbar-track-color: #eeeeee; 
+	overflow-x: hidden; 
+	overflow-y: auto;
+}
+
+.filler 
+{
+	width:30px;
+	height:10px;
+	display:none;
+	background-color:Red;
 }
 
 .oddRow 
 {
 	background-color:White;
-	width:70%;
+	width:100%;
 	cursor:pointer;
+	padding:0.5em;
 }
 
 .evenRow 
 {
-	background-color:#cccccc;
-	width:70%;
+	background-color:#eeeeee;
+	width:100%;
 	cursor:pointer;
+	padding:0.5em;
 }
 

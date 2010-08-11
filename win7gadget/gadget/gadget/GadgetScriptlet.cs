@@ -54,8 +54,6 @@ namespace gadget {
 //            tickerLabel = new Label(Document.GetElementById("ticker"));
 
             jiraResponse = Document.GetElementById("jiraResponse");
-            jiraResponse.Style.Width = Gadget.Docked ? "180px" : "380px";
-            jiraResponse.Style.Height = "280px";
 
 //            Window.SetInterval(OnTimer, 2000);
         }
@@ -131,22 +129,21 @@ namespace gadget {
             if (Gadget.Docked) {
                 Element.RemoveCSSClass(body, "undocked");
                 Element.AddCSSClass(body, "docked");
-                body.Style.Width = "200px";
+                body.Style.Width = "250px";
                 body.Style.Height = "400px";
             } else {
                 Element.AddCSSClass(body, "undocked");
                 Element.RemoveCSSClass(body, "docked");
-                body.Style.Width = "400px";
+                body.Style.Width = "500px";
                 body.Style.Height = "400px";
             }
-            if (jiraResponse != null) jiraResponse.Style.Width = Gadget.Docked ? "180px" : "380px";
         }
 
         private const string UpdatedRecently =
             "https://studio.atlassian.com/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?jqlQuery=project+%3D+PL+AND+updated%3E%3D-1w+ORDER+BY+updated+DESC&tempMax=1000";
         
         private void pollJira() {
-            jiraResponse.InnerText = "starting...";
+            labelDebug.Text = "Polling JIRA server...";
             pollNowButton.DOMElement.Disabled = true;
             HTTPRequest req = HTTPRequest.CreateRequest(UpdatedRecently, HTTPVerb.GET);
             req.Invoke(RequestCompleted);
@@ -156,8 +153,9 @@ namespace gadget {
             HTTPStatusCode statusCode = request.Response.StatusCode;
             pollNowButton.DOMElement.Disabled = false;
             if (statusCode != HTTPStatusCode.OK) {
-                jiraResponse.InnerText = "Error. Status code is " + statusCode;
+                labelDebug.Text = "Error. Status code is " + statusCode;
             } else {
+                labelDebug.Text = "";
                 XMLDocument resp = request.Response.GetXML();
                 createIssueListFromResponseXml(resp);
                 jiraResponse.InnerHTML = createIssueListHtmlFromIssueList();
@@ -200,28 +198,28 @@ namespace gadget {
                 sb.Append(issue.Key);
                 sb.Append("</a> ");
                 sb.Append(issue.Summary);
-                sb.Append("</div>\r\n");
+                sb.Append("<div class=\"filler\">A</div></div>\r\n");
             }
             return sb.ToString();
         }
 
         private static string createIssueHtml(Issue issue) {
             StringBuilder sb = new StringBuilder();
-            sb.Append("<img align=absmiddle src=\"");
+            sb.Append("<div class=\"issueDetails\"><img align=absmiddle src=\"");
             sb.Append(issue.IssueTypeIconUrl);
             sb.Append("\"> ");
             sb.Append("<a href=\"");
             sb.Append(issue.Link);
-            sb.Append("\">");
+            sb.Append("\"><b>");
             sb.Append(issue.Key);
-            sb.Append("</a><br><br>");
+            sb.Append("</b></a><br><br>");
             sb.Append("<table class=\"issueTable\" ><tr><td valign=\"top\" class=\"issueTableHeader\">");
             sb.Append("Type</td><td valign=\"top\" class=\"issueTableContent\">");
             sb.Append(issue.IssueType);
             sb.Append("</td></tr><tr><td valign=\"top\" class=\"issueTableHeader\">");
             sb.Append("Summary</td><td valign=\"top\" class=\"issueTableContent\">");
             sb.Append(issue.Summary);
-            sb.Append("</td></tr></table>");
+            sb.Append("</td></tr></table></div>");
             return sb.ToString();
         }
     }

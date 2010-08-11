@@ -21,9 +21,9 @@ namespace gadget {
 
         private FlyoutScriptlet() {
             DOMElement body = Document.Body;
-            body.Style.Width = "300";
-            body.Style.Height = "300";
-            body.Style.BackgroundColor = "#ff0000";
+            body.Style.Width = "400";
+            body.Style.Height = "400";
+            body.Style.BackgroundColor = "#eeeeee";
 
             buttonClose = new Button(Document.GetElementById("buttonClose"));
             buttonClose.Click += buttonClose_Click;

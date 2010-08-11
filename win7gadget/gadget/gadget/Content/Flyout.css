@@ -21,3 +21,20 @@
 	text-align: left;
 	padding-right: 1em;
 }
+
+.issueDetails 
+{
+	position:absolute;
+	
+	border:3px;
+	border-style:solid;
+	border-color:#cccccc;
+
+	top:4em;
+	left:1em;
+	right:1em;
+	bottom:1em;
+	overflow:auto;
+	
+	padding:1em;
+}
