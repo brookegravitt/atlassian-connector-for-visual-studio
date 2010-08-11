@@ -13,19 +13,19 @@ namespace gadget {
 
     public class GadgetScriptlet {
 
-        private const string FLYOUT_SHOW = "Show Details";
-        private const string FLYOUT_HIDE = "Hide Details";
+//        private bool flyoutVisible;
 
-        private bool flyoutVisible;
-
-        private static Button flyoutButton;
         private readonly Button pollNowButton;
-        private readonly Label settingsUpdateLabel;
-        private readonly Label tickerLabel;
         private readonly DOMElement jiraResponse;
+        private static string flyoutText = "";
+        private static Label labelDebug;
 
-        private int settingsCommitCount;
-        private int issueCount;
+        private static bool doShowFlyoutAgain;
+
+//        private int settingsCommitCount;
+//        private int issueCount;
+
+        private static readonly ArrayList issues = new ArrayList();
 
         static GadgetScriptlet() {
             if (Document.Body.ID == "gadget") {
@@ -46,38 +46,43 @@ namespace gadget {
 
             UpdateDockedState();
 
-            flyoutButton = new Button(Document.GetElementById("flyoutButton"));
-            flyoutButton.DOMElement.InnerText = FLYOUT_SHOW;
-            flyoutButton.Click += flyoutButton_Click;
-
             pollNowButton = new Button(Document.GetElementById("pollNowButton"));
             pollNowButton.Click += pollNowButton_Click;
 
-            settingsUpdateLabel = new Label(Document.GetElementById("settingsText"));
-            tickerLabel = new Label(Document.GetElementById("ticker"));
+            labelDebug = new Label(Document.GetElementById("debug"));
+//            settingsUpdateLabel = new Label(Document.GetElementById("settingsText"));
+//            tickerLabel = new Label(Document.GetElementById("ticker"));
 
             jiraResponse = Document.GetElementById("jiraResponse");
             jiraResponse.Style.Width = Gadget.Docked ? "180px" : "380px";
             jiraResponse.Style.Height = "280px";
 
-            Window.SetInterval(OnTimer, 2000);
+//            Window.SetInterval(OnTimer, 2000);
         }
 
         private void pollNowButton_Click(object sender, EventArgs e) {
             pollJira();
         }
 
-        private void OnTimer() {
-            tickerLabel.Text = new DateTime().Format("T");    
-        }
+//        private void OnTimer() {
+//            tickerLabel.Text = new DateTime().Format("T");    
+//        }
 
-        private void flyoutButton_Click(object sender, EventArgs e) {
-            openFlyout(!flyoutVisible);
-        }
-
-        public static void openFlyout(bool open) {
-            flyoutButton.DOMElement.InnerText = open ? FLYOUT_HIDE : FLYOUT_SHOW;
-            Gadget.Flyout.Show = open;
+        public static void openFlyout(int issueId) {
+            labelDebug.Text = "openFlyout: " + issueId;
+            if (issueId >= 0) {
+                Issue issue = (Issue) issues[issueId];
+                flyoutText = createIssueHtml(issue);
+                doShowFlyoutAgain = true;
+            } else {
+                flyoutText = null;
+                doShowFlyoutAgain = false;
+            }
+            if (Gadget.Flyout.Show) {
+                Gadget.Flyout.Show = false;
+            } else {
+                Gadget.Flyout.Show = issueId >= 0;
+            }
         }
 
         public static void Main(Dictionary arguments) {
@@ -93,27 +98,31 @@ namespace gadget {
         }
 
         private void OnFlyoutHide() {
-            // TODO: Use Gadget.Flyout.Document to get to the HTML document within
-            //       the Flyout page
+//            flyoutVisible = false;
+            if (doShowFlyoutAgain) {
+                labelDebug.Text = "re-showing flyout";
+                Window.SetTimeout(reShowFlyout, 300);
+            }
+        }
 
-            flyoutVisible = false;
-            flyoutButton.DOMElement.InnerText = FLYOUT_SHOW;
+        private void reShowFlyout() {
+            Gadget.Flyout.Show = true;
         }
 
         private void OnFlyoutShow() {
-            flyoutVisible = true;
-            flyoutButton.DOMElement.InnerText = FLYOUT_HIDE;
+//            flyoutVisible = true;
 
-            // TODO: Use Gadget.Flyout.Document to get to the HTML document within
-            //       the Flyout page
+            labelDebug.Text = "setting flyout text";
+            FlyoutScriptlet.setText(flyoutText);
+            doShowFlyoutAgain = false;
         }
 
         private void SettingsClosed(GadgetSettingsEvent e) {
             if (e.CloseAction == GadgetSettingsCloseAction.Cancel) return;
 
-            ++settingsCommitCount;
+//            ++settingsCommitCount;
 
-            settingsUpdateLabel.Text = string.Format("Settings updated {0} times", settingsCommitCount);
+//            settingsUpdateLabel.Text = string.Format("Settings updated {0} times", settingsCommitCount);
         }
 
         private void UpdateDockedState() {
@@ -134,7 +143,7 @@ namespace gadget {
         }
 
         private const string UpdatedRecently =
-            "https://studio.atlassian.com/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?jqlQuery=project+%3D+PLVS+AND+updated%3E%3D-1w+ORDER+BY+updated+DESC&tempMax=1000";
+            "https://studio.atlassian.com/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?jqlQuery=project+%3D+PL+AND+updated%3E%3D-1w+ORDER+BY+updated+DESC&tempMax=1000";
         
         private void pollJira() {
             jiraResponse.InnerText = "starting...";
@@ -150,47 +159,69 @@ namespace gadget {
                 jiraResponse.InnerText = "Error. Status code is " + statusCode;
             } else {
                 XMLDocument resp = request.Response.GetXML();
-//                issueCount = getIssueCountFromXml(resp);
-                jiraResponse.InnerHTML = createHtmlFromResponseXml(resp);
-//                tickerLabel.Text = Document.GetElementById("issue0").InnerHTML;
-//                jiraResponse.Style.Width = "1000px";
-//                jiraResponse.Style.Height = "1000px";
+                createIssueListFromResponseXml(resp);
+                jiraResponse.InnerHTML = createIssueListHtmlFromIssueList();
             }
         }
 
-        private void clickedIssue() {
-            tickerLabel.Text = "issue clicked";
-            Gadget.Flyout.Show = true;
+        private static void createIssueListFromResponseXml(XMLDocument resp) {
+            XMLNodeList issuesXml = resp.SelectNodes("/rss/channel/item");
+            issues.Clear();
+            for (int i = 0; i < issuesXml.Length; ++i) {
+                XMLNode key = issuesXml[i].SelectSingleNode("key");
+                XMLNode link = issuesXml[i].SelectSingleNode("link");
+                XMLNode summary = issuesXml[i].SelectSingleNode("summary");
+                XMLNode type = issuesXml[i].SelectSingleNode("type");
+
+                Issue issue = new Issue(key.Text, link.Text, summary.Text, type.Text, type.Attributes.GetNamedItem("iconUrl").Text);
+
+                issues.Add(issue);
+            }
         }
 
-        private int getIssueCountFromXml(XMLDocument resp) {
-            return resp.SelectNodes("/rss/channel/item").Length;    
-        }
-
-        private string createHtmlFromResponseXml(XMLDocument resp) {
-            XMLNodeList issues = resp.SelectNodes("/rss/channel/item");
+        private static string createIssueListHtmlFromIssueList() {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < issues.Length; ++i) {
-                sb.Append("<div onclick=\"javascript:gadget.GadgetScriptlet.openFlyout(true)\" class=\"");
-                sb.Append(i%2 > 0 ? "oddRow" : "evenRow");
-                sb.Append("\" id=\"issue" );
+                Issue issue = (Issue) issues[i];
+
+                sb.Append("<div onclick=\"javascript:gadget.GadgetScriptlet.openFlyout(");
+                sb.Append(i);
+                sb.Append(")\" class=\"");
+                sb.Append(i % 2 > 0 ? "oddRow" : "evenRow");
+                sb.Append("\" id=\"issue");
                 sb.Append(i);
                 sb.Append("\">");
-                XMLNode key = issues[i].SelectSingleNode("key");
-                XMLNode link = issues[i].SelectSingleNode("link");
-                XMLNode summary = issues[i].SelectSingleNode("summary");
-                XMLNode type = issues[i].SelectSingleNode("type");
-                sb.Append("<img src=\"");
-                sb.Append(type.Attributes.GetNamedItem("iconUrl").Text);
+                sb.Append("<img align=absmiddle src=\"");
+                sb.Append(issue.IssueTypeIconUrl);
                 sb.Append("\">");
                 sb.Append("<a href=\"");
-                sb.Append(link.Text);
+                sb.Append(issue.Link);
                 sb.Append("\"> ");
-                sb.Append(key.Text);
-                sb.Append("</a>");
-                sb.Append(summary.Text);
+                sb.Append(issue.Key);
+                sb.Append("</a> ");
+                sb.Append(issue.Summary);
                 sb.Append("</div>\r\n");
             }
+            return sb.ToString();
+        }
+
+        private static string createIssueHtml(Issue issue) {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("<img align=absmiddle src=\"");
+            sb.Append(issue.IssueTypeIconUrl);
+            sb.Append("\"> ");
+            sb.Append("<a href=\"");
+            sb.Append(issue.Link);
+            sb.Append("\">");
+            sb.Append(issue.Key);
+            sb.Append("</a><br><br>");
+            sb.Append("<table class=\"issueTable\" ><tr><td valign=\"top\" class=\"issueTableHeader\">");
+            sb.Append("Type</td><td valign=\"top\" class=\"issueTableContent\">");
+            sb.Append(issue.IssueType);
+            sb.Append("</td></tr><tr><td valign=\"top\" class=\"issueTableHeader\">");
+            sb.Append("Summary</td><td valign=\"top\" class=\"issueTableContent\">");
+            sb.Append(issue.Summary);
+            sb.Append("</td></tr></table>");
             return sb.ToString();
         }
     }
