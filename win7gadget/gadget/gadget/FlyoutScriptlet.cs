@@ -11,7 +11,7 @@ namespace gadget {
 
     public class FlyoutScriptlet {
 
-        private Label labelShock;
+        private readonly Button buttonClose;
 
         static FlyoutScriptlet() {
             if (Document.Body.ID == "gadgetFlyout") {
@@ -25,8 +25,17 @@ namespace gadget {
             body.Style.Height = "300";
             body.Style.BackgroundColor = "#ff0000";
 
-            labelShock = new Label(Document.GetElementById("shock"));
-            labelShock.Text = "shake a lot";
+            buttonClose = new Button(Document.GetElementById("buttonClose"));
+            buttonClose.Click += buttonClose_Click;
+        }
+
+        private static void buttonClose_Click(object sender, EventArgs e) {
+            Gadget.Flyout.Show = false;
+        }
+
+        public static void setText(string text) {
+            DOMElement element = Gadget.Flyout.Document.GetElementById("issueDetails");
+            element.InnerHTML = text;
         }
 
         public static void Main(Dictionary arguments) {
