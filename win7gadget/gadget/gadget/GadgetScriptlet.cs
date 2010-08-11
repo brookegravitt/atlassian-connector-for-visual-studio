@@ -17,8 +17,9 @@ namespace gadget {
 
         private readonly Button pollNowButton;
         private readonly DOMElement jiraResponse;
-        private static string flyoutText = "";
-        private static Label labelDebug;
+        private static string flyoutIssueDetailsText = "";
+        private static string flyoutIssueKeyText = "";
+        private static Label labelInfo;
 
         private static bool doShowFlyoutAgain;
 
@@ -26,6 +27,10 @@ namespace gadget {
 //        private int issueCount;
 
         private static readonly ArrayList issues = new ArrayList();
+
+        private string projectKey = "PL";
+        private string serverUrl = "https://studio.atlassian.com";
+        private static Filter updatedRecently = new Filter("Updated Recently", "updated%3E%3D-1w+ORDER+BY+updated+DESC");
 
         static GadgetScriptlet() {
             if (Document.Body.ID == "gadget") {
@@ -49,13 +54,19 @@ namespace gadget {
             pollNowButton = new Button(Document.GetElementById("pollNowButton"));
             pollNowButton.Click += pollNowButton_Click;
 
-            labelDebug = new Label(Document.GetElementById("debug"));
+            labelInfo = new Label(Document.GetElementById("info"));
+
 //            settingsUpdateLabel = new Label(Document.GetElementById("settingsText"));
 //            tickerLabel = new Label(Document.GetElementById("ticker"));
 
             jiraResponse = Document.GetElementById("jiraResponse");
 
+            setCurrentFilterLabel();
 //            Window.SetInterval(OnTimer, 2000);
+        }
+
+        private void setCurrentFilterLabel() {
+            Document.GetElementById("currentFilter").InnerHTML = string.Format("{0}<br>{1}: {2}", serverUrl, projectKey, updatedRecently.Name);
         }
 
         private void pollNowButton_Click(object sender, EventArgs e) {
@@ -67,13 +78,14 @@ namespace gadget {
 //        }
 
         public static void openFlyout(int issueId) {
-            labelDebug.Text = "openFlyout: " + issueId;
+//            labelDebug.Text = "openFlyout: " + issueId;
             if (issueId >= 0) {
                 Issue issue = (Issue) issues[issueId];
-                flyoutText = createIssueHtml(issue);
+                flyoutIssueDetailsText = createIssueDetailsHtml(issue);
+                flyoutIssueKeyText = createIssueKeyHtml(issue);
                 doShowFlyoutAgain = true;
             } else {
-                flyoutText = null;
+                flyoutIssueDetailsText = null;
                 doShowFlyoutAgain = false;
             }
             if (Gadget.Flyout.Show) {
@@ -98,7 +110,7 @@ namespace gadget {
         private void OnFlyoutHide() {
 //            flyoutVisible = false;
             if (doShowFlyoutAgain) {
-                labelDebug.Text = "re-showing flyout";
+//                labelDebug.Text = "re-showing flyout";
                 Window.SetTimeout(reShowFlyout, 300);
             }
         }
@@ -110,8 +122,9 @@ namespace gadget {
         private void OnFlyoutShow() {
 //            flyoutVisible = true;
 
-            labelDebug.Text = "setting flyout text";
-            FlyoutScriptlet.setText(flyoutText);
+//            labelDebug.Text = "setting flyout text";
+            FlyoutScriptlet.setIssueDetailsText(flyoutIssueDetailsText);
+            FlyoutScriptlet.setIssueKeyAndType(flyoutIssueKeyText);
             doShowFlyoutAgain = false;
         }
 
@@ -139,13 +152,18 @@ namespace gadget {
             }
         }
 
-        private const string UpdatedRecently =
-            "https://studio.atlassian.com/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?jqlQuery=project+%3D+PL+AND+updated%3E%3D-1w+ORDER+BY+updated+DESC&tempMax=1000";
-        
         private void pollJira() {
-            labelDebug.Text = "Polling JIRA server...";
+            labelInfo.Text = "Polling JIRA server...";
             pollNowButton.DOMElement.Disabled = true;
-            HTTPRequest req = HTTPRequest.CreateRequest(UpdatedRecently, HTTPVerb.GET);
+            string url = 
+                serverUrl 
+                + "/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?jqlQuery=project+%3D+" 
+                + projectKey 
+                + "+AND+" 
+                + updatedRecently.FilterDef 
+                + "&tempMax=1000";
+
+            HTTPRequest req = HTTPRequest.CreateRequest(url, HTTPVerb.GET);
             req.Invoke(RequestCompleted);
         }
 
@@ -153,9 +171,9 @@ namespace gadget {
             HTTPStatusCode statusCode = request.Response.StatusCode;
             pollNowButton.DOMElement.Disabled = false;
             if (statusCode != HTTPStatusCode.OK) {
-                labelDebug.Text = "Error. Status code is " + statusCode;
+                labelInfo.Text = "Error. Status code is " + statusCode;
             } else {
-                labelDebug.Text = "";
+                labelInfo.Text = "Last Polled: " + DateTime.Now.ToLocaleDateString() + " " + DateTime.Now.ToLocaleTimeString();
                 XMLDocument resp = request.Response.GetXML();
                 createIssueListFromResponseXml(resp);
                 jiraResponse.InnerHTML = createIssueListHtmlFromIssueList();
@@ -203,16 +221,9 @@ namespace gadget {
             return sb.ToString();
         }
 
-        private static string createIssueHtml(Issue issue) {
+        private static string createIssueDetailsHtml(Issue issue) {
             StringBuilder sb = new StringBuilder();
-            sb.Append("<div class=\"issueDetails\"><img align=absmiddle src=\"");
-            sb.Append(issue.IssueTypeIconUrl);
-            sb.Append("\"> ");
-            sb.Append("<a href=\"");
-            sb.Append(issue.Link);
-            sb.Append("\"><b>");
-            sb.Append(issue.Key);
-            sb.Append("</b></a><br><br>");
+            sb.Append("<div class=\"issueDetails\">");
             sb.Append("<table class=\"issueTable\" ><tr><td valign=\"top\" class=\"issueTableHeader\">");
             sb.Append("Type</td><td valign=\"top\" class=\"issueTableContent\">");
             sb.Append(issue.IssueType);
@@ -220,6 +231,19 @@ namespace gadget {
             sb.Append("Summary</td><td valign=\"top\" class=\"issueTableContent\">");
             sb.Append(issue.Summary);
             sb.Append("</td></tr></table></div>");
+            return sb.ToString();
+        }
+
+        private static string createIssueKeyHtml(Issue issue) {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("<img align=absmiddle src=\"");
+            sb.Append(issue.IssueTypeIconUrl);
+            sb.Append("\"> ");
+            sb.Append("<a href=\"");
+            sb.Append(issue.Link);
+            sb.Append("\"><b>");
+            sb.Append(issue.Key);
+            sb.Append("</b></a><br><br>");
             return sb.ToString();
         }
     }

@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Properties\Script.jst" />
+    <Compile Include="Filter.cs" />
     <Compile Include="Issue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GadgetScriptlet.cs" />
