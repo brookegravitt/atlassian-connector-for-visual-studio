@@ -53,6 +53,7 @@
     <Compile Include="GadgetScriptlet.cs" />
     <Compile Include="FlyoutScriptlet.cs" />
     <Compile Include="SettingsScriptlet.cs" />
+    <Compile Include="rpc.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Gadget.xml" />
@@ -69,6 +70,7 @@
     <Content Include="Content\Flyout.css" />
     <Content Include="Content\Settings.htm" />
     <Content Include="Content\Settings.css" />
+    <Content Include="Content\xmlrpc.js" />
   </ItemGroup>
   <Import Project="$(ProgramFiles)\nStuff\ScriptSharp\v1.0\nStuff.ScriptSharp.targets" />
   <PropertyGroup>
