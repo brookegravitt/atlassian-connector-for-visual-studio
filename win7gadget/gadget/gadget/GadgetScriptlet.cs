@@ -30,6 +30,9 @@ namespace gadget {
 
         private string projectKey = "PL";
         private string serverUrl = "https://studio.atlassian.com";
+        private string userName = "jgorycki";
+        private string password = "fPQ4CoRn";
+
         private static Filter updatedRecently = new Filter("Updated Recently", "updated%3E%3D-1w+ORDER+BY+updated+DESC");
 
         static GadgetScriptlet() {
@@ -65,12 +68,54 @@ namespace gadget {
 //            Window.SetInterval(OnTimer, 2000);
         }
 
+        private void gotProjects(object result) {
+            Dictionary d = (Dictionary) result;
+            StringBuilder sb = new StringBuilder();
+            foreach (DictionaryEntry entry in d) {
+                int nr;
+                try {
+                    nr = (int) int.Parse(entry.Key);
+                } catch (Exception) {
+                    continue;
+                }
+                if (Number.IsNaN(nr)) continue;
+
+                sb.Append(nr);
+                sb.Append(": ");
+                sb.Append(getProjectString(entry.Value));
+                sb.Append("<br><hr><br>");
+            }
+            jiraResponse.InnerHTML = sb.ToString();
+            labelInfo.Text = "got projects";
+        }
+
+        private static string getProjectString(object projectObject) {
+            Dictionary d = (Dictionary)projectObject;
+            StringBuilder sb = new StringBuilder();
+            foreach (DictionaryEntry entry in d) {
+                sb.Append("<br>&nbsp;&nbsp;&nbsp;&nbsp;" + entry.Key + ": " + entry.Value);
+            }
+            return sb.ToString();
+        }
+
+        private void errorGettingProjects(string error) {
+            labelInfo.Text = "error getting projects: " + error;
+        }
+
         private void setCurrentFilterLabel() {
             Document.GetElementById("currentFilter").InnerHTML = string.Format("{0}<br>{1}: {2}", serverUrl, projectKey, updatedRecently.Name);
         }
 
         private void pollNowButton_Click(object sender, EventArgs e) {
-            pollJira();
+
+            rpc.login(serverUrl, userName, password, gotLoginToken, errorGettingProjects);
+//            rpc.getprojects("https://studio.atlassian.com", "jgorycki", "fPQ4CoRn", gotProjects, errorGettingProjects);
+
+//            pollJira();
+        }
+
+        private void gotLoginToken(string token) {
+            rpc.getprojects(serverUrl, token, gotProjects, errorGettingProjects);
         }
 
 //        private void OnTimer() {
