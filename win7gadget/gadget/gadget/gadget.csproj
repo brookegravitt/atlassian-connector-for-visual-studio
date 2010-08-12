@@ -68,6 +68,7 @@
     <Content Include="Content\Gadget.css" />
     <Content Include="Content\Flyout.htm" />
     <Content Include="Content\Flyout.css" />
+    <Content Include="Content\rpc.js" />
     <Content Include="Content\Settings.htm" />
     <Content Include="Content\Settings.css" />
     <Content Include="Content\xmlrpc.js" />
