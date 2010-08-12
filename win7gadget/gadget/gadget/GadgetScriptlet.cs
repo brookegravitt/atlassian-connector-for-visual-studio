@@ -30,8 +30,8 @@ namespace gadget {
 
         private string projectKey = "PL";
         private string serverUrl = "https://studio.atlassian.com";
-        private string userName = "jgorycki";
-        private string password = "fPQ4CoRn";
+        private string userName = "user";
+        private string password = "password";
 
         private static Filter updatedRecently = new Filter("Updated Recently", "updated%3E%3D-1w+ORDER+BY+updated+DESC");
 
@@ -108,10 +108,7 @@ namespace gadget {
 
         private void pollNowButton_Click(object sender, EventArgs e) {
 
-            rpc.login(serverUrl, userName, password, gotLoginToken, errorGettingProjects);
-//            rpc.getprojects("https://studio.atlassian.com", "jgorycki", "fPQ4CoRn", gotProjects, errorGettingProjects);
-
-//            pollJira();
+            pollJira();
         }
 
         private void gotLoginToken(string token) {
