@@ -32,7 +32,7 @@
 	scrollbar-shadow-color: #bbbbbb; 
 	scrollbar-track-color: #eeeeee; 
 	overflow-x: hidden; 
-	overflow-y: auto;
+	overflow-y: scroll;
 }
 
 .filler 

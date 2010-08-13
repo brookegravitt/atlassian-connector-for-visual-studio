@@ -9,7 +9,6 @@ namespace gadget {
     [Imported]
     [IgnoreNamespace]
     public class rpc {
-
         public static void login(string url, string login, string password, LoginCallback cb, CallbackError errorCb) { }
         public static void getprojects(string url, string token, GetProjectsCallback cb, CallbackError errorCb) { }
     }
