@@ -1,3 +1,21 @@
 ﻿body 
 {
 }
+
+.label 
+{
+	width:6em;
+	position:absolute;
+	left:0em;
+	line-height:2em;
+	height:2em;
+	text-align:right;
+}
+
+.txtbox 
+{
+	position:absolute;
+	right:0em;
+	width:100%;
+	margin-left:7em;
+}

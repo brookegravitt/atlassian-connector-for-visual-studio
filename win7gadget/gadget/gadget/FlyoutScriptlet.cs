@@ -1,10 +1,6 @@
-// FlyoutScriptlet.cs
-//
-
 using System;
 using System.DHTML;
 using System.Gadgets;
-using ScriptFX;
 using ScriptFX.UI;
 
 namespace gadget {
