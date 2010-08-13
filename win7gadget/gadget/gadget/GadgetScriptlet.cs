@@ -203,11 +203,38 @@ namespace gadget {
                 XMLNode link = issuesXml[i].SelectSingleNode("link");
                 XMLNode summary = issuesXml[i].SelectSingleNode("summary");
                 XMLNode type = issuesXml[i].SelectSingleNode("type");
-
-                Issue issue = new Issue(key.Text, link.Text, summary.Text, type.Text, type.Attributes.GetNamedItem("iconUrl").Text);
+                XMLNode priority = issuesXml[i].SelectSingleNode("priority");
+                XMLNode status = issuesXml[i].SelectSingleNode("status");
+                XMLNode reporter = issuesXml[i].SelectSingleNode("reporter");
+                XMLNode assignee = issuesXml[i].SelectSingleNode("assignee");
+                XMLNode created = issuesXml[i].SelectSingleNode("created");
+                XMLNode updated = issuesXml[i].SelectSingleNode("updated");
+                XMLNode resolution = issuesXml[i].SelectSingleNode("resolution");
+                XMLNode description = issuesXml[i].SelectSingleNode("description");
+                XMLNode env = issuesXml[i].SelectSingleNode("environment");
+                XMLNode votes = issuesXml[i].SelectSingleNode("votes");
+                Issue issue = new Issue(
+                    safeText(key), safeText(link), safeText(summary), safeText(type), safeAttribute(type, "iconUrl"),
+                    safeText(priority), safeAttribute(priority, "iconUrl"),
+                    safeText(status), safeAttribute(status, "iconUrl"),
+                    safeText(reporter), safeText(assignee),
+                    safeText(created), safeText(updated),
+                    safeText(resolution), safeText(description), 
+                    safeText(env), safeText(votes)
+                    );
 
                 issues.Add(issue);
             }
+        }
+
+        private static string safeText(XMLNode node) {
+            return node == null ? "" : node.Text;
+        }
+
+        private static string safeAttribute(XMLNode node, string attr) {
+            if (node == null) return "";
+            XMLNode a = node.Attributes.GetNamedItem(attr);
+            return a != null ? a.Text : "";
         }
 
         private static string createIssueListHtmlFromIssueList() {
@@ -239,14 +266,28 @@ namespace gadget {
         private static string createIssueDetailsHtml(Issue issue) {
             StringBuilder sb = new StringBuilder();
             sb.Append("<div class=\"issueDetails\">");
-            sb.Append("<table class=\"issueTable\" ><tr><td valign=\"top\" class=\"issueTableHeader\">");
-            sb.Append("Type</td><td valign=\"top\" class=\"issueTableContent\">");
-            sb.Append(issue.IssueType);
-            sb.Append("</td></tr><tr><td valign=\"top\" class=\"issueTableHeader\">");
-            sb.Append("Summary</td><td valign=\"top\" class=\"issueTableContent\">");
-            sb.Append(issue.Summary);
-            sb.Append("</td></tr></table></div>");
+            sb.Append("<table class=\"issueTable\" >");
+            sb.Append(row("Summary", issue.Summary));
+            sb.Append(row("Type", string.Format("<img align=absmiddle src=\"{0}\"> {1}", issue.IssueTypeIconUrl, issue.IssueType)));
+            sb.Append(row("Status", string.Format("<img align=absmiddle src=\"{0}\"> {1}", issue.StatusIconUrl, issue.Status)));
+            sb.Append(row("Priority", string.Format("<img align=absmiddle src=\"{0}\"> {1}", issue.PriorityIconUrl, issue.Priority)));
+            sb.Append(row("Resolution", issue.Resolution));
+            sb.Append(row("Reporter", issue.Reporter));
+            sb.Append(row("Assignee", issue.Assignee));
+            sb.Append(row("Created", issue.Created));
+            sb.Append(row("Updated", issue.Updated));
+            sb.Append(row("Environment", issue.Environment));
+            sb.Append(row("Description", issue.Description));
+            sb.Append(row("Votes", issue.Votes));
+            sb.Append("</table></div>");
             return sb.ToString();
+        }
+
+        private static string row(string title, string value) {
+            return string.Format(
+                "<tr><td valign=\"top\" class=\"issueTableHeader\">{0}"
+                + "</td><td valign=\"top\" class=\"issueTableContent\">{1}"
+                + "</td></tr>", title, value);
         }
 
         private static string createIssueKeyHtml(Issue issue) {
