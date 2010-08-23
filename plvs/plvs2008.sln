@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestSpike", "TestSpike\Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestSpikeUT", "TestSpikeUT\TestSpikeUT.csproj", "{5640FBC2-036F-44E3-84D4-746998643764}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JiraStackHashAnalyzer", "JiraStackHashAnalyzer\JiraStackHashAnalyzer.csproj", "{7E08710C-BD57-4ACF-898F-EC581B373F72}"
+EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
@@ -40,6 +42,10 @@ Global
 		{1D81A77B-CF85-45C0-88DD-D2DB3E9C5389}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5640FBC2-036F-44E3-84D4-746998643764}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5640FBC2-036F-44E3-84D4-746998643764}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E08710C-BD57-4ACF-898F-EC581B373F72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E08710C-BD57-4ACF-898F-EC581B373F72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E08710C-BD57-4ACF-898F-EC581B373F72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E08710C-BD57-4ACF-898F-EC581B373F72}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
