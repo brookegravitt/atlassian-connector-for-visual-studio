@@ -14,6 +14,7 @@ namespace JiraStackHashAnalyzer {
 
         private Thread workerThread;
         private readonly NpgsqlConnection connection = new NpgsqlConnection("Server=127.0.0.1;Port=5432;User Id=postgres;Password=dupa;Database=jddet;");
+        private readonly NpgsqlConnection connJiraDb = new NpgsqlConnection("Server=127.0.0.1;Port=5432;User Id=postgres;Password=dupa;Database=jira;");
 
         public Form1() {
             InitializeComponent();
@@ -24,6 +25,7 @@ namespace JiraStackHashAnalyzer {
             textUser.Text = "jgorycki";
             textAnalyzeServerName.Text = "stac";
             textAnalyzeProject.Text = "PL";
+            numericProjectId.Value = 10240;
         }
 
         protected override void OnLoad(EventArgs e) {
@@ -51,6 +53,10 @@ namespace JiraStackHashAnalyzer {
 
         private void appendToAnalyzeLog(object txt) {
             appendToLogControl(txt, textAnalyzeLog);
+        }
+
+        private void appendToAnalyzeDbLog(object txt) {
+            appendToLogControl(txt, textAnalyzeDbLog);
         }
 
         private void appendToLogControl(object txt, TextBoxBase box) {
@@ -285,7 +291,7 @@ namespace JiraStackHashAnalyzer {
                     ((double) (100 * issuesWithStackTrace)) / issuesWithDescription, 
                     ((double) (100 * issuesWithStackTrace)) / issuesCount));
 
-                mapReduce(issuesWithStackTrace, issuesWithDescription, issuesCount);
+                mapReduce(issuesWithStackTrace, issuesWithDescription, issuesCount, textAnalyzeLog);
 
             } catch (Exception ex) {
                 appendToAnalyzeLog(ex);
@@ -295,7 +301,7 @@ namespace JiraStackHashAnalyzer {
             }
         }
 
-        private void mapReduce(int issuesWithStackTrace, int issuesWithDescription, int issuesCount) {
+        private void mapReduce(int issuesWithStackTrace, int issuesWithDescriptionOrComments, int issuesCount, TextBox log) {
             SortedDictionary<int, int> dupeCounts = new SortedDictionary<int, int>();
             foreach (int dupeCount in hashes.Values) {
                 if (dupeCounts.ContainsKey(dupeCount)) {
@@ -305,21 +311,21 @@ namespace JiraStackHashAnalyzer {
                 }
             }
 
-            appendToAnalyzeLog("");
+            appendToLogControl("", log);
             int totalDuplicates = 0;
             foreach (KeyValuePair<int, int> pair in dupeCounts) {
                 if (pair.Key == 1) continue;
-                appendToAnalyzeLog(string.Format("duplicates: {0} - count: {1}", pair.Key, pair.Value));
+                appendToLogControl(string.Format("duplicates: {0} - count: {1}", pair.Key, pair.Value), log);
                 totalDuplicates += pair.Value;
             }
-            appendToAnalyzeLog("");
-            appendToAnalyzeLog("total duplicates:\t\t\t\t\t " + totalDuplicates);
-            appendToAnalyzeLog(
-                string.Format("total duplicate percentage of stack issues with traces:\t {0:0.00}", ((double) 100 * totalDuplicates) / issuesWithStackTrace));
-            appendToAnalyzeLog(
-                string.Format("total duplicate percentage of issues with description:\t {0:0.00}", ((double)100 * totalDuplicates) / issuesWithDescription));
-            appendToAnalyzeLog(
-                string.Format("total duplicate percentage of all issues:\t\t\t {0:0.00}", ((double)100 * totalDuplicates) / issuesCount));
+            appendToLogControl("", log);
+            appendToLogControl("total duplicates:\t\t\t\t\t " + totalDuplicates, log);
+            appendToLogControl(
+                string.Format("total duplicate percentage of stack issues with traces:\t {0:0.00}", ((double) 100 * totalDuplicates) / issuesWithStackTrace), log);
+            appendToLogControl(
+                string.Format("total duplicate percentage of issues with description:\t {0:0.00}", ((double)100 * totalDuplicates) / issuesWithDescriptionOrComments), log);
+            appendToLogControl(
+                string.Format("total duplicate percentage of all issues:\t\t\t {0:0.00}", ((double)100 * totalDuplicates) / issuesCount), log);
         }
 
         private void handleMatch(MatchCollection matches) {
@@ -337,6 +343,107 @@ namespace JiraStackHashAnalyzer {
             } else {
                 hashes[hashString] = 1;
             }
+        }
+
+        private void buttonAnalyzeFromDbGoClick(object sender, EventArgs e) {
+            try {
+                textAnalyzeLog.Text = "";
+
+                int projectId = (int) numericProjectId.Value;
+
+                bool justDescription = checkJustDescription.Checked;
+
+                connJiraDb.Open();
+
+                hashes.Clear();
+
+                List<decimal> issues = new List<decimal>();
+
+                NpgsqlCommand command = new NpgsqlCommand(string.Format("select id, pkey, description from jiraissue where project={0}", projectId), connJiraDb);
+                NpgsqlDataReader reader = command.ExecuteReader();
+                int issuesCount = 0;
+                int issuesWithDescription = 0;
+                int issuesWithStackTraceInDescription = 0;
+                while (reader.Read()) {
+                    ++issuesCount;
+                    issues.Add(reader.GetDecimal(0));
+
+                    object val = reader.GetValue(2);
+                    string description = val != null && val is string ? reader.GetString(2) : "";
+                    if (string.IsNullOrEmpty(description)) continue;
+
+                    ++issuesWithDescription;
+
+                    Regex regex = new Regex(STACK_TRACE_REGEXP);
+                    MatchCollection matches = regex.Matches(description);
+                    if (matches.Count == 0) continue;
+                    handleMatch(matches);
+
+                    ++issuesWithStackTraceInDescription;
+                }
+
+                reader.Close();
+                command.Dispose();
+
+                int issuesWithComments = 0;
+                int issuesWihStackTraceInComments = 0;
+                if (!justDescription) {
+                    foreach (var issue in issues) {
+                        bool haveStackTrace;
+                        bool haveComment = handleComments(issue, out haveStackTrace);
+
+                        if (haveComment) {
+                            ++issuesWithComments;
+                        }
+                        if (haveStackTrace) {
+                            ++issuesWihStackTraceInComments;
+                        }
+                    }
+                }
+
+                appendToAnalyzeDbLog("total issues:\t\t\t " + issuesCount);
+                appendToAnalyzeDbLog("issues with description:\t\t " + issuesWithDescription);
+                appendToAnalyzeDbLog("issues with comments:\t\t " + issuesWithComments);
+                appendToAnalyzeDbLog(string.Format("issues with stack trace in description:\t {0} ({1:0.00}% {2:0.00}%)",
+                    issuesWithStackTraceInDescription,
+                    ((double)(100 * issuesWithStackTraceInDescription)) / issuesWithDescription,
+                    ((double)(100 * issuesWithStackTraceInDescription)) / issuesCount));
+                appendToAnalyzeDbLog(string.Format("issues with stack trace in comments:\t {0} ({1:0.00}% {2:0.00}%)",
+                    issuesWihStackTraceInComments,
+                    ((double)(100 * issuesWihStackTraceInComments)) / issuesWithComments,
+                    ((double)(100 * issuesWihStackTraceInComments)) / issuesCount));
+
+                mapReduce(issuesWithStackTraceInDescription + issuesWihStackTraceInComments, issuesWithDescription + issuesWithComments, issuesCount, textAnalyzeDbLog);
+
+            } catch (Exception ex) {
+                appendToAnalyzeDbLog(ex);
+            } finally {
+                appendToAnalyzeDbLog("Closing database connection");
+                connJiraDb.Close();
+            }
+
+        }
+
+        private bool handleComments(decimal issueId, out bool haveStackTrace) {
+            NpgsqlCommand command = new NpgsqlCommand(string.Format("select actionbody from jiraaction where issueid={0}", issueId), connJiraDb);
+            NpgsqlDataReader reader = command.ExecuteReader();
+            bool haveComments = false;
+            haveStackTrace = false;
+            while (reader.Read()) {
+                haveComments = true;
+                string comment = reader.GetString(0);
+                Regex regex = new Regex(STACK_TRACE_REGEXP);
+                MatchCollection matches = regex.Matches(comment);
+                if (matches.Count == 0) continue;
+                haveStackTrace = true;
+                handleMatch(matches);
+            }
+            reader.Close();
+            return haveComments;
+        }
+
+        private void buttonClear_Click(object sender, EventArgs e) {
+            textAnalyzeDbLog.Text = "";
         }
     }
 }
