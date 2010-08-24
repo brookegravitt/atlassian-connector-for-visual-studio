@@ -42,17 +42,26 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.textAnalyzeServerName = new System.Windows.Forms.TextBox();
-            this.textAnalyzeProject = new System.Windows.Forms.TextBox();
-            this.textAnalyzeLog = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
             this.buttonAnalyze = new System.Windows.Forms.Button();
+            this.label9 = new System.Windows.Forms.Label();
+            this.textAnalyzeLog = new System.Windows.Forms.TextBox();
+            this.textAnalyzeProject = new System.Windows.Forms.TextBox();
+            this.textAnalyzeServerName = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.textAnalyzeDbLog = new System.Windows.Forms.TextBox();
+            this.buttonAnalyzeFromDBGo = new System.Windows.Forms.Button();
+            this.numericProjectId = new System.Windows.Forms.NumericUpDown();
+            this.label10 = new System.Windows.Forms.Label();
+            this.checkJustDescription = new System.Windows.Forms.CheckBox();
+            this.buttonClear = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.tabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericProjectId)).BeginInit();
             this.SuspendLayout();
             // 
             // textLog
@@ -183,6 +192,7 @@
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -231,37 +241,24 @@
             this.tabPage2.Text = "Analyze";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // label7
+            // buttonAnalyze
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(9, 17);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(69, 13);
-            this.label7.TabIndex = 0;
-            this.label7.Text = "Server Name";
+            this.buttonAnalyze.Location = new System.Drawing.Point(84, 75);
+            this.buttonAnalyze.Name = "buttonAnalyze";
+            this.buttonAnalyze.Size = new System.Drawing.Size(75, 23);
+            this.buttonAnalyze.TabIndex = 6;
+            this.buttonAnalyze.Text = "Analyze!";
+            this.buttonAnalyze.UseVisualStyleBackColor = true;
+            this.buttonAnalyze.Click += new System.EventHandler(this.buttonAnalyze_Click);
             // 
-            // label8
+            // label9
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(7, 41);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(40, 13);
-            this.label8.TabIndex = 1;
-            this.label8.Text = "Project";
-            // 
-            // textAnalyzeServerName
-            // 
-            this.textAnalyzeServerName.Location = new System.Drawing.Point(84, 14);
-            this.textAnalyzeServerName.Name = "textAnalyzeServerName";
-            this.textAnalyzeServerName.Size = new System.Drawing.Size(100, 20);
-            this.textAnalyzeServerName.TabIndex = 2;
-            // 
-            // textAnalyzeProject
-            // 
-            this.textAnalyzeProject.Location = new System.Drawing.Point(84, 38);
-            this.textAnalyzeProject.Name = "textAnalyzeProject";
-            this.textAnalyzeProject.Size = new System.Drawing.Size(100, 20);
-            this.textAnalyzeProject.TabIndex = 3;
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(9, 110);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(42, 13);
+            this.label9.TabIndex = 5;
+            this.label9.Text = "Results";
             // 
             // textAnalyzeLog
             // 
@@ -276,24 +273,116 @@
             this.textAnalyzeLog.Size = new System.Drawing.Size(538, 428);
             this.textAnalyzeLog.TabIndex = 4;
             // 
-            // label9
+            // textAnalyzeProject
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(9, 110);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(42, 13);
-            this.label9.TabIndex = 5;
-            this.label9.Text = "Results";
+            this.textAnalyzeProject.Location = new System.Drawing.Point(84, 38);
+            this.textAnalyzeProject.Name = "textAnalyzeProject";
+            this.textAnalyzeProject.Size = new System.Drawing.Size(100, 20);
+            this.textAnalyzeProject.TabIndex = 3;
             // 
-            // buttonAnalyze
+            // textAnalyzeServerName
             // 
-            this.buttonAnalyze.Location = new System.Drawing.Point(84, 75);
-            this.buttonAnalyze.Name = "buttonAnalyze";
-            this.buttonAnalyze.Size = new System.Drawing.Size(75, 23);
-            this.buttonAnalyze.TabIndex = 6;
-            this.buttonAnalyze.Text = "Analyze!";
-            this.buttonAnalyze.UseVisualStyleBackColor = true;
-            this.buttonAnalyze.Click += new System.EventHandler(this.buttonAnalyze_Click);
+            this.textAnalyzeServerName.Location = new System.Drawing.Point(84, 14);
+            this.textAnalyzeServerName.Name = "textAnalyzeServerName";
+            this.textAnalyzeServerName.Size = new System.Drawing.Size(100, 20);
+            this.textAnalyzeServerName.TabIndex = 2;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(7, 41);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(40, 13);
+            this.label8.TabIndex = 1;
+            this.label8.Text = "Project";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(9, 17);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(69, 13);
+            this.label7.TabIndex = 0;
+            this.label7.Text = "Server Name";
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.buttonClear);
+            this.tabPage3.Controls.Add(this.checkJustDescription);
+            this.tabPage3.Controls.Add(this.textAnalyzeDbLog);
+            this.tabPage3.Controls.Add(this.buttonAnalyzeFromDBGo);
+            this.tabPage3.Controls.Add(this.numericProjectId);
+            this.tabPage3.Controls.Add(this.label10);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Size = new System.Drawing.Size(558, 562);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Analyze by DB";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // textAnalyzeDbLog
+            // 
+            this.textAnalyzeDbLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.textAnalyzeDbLog.Location = new System.Drawing.Point(8, 112);
+            this.textAnalyzeDbLog.Multiline = true;
+            this.textAnalyzeDbLog.Name = "textAnalyzeDbLog";
+            this.textAnalyzeDbLog.ReadOnly = true;
+            this.textAnalyzeDbLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textAnalyzeDbLog.Size = new System.Drawing.Size(542, 442);
+            this.textAnalyzeDbLog.TabIndex = 3;
+            // 
+            // buttonAnalyzeFromDBGo
+            // 
+            this.buttonAnalyzeFromDBGo.Location = new System.Drawing.Point(68, 53);
+            this.buttonAnalyzeFromDBGo.Name = "buttonAnalyzeFromDBGo";
+            this.buttonAnalyzeFromDBGo.Size = new System.Drawing.Size(75, 23);
+            this.buttonAnalyzeFromDBGo.TabIndex = 2;
+            this.buttonAnalyzeFromDBGo.Text = "Analyze!";
+            this.buttonAnalyzeFromDBGo.UseVisualStyleBackColor = true;
+            this.buttonAnalyzeFromDBGo.Click += new System.EventHandler(this.buttonAnalyzeFromDbGoClick);
+            // 
+            // numericProjectId
+            // 
+            this.numericProjectId.Location = new System.Drawing.Point(68, 27);
+            this.numericProjectId.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.numericProjectId.Name = "numericProjectId";
+            this.numericProjectId.Size = new System.Drawing.Size(120, 20);
+            this.numericProjectId.TabIndex = 1;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(8, 29);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(54, 13);
+            this.label10.TabIndex = 0;
+            this.label10.Text = "Project ID";
+            // 
+            // checkJustDescription
+            // 
+            this.checkJustDescription.AutoSize = true;
+            this.checkJustDescription.Location = new System.Drawing.Point(209, 57);
+            this.checkJustDescription.Name = "checkJustDescription";
+            this.checkJustDescription.Size = new System.Drawing.Size(101, 17);
+            this.checkJustDescription.TabIndex = 4;
+            this.checkJustDescription.Text = "Just Description";
+            this.checkJustDescription.UseVisualStyleBackColor = true;
+            // 
+            // buttonClear
+            // 
+            this.buttonClear.Location = new System.Drawing.Point(458, 81);
+            this.buttonClear.Name = "buttonClear";
+            this.buttonClear.Size = new System.Drawing.Size(75, 23);
+            this.buttonClear.TabIndex = 5;
+            this.buttonClear.Text = "Clear";
+            this.buttonClear.UseVisualStyleBackColor = true;
+            this.buttonClear.Click += new System.EventHandler(this.buttonClear_Click);
             // 
             // Form1
             // 
@@ -310,6 +399,9 @@
             this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericProjectId)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -341,6 +433,13 @@
         private System.Windows.Forms.TextBox textAnalyzeServerName;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TextBox textAnalyzeDbLog;
+        private System.Windows.Forms.Button buttonAnalyzeFromDBGo;
+        private System.Windows.Forms.NumericUpDown numericProjectId;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.CheckBox checkJustDescription;
+        private System.Windows.Forms.Button buttonClear;
     }
 }
 
