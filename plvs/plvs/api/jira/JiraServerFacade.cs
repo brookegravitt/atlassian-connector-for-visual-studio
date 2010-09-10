@@ -312,7 +312,7 @@ namespace Atlassian.plvs.api.jira {
         }
 
         private static void maybeHandle503(JiraServer server, Exception e) {
-            if (e is SoapSession.LoginException) {
+            if (e is LoginException) {
                 Exception inner = e.InnerException;
                 if (inner.Message != null && inner.Message.Contains("503")) {
                     throw new FiveOhThreeJiraException(server);
