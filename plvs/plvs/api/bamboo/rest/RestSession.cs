@@ -48,13 +48,24 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
         public RestSession login(string username, string pwd) {
 
+#if OLDSKOOL_AUTH
             string endpoint = server.Url + LOGIN_ACTION 
                 + "?username=" + HttpUtility.UrlEncode(CredentialUtils.getUserNameWithoutDomain(username), Encoding.UTF8) 
                 + "&password=" + HttpUtility.UrlEncode(pwd, Encoding.UTF8) 
                 + "&os_username=" + HttpUtility.UrlEncode(CredentialUtils.getUserNameWithoutDomain(username), Encoding.UTF8) 
                 + "&os_password=" + HttpUtility.UrlEncode(pwd, Encoding.UTF8);
+#else
+            string endpoint = server.Url + LOGIN_ACTION + getBasicAuthParameter(server.Url);
+#endif
 
+            userName = username;
+            password = pwd;
+
+#if OLDSKOOL_AUTH
             using (Stream stream = getQueryResultStream(endpoint, false)) {
+#else
+            using (Stream stream = getQueryResultStream(endpoint, true)) {
+#endif
                 XPathDocument doc = XPathUtils.getXmlDocument(stream);
 
                 string exceptions = getRemoteExceptionMessages(doc);
@@ -73,8 +84,6 @@ namespace Atlassian.plvs.api.bamboo.rest {
                 }
                 it.MoveNext();
                 authToken = it.Current.Value;
-                userName = username;
-                password = pwd;
 
                 LoggedIn = true;
                 return this;
