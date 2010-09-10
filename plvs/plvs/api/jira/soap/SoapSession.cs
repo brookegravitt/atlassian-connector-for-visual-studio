@@ -14,10 +14,6 @@ namespace Atlassian.plvs.api.jira.soap {
         public string Token { get; set; }
         private readonly JiraSoapServiceService service = new JiraSoapServiceService();
 
-        public class LoginException : Exception {
-            public LoginException(Exception e) : base("Login failed", e) { }
-        }
-
         public SoapSession(string url, bool noProxy) {
             service.Url = url + "/rpc/soap/jirasoapservice-v2";
             service.Timeout = GlobalSettings.NetworkTimeout * 1000;

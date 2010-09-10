@@ -10,14 +10,16 @@ namespace Atlassian.plvs.api.jira {
     internal class RestClient : JiraAuthenticatedClient {
         private readonly JiraServer server;
 
-        public RestClient(JiraServer server) : base(server.Url, server.UserName, server.Password) {
+        public RestClient(JiraServer server) : base(server.Url, server.UserName, server.Password, server.NoProxy) {
             this.server = server;
         }
 
         public string getRenderedContent(string issueKey, int issueType, int projectId, string markup) {
             StringBuilder url = new StringBuilder(BaseUrl + "/rest/api/1.0/render");
 
+#if OLDSKOOL_AUTH
             url.Append(appendAuthentication(true));
+#endif
 
             try {
 

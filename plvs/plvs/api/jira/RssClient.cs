@@ -13,7 +13,7 @@ namespace Atlassian.plvs.api.jira {
         private readonly JiraServer server;
 
         public RssClient(JiraServer server)
-            : base(server.Url, server.UserName, server.Password) {
+            : base(server.Url, server.UserName, server.Password, server.NoProxy) {
             this.server = server;
         }
 
@@ -25,7 +25,9 @@ namespace Atlassian.plvs.api.jira {
             url.Append("&pager/start=" + start);
             url.Append("&tempMax=" + max);
 
+#if OLDSKOOL_AUTH
             url.Append(appendAuthentication(false));
+#endif
 
             try {
                 using (Stream stream = getRssQueryResultStream(url)) {
@@ -47,7 +49,9 @@ namespace Atlassian.plvs.api.jira {
             url.Append("&pager/start=" + start);
             url.Append("&tempMax=" + max);
 
+#if OLDSKOOL_AUTH
             url.Append(appendAuthentication(false));
+#endif
 
             try {
                 using (Stream stream = getRssQueryResultStream(url)) {
@@ -63,7 +67,9 @@ namespace Atlassian.plvs.api.jira {
             StringBuilder url = new StringBuilder(BaseUrl + "/si/jira.issueviews:issue-xml/");
             url.Append(key).Append("/").Append(key).Append(".xml");
 
+#if OLDSKOOL_AUTH
             url.Append(appendAuthentication(true));
+#endif
 
             try {
                 using(Stream stream = getRssQueryResultStream(url)) {
@@ -86,6 +92,7 @@ namespace Atlassian.plvs.api.jira {
             req.Credentials = CredentialUtils.getCredentialsForUserAndPassword(url.ToString(), UserName, Password);
             req.Timeout = GlobalSettings.NetworkTimeout * 1000;
             req.ReadWriteTimeout = GlobalSettings.NetworkTimeout * 2000;
+
             HttpWebResponse resp = (HttpWebResponse) req.GetResponse();
             return resp.GetResponseStream();
         }
