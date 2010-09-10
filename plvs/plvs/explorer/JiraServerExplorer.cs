@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api;
 using Atlassian.plvs.api.jira;
@@ -9,7 +7,6 @@ using Atlassian.plvs.explorer.treeNodes;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
 using Atlassian.plvs.util;
-using Atlassian.plvs.util.jira;
 
 namespace Atlassian.plvs.explorer {
     public sealed partial class JiraServerExplorer : Form {
@@ -48,6 +45,8 @@ namespace Atlassian.plvs.explorer {
 
             webJira.Title = "";
             webJira.ErrorString = Resources.explorer_navigator_error_html;
+
+
         }
 
         public static void closeAll() {
@@ -61,12 +60,12 @@ namespace Atlassian.plvs.explorer {
 
             activeExplorers[server.GUID.ToString()] = this;
 
-            string data = JiraAuthenticatedClient.getLoginPostData(server.UserName, server.Password);
-            const string header = "Content-Type: application/x-www-form-urlencoded";
-            webJira.Browser.Navigate(server.Url + "/login.jsp?os_destination=" + server.Url, null, Encoding.UTF8.GetBytes(data), header);
+            webJira.Browser.Navigate(server.Url + "?" + CredentialUtils.getOsAuthString(server));
+
             treeJira.Nodes.Add(new PrioritiesNode(this, model, facade, server));
             treeJira.Nodes.Add(new UsersNode(model, facade, server));
             treeJira.Nodes.Add(new ProjectsNode(this, model, facade, server));
+
             treeJira.SelectedNode = null;
         }
 
@@ -75,7 +74,7 @@ namespace Atlassian.plvs.explorer {
             dropDownActions.DropDownItems.Add("phony");
             if (node != null) {
                 node.onClick(status);
-                string url = node.getUrl();
+                string url = node.getUrl(CredentialUtils.getOsAuthString(server));
                 webJira.Browser.Navigate(url);
 
                 ICollection<ToolStripItem> menuItems = node.MenuItems;

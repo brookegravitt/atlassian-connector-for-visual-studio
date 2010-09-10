@@ -13,15 +13,15 @@ using Atlassian.plvs.api;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs.jira;
+using Atlassian.plvs.models;
 using Atlassian.plvs.models.jira;
+using Atlassian.plvs.net;
 using Atlassian.plvs.ui.jira.issues;
 using Atlassian.plvs.util.jira;
 using Atlassian.plvs.windows;
 using Atlassian.plvs.util;
 using EnvDTE;
 using Microsoft.Win32;
-using AtlassianConstants=Atlassian.plvs.util.Constants;
-using Constants=EnvDTE.Constants;
 using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 using Process=System.Diagnostics.Process;
 using SaveFileDialog = System.Windows.Forms.SaveFileDialog;
@@ -38,8 +38,8 @@ namespace Atlassian.plvs.ui.jira {
         private readonly StatusLabel status;
 
         private JiraIssue issue;
-        private readonly TabControl tabWindow;
         private readonly TabPage myTab;
+        private readonly Action<TabPage> buttonCloseClicked;
         private readonly JiraActiveIssueManager activeIssueManager;
 
         private bool issueCommentsLoaded;
@@ -58,9 +58,9 @@ namespace Atlassian.plvs.ui.jira {
         private WebBrowserWithLabel webAttachmentView;
 
         public IssueDetailsPanel(
-            JiraIssueListModel model, Solution solution, JiraIssue issue, 
-            TabControl tabWindow, TabPage myTab, ToolWindowStateMonitor 
-            toolWindowStateMonitor, JiraActiveIssueManager activeIssueManager) {
+            JiraIssueListModel model, Solution solution, JiraIssue issue, TabPage myTab, 
+            ToolWindowStateMonitor toolWindowStateMonitor, Action<TabPage> buttonCloseClicked, 
+            JiraActiveIssueManager activeIssueManager) {
 
             this.model = model;
             this.solution = solution;
@@ -71,8 +71,8 @@ namespace Atlassian.plvs.ui.jira {
 
             this.issue = issue;
 
-            this.tabWindow = tabWindow;
             this.myTab = myTab;
+            this.buttonCloseClicked = buttonCloseClicked;
             this.activeIssueManager = activeIssueManager;
 
             dropDownIssueActions.DropDownItems.Add("dummy");
@@ -211,6 +211,8 @@ namespace Atlassian.plvs.ui.jira {
             rebuildAllPanels(false);
             status.setInfo("No issue details yet");
             runRefreshThread();
+
+            SolutionUtils.refillAllSolutionProjectItems(solution);
         }
 
         protected override void OnLoad(EventArgs e) {
@@ -401,11 +403,11 @@ namespace Atlassian.plvs.ui.jira {
             string tableContents = string.Format(Resources.issue_summary_html,
                                                  editImagePath,
                                                  issue.Summary,
-                                                 JiraImageCache.Instance.getImage(issue.Server, issue.IssueTypeIconUrl).FileUrl ?? nothingImagePath,
+                                                 ImageCache.Instance.getImage(issue.Server, issue.IssueTypeIconUrl).FileUrl ?? nothingImagePath,
                                                  issue.IssueType,
-                                                 JiraImageCache.Instance.getImage(issue.Server, issue.StatusIconUrl).FileUrl ?? nothingImagePath,
+                                                 ImageCache.Instance.getImage(issue.Server, issue.StatusIconUrl).FileUrl ?? nothingImagePath,
                                                  issue.Status,
-                                                 JiraImageCache.Instance.getImage(issue.Server, issue.PriorityIconUrl).FileUrl ?? nothingImagePath,
+                                                 ImageCache.Instance.getImage(issue.Server, issue.PriorityIconUrl).FileUrl ?? nothingImagePath,
                                                  issue.Priority ?? "None",
                                                  env,
                                                  JiraServerCache.Instance.getUsers(issue.Server).getUser(issue.Assignee),
@@ -465,7 +467,7 @@ namespace Atlassian.plvs.ui.jira {
                 listViewAttachments.Items.Add(new JiraAttachmentListViewItem(issue, att));
             }
 
-            reinitializeAttachmentView(null);
+            webAttachmentView.Browser.Navigate(new Uri("about:blank"));
         }
 
         private void rebuildLinksPanel() {
@@ -589,10 +591,10 @@ namespace Atlassian.plvs.ui.jira {
             sb.Append("<tr>");
 
             // let's pray all issue icons are 16x16 :)
-            sb.Append("<td class=\"issueelement\" width=\"16px\">").Append("<img src=\"" + jiraIssue.IssueTypeIconUrl + "\"/>").Append("</td>");
+            sb.Append("<td class=\"issueelement\" width=\"16px\">").Append("<img src=\"" + (ImageCache.Instance.getImage(jiraIssue.Server, jiraIssue.IssueTypeIconUrl).FileUrl ?? nothingImagePath) + "\"/>").Append("</td>");
             sb.Append("<td class=\"issueelement\">").Append("<a href=\"").Append(targetlinktype).Append(jiraIssue.Key).Append("\">").Append(jiraIssue.Key).Append("</a></td>");
-            sb.Append("<td class=\"issueelement\" width=\"16px\">").Append("<img src=\"" + jiraIssue.PriorityIconUrl + "\" alt=\"" + jiraIssue.Priority + "\"/>").Append("</td>");
-            sb.Append("<td class=\"issueelement\" width=\"16px\">").Append("<img src=\"" + jiraIssue.StatusIconUrl + "\" alt=\"" + jiraIssue.Status + "\"/>").Append("</td>");
+            sb.Append("<td class=\"issueelement\" width=\"16px\">").Append("<img src=\"" + (ImageCache.Instance.getImage(jiraIssue.Server, jiraIssue.PriorityIconUrl).FileUrl ?? nothingImagePath) + "\" alt=\"" + jiraIssue.Priority + "\"/>").Append("</td>");
+            sb.Append("<td class=\"issueelement\" width=\"16px\">").Append("<img src=\"" + (ImageCache.Instance.getImage(jiraIssue.Server, jiraIssue.StatusIconUrl).FileUrl ?? nothingImagePath) + "\" alt=\"" + jiraIssue.Status + "\"/>").Append("</td>");
             sb.Append("<td class=\"issueelement\">").Append(jiraIssue.Summary).Append("</td></tr>\n");
         }
 
@@ -632,9 +634,8 @@ namespace Atlassian.plvs.ui.jira {
         private void buttonClose_Click(object sender, EventArgs e) {
             removeModelListeners();
 
-            tabWindow.TabPages.Remove(myTab);
-            if (tabWindow.TabPages.Count == 0) {
-                IssueDetailsWindow.Instance.FrameVisible = false;
+            if (buttonCloseClicked != null) {
+                buttonCloseClicked(myTab);
             }
         }
 
@@ -677,64 +678,19 @@ namespace Atlassian.plvs.ui.jira {
             string line = e.Url.ToString();
 
             if (line.StartsWith(STACKLINE_URL_TYPE) && line.LastIndexOf(STACKLINE_LINE_NUMBER_SEPARATOR) != -1) {
-                List<ProjectItem> files = new List<ProjectItem>();
 
                 string file = line.Substring(STACKLINE_URL_TYPE.Length,
                                              line.LastIndexOf(STACKLINE_LINE_NUMBER_SEPARATOR) -
                                              STACKLINE_URL_TYPE.Length);
 
-                foreach (Project project in solution.Projects) {
-                    matchProjectItemChildren(file, files, project.ProjectItems);
-                }
-                if (files.Count == 0) {
-                    MessageBox.Show("No matching files found for " + file, AtlassianConstants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    Debug.WriteLine("No matching files found for " + file);
-                } else if (files.Count > 1) {
-                    MessageBox.Show("Multiple matching files found for " + file, AtlassianConstants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    Debug.WriteLine("Multiple matching files found for " + file);
-                } else {
-                    string lineNoStr = line.Substring(line.LastIndexOf(STACKLINE_LINE_NUMBER_SEPARATOR) + 1);
-                    try {
-                        int lineNo = int.Parse(lineNoStr);
-                        if (lineNo < 0) {
-                            throw new ArgumentException();
-                        }
-                        Debug.WriteLine("opening file " + file + " at line number " + lineNo);
+                string lineNoStr = line.Substring(line.LastIndexOf(STACKLINE_LINE_NUMBER_SEPARATOR) + 1);
 
-                        Window w = files[0].Open(Constants.vsViewKindCode);
-                        w.Visible = true;
-                        w.Document.Activate();
-                        TextSelection sel = w.DTE.ActiveDocument.Selection as TextSelection;
-                        if (sel != null) {
-                            sel.SelectAll();
-                            sel.MoveToLineAndOffset(lineNo, 1, false);
-                            sel.SelectLine();
-                        } else {
-                            throw new Exception("Cannot get text selection for the document");
-                        }
-                    } catch (Exception ex) {
-                        PlvsUtils.showError("Unable to open the specified file", ex);
-                        Debug.WriteLine(ex);
-                    }
-                }
+                SolutionUtils.openSolutionFile(file, lineNoStr, solution);
 
                 e.Cancel = true;
                 return true;
             }
             return false;
-        }
-
-        private static void matchProjectItemChildren(string file, ICollection<ProjectItem> files, ProjectItems items) {
-            if (items == null) return;
-
-            foreach (ProjectItem item in items) {
-//                Debug.WriteLine(item.Name);
-                if (file.EndsWith(item.Name)) {
-//                    Debug.WriteLine("@@@matched against " + file);
-                    files.Add(item);
-                }
-                matchProjectItemChildren(file, files, item.ProjectItems);
-            }
         }
 
         private void issueDescription_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
@@ -920,7 +876,7 @@ namespace Atlassian.plvs.ui.jira {
 
             if (isInlineNavigable(item.Attachment.Name)) {
                 try {
-                    webAttachmentView.Browser.Navigate(item.Url);
+                    webAttachmentView.Browser.navigateWithProxy(item.Url + "?" + CredentialUtils.getOsAuthString(issue.Server));
                 } catch (COMException ex) {
                     Debug.WriteLine("IssueDetailsPanel.listViewAttachments_Click() - exception caught: " + ex.Message);
                     reinitializeAttachmentView(() => showUnableToViewAttachmentPage(""));
@@ -960,12 +916,7 @@ namespace Atlassian.plvs.ui.jira {
             
             splitContainerAttachments.Panel2.Controls.Add(webAttachmentView);
             splitContainerAttachments.Panel2.ResumeLayout(true);
-
-            string data = JiraAuthenticatedClient.getLoginPostData(issue.Server.UserName, issue.Server.Password);
-            const string header = "Content-Type: application/x-www-form-urlencoded";
-            webAttachmentView.Browser.Navigated += attachmentsBrowserInitialized;
-            webAttachmentView.Browser.Navigate(issue.Server.Url + "/login.jsp", null, Encoding.UTF8.GetBytes(data), header);
-
+            
             if (onReinserted == null) return;
 
             // lame as hell. How can I tell when exactly it is kosher 
@@ -973,11 +924,6 @@ namespace Atlassian.plvs.ui.jira {
             Timer t = new Timer { Interval = 1000 };
             t.Tick += delegate { t.Stop(); onReinserted(); };
             t.Start();
-        }
-
-        private void attachmentsBrowserInitialized(object sender, WebBrowserNavigatedEventArgs e) {
-            webAttachmentView.Browser.Navigated -= attachmentsBrowserInitialized;
-            webAttachmentView.Browser.Navigate("about:blank");
         }
 
         private void attachmentsMenuOpening(object sender, System.ComponentModel.CancelEventArgs e) {
@@ -1001,12 +947,7 @@ namespace Atlassian.plvs.ui.jira {
             status.setInfo("Saving attachment \"" + item.Attachment.Name + "\"...");
             WebClient client = new WebClient();
             client.DownloadDataCompleted += ((sender, e) => downloadDataCompleted(item.Attachment.Name, e, stream));
-            IDictionary<string, string> sessionCookie = facade.getExistingSessionCookie(issue.Server);
-            if (sessionCookie != null) {
-                JiraAuthenticatedClient.setSessionCookie(client.Headers, sessionCookie);
-            }
-
-            client.DownloadDataAsync(new Uri(item.Url));
+            client.DownloadDataAsync(new Uri(item.Url + "?" + CredentialUtils.getOsAuthString(issue.Server)));
         }
 
         private void downloadDataCompleted(string name, DownloadDataCompletedEventArgs e, Stream stream) {

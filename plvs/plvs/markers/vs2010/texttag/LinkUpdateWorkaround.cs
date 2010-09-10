@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using Atlassian.plvs.dialogs;
 using Atlassian.plvs.windows;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
@@ -40,9 +41,18 @@ namespace Atlassian.plvs.markers.vs2010.texttag {
         public ViewListener(ITextView view) {
             this.view = view;
             AtlassianPanel.Instance.Jira.SelectedServerChanged += jiraSelectedServerChanged;
+            GlobalSettings.SettingsChanged += globalSettingsChanged;
+        }
+
+        private void globalSettingsChanged(object sender, EventArgs e) {
+            update();
         }
 
         private void jiraSelectedServerChanged(object sender, EventArgs e) {
+            update();
+        }
+
+        private void update() {
             var options = view.Options;
             if (!options.GetOptionValue(DefaultTextViewOptions.DisplayUrlsAsHyperlinksId)) return;
             options.SetOptionValue(DefaultTextViewOptions.DisplayUrlsAsHyperlinksId, false);
@@ -58,6 +68,7 @@ namespace Atlassian.plvs.markers.vs2010.texttag {
             if (disposed) return;
             if (disposing) {
                 AtlassianPanel.Instance.Jira.SelectedServerChanged -= jiraSelectedServerChanged;
+                GlobalSettings.SettingsChanged -= globalSettingsChanged;
             }
             disposed = true;
         }

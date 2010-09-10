@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Windows.Forms;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Media;
-using Atlassian.plvs.api.jira;
 using Atlassian.plvs.util;
-using Atlassian.plvs.windows;
+using Atlassian.plvs.util.jira;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 
@@ -18,7 +14,7 @@ namespace Atlassian.plvs.markers.vs2010.menu {
         public OpenIssueInBrowserSmartTagAction(ITrackingSpan span) {
             snapshot = span.TextBuffer.CurrentSnapshot;
             issueKey = span.GetText(snapshot);
-            menuText = "View JIRA Issue in the Browser";
+            menuText = "View " + issueKey + " in the Browser";
         }
 
         public string DisplayText {
@@ -36,17 +32,7 @@ namespace Atlassian.plvs.markers.vs2010.menu {
         }
 
         public void Invoke() {
-            try {
-                JiraServer server = AtlassianPanel.Instance.Jira.CurrentlySelectedServerOrDefault;
-                if (server != null) {
-                    Process.Start(server.Url + "/browse/" + issueKey);
-                } else {
-                    MessageBox.Show("No JIRA server selected", Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                // ReSharper disable EmptyGeneralCatchClause
-            } catch (Exception) {
-                // ReSharper restore EmptyGeneralCatchClause
-            }
+            JiraIssueUtils.launchBrowser(issueKey);
         }
     }
 

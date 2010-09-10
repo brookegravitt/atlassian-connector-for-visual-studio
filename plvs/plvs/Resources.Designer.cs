@@ -218,6 +218,33 @@ namespace Atlassian.plvs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;table class=&quot;summary&quot;&gt;
+        ///
+        ///&lt;tr&gt;&lt;td class=&quot;labelcolumn&quot;&gt;Build Number&lt;/td&gt;&lt;td&gt;{0}&lt;/td&gt;&lt;/tr&gt;
+        ///&lt;tr&gt;&lt;td class=&quot;labelcolumn&quot;&gt;Build State&lt;/td&gt;&lt;td style=&quot;color:{8};&quot;&gt;{7}&lt;/td&gt;&lt;/tr&gt;
+        ///&lt;tr&gt;&lt;td class=&quot;labelcolumn&quot;&gt;Build Key&lt;/td&gt;&lt;td&gt;{1}&lt;/td&gt;&lt;/tr&gt;
+        ///&lt;tr&gt;&lt;td class=&quot;labelcolumn&quot;&gt;Build Reason&lt;/td&gt;&lt;td&gt;{2}&lt;/td&gt;&lt;/tr&gt;
+        ///&lt;tr&gt;&lt;td class=&quot;labelcolumn&quot;&gt;Tests&lt;/td&gt;&lt;td&gt;{3}&lt;/td&gt;&lt;/tr&gt;
+        ///&lt;tr&gt;&lt;td class=&quot;labelcolumn&quot;&gt;Completed&lt;/td&gt;&lt;td&gt;{4}&lt;/td&gt;&lt;/tr&gt;
+        ///&lt;tr&gt;&lt;td class=&quot;labelcolumn&quot;&gt;Duration&lt;/td&gt;&lt;td&gt;{5}&lt;/td&gt;&lt;/tr&gt;
+        ///&lt;tr&gt;&lt;td class=&quot;labelcolumn&quot;&gt;Server&lt;/ [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string build_summary_html {
+            get {
+                return ResourceManager.GetString("build_summary_html", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Builds - Bamboo.
+        /// </summary>
+        internal static string BuildDetailsToolWindowTitle {
+            get {
+                return ResourceManager.GetString("BuildDetailsToolWindowTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Can not create tool window..
         /// </summary>
         internal static string CanNotCreateWindow {
@@ -319,6 +346,13 @@ namespace Atlassian.plvs {
             }
         }
         
+        internal static System.Drawing.Bitmap find_bamboo {
+            get {
+                object obj = ResourceManager.GetObject("find_bamboo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap find_jira {
             get {
                 object obj = ResourceManager.GetObject("find_jira", resourceCulture);
@@ -343,6 +377,20 @@ namespace Atlassian.plvs {
         internal static System.Drawing.Bitmap global_properties {
             get {
                 object obj = ResourceManager.GetObject("global_properties", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap icn_comment {
+            get {
+                object obj = ResourceManager.GetObject("icn_comment", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap icn_label {
+            get {
+                object obj = ResourceManager.GetObject("icn_label", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -614,6 +662,15 @@ namespace Atlassian.plvs {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to Click with middle mouse button to close the tab.
+        /// </summary>
+        internal static string MIDDLE_CLICK_TO_CLOSE {
+            get {
+                return ResourceManager.GetString("MIDDLE_CLICK_TO_CLOSE", resourceCulture);
+            }
+        }
+        
         internal static System.Drawing.Bitmap minus {
             get {
                 object obj = ResourceManager.GetObject("minus", resourceCulture);
@@ -695,6 +752,13 @@ namespace Atlassian.plvs {
             get {
                 object obj = ResourceManager.GetObject("search_jira", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static byte[] small_throbber {
+            get {
+                object obj = ResourceManager.GetObject("small_throbber", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
@@ -865,6 +929,20 @@ namespace Atlassian.plvs {
         internal static System.Drawing.Bitmap view_in_browser {
             get {
                 object obj = ResourceManager.GetObject("view_in_browser", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap VSObject_Class {
+            get {
+                object obj = ResourceManager.GetObject("VSObject_Class", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap VSObject_Namespace {
+            get {
+                object obj = ResourceManager.GetObject("VSObject_Namespace", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

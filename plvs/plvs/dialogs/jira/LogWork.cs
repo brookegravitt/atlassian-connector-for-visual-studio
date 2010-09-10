@@ -170,6 +170,9 @@ namespace Atlassian.plvs.dialogs.jira {
         }
 
         private DateTime getStartTime() {
+
+            DateTime result = endTime;
+#if false
             Regex regex = new Regex(Constants.TIME_TRACKING_REGEX);
             Match match = regex.Match(textTimeSpent.Text);
             Group @groupWeeks = match.Groups[2];
@@ -177,7 +180,6 @@ namespace Atlassian.plvs.dialogs.jira {
             Group @groupHours = match.Groups[6];
             Group @groupMinutes = match.Groups[8];
 
-            DateTime result = endTime;
             if (groupWeeks != null && groupWeeks.Success) {
                 result = result.AddDays(-7*double.Parse(groupWeeks.Value));
             }
@@ -190,6 +192,7 @@ namespace Atlassian.plvs.dialogs.jira {
             if (groupMinutes != null && groupMinutes.Success) {
                 result = result.AddMinutes(-1*double.Parse(groupMinutes.Value));
             }
+#endif
             return result;
         }
 

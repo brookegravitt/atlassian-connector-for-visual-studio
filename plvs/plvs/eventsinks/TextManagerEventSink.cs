@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Atlassian.plvs.dialogs;
 using Atlassian.plvs.markers;
 using Atlassian.plvs.windows;
 using Microsoft.VisualStudio;
@@ -61,13 +62,23 @@ namespace Atlassian.plvs.eventsinks {
             public SelectedServerListener(IVsTextView pView) {
                 this.pView = pView;
                 AtlassianPanel.Instance.Jira.SelectedServerChanged += jiraSelectedServerChanged;
+                GlobalSettings.SettingsChanged += globalSettingsChanged;
             }
 
             public void shutdown() {
                 AtlassianPanel.Instance.Jira.SelectedServerChanged -= jiraSelectedServerChanged;
+                GlobalSettings.SettingsChanged -= globalSettingsChanged;
+            }
+
+            private void globalSettingsChanged(object sender, EventArgs e) {
+                updateMarkers();
             }
 
             private void jiraSelectedServerChanged(object sender, EventArgs e) {
+                updateMarkers();
+            }
+
+            private void updateMarkers() {
                 IVsTextLines buffer;
                 pView.GetBuffer(out buffer);
                 if (buffer == null) {

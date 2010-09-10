@@ -14,7 +14,8 @@ namespace Atlassian.plvs.api.jira {
         }
 
         private readonly Dictionary<string, string> soapTokenMap = new Dictionary<string, string>();
-        private readonly Dictionary<string, IDictionary<string, string>> rssSessionCookieMap = new Dictionary<string, IDictionary<string, string>>();
+        private readonly Dictionary<string, IDictionary<string, string>> rssSessionCookieMap 
+            = new Dictionary<string, IDictionary<string, string>>();
 
         private JiraServerFacade() {
             PlvsUtils.installSslCertificateHandler();
@@ -30,7 +31,7 @@ namespace Atlassian.plvs.api.jira {
         }
 
         public void dropAllSessions() {
-            lock(soapTokenMap) {
+            lock (soapTokenMap) {
                 soapTokenMap.Clear();
             }
             lock (rssSessionCookieMap) {
@@ -41,7 +42,7 @@ namespace Atlassian.plvs.api.jira {
         public IDictionary<string, string> createOrGetSessionCookie(JiraServer server) {
             IDictionary<string, string> cookie = getExistingSessionCookie(server);
             if (cookie != null) return cookie;
-            lock(rssSessionCookieMap) {
+            lock (rssSessionCookieMap) {
                 using (RssClient rss = new RssClient(server)) {
                     cookie = rss.login();
                     rssSessionCookieMap[getSessionOrTokenKey(server)] = cookie;
@@ -78,7 +79,7 @@ namespace Atlassian.plvs.api.jira {
         public List<JiraIssue> getCustomFilterIssues(JiraServer server, JiraFilter filter, int start, int count) {
             using (RssClient rss = new RssClient(server)) {
                 return setSessionCookieAndWrapExceptions(
-                    server, rss, 
+                    server, rss,
                     () => rss.getCustomFilterIssues(filter.getFilterQueryString(), filter.getSortBy(), "DESC", start, count));
             }
         }

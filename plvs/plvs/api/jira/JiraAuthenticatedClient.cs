@@ -10,16 +10,16 @@ namespace Atlassian.plvs.api.jira {
     internal class JiraAuthenticatedClient : IDisposable {
         private readonly bool dontUseProxy;
 
+        protected string UserName { get; private set; }
+        protected string Password { get; private set; }
+        protected string BaseUrl { get; private set; }
+
         private const string NO_SESSION_COOKIE = "No session cookies found in response";
 
         private const string JSESSIONID = "JSESSIONID=";
         private const string STUDIO_CROWD_TOKEN = "studio.crowd.tokenkey=";
 
         public IDictionary<string, string> SessionTokens { get; set; }
-
-        protected string UserName { get; private set; }
-        protected string Password { get; private set; }
-        protected string BaseUrl { get; private set; }
 
         public JiraAuthenticatedClient(string url, string userName, string password, bool dontUseProxy) {
             this.dontUseProxy = dontUseProxy;
@@ -89,6 +89,7 @@ namespace Atlassian.plvs.api.jira {
             return "";
         }
 #else
+
         protected void setSessionCookie(HttpWebRequest req) {
             if (SessionTokens != null) {
                 req.Headers["Cookie"] = getSessionCookieString(SessionTokens);
@@ -118,5 +119,6 @@ namespace Atlassian.plvs.api.jira {
 
         public void Dispose() {
         }
+
     }
 }

@@ -1,14 +1,14 @@
-﻿using System.Text.RegularExpressions;
-using Microsoft.VisualStudio.Text;
+﻿using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
 
 namespace Atlassian.plvs.markers.vs2010.texttag {
     internal class JiraIssueTextTagger : LineTagger<JiraIssueTextTag> {
-        public JiraIssueTextTagger(ITextBuffer buffer, IClassifier classifier) : base(buffer, classifier) {}
+        public const string TEXT_TAGGER_CACHE_PROPERTY_NAME = "PlvsJiraIssueTextTaggerTagCache";
 
-        protected override TagSpan<JiraIssueTextTag> getTagSpan(Match match, SnapshotSpan span, ClassificationSpan classification, int lastLine) {
-            string issueKey = classification.Span.GetText().Substring(match.Index, match.Length);
+        public JiraIssueTextTagger(ITextBuffer buffer, IClassifier classifier) : base(buffer, classifier, TEXT_TAGGER_CACHE_PROPERTY_NAME) { }
+
+        protected override TagSpan<JiraIssueTextTag> getTagForKey(SnapshotSpan span, string issueKey, int lastLine) {
             return new TagSpan<JiraIssueTextTag>(span, new JiraIssueTextTag(span, issueKey));
         }
     }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Atlassian.plvs.api.jira;
-using Atlassian.plvs.markers.vs2010.texttag;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.windows;
 using Microsoft.VisualStudio.Language.Intellisense;
@@ -25,11 +24,9 @@ namespace Atlassian.plvs.markers.vs2010.quickinfo {
                 return;
             }
             
-            JiraIssueTextTag textTag = provider.currentTextTag;
+            string issueKey = provider.CurrentIssueKey;
 
-            if (textTag != null) {
-                string issueKey = textTag.IssueKey;
-
+            if (issueKey != null) {
                 ITextSnapshot currentSnapshot = subjectTriggerPoint.Value.Snapshot;
                 SnapshotSpan querySpan = new SnapshotSpan(subjectTriggerPoint.Value, 0);
 
@@ -52,11 +49,16 @@ namespace Atlassian.plvs.markers.vs2010.quickinfo {
                            + "\r\nPriority: " + issue.Priority
                            + "\r\nReporter: " + JiraServerCache.Instance.getUsers(issue.Server).getUser(issue.Reporter)
                            + "\r\nAssignee: " + JiraServerCache.Instance.getUsers(issue.Server).getUser(issue.Assignee)
-                           + "\r\nLast Updated: " + issue.UpdateDate;
+                           + "\r\nLast Updated: " + issue.UpdateDate 
+                           + getCrtlClickText();
                 }
-                return "Issue Key: " + issueKey;
+                return "Issue Key: " + issueKey + getCrtlClickText();
             }
             return "Issue Key: " + issueKey + "\r\nNo JIRA server selected";
+        }
+
+        private static string getCrtlClickText() {
+            return "\r\n\r\nCTRL + click to open issue";
         }
 
         private bool disposed;

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.Composition;
-using Atlassian.plvs.markers.vs2010.texttag;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Operations;
@@ -22,7 +21,7 @@ namespace Atlassian.plvs.markers.vs2010.quickinfo {
         [Import]
         public IViewTagAggregatorFactoryService tagAggregatorFactoryService;
 
-        public JiraIssueTextTag currentTextTag { get; set; }
+        public string CurrentIssueKey { get; set; }
 
         public IQuickInfoSource TryCreateQuickInfoSource(ITextBuffer textBuffer) {
             return new JiraIssueQuickInfoSource(this, textBuffer);

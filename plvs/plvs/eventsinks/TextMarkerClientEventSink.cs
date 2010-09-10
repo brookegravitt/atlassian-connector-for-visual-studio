@@ -1,16 +1,7 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Windows.Forms;
-using Atlassian.plvs.api.jira;
-using Atlassian.plvs.models.jira;
-using Atlassian.plvs.ui.jira;
-using Atlassian.plvs.util;
-using Atlassian.plvs.windows;
+﻿using Atlassian.plvs.util.jira;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.TextManager.Interop;
-using AtlassianConstants = Atlassian.plvs.util.Constants;
 
 namespace Atlassian.plvs.eventsinks {
     public sealed class TextMarkerClientEventSink : AbstractMarkerClientEventSink {
@@ -68,56 +59,19 @@ namespace Atlassian.plvs.eventsinks {
         public override int ExecMarkerCommand(IVsTextMarker pMarker, int iItem) {
             switch (iItem) {
                 case 0:
-                    openInIde();
+                    JiraIssueUtils.openInIde(issueKey);
                     return VSConstants.S_OK;
                 case 1:
-                    launchBrowser();
+                    JiraIssueUtils.launchBrowser(issueKey);
                     return VSConstants.S_OK;
 
                 case (int) MarkerCommandValues.mcvBodyDoubleClickCommand:
-                    openInIde();
+                    JiraIssueUtils.openInIde(issueKey);
                     return VSConstants.S_OK;
 
                 default:
                     return VSConstants.S_OK;
             }
-        }
-
-        private void openInIde() {
-            if (issueKey == null) return;
-
-            bool found = false;
-            foreach (JiraIssue issue in JiraIssueListModelImpl.Instance.Issues.Where(issue => issue.Key.Equals(issueKey))) {
-                IssueDetailsWindow.Instance.openIssue(issue, AtlassianPanel.Instance.Jira.ActiveIssueManager);
-                found = true;
-                break;
-            }
-            if (!found) {
-                AtlassianPanel.Instance.Jira.findAndOpenIssue(issueKey, findFinished);
-            }
-        }
-
-        private static void findFinished(bool success, string message, Exception e) {
-            if (!success) {
-                PlvsUtils.showError(message, e);
-            }
-        }
-
-        private void launchBrowser() {
-            if (issueKey == null) {
-                return;
-            }
-            try {
-                JiraServer server = AtlassianPanel.Instance.Jira.CurrentlySelectedServerOrDefault;
-                if (server != null) {
-                    Process.Start(server.Url + "/browse/" + issueKey);
-                } else {
-                    MessageBox.Show("No JIRA server selected", AtlassianConstants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-// ReSharper disable EmptyGeneralCatchClause
-            catch {}
-// ReSharper restore EmptyGeneralCatchClause
         }
     }
 }

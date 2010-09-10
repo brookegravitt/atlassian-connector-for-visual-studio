@@ -44,6 +44,8 @@ namespace Atlassian.plvs.windows {
             this.buttonReportBug = new System.Windows.Forms.ToolStripButton();
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
             this.notifyUpdate = new System.Windows.Forms.NotifyIcon(this.components);
+            this.tabReviews = new System.Windows.Forms.TabPage();
+            this.tabCrucible = new ui.crucible.TabCrucible();
             this.mainContainer.ContentPanel.SuspendLayout();
             this.mainContainer.LeftToolStripPanel.SuspendLayout();
             this.mainContainer.SuspendLayout();
@@ -52,6 +54,7 @@ namespace Atlassian.plvs.windows {
             this.tabBuilds.SuspendLayout();
             this.globalToolBar.SuspendLayout();
             this.toolStripContainer1.SuspendLayout();
+            this.tabReviews.SuspendLayout();
             this.SuspendLayout();
             // 
             // mainContainer
@@ -76,6 +79,7 @@ namespace Atlassian.plvs.windows {
             // 
             this.productTabs.Controls.Add(this.tabIssues);
             this.productTabs.Controls.Add(this.tabBuilds);
+            this.productTabs.Controls.Add(this.tabReviews);
             this.productTabs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.productTabs.Location = new System.Drawing.Point(0, 0);
             this.productTabs.Name = "productTabs";
@@ -197,6 +201,24 @@ namespace Atlassian.plvs.windows {
             this.notifyUpdate.BalloonTipClicked += new System.EventHandler(this.notifyUpdate_BalloonTipClicked);
             this.notifyUpdate.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyUpdate_MouseDoubleClick);
             // 
+            // tabReviews
+            // 
+            this.tabReviews.Controls.Add(this.tabCrucible);
+            this.tabReviews.Location = new System.Drawing.Point(4, 22);
+            this.tabReviews.Name = "tabReviews";
+            this.tabReviews.Size = new System.Drawing.Size(820, 285);
+            this.tabReviews.TabIndex = 2;
+            this.tabReviews.Text = "Reviews - Crucible";
+            this.tabReviews.UseVisualStyleBackColor = true;
+            // 
+            // tabCrucible
+            // 
+            this.tabCrucible.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabCrucible.Location = new System.Drawing.Point(0, 0);
+            this.tabCrucible.Name = "tabCrucible";
+            this.tabCrucible.Size = new System.Drawing.Size(820, 285);
+            this.tabCrucible.TabIndex = 0;
+            // 
             // AtlassianPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -218,6 +240,7 @@ namespace Atlassian.plvs.windows {
             this.globalToolBar.PerformLayout();
             this.toolStripContainer1.ResumeLayout(false);
             this.toolStripContainer1.PerformLayout();
+            this.tabReviews.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -237,5 +260,7 @@ namespace Atlassian.plvs.windows {
         private TabJira tabJira;
         private System.Windows.Forms.NotifyIcon notifyUpdate;
         private System.Windows.Forms.ToolStripButton buttonReportBug;
+        private System.Windows.Forms.TabPage tabReviews;
+        private global::Atlassian.plvs.ui.crucible.TabCrucible tabCrucible;
     }
 }
