@@ -123,6 +123,7 @@
     <Compile Include="api\jira\JiraServerFacade.cs" />
     <Compile Include="api\jira\JiraUser.cs" />
     <Compile Include="api\jira\RssClient.cs" />
+    <Compile Include="api\LoginException.cs" />
     <Compile Include="api\Server.cs" />
     <Compile Include="api\jira\soap\SoapSession.cs" />
     <Compile Include="api\ServerFacade.cs" />
