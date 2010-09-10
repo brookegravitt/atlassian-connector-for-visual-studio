@@ -517,15 +517,5 @@ namespace Atlassian.plvs.ui.bamboo {
             }
             return false;
         }
-
-        private void buttonLabel_Click(object sender, EventArgs e) {
-            LabelBuild dlg = new LabelBuild(build, BambooBuildUtils.getPlanKey(build), status);
-            dlg.ShowDialog();
-        }
-
-        private void buttonComment_Click(object sender, EventArgs e) {
-            NewBuildComment dlg = new NewBuildComment(build, BambooBuildUtils.getPlanKey(build), status);
-            dlg.ShowDialog();
-        }
     }
 }
