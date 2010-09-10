@@ -172,8 +172,6 @@ namespace Atlassian.plvs.ui.bamboo {
             buttonViewInBrowser.Enabled = n != null;
             buttonOpen.Enabled = n != null;
             buttonRunBuild.Enabled = n != null;
-            buttonCommentBuild.Enabled = n != null;
-            buttonLabelBuild.Enabled = n != null;
         }
 
         public void shutdown() {
@@ -407,22 +405,6 @@ namespace Atlassian.plvs.ui.bamboo {
             } catch (Exception ex) {
                 Debug.WriteLine("TabBamboo.buttonHelp_Click() - exception: " + ex.Message);
             }
-        }
-
-        private void buttonLabelBuild_Click(object sender, EventArgs e) {
-            runOnSelectedNode(delegate(BambooBuild b) {
-                string key = BambooBuildUtils.getPlanKey(b);
-                LabelBuild dlg = new LabelBuild(b, key, status);
-                dlg.ShowDialog();
-            });
-        }
-
-        private void buttonCommentBuild_Click(object sender, EventArgs e) {
-            runOnSelectedNode(delegate(BambooBuild b) {
-                string key = BambooBuildUtils.getPlanKey(b);
-                NewBuildComment dlg = new NewBuildComment(b, key, status);
-                dlg.ShowDialog();
-            });
         }
 
         private void buttonFindBuild_Click(object sender, EventArgs e) {

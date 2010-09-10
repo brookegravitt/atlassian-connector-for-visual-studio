@@ -23,7 +23,6 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BuildDetailsPanel));
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.labelStatus = new System.Windows.Forms.ToolStripStatusLabel();
@@ -33,19 +32,17 @@
             this.tabLog = new System.Windows.Forms.TabPage();
             this.webLog = new System.Windows.Forms.WebBrowser();
             this.tabTests = new System.Windows.Forms.TabPage();
+            this.labelNoTestsFound = new System.Windows.Forms.Label();
             this.toolStripContainerTests = new System.Windows.Forms.ToolStripContainer();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.buttonViewInBrowser = new System.Windows.Forms.ToolStripButton();
             this.buttonRun = new System.Windows.Forms.ToolStripButton();
-            this.buttonLabel = new System.Windows.Forms.ToolStripButton();
-            this.buttonComment = new System.Windows.Forms.ToolStripButton();
             this.buttonClose = new System.Windows.Forms.ToolStripButton();
             this.testResultsToolStrip = new System.Windows.Forms.ToolStrip();
             this.buttonFailedOnly = new System.Windows.Forms.ToolStripButton();
             this.buttonOpenTest = new System.Windows.Forms.ToolStripButton();
             this.buttonRunTestInVs = new System.Windows.Forms.ToolStripButton();
             this.buttonDebugTestInVs = new System.Windows.Forms.ToolStripButton();
-            this.labelNoTestsFound = new System.Windows.Forms.Label();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -134,8 +131,8 @@
             this.webSummary.Size = new System.Drawing.Size(649, 167);
             this.webSummary.TabIndex = 0;
             this.webSummary.WebBrowserShortcutsEnabled = false;
-            this.webSummary.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webSummary_Navigating);
             this.webSummary.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webSummary_DocumentCompleted);
+            this.webSummary.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webSummary_Navigating);
             // 
             // tabLog
             // 
@@ -159,8 +156,8 @@
             this.webLog.Size = new System.Drawing.Size(649, 167);
             this.webLog.TabIndex = 0;
             this.webLog.WebBrowserShortcutsEnabled = false;
-            this.webLog.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webLog_Navigating);
             this.webLog.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webLog_DocumentCompleted);
+            this.webLog.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webLog_Navigating);
             // 
             // tabTests
             // 
@@ -172,6 +169,16 @@
             this.tabTests.TabIndex = 2;
             this.tabTests.Text = "Test Results";
             this.tabTests.UseVisualStyleBackColor = true;
+            // 
+            // labelNoTestsFound
+            // 
+            this.labelNoTestsFound.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.labelNoTestsFound.Location = new System.Drawing.Point(0, 0);
+            this.labelNoTestsFound.Name = "labelNoTestsFound";
+            this.labelNoTestsFound.Size = new System.Drawing.Size(655, 173);
+            this.labelNoTestsFound.TabIndex = 17;
+            this.labelNoTestsFound.Text = "No Tests Found";
+            this.labelNoTestsFound.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // toolStripContainerTests
             // 
@@ -195,12 +202,10 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.buttonViewInBrowser,
             this.buttonRun,
-            this.buttonLabel,
-            this.buttonComment,
             this.buttonClose});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(118, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(103, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonViewInBrowser
@@ -222,26 +227,6 @@
             this.buttonRun.Size = new System.Drawing.Size(23, 22);
             this.buttonRun.Text = "Run Build";
             this.buttonRun.Click += new System.EventHandler(this.buttonRun_Click);
-            // 
-            // buttonLabel
-            // 
-            this.buttonLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonLabel.Image = global::Atlassian.plvs.Resources.icn_label;
-            this.buttonLabel.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonLabel.Name = "buttonLabel";
-            this.buttonLabel.Size = new System.Drawing.Size(23, 22);
-            this.buttonLabel.Text = "Add Build Label";
-            this.buttonLabel.Click += new System.EventHandler(this.buttonLabel_Click);
-            // 
-            // buttonComment
-            // 
-            this.buttonComment.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonComment.Image = global::Atlassian.plvs.Resources.icn_comment;
-            this.buttonComment.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonComment.Name = "buttonComment";
-            this.buttonComment.Size = new System.Drawing.Size(23, 22);
-            this.buttonComment.Text = "Add Build Comment";
-            this.buttonComment.Click += new System.EventHandler(this.buttonComment_Click);
             // 
             // buttonClose
             // 
@@ -291,21 +276,11 @@
             // buttonDebugTestInVs
             // 
             this.buttonDebugTestInVs.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonDebugTestInVs.Image = Resources.bug;
+            this.buttonDebugTestInVs.Image = global::Atlassian.plvs.Resources.bug;
             this.buttonDebugTestInVs.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonDebugTestInVs.Name = "buttonDebugTestInVs";
             this.buttonDebugTestInVs.Size = new System.Drawing.Size(23, 22);
             this.buttonDebugTestInVs.Text = "Debug Test";
-            // 
-            // labelNoTestsFound
-            // 
-            this.labelNoTestsFound.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelNoTestsFound.Location = new System.Drawing.Point(0, 0);
-            this.labelNoTestsFound.Name = "labelNoTestsFound";
-            this.labelNoTestsFound.Size = new System.Drawing.Size(655, 173);
-            this.labelNoTestsFound.TabIndex = 17;
-            this.labelNoTestsFound.Text = "No Tests Found";
-            this.labelNoTestsFound.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // BuildDetailsPanel
             // 
@@ -350,8 +325,6 @@
         private System.Windows.Forms.ToolStripButton buttonViewInBrowser;
         private System.Windows.Forms.ToolStripButton buttonRun;
         private System.Windows.Forms.TabPage tabTests;
-        private System.Windows.Forms.ToolStripButton buttonLabel;
-        private System.Windows.Forms.ToolStripButton buttonComment;
         private System.Windows.Forms.ToolStripContainer toolStripContainerTests;
         private System.Windows.Forms.ToolStrip testResultsToolStrip;
         private System.Windows.Forms.ToolStripButton buttonFailedOnly;

@@ -143,18 +143,6 @@
     <Compile Include="dialogs\BadCertificateDialog.Designer.cs">
       <DependentUpon>BadCertificateDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="dialogs\bamboo\LabelBuild.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="dialogs\bamboo\LabelBuild.Designer.cs">
-      <DependentUpon>LabelBuild.cs</DependentUpon>
-    </Compile>
-    <Compile Include="dialogs\bamboo\NewBuildComment.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="dialogs\bamboo\NewBuildComment.Designer.cs">
-      <DependentUpon>NewBuildComment.cs</DependentUpon>
-    </Compile>
     <Compile Include="dialogs\bamboo\SearchBuild.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -645,12 +633,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\BadCertificateDialog.resx">
       <DependentUpon>BadCertificateDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="dialogs\bamboo\LabelBuild.resx">
-      <DependentUpon>LabelBuild.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="dialogs\bamboo\NewBuildComment.resx">
-      <DependentUpon>NewBuildComment.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\bamboo\SearchBuild.resx">
       <DependentUpon>SearchBuild.cs</DependentUpon>
