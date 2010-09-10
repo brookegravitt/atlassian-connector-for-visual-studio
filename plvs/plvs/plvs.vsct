@@ -108,7 +108,7 @@
             bitmap strip containing the bitmaps and then there are the numeric ids of the elements used 
             inside a button definition. An important aspect of this declaration is that the element id 
             must be the actual index (1-based) of the bitmap inside the bitmap strip. -->
-      <Bitmap guid="guidImages" href="Resources\icons\Images.bmp" usedList="charlie, jira, jiraFind, jiraCreate, bmpPicArrows"/>
+      <Bitmap guid="guidImages" href="Resources\icons\Images.bmp" usedList="charlie, jira, jiraFind, jiraCreate, bamboo"/>
 
     </Bitmaps>
  
@@ -143,7 +143,7 @@
       <IDSymbol name="jira" value="2" />
       <IDSymbol name="jiraFind" value="3" />
       <IDSymbol name="jiraCreate" value="4" />
-      <IDSymbol name="bmpPicArrows" value="5" />
+      <IDSymbol name="bamboo" value="5" />
     </GuidSymbol>
   </Symbols>
 

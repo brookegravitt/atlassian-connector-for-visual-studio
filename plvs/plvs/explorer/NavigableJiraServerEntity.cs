@@ -2,7 +2,7 @@
 
 namespace Atlassian.plvs.explorer {
     interface NavigableJiraServerEntity {
-        string getUrl();
+        string getUrl(string authString);
         void onClick(StatusLabel status);
     }
 }

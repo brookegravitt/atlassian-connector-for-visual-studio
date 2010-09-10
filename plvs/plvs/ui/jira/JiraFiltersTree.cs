@@ -27,8 +27,12 @@ namespace Atlassian.plvs.ui.jira {
         private Action reloadIssues;
         private JiraServerModel model;
 
+        public TreeNodeCollapseExpandStatusManager CollapseExpandManager { get; set; }
+
         public JiraFiltersTree() {
             initImageList();
+            AfterCollapse += jiraFiltersTreeAfterCollapse;
+            AfterExpand += jiraFiltersTreeAfterExpand;
         }
 
         public bool RecentlyViewedSelected {
@@ -122,7 +126,6 @@ namespace Atlassian.plvs.ui.jira {
             foreach (JiraSavedFilter filter in filters) {
                 node.Nodes.Add(new JiraSavedFilterTreeNode(server, filter, 1));
             }
-            node.ExpandAll();
         }
 
         public void addCustomFilterNodes(JiraServer server) {
@@ -437,6 +440,48 @@ namespace Atlassian.plvs.ui.jira {
 
         public void setModel(JiraServerModel m) {
             model = m;
+        }
+
+        private bool isRestoring;
+
+        public void restoreExpandCollapseStates() {
+            if (CollapseExpandManager == null) {
+                ExpandAll();
+                return;
+            }
+            isRestoring = true;
+            foreach (var node in Nodes) {
+                restoreExpandCollapseState(node as TreeNode);    
+            }
+            isRestoring = false;
+        }
+
+        private void jiraFiltersTreeAfterExpand(object sender, TreeViewEventArgs e) {
+            if (isRestoring) return;
+            rememberExpandCollapseState(e.Node);
+        }
+
+        private void jiraFiltersTreeAfterCollapse(object sender, TreeViewEventArgs e) {
+            if (isRestoring) return;
+            rememberExpandCollapseState(e.Node);
+        }
+
+        private void rememberExpandCollapseState(TreeNode node) {
+            if (node == null) return;
+            if (CollapseExpandManager == null) return;
+            CollapseExpandManager.rememberNodeState(node);
+            foreach (var childNode in node.Nodes) {
+                rememberExpandCollapseState(childNode as TreeNode);
+            }
+        }
+
+        private void restoreExpandCollapseState(TreeNode node) {
+            if (node == null) return;
+            if (CollapseExpandManager == null) return;
+            CollapseExpandManager.restoreNodeState(node);
+            foreach (var childNode in node.Nodes) {
+                restoreExpandCollapseState(childNode as TreeNode);
+            }
         }
     }
 }

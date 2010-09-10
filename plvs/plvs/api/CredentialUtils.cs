@@ -6,10 +6,7 @@ using System.Web;
 
 namespace Atlassian.plvs.api {
     public static class CredentialUtils {
-        public static ICredentials getCredentialsForUserAndPassword(string url, string userName, string password) {
-#if false
-            return new NetworkCredential(getUserNameWithoutDomain(userName), password, getUserDomain(userName));
-#else
+        public static CredentialCache getCredentialsForUserAndPassword(string url, string userName, string password) {
             CredentialCache credsCache = new CredentialCache();
             NetworkCredential creds = new NetworkCredential(getUserNameWithoutDomain(userName), password, getUserDomain(userName));
             credsCache.Add(new Uri(url), "Negotiate", creds);
@@ -17,7 +14,6 @@ namespace Atlassian.plvs.api {
             credsCache.Add(new Uri(url), "Digest", creds);
             credsCache.Add(new Uri(url), "Basic", creds);
             return credsCache;
-#endif
         }
 
 //        public static NetworkCredential getCredentialsForUserAndPassword(string url, string userName, string password) {
@@ -65,7 +61,6 @@ namespace Atlassian.plvs.api {
             return domain;
         }
 
-#if OLDSKOOL_AUTH
         public static string getOsAuthString(Server server) {
             return getOsAuthString(server.UserName, server.Password);
         }
@@ -75,6 +70,5 @@ namespace Atlassian.plvs.api {
                 "os_username=" + HttpUtility.UrlEncode(getUserNameWithoutDomain(userName)) 
                 + "&os_password=" + HttpUtility.UrlEncode(password);
         }
-#endif
     }
 }

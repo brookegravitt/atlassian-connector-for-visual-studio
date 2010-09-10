@@ -10,4 +10,14 @@ namespace Atlassian.plvs.attributes {
             StringValue = value;
         }
     }
+
+    public class ColorValueAttribute : Attribute {
+
+        public string ColorValue { get; protected set; }
+
+        public ColorValueAttribute(string htmlColor) {
+            ColorValue = htmlColor;
+        }
+    }
+
 }

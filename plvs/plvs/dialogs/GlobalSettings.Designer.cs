@@ -43,6 +43,12 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.numericMaxIssueLinksFileLength = new System.Windows.Forms.NumericUpDown();
+            this.radioDisableIssueLinksForLargeFiles = new System.Windows.Forms.RadioButton();
+            this.radioDisableIssueLinksForAllFiles = new System.Windows.Forms.RadioButton();
+            this.checkDisableIssueLinks = new System.Windows.Forms.CheckBox();
             this.checkAnkhSvn = new System.Windows.Forms.CheckBox();
             this.checkJiraExplorer = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -70,6 +76,8 @@
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericMaxIssueLinksFileLength)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericJiraBatchSize)).BeginInit();
             this.tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericBambooPollingInterval)).BeginInit();
@@ -238,6 +246,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.groupBox3);
             this.tabPage2.Controls.Add(this.checkAnkhSvn);
             this.tabPage2.Controls.Add(this.checkJiraExplorer);
             this.tabPage2.Controls.Add(this.label1);
@@ -250,10 +259,91 @@
             this.tabPage2.Text = "JIRA";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.label10);
+            this.groupBox3.Controls.Add(this.numericMaxIssueLinksFileLength);
+            this.groupBox3.Controls.Add(this.radioDisableIssueLinksForLargeFiles);
+            this.groupBox3.Controls.Add(this.radioDisableIssueLinksForAllFiles);
+            this.groupBox3.Controls.Add(this.checkDisableIssueLinks);
+            this.groupBox3.Location = new System.Drawing.Point(9, 44);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(465, 105);
+            this.groupBox3.TabIndex = 4;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "JIRA Issue Links In Editor";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(276, 69);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(28, 13);
+            this.label10.TabIndex = 4;
+            this.label10.Text = "lines";
+            // 
+            // numericMaxIssueLinksFileLength
+            // 
+            this.numericMaxIssueLinksFileLength.Location = new System.Drawing.Point(150, 67);
+            this.numericMaxIssueLinksFileLength.Maximum = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
+            this.numericMaxIssueLinksFileLength.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numericMaxIssueLinksFileLength.Name = "numericMaxIssueLinksFileLength";
+            this.numericMaxIssueLinksFileLength.Size = new System.Drawing.Size(120, 20);
+            this.numericMaxIssueLinksFileLength.TabIndex = 3;
+            this.numericMaxIssueLinksFileLength.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.numericMaxIssueLinksFileLength.ValueChanged += new System.EventHandler(this.numericMaxIssueLinksFileLength_ValueChanged);
+            // 
+            // radioDisableIssueLInksForLargeFiles
+            // 
+            this.radioDisableIssueLinksForLargeFiles.AutoSize = true;
+            this.radioDisableIssueLinksForLargeFiles.Location = new System.Drawing.Point(19, 67);
+            this.radioDisableIssueLinksForLargeFiles.Name = "radioDisableIssueLinksForLargeFiles";
+            this.radioDisableIssueLinksForLargeFiles.Size = new System.Drawing.Size(125, 17);
+            this.radioDisableIssueLinksForLargeFiles.TabIndex = 2;
+            this.radioDisableIssueLinksForLargeFiles.TabStop = true;
+            this.radioDisableIssueLinksForLargeFiles.Text = "For Files Larger Than";
+            this.radioDisableIssueLinksForLargeFiles.UseVisualStyleBackColor = true;
+            this.radioDisableIssueLinksForLargeFiles.CheckedChanged += new System.EventHandler(this.radioDisableIssueLInksForLargeFiles_CheckedChanged);
+            // 
+            // radioDisableIssueLinksForAllFiles
+            // 
+            this.radioDisableIssueLinksForAllFiles.AutoSize = true;
+            this.radioDisableIssueLinksForAllFiles.Location = new System.Drawing.Point(19, 43);
+            this.radioDisableIssueLinksForAllFiles.Name = "radioDisableIssueLinksForAllFiles";
+            this.radioDisableIssueLinksForAllFiles.Size = new System.Drawing.Size(78, 17);
+            this.radioDisableIssueLinksForAllFiles.TabIndex = 1;
+            this.radioDisableIssueLinksForAllFiles.TabStop = true;
+            this.radioDisableIssueLinksForAllFiles.Text = "For All Files";
+            this.radioDisableIssueLinksForAllFiles.UseVisualStyleBackColor = true;
+            this.radioDisableIssueLinksForAllFiles.CheckedChanged += new System.EventHandler(this.radioDisableIssueLinksForAllFiles_CheckedChanged);
+            // 
+            // checkDisableIssueLinks
+            // 
+            this.checkDisableIssueLinks.AutoSize = true;
+            this.checkDisableIssueLinks.Location = new System.Drawing.Point(7, 20);
+            this.checkDisableIssueLinks.Name = "checkDisableIssueLinks";
+            this.checkDisableIssueLinks.Size = new System.Drawing.Size(268, 17);
+            this.checkDisableIssueLinks.TabIndex = 0;
+            this.checkDisableIssueLinks.Text = "Disable Scanning Text Editors For JIRA Issue Links";
+            this.checkDisableIssueLinks.UseVisualStyleBackColor = true;
+            this.checkDisableIssueLinks.CheckedChanged += new System.EventHandler(this.checkDisableIssueLinks_CheckedChanged);
+            // 
             // checkAnkhSvn
             // 
             this.checkAnkhSvn.AutoSize = true;
-            this.checkAnkhSvn.Location = new System.Drawing.Point(6, 63);
+            this.checkAnkhSvn.Location = new System.Drawing.Point(9, 189);
             this.checkAnkhSvn.Name = "checkAnkhSvn";
             this.checkAnkhSvn.Size = new System.Drawing.Size(230, 17);
             this.checkAnkhSvn.TabIndex = 3;
@@ -264,7 +354,7 @@
             // checkJiraExplorer
             // 
             this.checkJiraExplorer.AutoSize = true;
-            this.checkJiraExplorer.Location = new System.Drawing.Point(6, 40);
+            this.checkJiraExplorer.Location = new System.Drawing.Point(9, 166);
             this.checkJiraExplorer.Name = "checkJiraExplorer";
             this.checkJiraExplorer.Size = new System.Drawing.Size(228, 17);
             this.checkJiraExplorer.TabIndex = 2;
@@ -554,6 +644,9 @@
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericMaxIssueLinksFileLength)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericJiraBatchSize)).EndInit();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
@@ -608,6 +701,12 @@
         private System.Windows.Forms.TextBox textProxyUserName;
         private System.Windows.Forms.TextBox textProxyHost;
         private System.Windows.Forms.NumericUpDown numericProxyPort;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.NumericUpDown numericMaxIssueLinksFileLength;
+        private System.Windows.Forms.RadioButton radioDisableIssueLinksForLargeFiles;
+        private System.Windows.Forms.RadioButton radioDisableIssueLinksForAllFiles;
+        private System.Windows.Forms.CheckBox checkDisableIssueLinks;
 
     }
 }

@@ -261,6 +261,9 @@ namespace Atlassian.plvs.ui.jira {
                 ICollection<JiraServer> jiraServers = JiraServerModel.Instance.getAllEnabledServers();
                 if (jiraServers.Where(server => server.GUID.ToString().Equals(activeIssueServerGuidStr)).Any()) {
                     CurrentActiveIssue = new ActiveIssue(activeIssueKey, activeIssueServerGuidStr);
+                    if (ActiveIssueChanged != null) {
+                        ActiveIssueChanged(this, null);
+                    }
                 }
             }
             loadPastActiveIssues(store);
@@ -556,7 +559,7 @@ namespace Atlassian.plvs.ui.jira {
                                                                            && it.Issue.ServerGuid.Equals(issueCopy.Server.GUID.ToString()))) {
                                                                
                                                                it.Text = getShortIssueSummary(issue);
-                                                               JiraImageCache.ImageInfo imageInfo = JiraImageCache.Instance.getImage(issue.Server, issue.IssueTypeIconUrl);
+                                                               ImageCache.ImageInfo imageInfo = ImageCache.Instance.getImage(issue.Server, issue.IssueTypeIconUrl);
                                                                it.Image = imageInfo != null ? imageInfo.Img : null;
                                                            }
                                                        }
@@ -576,7 +579,7 @@ namespace Atlassian.plvs.ui.jira {
         private void setActiveIssueDropdownTextAndImage(JiraServer server, JiraIssue issue) {
             if (CurrentActiveIssue != null && CurrentActiveIssue.Enabled) {
                 activeIssueDropDown.Text = getShortIssueSummary(issue);
-                JiraImageCache.ImageInfo imageInfo = JiraImageCache.Instance.getImage(server, issue.IssueTypeIconUrl);
+                ImageCache.ImageInfo imageInfo = ImageCache.Instance.getImage(server, issue.IssueTypeIconUrl);
                 activeIssueDropDown.Image = imageInfo != null ? imageInfo.Img : null;
             } else {
                 setNoIssueActiveInDropDown();

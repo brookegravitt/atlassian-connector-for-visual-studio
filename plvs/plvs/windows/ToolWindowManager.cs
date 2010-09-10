@@ -6,6 +6,7 @@ namespace Atlassian.plvs.windows {
     public class ToolWindowManager {
         public ToolWindowPane AtlassianWindow { get; set; }
         public ToolWindowPane IssueDetailsWindow { get; set; }
+        public ToolWindowPane BuildDetailsWindow { get; set; }
 
         private static readonly ToolWindowManager INSTANCE = new ToolWindowManager();
 

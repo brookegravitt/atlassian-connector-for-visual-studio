@@ -4,19 +4,31 @@ using System.Windows.Forms;
 using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
 using Atlassian.plvs.models.jira;
+using Atlassian.plvs.store;
 using Atlassian.plvs.ui.jira.issues;
 using Atlassian.plvs.ui.jira.issues.menus;
 
 namespace Atlassian.plvs.ui.jira {
     public sealed class JiraIssueTree : TreeViewAdv {
+
+        private const string JIRA_UPDATED_COLUMN_WIDTH = "JiraUpdatedColumnWidth";
+        private const string JIRA_STATUS_COLUMN_WIDTH = "JiraStatusColumnWidth";
+
+        private int updatedWidth;
+        private int statusWidth;
+
         private readonly Control parent;
         private readonly StatusLabel status;
         private readonly JiraIssueListModel model;
 
+        public TreeNodeCollapseExpandStatusManager CollapseExpandManager { get; set; }
+
         private const int MARGIN = 16;
-        private const int STATUS_WIDTH = 150;
-        private const int UPDATED_WIDTH = 150;
+        private const int STATUS_WIDTH_DEFAULT = 150;
+        private const int UPDATED_WIDTH_DEFAULT = 150;
         private const int PRIORITY_WIDTH = 24;
+        private const int STATUS_MIN = 100;
+        private const int UPDATED_MIN = 100;
 
         private readonly TreeColumn colName = new TreeColumn();
         private readonly TreeColumn colStatus = new TreeColumn();
@@ -40,10 +52,10 @@ namespace Atlassian.plvs.ui.jira {
             }
         }
 
-        private static ToolTipProvider toolTipProvider = new ToolTipProvider();
+        private static readonly ToolTipProvider toolTipProvider = new ToolTipProvider();
 
-        public JiraIssueTree(Control parent, StatusLabel status, JiraIssueListModel model, int itemHeight, Font font) {
-            this.parent = parent;
+        public JiraIssueTree(SplitContainer splitter, StatusLabel status, JiraIssueListModel model, int itemHeight, Font font) {
+            parent = splitter.Panel2;
             this.status = status;
             this.model = model;
 
@@ -111,27 +123,58 @@ namespace Atlassian.plvs.ui.jira {
             NodeControls.Add(controlStatusText);
             NodeControls.Add(controlUpdated);
 
-            setSummaryColumnWidth();
+            loadColumnWidths();
 
             parent.SizeChanged += parentSizeChanged;
+            splitter.SizeChanged += parentSizeChanged;
+            splitter.SplitterMoved += parentSizeChanged;
 
             colPriority.TextAlign = HorizontalAlignment.Left;
             colPriority.Width = PRIORITY_WIDTH;
             colPriority.MinColumnWidth = PRIORITY_WIDTH;
             colPriority.MaxColumnWidth = PRIORITY_WIDTH;
-            colUpdated.Width = UPDATED_WIDTH;
-            colUpdated.MinColumnWidth = UPDATED_WIDTH;
-            colUpdated.MaxColumnWidth = UPDATED_WIDTH;
-            colStatus.Width = STATUS_WIDTH;
-            colStatus.MinColumnWidth = STATUS_WIDTH;
-            colStatus.MaxColumnWidth = STATUS_WIDTH;
+
+            colStatus.Width = statusWidth;
+            colStatus.MinColumnWidth = STATUS_MIN;
+
+            colUpdated.Width = updatedWidth;
+            colUpdated.MinColumnWidth = UPDATED_MIN;
+
             colName.TextAlign = HorizontalAlignment.Left;
             colPriority.TooltipText = "Priority";
             colStatus.TextAlign = HorizontalAlignment.Left;
             colPriority.TextAlign = HorizontalAlignment.Left;
             colUpdated.TextAlign = HorizontalAlignment.Right;
 
+            setSummaryColumnWidth();
+
             ItemDrag += jiraIssueTreeItemDrag;
+
+            Expanded += jiraIssueTreeExpanded;
+            Collapsed += jiraIssueTreeCollapsed;
+
+            colUpdated.WidthChanged += columnWidthChanged;
+            colStatus.WidthChanged += columnWidthChanged;
+        }
+
+        private void columnWidthChanged(object sender, EventArgs e) {
+            saveColumnWidths();
+            setSummaryColumnWidth();
+        }
+
+        private void saveColumnWidths() {
+            statusWidth = colStatus.Width;
+            updatedWidth = colUpdated.Width;
+
+            ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
+            store.storeParameter(JIRA_STATUS_COLUMN_WIDTH, statusWidth);
+            store.storeParameter(JIRA_UPDATED_COLUMN_WIDTH, updatedWidth);
+        }
+
+        private void loadColumnWidths() {
+            ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
+            statusWidth = store.loadParameter(JIRA_STATUS_COLUMN_WIDTH, STATUS_WIDTH_DEFAULT);
+            updatedWidth = store.loadParameter(JIRA_UPDATED_COLUMN_WIDTH, UPDATED_WIDTH_DEFAULT);
         }
 
         public void addContextMenu(ToolStripItem[] items) {
@@ -140,16 +183,13 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void setSummaryColumnWidth() {
-            // todo: well, this is lame. figure out how to handle filling first column to occupy all space in a propper manner
-            int summaryWidth = parent.Width
-                               - PRIORITY_WIDTH - UPDATED_WIDTH - STATUS_WIDTH
-                               - SystemInformation.VerticalScrollBarWidth - MARGIN;
+            int summaryWidth = parent.Width - PRIORITY_WIDTH - updatedWidth - statusWidth - SystemInformation.VerticalScrollBarWidth - MARGIN;
             if (summaryWidth < 0) {
                 summaryWidth = 4 * PRIORITY_WIDTH;
             }
             colName.Width = summaryWidth;
-            //            colName.MinColumnWidth = summaryWidth;
-            //            colName.MaxColumnWidth = summaryWidth;
+            colName.MinColumnWidth = summaryWidth;
+            colName.MaxColumnWidth = summaryWidth;
         }
 
         private void parentSizeChanged(object sender, EventArgs e) {
@@ -177,6 +217,46 @@ namespace Atlassian.plvs.ui.jira {
             d.SetText("ISSUE:" + n.Issue.Key + ":SERVER:{" + n.Issue.Server.GUID + "}");
 
             DoDragDrop(d, DragDropEffects.Copy | DragDropEffects.Move);
+        }
+
+        private bool isRestoring;
+        
+        public void restoreExpandCollapseStates() {
+            if (CollapseExpandManager == null) {
+                ExpandAll();
+                return;
+            }
+            isRestoring = true;
+            foreach (var node in AllNodes) {
+                restoreExpandCollapseState(node);
+            }
+            isRestoring = false;
+        }
+
+        private void restoreExpandCollapseState(TreeNodeAdv node) {
+            if (CollapseExpandManager == null) return;
+            bool expanded = CollapseExpandManager.restoreNodeState(node.Tag);
+            if (expanded) node.Expand(true); else node.Collapse(true);
+        }
+
+        private void rememberExpandCollapseState(TreeNodeAdv node) {
+            if (CollapseExpandManager == null) return;
+
+            TreeNodeCollapseExpandStatusManager.TreeNodeRememberingCollapseState n = 
+                node.Tag as TreeNodeCollapseExpandStatusManager.TreeNodeRememberingCollapseState;
+            if (n == null) return;
+            n.NodeExpanded = node.IsExpanded;
+            CollapseExpandManager.rememberNodeState(node.Tag);
+        }
+
+        private void jiraIssueTreeCollapsed(object sender, TreeViewAdvEventArgs e) {
+            if (isRestoring) return;
+            rememberExpandCollapseState(e.Node);
+        }
+
+        private void jiraIssueTreeExpanded(object sender, TreeViewAdvEventArgs e) {
+            if (isRestoring) return;
+            rememberExpandCollapseState(e.Node);
         }
     }
 }

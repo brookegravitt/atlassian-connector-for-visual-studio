@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Threading;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs;
@@ -21,12 +20,16 @@ using Atlassian.plvs.util;
 using Atlassian.plvs.windows;
 using EnvDTE;
 using Process=System.Diagnostics.Process;
+using SearchIssue = Atlassian.plvs.dialogs.jira.SearchIssue;
 using Thread=System.Threading.Thread;
 
 namespace Atlassian.plvs.ui.jira {
     public partial class TabJira : UserControl, AddNewServerLink {
 
         private const string GROUP_SUBTASKS_UNDER_PARENT = "JiraIssueListGroupSubtasksUnderParent";
+        private const string FILTER_PANEL_VISIBLE = "JiraIssueListFilterPanelVisible";
+        private const string HIDE_FILTERS = "Hide Filters";
+        private const string SHOW_FILTERS = "Show Filters";
 
         private JiraIssueTree issuesTree;
 
@@ -45,6 +48,11 @@ namespace Atlassian.plvs.ui.jira {
         private int currentGeneration;
         private bool metadataFetched;
         public JiraActiveIssueManager ActiveIssueManager { get; private set; }
+
+        private ToolStripButton buttonShowHideFilters;
+
+        private bool initialFilterSelected;
+        private int baseSpliterDistance;
 
         public TabJira() {
             InitializeComponent();
@@ -70,11 +78,54 @@ namespace Atlassian.plvs.ui.jira {
 
             getMoreIssues.VisibleChanged += (s, e) => resizeStatusBar();
 
+            statusStrip.Items.Clear();
+            initializeShowHideFiltersButton(store.loadParameter(FILTER_PANEL_VISIBLE, 1) != 0);
             initializeActiveIssueToolStrip();
+            resizeStatusBar();
+        }
+
+        private void initializeShowHideFiltersButton(bool visible) {
+            buttonShowHideFilters = new ToolStripButton {
+                                        Image = Resources.ico_jira_filter,
+                                        CheckOnClick = true,
+                                        Text = visible ? HIDE_FILTERS : SHOW_FILTERS,
+                                        DisplayStyle = ToolStripItemDisplayStyle.Image,
+                                        AutoToolTip = true,
+                                        Checked = visible
+                                    };
+            buttonShowHideFilters.Click += buttonShowHideFilters_Click;
+            statusStrip.Items.Add(buttonShowHideFilters);
+            statusStrip.Items.Add(new ToolStripSeparator());
+            baseSpliterDistance = jiraSplitter.SplitterDistance;
+            jiraSplitter.Panel1MinSize = visible ? 25 : 1;
+            // we can't just collapse the left panel right away, because issue list retrieval
+            // is triggered by a filter tree selection event. It turns out that this event is
+            // not fired until the tree is actually visible - seems like the tree control is not
+            // instantiated until the parent panel is uncollapsed. Or something.
+            // So I am cheating and make the filter tree "almost invisible" by making it 1 pixel narrow
+            if (!visible) {
+                jiraSplitter.SplitterDistance = 1;
+            }
+        }
+
+        private void buttonShowHideFilters_Click(object sender, EventArgs e) {
+            bool visible = buttonShowHideFilters.Checked;
+            buttonShowHideFilters.Text = visible ? HIDE_FILTERS : SHOW_FILTERS;
+            ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
+            store.storeParameter(FILTER_PANEL_VISIBLE, visible ? 1 : 0);
+            jiraSplitter.Panel1MinSize = visible ? 25 : 1;
+            if (initialFilterSelected) {
+                jiraSplitter.Panel1Collapsed = !visible;
+            }
+            if (visible) {
+                jiraSplitter.SplitterDistance = baseSpliterDistance;
+            } else {
+                baseSpliterDistance = jiraSplitter.SplitterDistance;
+                jiraSplitter.SplitterDistance = 1;
+            }
         }
 
         private void initializeActiveIssueToolStrip() {
-            statusStrip.Items.Clear();
             ActiveIssueManager = new JiraActiveIssueManager(statusStrip, status);
             statusStrip.Items.Add(jiraStatus);
             statusStrip.Items.Add(getMoreIssues);
@@ -169,7 +220,7 @@ namespace Atlassian.plvs.ui.jira {
                 issueTreeContainer.ContentPanel.Controls.Remove(issuesTree);
             }
 
-            issuesTree = new JiraIssueTree(jiraSplitter.Panel2, status, searchingModel, filtersTree.ItemHeight, filtersTree.Font);
+            issuesTree = new JiraIssueTree(jiraSplitter, status, searchingModel, filtersTree.ItemHeight, filtersTree.Font);
 
             ToolStripMenuItem copyToClipboardItem = new ToolStripMenuItem("Copy to Clipboard", Resources.ico_copytoclipboard)
                                                     {
@@ -268,7 +319,7 @@ namespace Atlassian.plvs.ui.jira {
         private void comboGroupBy_SelectedIndexChanged(object sender, EventArgs e) {
             updateIssuesTreeModel();
             updateIssueListButtons();
-            expandIssuesTree();
+            issuesTree.restoreExpandCollapseStates();
         }
 
         private void updateIssuesTreeModel() {
@@ -386,23 +437,23 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void issuesTree_StructureChanged(object sender, TreePathEventArgs e) {
-            expandIssuesTree();
-            restoreSelectedIssue(lastSelectedIssue);
+            issuesTree.restoreExpandCollapseStates();
+            restoreExpandStatesAndSelectedIssue(lastSelectedIssue);
             invokeSelectedIssueChanged();
         }
 
         private void issueTreeModel_NodesInserted(object sender, TreeModelEventArgs e) {
-            restoreSelectedIssue(lastSelectedIssue);
+            restoreExpandStatesAndSelectedIssue(lastSelectedIssue);
             invokeSelectedIssueChanged();
         }
 
         private void issueTreeModel_NodesChanged(object sender, TreeModelEventArgs e) {
-            restoreSelectedIssue(lastSelectedIssue);
+            restoreExpandStatesAndSelectedIssue(lastSelectedIssue);
             invokeSelectedIssueChanged();
         }
 
         private void issueTreeModel_NodesRemoved(object sender, TreeModelEventArgs e) {
-            restoreSelectedIssue(lastSelectedIssue);
+            restoreExpandStatesAndSelectedIssue(lastSelectedIssue);
             invokeSelectedIssueChanged();
         }
 
@@ -462,6 +513,9 @@ namespace Atlassian.plvs.ui.jira {
                 Controls.Add(linkAddJiraServer);
             } else {
 
+                filtersTree.CollapseExpandManager = 
+                    new TreeNodeCollapseExpandStatusManager(ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS));
+
                 jiraContainer.Visible = true;
 
                 filtersTree.clear();
@@ -513,19 +567,19 @@ namespace Atlassian.plvs.ui.jira {
                     List<JiraNamedEntity> issueTypes = Facade.getIssueTypes(server);
                     foreach (JiraNamedEntity type in issueTypes) {
                         JiraServerCache.Instance.addIssueType(server, type);
-                        JiraImageCache.Instance.getImage(server, type.IconUrl);
+                        ImageCache.Instance.getImage(server, type.IconUrl);
                     }
                     List<JiraNamedEntity> subtaskIssueTypes = Facade.getSubtaskIssueTypes(server);
                     foreach (JiraNamedEntity type in subtaskIssueTypes) {
                         JiraServerCache.Instance.addIssueType(server, type);
-                        JiraImageCache.Instance.getImage(server, type.IconUrl);
+                        ImageCache.Instance.getImage(server, type.IconUrl);
                     }
 
                     status.setInfo("[" + server.Name + "] Loading issue priorities...");
                     List<JiraNamedEntity> priorities = Facade.getPriorities(server);
                     foreach (JiraNamedEntity prio in priorities) {
                         JiraServerCache.Instance.addPriority(server, prio);
-                        JiraImageCache.Instance.getImage(server, prio.IconUrl);
+                        ImageCache.Instance.getImage(server, prio.IconUrl);
                     }
 
                     status.setInfo("[" + server.Name + "] Loading issue resolutions...");
@@ -538,7 +592,7 @@ namespace Atlassian.plvs.ui.jira {
                     List<JiraNamedEntity> statuses = Facade.getStatuses(server);
                     foreach (JiraNamedEntity s in statuses) {
                         JiraServerCache.Instance.addStatus(server, s);
-                        JiraImageCache.Instance.getImage(server, s.IconUrl);
+                        ImageCache.Instance.getImage(server, s.IconUrl);
                     }
 
                     status.setInfo("[" + server.Name + "] Loading saved filters...");
@@ -565,7 +619,7 @@ namespace Atlassian.plvs.ui.jira {
                                                  }
                                                  metadataFetched = true;
                                                  filtersTree.addRecentlyViewedNode();
-                                                 filtersTree.ExpandAll();
+                                                 filtersTree.restoreExpandCollapseStates();
                                                  filtersTree.restoreLastSelectedFilterItem();
                                                  updateIssueListButtons();
 
@@ -618,12 +672,21 @@ namespace Atlassian.plvs.ui.jira {
             if (SelectedServerChanged != null) {
                 SelectedServerChanged(this, new EventArgs());
             }
+
+            if (!initialFilterSelected) {
+                initialFilterSelected = true;
+                if (!buttonShowHideFilters.Checked) {
+                    jiraSplitter.Panel1Collapsed = true;
+                }
+            }
         }
 
         public event EventHandler<EventArgs> SelectedServerChanged;
 
-        private void restoreSelectedIssue(JiraIssue issue) {
+        private void restoreExpandStatesAndSelectedIssue(JiraIssue issue) {
             this.safeInvoke(new MethodInvoker(() => {
+                                                  issuesTree.restoreExpandCollapseStates();
+
                                                   if (issue == null) {
                                                       return;
                                                   }
@@ -642,6 +705,10 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void reloadIssues() {
+
+            issuesTree.CollapseExpandManager =
+                new TreeNodeCollapseExpandStatusManager(ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS));
+
             JiraSavedFilterTreeNode savedFilterNode;
             RecentlyOpenIssuesTreeNode recentIssuesNode;
             JiraCustomFilterTreeNode customFilterNode;
@@ -654,13 +721,13 @@ namespace Atlassian.plvs.ui.jira {
             JiraIssue selectedIssue = SelectedIssue;
 
             if (savedFilterNode != null) {
-                issueLoadThread = reloadIssuesWithSavedFilter(savedFilterNode, () => restoreSelectedIssue(selectedIssue));
+                issueLoadThread = reloadIssuesWithSavedFilter(savedFilterNode, () => restoreExpandStatesAndSelectedIssue(selectedIssue));
             } else if (customFilterNode != null && !customFilterNode.Filter.Empty) {
-                issueLoadThread = reloadIssuesWithCustomFilter(customFilterNode, () => restoreSelectedIssue(selectedIssue));
+                issueLoadThread = reloadIssuesWithCustomFilter(customFilterNode, () => restoreExpandStatesAndSelectedIssue(selectedIssue));
             } else if (presetFilterNode != null) {
-                issueLoadThread = reloadIssuesWithPresetFilter(presetFilterNode, () => restoreSelectedIssue(selectedIssue));
+                issueLoadThread = reloadIssuesWithPresetFilter(presetFilterNode, () => restoreExpandStatesAndSelectedIssue(selectedIssue));
             } else if (recentIssuesNode != null) {
-                issueLoadThread = reloadIssuesWithRecentlyViewedIssues(() => restoreSelectedIssue(selectedIssue));
+                issueLoadThread = reloadIssuesWithRecentlyViewedIssues(() => restoreExpandStatesAndSelectedIssue(selectedIssue));
             }
 
             loadIssuesInThread(issueLoadThread);
@@ -774,11 +841,11 @@ namespace Atlassian.plvs.ui.jira {
             JiraIssue selectedIssue = SelectedIssue;
 
             if (savedFilterNode != null) {
-                issueLoadThread = updateIssuesWithSavedFilter(savedFilterNode, () => restoreSelectedIssue(selectedIssue));
+                issueLoadThread = updateIssuesWithSavedFilter(savedFilterNode, () => restoreExpandStatesAndSelectedIssue(selectedIssue));
             } else if (customFilterNode != null && !customFilterNode.Filter.Empty) {
-                issueLoadThread = updateIssuesWithCustomFilter(customFilterNode, () => restoreSelectedIssue(selectedIssue));
+                issueLoadThread = updateIssuesWithCustomFilter(customFilterNode, () => restoreExpandStatesAndSelectedIssue(selectedIssue));
             } else if (presetFilterNode != null) {
-                issueLoadThread = updateIssuesWithPresetFilter(presetFilterNode, () => restoreSelectedIssue(selectedIssue));
+                issueLoadThread = updateIssuesWithPresetFilter(presetFilterNode, () => restoreExpandStatesAndSelectedIssue(selectedIssue));
             }
 
             loadIssuesInThread(issueLoadThread);
@@ -860,7 +927,7 @@ namespace Atlassian.plvs.ui.jira {
                 status.setError("Failed to find issue " + key, ex);
                 Invoke(new MethodInvoker(delegate
                                              {
-                                                 string message = "Unable to find issue " + key + " on server \"" + server.Name;
+                                                 string message = "Unable to find issue " + key + " on server \"" + server.Name + "\"";
                                                  if (onFinish != null) {
                                                      onFinish(false, message, ex);
                                                  }
@@ -1006,7 +1073,12 @@ namespace Atlassian.plvs.ui.jira {
 
         private void resizeStatusBar() {
             int height = jiraStatus.Height;
-            jiraStatus.Size = new Size(statusStrip.Width - (getMoreIssues.Visible ? getMoreIssues.Width : 0) - ActiveIssueManager.ToolbarWidth, height);
+            jiraStatus.Size = new Size(
+                statusStrip.Width 
+                - (getMoreIssues.Visible ? getMoreIssues.Width : 0) 
+                - (ActiveIssueManager != null ? ActiveIssueManager.ToolbarWidth : 0)
+                - buttonShowHideFilters.Width - new ToolStripSeparator().Width, 
+                height);
         }
     }
 }

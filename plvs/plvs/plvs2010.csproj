@@ -33,10 +33,10 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
-    <SccProjectName>Svn</SccProjectName>
-    <SccLocalPath>Svn</SccLocalPath>
-    <SccAuxPath>Svn</SccAuxPath>
-    <SccProvider>SubversionScc</SccProvider>
+    <SccProjectName>&lt;Project Location In Database&gt;</SccProjectName>
+    <SccLocalPath>&lt;Local Binding Root of Project&gt;</SccLocalPath>
+    <SccAuxPath>&lt;Source Control Database&gt;</SccAuxPath>
+    <SccProvider>Mercurial Source Control Package</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -105,6 +105,7 @@
     <Compile Include="api\bamboo\BambooBuild.cs" />
     <Compile Include="api\bamboo\BambooPlan.cs" />
     <Compile Include="api\bamboo\BambooServerFacade.cs" />
+    <Compile Include="api\bamboo\BambooTest.cs" />
     <Compile Include="api\bamboo\rest\RestSession.cs" />
     <Compile Include="api\CredentialUtils.cs" />
     <Compile Include="api\jira\FiveOhThreeJiraException.cs" />
@@ -142,6 +143,12 @@
     </Compile>
     <Compile Include="dialogs\BadCertificateDialog.Designer.cs">
       <DependentUpon>BadCertificateDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\bamboo\SearchBuild.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\bamboo\SearchBuild.Designer.cs">
+      <DependentUpon>SearchBuild.cs</DependentUpon>
     </Compile>
     <Compile Include="dialogs\ExceptionViewer.cs">
       <SubType>Form</SubType>
@@ -302,6 +309,13 @@
     <Compile Include="markers\vs2010\classifier\JiraIssueEditorClassifier.cs" />
     <Compile Include="markers\vs2010\classifier\JiraIssueEditorClassifierFormat.cs" />
     <Compile Include="markers\vs2010\classifier\JiraIssueEditorClassifierType.cs" />
+    <Compile Include="markers\vs2010\DebugMon.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="markers\vs2010\DebugMon.Designer.cs">
+      <DependentUpon>DebugMon.cs</DependentUpon>
+    </Compile>
+    <Compile Include="markers\vs2010\marginglyph\JiraIssueGlyphMouseProcessorProvider.cs" />
     <Compile Include="markers\vs2010\menu\JiraIssueActionsSmartTag.cs" />
     <Compile Include="markers\vs2010\marginglyph\JiraIssueGlyphFactory.cs" />
     <Compile Include="markers\vs2010\marginglyph\JiraIssueGlyphFactoryProvider.cs" />
@@ -309,6 +323,7 @@
     <Compile Include="markers\vs2010\menu\JiraIssueActionsSmartTagProvider.cs" />
     <Compile Include="markers\vs2010\menu\OpenIssueInBrowserSmartTagAction.cs" />
     <Compile Include="markers\vs2010\menu\OpenIssueInIdeSmartTagAction.cs" />
+    <Compile Include="markers\vs2010\mouseandkeyboard\MouseProcessorProvider.cs" />
     <Compile Include="markers\vs2010\quickinfo\JiraIssueQuickInfoController.cs" />
     <Compile Include="markers\vs2010\quickinfo\JiraIssueQuickInfoControllerProvider.cs" />
     <Compile Include="markers\vs2010\quickinfo\JiraIssueQuickInfoProvider.cs" />
@@ -316,6 +331,7 @@
     <Compile Include="markers\vs2010\marginglyph\JiraIssueLineGlyphTagger.cs" />
     <Compile Include="markers\vs2010\marginglyph\JiraIssueLineGlyphTagProvider.cs" />
     <Compile Include="markers\vs2010\marginglyph\JiraIssueLineGlyphTag.cs" />
+    <Compile Include="markers\vs2010\TagCache.cs" />
     <Compile Include="markers\vs2010\texttag\JiraIssueTextTag.cs" />
     <Compile Include="markers\vs2010\texttag\JiraIssueTextTagger.cs" />
     <Compile Include="markers\vs2010\texttag\JiraIssueTagProvider.cs" />
@@ -342,7 +358,7 @@
     <Compile Include="models\jira\fields\TimeTrackingFiller.cs" />
     <Compile Include="models\jira\JiraActionFieldType.cs" />
     <Compile Include="api\jira\JiraUserCache.cs" />
-    <Compile Include="models\jira\JiraImageCache.cs" />
+    <Compile Include="net\ProxyListener.cs" />
     <Compile Include="scm\AnkhSvnJiraActiveIssueControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -361,21 +377,55 @@
     <Compile Include="ui\AutosizeListView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ui\bamboo\BambooBuildHistoryTable.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\bamboo\BambooBuildHistoryTable.Designer.cs">
+      <DependentUpon>BambooBuildHistoryTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="ui\bamboo\BambooBuildTree.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ui\bamboo\bamboonodes\BambooServerTreeNode.cs" />
     <Compile Include="ui\bamboo\bamboonodes\TreeNodeWithBambooServer.cs" />
+    <Compile Include="ui\bamboo\BambooTestResultTree.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ui\bamboo\BuildDetailsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\bamboo\BuildDetailsPanel.Designer.cs">
+      <DependentUpon>BuildDetailsPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ui\bamboo\BuildDetailsToolWindow.cs" />
+    <Compile Include="ui\bamboo\BuildDetailsWindow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\bamboo\BuildDetailsWindow.Designer.cs">
+      <DependentUpon>BuildDetailsWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="ui\bamboo\BuildNode.cs" />
+    <Compile Include="ui\bamboo\NodeBuildInProgressIcon.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ui\bamboo\TabBamboo.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ui\bamboo\TabBamboo.Designer.cs">
       <DependentUpon>TabBamboo.cs</DependentUpon>
     </Compile>
+    <Compile Include="ui\bamboo\TestMethodNode.cs" />
+    <Compile Include="ui\bamboo\TestPackageOrClassNode.cs" />
     <Compile Include="ui\bamboo\treemodels\FlatBuildTreeModel.cs" />
+    <Compile Include="ui\bamboo\treemodels\TestResultTreeModel.cs" />
     <Compile Include="ui\ComboBoxWithImages.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ui\crucible\TabCrucible.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\crucible\TabCrucible.Designer.cs">
+      <DependentUpon>TabCrucible.cs</DependentUpon>
     </Compile>
     <Compile Include="ui\jira\fields\DateFieldEditorProvider.cs" />
     <Compile Include="ui\jira\fields\FixedHeightFieldEditorProvider.cs" />
@@ -421,16 +471,24 @@
     <Compile Include="ui\ToolWindowFrame.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="ui\TreeNodeCollapseExpandStatusManager.cs" />
     <Compile Include="ui\WebBrowserWithLabel.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ui\WebBrowserWithLabel.Designer.cs">
       <DependentUpon>WebBrowserWithLabel.cs</DependentUpon>
     </Compile>
+    <Compile Include="util\bamboo\BambooBuildUtils.cs" />
     <Compile Include="util\Constants.cs" />
     <Compile Include="util\ExceptionBuilder.cs" />
-    <Compile Include="util\jira\BambooBuildUtils.cs" />
+    <Compile Include="util\FileListPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="util\FileListPicker.Designer.cs">
+      <DependentUpon>FileListPicker.cs</DependentUpon>
+    </Compile>
     <Compile Include="util\jira\IssueActionRunner.cs" />
+    <Compile Include="util\SolutionUtils.cs" />
     <Compile Include="util\XPathUtils.cs" />
     <Compile Include="ui\jira\TabJira.cs">
       <SubType>UserControl</SubType>
@@ -467,6 +525,7 @@
     <Compile Include="models\jira\presetFilters\JiraPresetFilterReportedByMe.cs" />
     <Compile Include="models\jira\presetFilters\JiraPresetFilterUnscheduled.cs" />
     <Compile Include="store\CredentialsVault.cs" />
+    <Compile Include="models\ImageCache.cs" />
     <Compile Include="models\jira\JiraCustomFilter.cs" />
     <Compile Include="models\jira\JiraIssueListModel.cs" />
     <Compile Include="models\jira\JiraIssueListModelBuilder.cs" />
@@ -576,6 +635,9 @@
     <EmbeddedResource Include="dialogs\BadCertificateDialog.resx">
       <DependentUpon>BadCertificateDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\bamboo\SearchBuild.resx">
+      <DependentUpon>SearchBuild.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="dialogs\ExceptionViewer.resx">
       <DependentUpon>ExceptionViewer.cs</DependentUpon>
     </EmbeddedResource>
@@ -658,6 +720,9 @@
       <DependentUpon>JiraServerExplorer.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="markers\vs2010\DebugMon.resx">
+      <DependentUpon>DebugMon.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="scm\AnkhSvnJiraActiveIssueControl.resx">
       <DependentUpon>AnkhSvnJiraActiveIssueControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -666,9 +731,21 @@
       <DependentUpon>AnkhSvnJiraConnectorControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="ui\bamboo\BambooBuildHistoryTable.resx">
+      <DependentUpon>BambooBuildHistoryTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\bamboo\BuildDetailsPanel.resx">
+      <DependentUpon>BuildDetailsPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\bamboo\BuildDetailsWindow.resx">
+      <DependentUpon>BuildDetailsWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ui\bamboo\TabBamboo.resx">
       <DependentUpon>TabBamboo.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\crucible\TabCrucible.resx">
+      <DependentUpon>TabCrucible.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ui\jira\JiraTextAreaWithWikiPreview.resx">
       <DependentUpon>JiraTextAreaWithWikiPreview.cs</DependentUpon>
@@ -693,6 +770,9 @@
     <EmbeddedResource Include="ui\WebBrowserWithLabel.resx">
       <DependentUpon>WebBrowserWithLabel.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="util\FileListPicker.resx">
+      <DependentUpon>FileListPicker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="windows\AtlassianPanel.resx">
       <DependentUpon>AtlassianPanel.cs</DependentUpon>
@@ -726,6 +806,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Resources\icons\small_throbber" />
     <None Include="Web References\Atlassian.plvs.api.soap.service\jirasoapservice-v2.wsdl" />
     <None Include="Web References\Atlassian.plvs.api.soap.service\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
@@ -876,7 +957,7 @@
     <Content Include="Resources\icons\minus.png" />
     <Content Include="Resources\icons\new_comment.png" />
     <Content Include="Resources\icons\nothing.png" />
-    <Content Include="Resources\icons\open_in_ide.png" />
+    <Resource Include="Resources\icons\open_in_ide.png" />
     <Content Include="Resources\icons\pazu.bmp" />
     <None Include="markers\Markers2008.reg" />
     <None Include="Resources\icons\pazu_32.bmp" />
@@ -897,7 +978,7 @@
     <Content Include="Resources\icons\unknown.png" />
     <Content Include="Resources\icons\update_unavailable.ico" />
     <Content Include="Resources\icons\update_unavailable.png" />
-    <Content Include="Resources\icons\view_in_browser.png" />
+    <Resource Include="Resources\icons\view_in_browser.png" />
     <None Include="Resources\texts\about_html.txt" />
     <None Include="Resources\texts\comments_css.txt" />
     <None Include="Resources\texts\summary_and_description_css.txt" />
@@ -905,8 +986,11 @@
     <None Include="third party\ankh\LICENSE.rtf" />
     <Content Include="Resources\icons\vs2008.bmp" />
     <Content Include="Resources\icons\vs2010.bmp" />
+    <Content Include="Resources\icons\VSObject_Class.png" />
+    <Content Include="Resources\icons\VSObject_Namespace.png" />
     <Content Include="Resources\texts\attachment_download_html.txt" />
     <Content Include="Resources\texts\autoupdate_html.txt" />
+    <Content Include="Resources\texts\build_summary_html.txt" />
     <Content Include="Resources\texts\explorer_navigator_error_html.txt" />
     <Content Include="Resources\texts\issue_summary_html.txt" />
     <Content Include="Resources\texts\issue_summary_original_estimate_editable_html.txt" />
@@ -959,6 +1043,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <!--
     To specify a different registry root to register your package, uncomment the TargetRegistryRoot
