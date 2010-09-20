@@ -90,6 +90,7 @@ namespace Atlassian.plvs.eventsinks {
             }
             catch (Exception e) {
                 Debug.WriteLine(e);
+                new ExceptionViewer("Failed to initialize Atlassian tool windows", e).ShowDialog();
             }
 
             return VSConstants.S_OK;
