@@ -42,12 +42,13 @@
             this.buttonTestConnection = new System.Windows.Forms.Button();
             this.checkDontUseProxy = new System.Windows.Forms.CheckBox();
             this.checkShared = new System.Windows.Forms.CheckBox();
+            this.checkUseOldskoolAuth = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // buttonCancel
             // 
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(377, 203);
+            this.buttonCancel.Location = new System.Drawing.Point(377, 226);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 9;
@@ -56,7 +57,7 @@
             // 
             // buttonAddOrEdit
             // 
-            this.buttonAddOrEdit.Location = new System.Drawing.Point(296, 203);
+            this.buttonAddOrEdit.Location = new System.Drawing.Point(296, 226);
             this.buttonAddOrEdit.Name = "buttonAddOrEdit";
             this.buttonAddOrEdit.Size = new System.Drawing.Size(75, 23);
             this.buttonAddOrEdit.TabIndex = 8;
@@ -145,7 +146,7 @@
             // 
             // buttonTestConnection
             // 
-            this.buttonTestConnection.Location = new System.Drawing.Point(97, 203);
+            this.buttonTestConnection.Location = new System.Drawing.Point(97, 226);
             this.buttonTestConnection.Name = "buttonTestConnection";
             this.buttonTestConnection.Size = new System.Drawing.Size(112, 23);
             this.buttonTestConnection.TabIndex = 7;
@@ -175,11 +176,23 @@
             this.checkShared.UseVisualStyleBackColor = true;
             this.checkShared.CheckedChanged += new System.EventHandler(this.checkShared_CheckedChanged);
             // 
+            // checkUseOldskoolAuth
+            // 
+            this.checkUseOldskoolAuth.AutoSize = true;
+            this.checkUseOldskoolAuth.Location = new System.Drawing.Point(97, 193);
+            this.checkUseOldskoolAuth.Name = "checkUseOldskoolAuth";
+            this.checkUseOldskoolAuth.Size = new System.Drawing.Size(194, 17);
+            this.checkUseOldskoolAuth.TabIndex = 10;
+            this.checkUseOldskoolAuth.Text = "Authenticate using URL parameters";
+            this.checkUseOldskoolAuth.UseVisualStyleBackColor = true;
+            this.checkUseOldskoolAuth.CheckedChanged += new System.EventHandler(this.checkUseOldskoolAuth_CheckedChanged);
+            // 
             // AddOrEditJiraServer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(464, 239);
+            this.ClientSize = new System.Drawing.Size(464, 261);
+            this.Controls.Add(this.checkUseOldskoolAuth);
             this.Controls.Add(this.checkShared);
             this.Controls.Add(this.checkDontUseProxy);
             this.Controls.Add(this.buttonTestConnection);
@@ -223,5 +236,6 @@
         private System.Windows.Forms.Button buttonTestConnection;
         private System.Windows.Forms.CheckBox checkDontUseProxy;
         private System.Windows.Forms.CheckBox checkShared;
+        private System.Windows.Forms.CheckBox checkUseOldskoolAuth;
     }
 }

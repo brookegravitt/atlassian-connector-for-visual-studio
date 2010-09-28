@@ -321,6 +321,10 @@ namespace Atlassian.plvs.api.jira {
         }
 
         private void setSessionCookie(JiraServer server, JiraAuthenticatedClient client) {
+            if (!server.OldSkoolAuth) {
+                return;
+            }
+
             lock (rssSessionCookieMap) {
                 string key = getSessionOrTokenKey(server);
                 if (rssSessionCookieMap.ContainsKey(key)) {
@@ -332,6 +336,10 @@ namespace Atlassian.plvs.api.jira {
         }
 
         private void removeSessionCookie(JiraServer server) {
+            if (!server.OldSkoolAuth) {
+                return;
+            }
+
             lock (rssSessionCookieMap) {
                 rssSessionCookieMap.Remove(getSessionOrTokenKey(server));
             }

@@ -29,7 +29,7 @@ namespace Atlassian.plvs.api.jira {
         }
 
         public IDictionary<string, string> login() {
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(BaseUrl + "/login.jsp");
+            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(BaseUrl + "/Dashboard.jspa");
             req.Proxy = dontUseProxy ? null : GlobalSettings.Proxy;
             req.Credentials = CredentialUtils.getCredentialsForUserAndPassword(BaseUrl, UserName, Password);
             req.Timeout = GlobalSettings.NetworkTimeout * 1000;
@@ -81,14 +81,12 @@ namespace Atlassian.plvs.api.jira {
             return idxEnd == -1 ? null : cookies.Substring(idxStart + tokenName.Length, idxEnd - idxStart - tokenName.Length);
         }
 
-#if OLDSKOOL_AUTH
         protected string appendAuthentication(bool first) {
             if (UserName != null) {
                 return (first ? "?" : "&") + CredentialUtils.getOsAuthString(UserName, Password);
             }
             return "";
         }
-#else
 
         protected void setSessionCookie(HttpWebRequest req) {
             if (SessionTokens != null) {
@@ -115,7 +113,6 @@ namespace Atlassian.plvs.api.jira {
                 HttpUtility.UrlEncode(CredentialUtils.getUserNameWithoutDomain(userName)),
                 HttpUtility.UrlEncode(password));
         }
-#endif
 
         public void Dispose() {
         }
