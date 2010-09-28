@@ -31,6 +31,7 @@ namespace Atlassian.plvs.dialogs.jira {
                     checkEnabled.Checked = server.Enabled;
                     checkShared.Checked = server.IsShared;
                     checkDontUseProxy.Checked = server.NoProxy;
+                    checkUseOldskoolAuth.Checked = server.OldSkoolAuth;
                 }
             }
             else {
@@ -40,6 +41,7 @@ namespace Atlassian.plvs.dialogs.jira {
                 checkEnabled.Checked = true;
                 checkShared.Checked = false;
                 checkDontUseProxy.Checked = false;
+                checkUseOldskoolAuth.Checked = false;
             }
 
             StartPosition = FormStartPosition.CenterParent;
@@ -72,6 +74,7 @@ namespace Atlassian.plvs.dialogs.jira {
             server.Enabled = checkEnabled.Checked;
             server.IsShared = checkShared.Checked;
             server.NoProxy = checkDontUseProxy.Checked;
+            server.OldSkoolAuth = checkUseOldskoolAuth.Checked;
         }
 
         private void name_TextChanged(object sender, EventArgs e) {
@@ -116,6 +119,10 @@ namespace Atlassian.plvs.dialogs.jira {
         }
 
         private void checkShared_CheckedChanged(object sender, EventArgs e) {
+            checkIfValid();
+        }
+
+        private void checkUseOldskoolAuth_CheckedChanged(object sender, EventArgs e) {
             checkIfValid();
         }
     }

@@ -25,9 +25,9 @@ namespace Atlassian.plvs.api.jira {
             url.Append("&pager/start=" + start);
             url.Append("&tempMax=" + max);
 
-#if OLDSKOOL_AUTH
-            url.Append(appendAuthentication(false));
-#endif
+            if (server.OldSkoolAuth) {
+                url.Append(appendAuthentication(false));
+            }
 
             try {
                 using (Stream stream = getRssQueryResultStream(url)) {
@@ -49,9 +49,9 @@ namespace Atlassian.plvs.api.jira {
             url.Append("&pager/start=" + start);
             url.Append("&tempMax=" + max);
 
-#if OLDSKOOL_AUTH
-            url.Append(appendAuthentication(false));
-#endif
+            if (server.OldSkoolAuth) {
+                url.Append(appendAuthentication(false));
+            }
 
             try {
                 using (Stream stream = getRssQueryResultStream(url)) {
@@ -67,9 +67,9 @@ namespace Atlassian.plvs.api.jira {
             StringBuilder url = new StringBuilder(BaseUrl + "/si/jira.issueviews:issue-xml/");
             url.Append(key).Append("/").Append(key).Append(".xml");
 
-#if OLDSKOOL_AUTH
-            url.Append(appendAuthentication(true));
-#endif
+            if (server.OldSkoolAuth) {
+                url.Append(appendAuthentication(true));
+            }
 
             try {
                 using(Stream stream = getRssQueryResultStream(url)) {

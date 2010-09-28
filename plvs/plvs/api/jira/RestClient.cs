@@ -17,9 +17,9 @@ namespace Atlassian.plvs.api.jira {
         public string getRenderedContent(string issueKey, int issueType, int projectId, string markup) {
             StringBuilder url = new StringBuilder(BaseUrl + "/rest/api/1.0/render");
 
-#if OLDSKOOL_AUTH
-            url.Append(appendAuthentication(true));
-#endif
+            if (server.OldSkoolAuth) {
+                url.Append(appendAuthentication(true));
+            }
 
             try {
 
