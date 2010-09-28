@@ -1072,6 +1072,9 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void resizeStatusBar() {
+            if (buttonShowHideFilters == null) {
+                return;
+            }
             int height = jiraStatus.Height;
             jiraStatus.Size = new Size(
                 statusStrip.Width 
