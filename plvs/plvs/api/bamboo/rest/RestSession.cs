@@ -25,7 +25,9 @@ namespace Atlassian.plvs.api.bamboo.rest {
         private const string LATEST_BUILDS_FOR_PLANS_ACTION = "/rest/api/latest/build/{0}?expand=builds[0].build";
         private const string BUILD_BY_KEY_ACTION = "/rest/api/latest/build/{0}?expand=artifacts.artifact,jiraIssues.jiraIssue";
         private const string LAST_N_BUILDS_ROM_PLAN = "/rest/api/latest/build/{0}?expand=builds[0:{1}].build";
-        private const string ALL_TESTS = "/rest/api/latest/build/{0}?expand=testResults.all";
+        
+        private const string ALL_TESTS = "/rest/api/latest/build/{0}?expand=testResults.all,stages.stage.results.result.testResults.all";
+        private const string ALL_ARTIFACTS = "/rest/api/latest/build/{0}?expand=artifacts.artifact,stages.stage.results.result.artifacts.artifact";
 
         private const string ALL_PLANS_ACTION = "/rest/api/latest/plan?expand=plans.plan";
         private const string FAVOURITE_PLANS_ACTION = "/rest/api/latest/plan?favourite&expand=plans.plan";
@@ -194,6 +196,76 @@ namespace Atlassian.plvs.api.bamboo.rest {
             return result;
         }
 
+        private static BuildArtifact getArtifact(string resultKey, XPathNavigator artifact) {
+            if (!artifact.HasChildren) return null;
+            XPathNavigator art = artifact.Clone();
+            art.MoveToFirstChild();
+            string name = null;
+            string link = null;
+            do {
+                switch (art.Name) {
+                    case "name":
+                        name = art.Value;
+                        break;
+                    case "link":
+                        link = XPathUtils.getAttributeSafely(art, "href", null);
+                        break;
+                }
+            } while (art.MoveToNext());
+            if (name == null | link == null) return null;
+            BuildArtifact a = new BuildArtifact(resultKey, name, link);
+            return a;
+        }
+
+        public ICollection<BuildArtifact> getArtifacts(string buildKey) {
+            string buildUrl = string.Format(ALL_ARTIFACTS, buildKey);
+            string endpoint = server.Url + buildUrl;
+
+            using (Stream stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint), true)) {
+                XPathDocument doc = XPathUtils.getXmlDocument(stream);
+
+                string code = getRestErrorStatusCode(doc);
+                if (code != null) {
+                    throw new Exception(code);
+                }
+
+                XPathNavigator nav = doc.CreateNavigator();
+
+                List<BuildArtifact> artifacts = new List<BuildArtifact>();
+
+                XPathExpression expr = nav.Compile("/build/artifacts/artifact");
+                XPathNodeIterator it = nav.Select(expr);
+
+                if (it.MoveNext()) {
+                    artifacts.Add(getArtifact(null, it.Current));
+                }
+
+                expr = nav.Compile("/result/artifacts/artifact");
+                it = nav.Select(expr);
+
+                if (it.MoveNext()) {
+                    artifacts.Add(getArtifact(null, it.Current));
+                }
+
+                expr = nav.Compile("/result/stages/stage/results/result");
+                it = nav.Select(expr);
+
+                while (it.MoveNext()) {
+                    string resultKey = XPathUtils.getAttributeSafely(it.Current, "key", null);
+                    XPathNodeIterator it2 = it.Clone();
+                    XPathExpression expr3 = it2.Current.Compile("artifacts/artifact");
+
+                    XPathNodeIterator it3 = it2.Current.Select(expr3);
+
+                    while (it3.MoveNext()) {
+                        artifacts.Add(getArtifact(resultKey, it3.Current));
+                    }
+                }
+
+                return artifacts;
+            }
+        }
+
         public ICollection<BambooTest> getTestResults(string buildKey) {
 
             string buildUrl = string.Format(ALL_TESTS, buildKey);
@@ -211,6 +283,11 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
                 XPathExpression expr = nav.Compile("/build/testResults/all/testResult");
                 XPathNodeIterator it = nav.Select(expr);
+
+                if (it.Count == 0) {
+                    expr = nav.Compile("/result/stages/stage/results/result/testResults/all/testResult");
+                    it = nav.Select(expr);
+                }
 
                 List<BambooTest> tests = new List<BambooTest>();
 
@@ -291,6 +368,11 @@ namespace Atlassian.plvs.api.bamboo.rest {
                 expr = nav.Compile(prefix + "/build");
                 it = nav.Select(expr);
 
+                if (it.Count == 0) {
+                    expr = nav.Compile(prefix + "/result");
+                    it = nav.Select(expr);
+                }
+
                 List<BambooBuild> builds = new List<BambooBuild>();
 
                 while (it.MoveNext()) {
@@ -303,7 +385,6 @@ namespace Atlassian.plvs.api.bamboo.rest {
                     int successfulTestCount = 0;
                     int failedTestCount = 0;
                     string buildReason = null;
-                    List<BambooBuild.Artifact> artifacts = new List<BambooBuild.Artifact>();
                     List<BambooBuild.RelatedIssue> relatedIssues = new List<BambooBuild.RelatedIssue>();
 
                     do {
@@ -323,16 +404,6 @@ namespace Atlassian.plvs.api.bamboo.rest {
                             case "buildReason":
                                 buildReason = it.Current.Value;
                                 break;
-                            case "artifacts":
-                                if (it.Current.HasChildren) {
-                                    XPathNavigator chnav = it.Clone().Current;
-                                    chnav.MoveToFirstChild();
-                                    do {
-                                        BambooBuild.Artifact artifact = getArtifact(chnav);
-                                        if (artifact != null) artifacts.Add(artifact);
-                                    } while (chnav.MoveToNext());
-                                }
-                                break;
                             case "jiraIssues":
                                 if (it.Current.HasChildren) {
                                     XPathNavigator chnav = it.Clone().Current;
@@ -350,7 +421,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
                     BambooBuild.PlanState planState = getPlanState ? getPlanStateForBuild(key) : BambooBuild.PlanState.IDLE;
                     BambooBuild build = new BambooBuild(server,
                         key, BambooBuild.stringToResult(state), number, buildRelativeTime,
-                        buildDurationDescription, successfulTestCount, failedTestCount, buildReason, planState, artifacts, relatedIssues);
+                        buildDurationDescription, successfulTestCount, failedTestCount, buildReason, planState, relatedIssues);
                     builds.Add(build);
                 }
 
@@ -361,27 +432,6 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
                 return builds;
             }
-        }
-
-        private static BambooBuild.Artifact getArtifact(XPathNavigator artifact) {
-            if (!artifact.HasChildren) return null;
-            XPathNavigator art = artifact.Clone();
-            art.MoveToFirstChild();
-            string name = null;
-            string link = null;
-            do {
-                switch (art.Name) {
-                    case "name":
-                        name = art.Value;
-                        break;
-                    case "link":
-                        link = XPathUtils.getAttributeSafely(art, "href", null);
-                        break;
-                }
-            } while (art.MoveToNext());
-            if (name == null | link == null) return null;
-            BambooBuild.Artifact a = new BambooBuild.Artifact(name, link);
-            return a;
         }
 
         private static BambooBuild.RelatedIssue getRelatedIssue(XPathNavigator issue) {
@@ -403,7 +453,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
         }
 
         private BambooBuild.PlanState getPlanStateForBuild(string buildKey) {
-            BambooBuild.PlanState state = BambooBuild.PlanState.UNKNOWN;
+            BambooBuild.PlanState state;
 
             string endpoint = server.Url + string.Format(PLAN_DETAILS, BambooBuildUtils.getPlanKey(buildKey));
             using (Stream stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint), true)) {
@@ -499,14 +549,23 @@ namespace Atlassian.plvs.api.bamboo.rest {
             }
         }
 
-        public string getBuildLog(BambooBuild build) {
-            string endpoint = server.Url + "/download/" + BambooBuildUtils.getPlanKey(build) + "/build_logs/" + build.Key + ".log";
+        public string getBuildLog(string logUrl) {
+            string endpoint = logUrl;
             endpoint = endpoint + getBasicAuthParameter(endpoint);
             using (Stream stream = getQueryResultStream(endpoint, true)) {
                 StreamReader reader = new StreamReader(stream);
                 return reader.ReadToEnd();
             }
         }
+
+//        public string getBuildLog(BambooBuild build) {
+//            string endpoint = server.Url + "/download/" + BambooBuildUtils.getPlanKey(build) + "/build_logs/" + build.Key + ".log";
+//            endpoint = endpoint + getBasicAuthParameter(endpoint);
+//            using (Stream stream = getQueryResultStream(endpoint, true)) {
+//                StreamReader reader = new StreamReader(stream);
+//                return reader.ReadToEnd();
+//            }
+//        }
 
         private Stream getQueryResultStream(string endpoint, bool setBasicAuth) {
             var req = (HttpWebRequest)WebRequest.Create(endpoint);

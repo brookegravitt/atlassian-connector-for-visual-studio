@@ -33,15 +33,6 @@ namespace Atlassian.plvs.api.bamboo {
             return BuildResult.UNKNOWN;
         }
 
-        public class Artifact {
-            public string Name { get; private set; }
-            public string Url { get; private set; }
-            public Artifact(string name, string url) {
-                Name = name;
-                Url = url;
-            }
-        }
-
         public class RelatedIssue {
             public string Key { get; private set; }
             public string Url { get; private set; }
@@ -54,7 +45,7 @@ namespace Atlassian.plvs.api.bamboo {
         public BambooBuild(
             BambooServer server, string key, BuildResult result, int number, string relativeTime,
             string duration, int successfulTests, int failedTests, string reason, PlanState state,
-            ICollection<Artifact> artifacts, ICollection<RelatedIssue> relatedIssues) {
+            ICollection<RelatedIssue> relatedIssues) {
 
             Server = server;
             Key = key;
@@ -66,7 +57,6 @@ namespace Atlassian.plvs.api.bamboo {
             FailedTests = failedTests;
             Reason = reason;
             State = state;
-            Artifacts = artifacts;
             RelatedIssues = relatedIssues;
         }
 
@@ -80,7 +70,6 @@ namespace Atlassian.plvs.api.bamboo {
         public int FailedTests { get; private set; }
         public string Reason { get; private set; }
         public PlanState State { get; private set; }
-        public ICollection<Artifact> Artifacts { get; private set; }
         public ICollection<RelatedIssue> RelatedIssues { get; private set; }
     }
 }
