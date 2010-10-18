@@ -27,6 +27,8 @@ namespace Atlassian.plvs.ui.bamboo {
         private readonly BambooBuild build;
 
         private BambooBuild buildWithDetails;
+        private ICollection<BuildArtifact> buildArtifacts;
+
         private bool unableToRetrieveDetails;
 
         private readonly TabPage myTab;
@@ -56,6 +58,11 @@ namespace Atlassian.plvs.ui.bamboo {
             parent.setMyTabIconFromBuildResult(build.Result, myTab);
 
             status = new StatusLabel(statusStrip, labelStatus);
+
+            tabLogPanels.Visible = false;
+            tabLogPanels.TabPages.Clear();
+
+            webLog.Dock = DockStyle.Fill;
         }
 
         protected override void OnLoad(EventArgs e) {
@@ -76,6 +83,7 @@ namespace Atlassian.plvs.ui.bamboo {
         private void getBuildDetailsRunner() {
             try {
                 buildWithDetails = BambooServerFacade.Instance.getBuildByKey(build.Server, build.Key);
+                buildArtifacts = BambooServerFacade.Instance.getArtifacts(build);
             } catch(Exception e) {
                 status.setError("Failed to retrieve build details", e);
                 unableToRetrieveDetails = true;
@@ -92,19 +100,66 @@ namespace Atlassian.plvs.ui.bamboo {
 
         private void getLogRunner() {
             try {
-                string buildLog = BambooServerFacade.Instance.getBuildLog(build);
-                StringBuilder sb = new StringBuilder();
-                sb.Append("<html>\n<head>\n").Append(Resources.summary_and_description_css);
-                sb.Append("\n</head>\n<body class=\"description\">\n");
-                sb.Append(createAugmentedLog(HttpUtility.HtmlEncode(buildLog)));
-                sb.Append("</body></html>");
+                List<Exception> exceptions = new List<Exception>();
+                SortedDictionary<string, string> logs = new SortedDictionary<string, string>();
+                int unnamed = 1;
+                foreach (BuildArtifact artifact in buildArtifacts) {
+                    if (!artifact.Name.Equals("Build log")) { continue; }
+                    try {
+                        logs[artifact.ResultKey ?? ("Log #" + unnamed++)] = BambooServerFacade.Instance.getBuildLog(build.Server, artifact.Url);
+                    } catch (Exception e) {
+                        exceptions.Add(e);
+                    }
+                }
+                if (exceptions.Count > 0) {
+                    StringBuilder sb = new StringBuilder();
+                    foreach (var exception in exceptions) {
+                        sb.Append(exception).Append("\r\n\r\n");
+                    }
+                    throw new Exception(sb.ToString());
+                }
+//                string buildLog = BambooServerFacade.Instance.getBuildLog(build);
 
-                this.safeInvoke(new MethodInvoker(delegate { webLog.DocumentText = sb.ToString(); }));
+
+                this.safeInvoke(new MethodInvoker(delegate {
+                                                      webLog.Visible = false;
+                                                      tabLogPanels.Visible = true;
+                                                      foreach (string key in logs.Keys) {
+                                                          addLogTab(key, logs[key]);
+                                                      }
+                                                      tabLogPanels.Dock = DockStyle.Fill;
+                                                  }));
                 status.setInfo("Build log retrieved");
             } catch (Exception e) {
-                status.setError("Failed to retrieve build log", e);
+                status.setError("Failed to retrieve build logs", e);
+                this.safeInvoke(new MethodInvoker(delegate { webLog.DocumentText = ""; }));
             }
             runGetTestsThread();
+        }
+
+        private void addLogTab(string key, string log) {
+            TabPage page = new TabPage(key);
+            WebBrowser txt = new WebBrowser {
+                                 WebBrowserShortcutsEnabled = false, 
+                                 ScriptErrorsSuppressed = true
+                             };
+            txt.DocumentCompleted += (s, e) => {
+                                        if (txt.Document != null && txt.Document.Body != null) {
+                                            txt.Document.Body.ScrollTop = A_LOT;
+                                        }
+                                        txt.Navigating += logNavigating;
+                                     };
+
+            page.Controls.Add(txt);
+            tabLogPanels.TabPages.Add(page);
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("<html>\n<head>\n").Append(Resources.summary_and_description_css);
+            sb.Append("\n</head>\n<body class=\"description\">\n");
+            sb.Append(createAugmentedLog(HttpUtility.HtmlEncode(log)));
+            sb.Append("</body></html>");
+
+            txt.DocumentText = sb.ToString();
         }
 
         private void runGetTestsThread() {
@@ -331,10 +386,14 @@ namespace Atlassian.plvs.ui.bamboo {
 
         private string getArtifactsHtml() {
             if (buildWithDetails == null) return RETRIEVING_DETAILS;
-            if (buildWithDetails.Artifacts == null || buildWithDetails.Artifacts.Count == 0) return "No build artifacts";
+            if (buildArtifacts == null || buildArtifacts.Count == 0) return "No build artifacts";
             StringBuilder sb = new StringBuilder();
-            foreach (BambooBuild.Artifact artifact in buildWithDetails.Artifacts) {
-                sb.Append("<a href=\"").Append(artifact.Url).Append("\">").Append(artifact.Name).Append("</a>, ");
+            foreach (BuildArtifact artifact in buildArtifacts) {
+                sb.Append("<a href=\"").Append(artifact.Url).Append("\">");
+                if (artifact.ResultKey != null) {
+                    sb.Append(artifact.ResultKey).Append(" - ");    
+                }
+                sb.Append(artifact.Name).Append("</a>, ");
             }
             return sb.ToString(0, sb.Length - 2);
         }
@@ -417,40 +476,40 @@ namespace Atlassian.plvs.ui.bamboo {
             summaryLoaded = true;
         }
 
-        private bool logCompleted;
+//        private bool logCompleted;
 
         private void webLog_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) {
-            if (throbberLoaded) {
-                logCompleted = true;
-                if (webLog.Document != null && webLog.Document.Body != null) webLog.Document.Body.ScrollTop = A_LOT;
-            } else {
-                throbberLoaded = true;
-            }
+//            if (throbberLoaded) {
+//                logCompleted = true;
+//                if (webLog.Document != null && webLog.Document.Body != null) webLog.Document.Body.ScrollTop = A_LOT;
+//            } else {
+//                throbberLoaded = true;
+//                webLog.Navigating += logNavigating;
+//            }
         }
 
-        private bool throbberLoaded = true;
-        private bool scrolledDown;
+//        private bool throbberLoaded = true;
+//        private bool scrolledDown;
 
         private void tabControl_SelectedIndexChanged(object sender, EventArgs e) {
             if (!tabControl.SelectedTab.Equals(tabLog)) return;
 
-            if (!logCompleted) {
-                throbberLoaded = false;
+//            if (!logCompleted) {
+//                throbberLoaded = false;
                 webLog.DocumentText = PlvsUtils.getThrobberHtml(PlvsUtils.getThroberPath(), "Fetching build log...");
-            } else {
-                throbberLoaded = true;
-                if (scrolledDown) return;
-                BeginInvoke(new MethodInvoker(delegate {
-                    if (webLog.Document != null && webLog.Document.Body != null) {
-                        webLog.Document.Body.ScrollTop = A_LOT;
-                        scrolledDown = true;
-                    }
-                }));
-            }
+//            } else {
+//                throbberLoaded = true;
+//                if (scrolledDown) return;
+//                BeginInvoke(new MethodInvoker(delegate {
+//                    if (webLog.Document != null && webLog.Document.Body != null) {
+//                        webLog.Document.Body.ScrollTop = A_LOT;
+//                        scrolledDown = true;
+//                    }
+//                }));
+//            }
         }
 
-        private void webLog_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
-            if (!logCompleted) return;
+        private void logNavigating(object sender, WebBrowserNavigatingEventArgs e) {
 
             e.Cancel = true;
             
