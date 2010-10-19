@@ -160,7 +160,6 @@
             this.webLog.Size = new System.Drawing.Size(107, 94);
             this.webLog.TabIndex = 0;
             this.webLog.WebBrowserShortcutsEnabled = false;
-            this.webLog.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webLog_DocumentCompleted);
             // 
             // tabTests
             // 
