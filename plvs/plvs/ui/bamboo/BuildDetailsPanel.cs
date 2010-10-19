@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Web;
 using System.Windows.Forms;
 using Atlassian.plvs.api.bamboo;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.autoupdate;
-using Atlassian.plvs.dialogs.bamboo;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.store;
 using Atlassian.plvs.ui.bamboo.treemodels;
-using Atlassian.plvs.ui.jira;
 using Atlassian.plvs.util;
 using Atlassian.plvs.util.bamboo;
 using Atlassian.plvs.windows;
@@ -89,77 +88,89 @@ namespace Atlassian.plvs.ui.bamboo {
                 unableToRetrieveDetails = true;
             }
             this.safeInvoke(new MethodInvoker(displaySummary));
-            runGetLogThread();
+            runGetTestsThread();
         }
 
         private void runGetLogThread() {
-            status.setInfo("Retrieving build log...");
+            status.setInfo("Retrieving build logs...");
             Thread t = PlvsUtils.createThread(getLogRunner);
             t.Start();
         }
 
         private void getLogRunner() {
-            try {
-                List<Exception> exceptions = new List<Exception>();
-                SortedDictionary<string, string> logs = new SortedDictionary<string, string>();
-                int unnamed = 1;
-                foreach (BuildArtifact artifact in buildArtifacts) {
-                    if (!artifact.Name.Equals("Build log")) { continue; }
-                    try {
-                        logs[artifact.ResultKey ?? ("Log #" + unnamed++)] = BambooServerFacade.Instance.getBuildLog(build.Server, artifact.Url);
-                    } catch (Exception e) {
-                        exceptions.Add(e);
-                    }
-                }
-                if (exceptions.Count > 0) {
-                    StringBuilder sb = new StringBuilder();
-                    foreach (var exception in exceptions) {
-                        sb.Append(exception).Append("\r\n\r\n");
-                    }
-                    throw new Exception(sb.ToString());
-                }
-//                string buildLog = BambooServerFacade.Instance.getBuildLog(build);
+            SortedDictionary<string, string> logs = new SortedDictionary<string, string>();
+            List<Exception> exceptions = new List<Exception>();
 
-
-                this.safeInvoke(new MethodInvoker(delegate {
-                                                      webLog.Visible = false;
-                                                      tabLogPanels.Visible = true;
-                                                      foreach (string key in logs.Keys) {
-                                                          addLogTab(key, logs[key]);
-                                                      }
-                                                      tabLogPanels.Dock = DockStyle.Fill;
-                                                  }));
-                status.setInfo("Build log retrieved");
-            } catch (Exception e) {
-                status.setError("Failed to retrieve build logs", e);
-                this.safeInvoke(new MethodInvoker(delegate { webLog.DocumentText = ""; }));
+            int unnamed = 1;
+            foreach (BuildArtifact artifact in buildArtifacts) {
+                if (!artifact.Name.Equals("Build log")) { continue; }
+                try {
+                    logs[artifact.ResultKey ?? ("Log #" + unnamed)] =
+                        BambooServerFacade.Instance.getBuildLog(build.Server, artifact.Url);
+                    if (artifact.ResultKey == null) {
+                        ++unnamed;
+                    }
+                } catch (Exception e) {
+                    exceptions.Add(e);
+                }
             }
-            runGetTestsThread();
+
+            this.safeInvoke(new MethodInvoker(delegate {
+                                                  webLog.Visible = false;
+                                                  tabLogPanels.Visible = true;
+                                                  foreach (string key in logs.Keys) {
+                                                      addLogTab(key, logs[key]);
+                                                  }
+                                                  tabLogPanels.Dock = DockStyle.Fill;
+                                              }));
+            if (exceptions.Count > 0) {
+                status.setError("Failed to retrieve some of the build logs", exceptions);
+                if (logs.Count == 0) {
+                    this.safeInvoke(new MethodInvoker(delegate { webLog.DocumentText = ""; }));
+                }
+            } else {
+                status.setInfo("Build log retrieved");
+            } 
         }
 
         private void addLogTab(string key, string log) {
             TabPage page = new TabPage(key);
-            WebBrowser txt = new WebBrowser {
-                                 WebBrowserShortcutsEnabled = false, 
-                                 ScriptErrorsSuppressed = true
+            WebBrowser txt = new WebBrowser
+                             {
+                                 WebBrowserShortcutsEnabled = false,
+                                 IsWebBrowserContextMenuEnabled = false,
+                                 ScriptErrorsSuppressed = true,
+                                 Dock = DockStyle.Fill
                              };
-            txt.DocumentCompleted += (s, e) => {
-                                        if (txt.Document != null && txt.Document.Body != null) {
-                                            txt.Document.Body.ScrollTop = A_LOT;
-                                        }
-                                        txt.Navigating += logNavigating;
-                                     };
 
             page.Controls.Add(txt);
             tabLogPanels.TabPages.Add(page);
+            txt.DocumentText = getLogHtml(log, false, null);
 
+            Thread t = PlvsUtils.createThread(() => fillLogTab(txt, key, log));
+            t.Start();
+        }
+
+        private void fillLogTab(WebBrowser txt, string key, string log) {
+            string augmentedLog = getLogHtml(log, true,
+                percent => status.setInfo(string.Format("Processing build log: {0} - {1}%", key, percent)));
+
+            this.safeInvoke(new MethodInvoker(delegate {
+                                                  status.setInfo(string.Format("Build log {0} processed", key));
+                                                  txt.DocumentCompleted += (s, e) => { txt.Navigating += logNavigating; };
+                                                  txt.DocumentText = augmentedLog;
+                                              }));
+        }
+
+        private string getLogHtml(string log, bool augmented, Action<int> progress) {
             StringBuilder sb = new StringBuilder();
             sb.Append("<html>\n<head>\n").Append(Resources.summary_and_description_css);
             sb.Append("\n</head>\n<body class=\"description\">\n");
-            sb.Append(createAugmentedLog(HttpUtility.HtmlEncode(log)));
+            sb.Append(augmented
+                          ? createAugmentedLog(HttpUtility.HtmlEncode(log), progress)
+                          : HttpUtility.HtmlEncode(log).Replace("\n", "<br>\n"));
             sb.Append("</body></html>");
-
-            txt.DocumentText = sb.ToString();
+            return sb.ToString();
         }
 
         private void runGetTestsThread() {
@@ -180,6 +191,7 @@ namespace Atlassian.plvs.ui.bamboo {
             } catch (Exception e) {
                 status.setError("Failed to retrieve test results", e);
             }
+            runGetLogThread();
         }
 
         private void createAndFillTestTree(ICollection<BambooTest> tests) {
@@ -285,13 +297,24 @@ namespace Atlassian.plvs.ui.bamboo {
 
         private static readonly Regex FILE_AND_LINE = new Regex("(.*?)\\s(&quot;)?((([a-zA-Z]:)|(\\\\))?\\S+?)(&quot;)?\\s*\\(((\\d+)(,\\d+)?)\\)(.*?)"); 
 
-        private string createAugmentedLog(string log) {
+        private string createAugmentedLog(string log, Action<int> progress) {
 
             SolutionUtils.refillAllSolutionProjectItems(solution);
 
             string[] strings = log.Split(new[] {'\n'});
             StringBuilder logSb = new StringBuilder();
+            int prevPercent = 0;
+            double i = 0;
             foreach (var s in strings) {
+                if (progress != null) {
+                    ++i;
+                    int percent = (int)(i * 100 / strings.Length);
+                    if (percent > prevPercent) {
+                        prevPercent = percent;
+                        progress(percent);
+                    }
+                }
+
                 StringBuilder lineSb = new StringBuilder();
                 bool tooLong = s.Length > MAX_PARSEABLE_LENGTH;
                 string parseablePart = tooLong ? s.Substring(0, MAX_PARSEABLE_LENGTH) : s;
@@ -476,37 +499,9 @@ namespace Atlassian.plvs.ui.bamboo {
             summaryLoaded = true;
         }
 
-//        private bool logCompleted;
-
-        private void webLog_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) {
-//            if (throbberLoaded) {
-//                logCompleted = true;
-//                if (webLog.Document != null && webLog.Document.Body != null) webLog.Document.Body.ScrollTop = A_LOT;
-//            } else {
-//                throbberLoaded = true;
-//                webLog.Navigating += logNavigating;
-//            }
-        }
-
-//        private bool throbberLoaded = true;
-//        private bool scrolledDown;
-
         private void tabControl_SelectedIndexChanged(object sender, EventArgs e) {
             if (!tabControl.SelectedTab.Equals(tabLog)) return;
-
-//            if (!logCompleted) {
-//                throbberLoaded = false;
-                webLog.DocumentText = PlvsUtils.getThrobberHtml(PlvsUtils.getThroberPath(), "Fetching build log...");
-//            } else {
-//                throbberLoaded = true;
-//                if (scrolledDown) return;
-//                BeginInvoke(new MethodInvoker(delegate {
-//                    if (webLog.Document != null && webLog.Document.Body != null) {
-//                        webLog.Document.Body.ScrollTop = A_LOT;
-//                        scrolledDown = true;
-//                    }
-//                }));
-//            }
+            webLog.DocumentText = PlvsUtils.getThrobberHtml(PlvsUtils.getThroberPath(), "Fetching build log...");
         }
 
         private void logNavigating(object sender, WebBrowserNavigatingEventArgs e) {
