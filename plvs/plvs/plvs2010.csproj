@@ -106,6 +106,7 @@
     <Compile Include="api\bamboo\BambooPlan.cs" />
     <Compile Include="api\bamboo\BambooServerFacade.cs" />
     <Compile Include="api\bamboo\BambooTest.cs" />
+    <Compile Include="api\bamboo\BuildArtifact.cs" />
     <Compile Include="api\bamboo\rest\RestSession.cs" />
     <Compile Include="api\CredentialUtils.cs" />
     <Compile Include="api\jira\FiveOhThreeJiraException.cs" />
