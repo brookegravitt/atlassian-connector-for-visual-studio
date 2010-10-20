@@ -321,7 +321,7 @@ namespace Atlassian.plvs.api.jira {
         }
 
         private void setSessionCookie(JiraServer server, JiraAuthenticatedClient client) {
-            if (!server.OldSkoolAuth) {
+            if (server.OldSkoolAuth) {
                 return;
             }
 
@@ -336,7 +336,7 @@ namespace Atlassian.plvs.api.jira {
         }
 
         private void removeSessionCookie(JiraServer server) {
-            if (!server.OldSkoolAuth) {
+            if (server.OldSkoolAuth) {
                 return;
             }
 
