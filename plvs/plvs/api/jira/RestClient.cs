@@ -31,6 +31,9 @@ namespace Atlassian.plvs.api.jira {
                 req.Timeout = GlobalSettings.NetworkTimeout * 1000;
                 req.ReadWriteTimeout = GlobalSettings.NetworkTimeout * 2000;
                 req.ContentType = "application/json";
+
+                setSessionCookie(req);
+
                 Stream requestStream = req.GetRequestStream();
                 ASCIIEncoding encoding = new ASCIIEncoding();
                 StringBuilder query = new StringBuilder();
