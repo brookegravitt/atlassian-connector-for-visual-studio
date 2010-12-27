@@ -188,7 +188,7 @@ namespace Atlassian.plvs.models.jira {
                 sb.Append(first++ == 0 ? "" : "&").Append("reporter=").Append(server.UserName);
             switch (Assignee) {
                 case UserType.CURRENT:
-                    sb.Append(first == 0 ? "" : "&").Append("assignee=").Append(server.UserName);
+                    sb.Append(first == 0 ? "" : "&").Append("assigneeSelect=issue_current_user");
                     break;
                 case UserType.UNASSIGNED:
                     sb.Append(first == 0 ? "" : "&").Append("assigneSelect=unassigned");
