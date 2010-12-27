@@ -93,6 +93,10 @@ namespace Atlassian.plvs.api.jira {
             req.Timeout = GlobalSettings.NetworkTimeout * 1000;
             req.ReadWriteTimeout = GlobalSettings.NetworkTimeout * 2000;
 
+            if (!server.OldSkoolAuth) {
+                setSessionCookie(req);
+            }
+
             HttpWebResponse resp = (HttpWebResponse) req.GetResponse();
             return resp.GetResponseStream();
         }
