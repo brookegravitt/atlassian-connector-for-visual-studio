@@ -12,6 +12,7 @@ using Atlassian.plvs.scm;
 using Atlassian.plvs.store;
 using Atlassian.plvs.ui.bamboo;
 using Atlassian.plvs.ui.jira;
+using Atlassian.plvs.util;
 using Atlassian.plvs.windows;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
@@ -254,14 +255,18 @@ namespace Atlassian.plvs {
         }
 
         static void applicationThreadException(object sender, System.Threading.ThreadExceptionEventArgs e) {
-            UnhandledExceptionDialog dlg = new UnhandledExceptionDialog(e.Exception);
-            dlg.ShowDialog();
+            if (PlvsUtils.isConnectorException(e.Exception)) {
+                UnhandledExceptionDialog dlg = new UnhandledExceptionDialog(e.Exception);
+                dlg.ShowDialog();
+            }
         }
 
         private static void unhandledExceptionHandler(object sender, UnhandledExceptionEventArgs e) {
             Exception ex = (Exception) e.ExceptionObject;
-            UnhandledExceptionDialog dlg = new UnhandledExceptionDialog(ex);
-            dlg.ShowDialog();
+            if (PlvsUtils.isConnectorException(ex)) {
+                UnhandledExceptionDialog dlg = new UnhandledExceptionDialog(ex);
+                dlg.ShowDialog();
+            }
         }
 
         private object CreateAnkhSvnConnector(IServiceContainer container, Type servicetype) {

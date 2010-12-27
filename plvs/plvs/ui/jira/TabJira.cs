@@ -549,6 +549,7 @@ namespace Atlassian.plvs.ui.jira {
         private void reloadKnownServersWorker(IEnumerable<JiraServer> servers, int myGeneration) {
 
             try {
+
                 JiraServerCache.Instance.clearProjects();
                 JiraServerCache.Instance.clearIssueTypes();
                 JiraServerCache.Instance.clearStatuses();
