@@ -381,8 +381,12 @@ namespace Atlassian.plvs.util {
                                  try {
                                      threadStart.Invoke();
                                  } catch (Exception e) {
-                                     UnhandledExceptionDialog dlg = new UnhandledExceptionDialog(e);
-                                     dlg.ShowDialog();
+                                     if (isConnectorException(e)) {
+                                         UnhandledExceptionDialog dlg = new UnhandledExceptionDialog(e);
+                                         dlg.ShowDialog();
+                                     } else {
+                                         throw;
+                                     }
                                  }
                              };
             System.Threading.Thread t = new System.Threading.Thread(ts);
@@ -410,6 +414,11 @@ namespace Atlassian.plvs.util {
                 return "<html><head>" + Resources.summary_and_description_css + "</head><body class=\"summary\">" + text + "</body></html>";
             }
             return string.Format(Resources.throbber_html, throbberPath);
+        }
+
+        // PLVS-217
+        public static bool isConnectorException(Exception e) {
+            return e.StackTrace.Split(new[] { '\n' }).Any(line => line.Contains("Atlassian.plvs."));
         }
     }
 }
