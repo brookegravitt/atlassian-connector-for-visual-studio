@@ -9,6 +9,7 @@ namespace Atlassian.plvs.ui.jira.issuefilternodes {
             : base(filter.Name, imageIdx) {
             this.server = server;
             Filter = filter;
+            Tag = filter.Name;
         }
 
         public override JiraServer Server {
