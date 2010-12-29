@@ -42,16 +42,21 @@
   <target name="clean">
     <delete dir="${main.project}/bin/${configuration}" />
     <delete dir="${main.project}/obj/${configuration}" />
+    <delete dir="${main.project}/obj/x86/${configuration}" />
   </target>
 
   <target name="build.setup" depends="clean,version.update" >
     <exec program="${msbuild35}">
       <arg value="${main.project}/${main.project}2008.csproj" />
-      <arg value="/p:Configuration=${configuration}" />
+      <arg value="/p:Configuration=${configuration},Platform=x86" />
+      <arg value="/v:m" />
+      <arg value="/clp:ShowCommandLine" />
     </exec>
     <exec program="${msbuild40}">
       <arg value="${main.project}/${main.project}2010.csproj" />
-      <arg value="/p:Configuration=${configuration}" />
+      <arg value="/p:Configuration=${configuration},Platform=x86" />
+      <arg value="/v:m" />
+      <arg value="/clp:ShowCommandLine" />
     </exec>
     <exec program="${nsis}">
       <arg value="/DVERSION=${version}-${build.stamp}" />
