@@ -92,11 +92,12 @@ namespace Atlassian.plvs.util {
         public static void showErrors(string msg, ICollection<Exception> exceptions) {
             if (exceptions.Count == 1) {
                 foreach (Exception e in exceptions) {
-                    FiveOhThreeJiraException ex = e as FiveOhThreeJiraException;
-                    if (ex != null) {
-                        MessageBoxWithHtml.showError(
-                            Constants.ERROR_CAPTION, getJira503Description(ex.Server), 
-                            () => Clipboard.SetText(getFullExceptionTextDetails(msg, ex)), null);
+                    FiveOhThreeJiraException e503 = e as FiveOhThreeJiraException;
+                    XPathUtils.InvalidXmlDocumentException eXml = e as XPathUtils.InvalidXmlDocumentException;
+                    if (e503 != null) {
+                        show503Error(e503, msg);
+                    } else if (eXml != null) {
+                        showXmlDocumentError(eXml, msg);
                     } else {
                         showNonJira503Errors(exceptions, msg);
                     }
@@ -142,18 +143,36 @@ namespace Atlassian.plvs.util {
         }
 
         public static void showError(string msg, Exception e) {
-            FiveOhThreeJiraException ex = e as FiveOhThreeJiraException;
-            if (ex != null) {
-                MessageBoxWithHtml.showError(
-                    Constants.ERROR_CAPTION, getJira503Description(ex.Server), 
-                    () => Clipboard.SetText(getFullExceptionTextDetails(msg, ex)), null);
+            FiveOhThreeJiraException e503 = e as FiveOhThreeJiraException;
+            XPathUtils.InvalidXmlDocumentException eXml = e as XPathUtils.InvalidXmlDocumentException;
+            if (e503 != null) {
+                show503Error(e503, msg);
+            } else if (eXml != null) {
+                showXmlDocumentError(eXml, msg);
             } else {
                 string exceptionMessage = getExceptionMessage(e) + getExceptionDetailsLink("ex");
                 MessageBoxWithHtml.showError(
-                    Constants.ERROR_CAPTION, (msg != null ? msg + "<br>\r\n<br>\r\n" : "") + exceptionMessage,
+                    Constants.ERROR_CAPTION, 
+                    (msg != null ? msg + "<br>\r\n<br>\r\n" : "") + exceptionMessage,
                     () => Clipboard.SetText(getFullExceptionTextDetails(msg, e)),
                     delegate { new ExceptionViewer(msg, e).ShowDialog(); });
             }
+        }
+
+        private static void show503Error(FiveOhThreeJiraException e503, string msg) {
+            MessageBoxWithHtml.showError(
+                Constants.ERROR_CAPTION, 
+                getJira503Description(e503.Server),
+                () => Clipboard.SetText(getFullExceptionTextDetails(msg, e503)), 
+                null);
+        }
+
+        private static void showXmlDocumentError(XPathUtils.InvalidXmlDocumentException e, string msg) {
+            MessageBoxWithHtml.showError(
+                Constants.ERROR_CAPTION,
+                e.Message + getExceptionDetailsLink("eXml"),
+                () => Clipboard.SetText((msg != null ? msg + "\r\n\r\n" : "") + e.SourceDoc),
+                delegate { new ExceptionViewer(e.SourceDoc, e).ShowDialog(); });
         }
 
         private static string getExceptionDetailsLink(string tag) {

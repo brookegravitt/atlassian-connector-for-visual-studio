@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
+using System.Xml;
 using System.Xml.XPath;
 
 namespace Atlassian.plvs.util {
@@ -32,7 +34,6 @@ namespace Atlassian.plvs.util {
         }
 
         public static XPathDocument getXmlDocument(Stream stream) {
-#if true
             StringBuilder sb = new StringBuilder();
 
             // used on each read operation
@@ -54,11 +55,20 @@ namespace Atlassian.plvs.util {
             }
             while (count > 0); // any more data to read?
 
-            XPathDocument doc = new XPathDocument(new StringReader(sb.ToString()));
-#else
-            XPathDocument doc = new XPathDocument(stream);
-#endif
-            return doc;
+            try {
+                XPathDocument doc = new XPathDocument(new StringReader(sb.ToString()));
+                return doc;
+            } catch (Exception e) {
+                throw new InvalidXmlDocumentException(sb.ToString(), e);
+            }
+        }
+
+        public class InvalidXmlDocumentException : Exception {
+            public string SourceDoc { get; private set; }
+
+            public InvalidXmlDocumentException(string source, Exception e) : base("Failed to parse XML document", e) {
+                SourceDoc = source;
+            }
         }
     }
 }
