@@ -476,11 +476,13 @@ namespace Atlassian.plvs.ui.jira {
                                                                onFinish();
                                                            }));
                 } catch (Exception e) {
+                    CurrentActiveIssue = null;
                     jiraStatus.setError(FAILED_TO_START_WORK, e);
-                    PlvsUtils.showError(FAILED_TO_START_WORK, e);
+                    container.safeInvoke(new MethodInvoker(() => PlvsUtils.showError(FAILED_TO_START_WORK, e)));
                 }
             } else {
-                PlvsUtils.showError(FAILED_TO_START_WORK, new Exception("Unknown JIRA server"));
+                container.safeInvoke(new MethodInvoker(
+                    () => PlvsUtils.showError(FAILED_TO_START_WORK, new Exception("Unknown JIRA server"))));
             }
         }
 
