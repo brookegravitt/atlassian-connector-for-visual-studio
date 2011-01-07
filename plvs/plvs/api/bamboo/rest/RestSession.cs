@@ -19,15 +19,28 @@ namespace Atlassian.plvs.api.bamboo.rest {
         private string password;
 
         private string cookie;
+
         private const string BUILDS_XML_SUBTREE = "/builds/builds";
+        private const string BUILDS_XML_SUBTREE_3_0 = "/results/results";
+
+        private const string INFO = "/rest/api/latest/info";
+
         private const string LATEST_BUILDS_FOR_FAVOURITE_PLANS_ACTION = "/rest/api/latest/build?favourite&expand=builds.build";
+        private const string LATEST_BUILDS_FOR_FAVOURITE_PLANS_ACTION_3_0 = "/rest/api/latest/result?favourite&expand=results.result";
 
         private const string LATEST_BUILDS_FOR_PLANS_ACTION = "/rest/api/latest/build/{0}?expand=builds[0].build";
+        private const string LATEST_BUILDS_FOR_PLANS_ACTION_3_0 = "/rest/api/latest/result/{0}?expand=results[0].result";
         private const string BUILD_BY_KEY_ACTION = "/rest/api/latest/build/{0}?expand=artifacts.artifact,jiraIssues.jiraIssue";
+        private const string BUILD_BY_KEY_ACTION_3_0 = "/rest/api/latest/result/{0}?expand=artifacts.artifact,jiraIssues.jiraIssue";
         private const string LAST_N_BUILDS_ROM_PLAN = "/rest/api/latest/build/{0}?expand=builds[0:{1}].build";
+        private const string LAST_N_BUILDS_ROM_PLAN_3_0 = "/rest/api/latest/result/{0}?expand=results[0:{1}].result";
         
         private const string ALL_TESTS = "/rest/api/latest/build/{0}?expand=testResults.all,stages.stage.results.result.testResults.all";
+        private const string ALL_TESTS_3_0 = "/rest/api/latest/result/{0}-{1}?expand=testResults.allTests";
         private const string ALL_ARTIFACTS = "/rest/api/latest/build/{0}?expand=artifacts.artifact,stages.stage.results.result.artifacts.artifact";
+        private const string ALL_ARTIFACTS_3_0 = "/rest/api/latest/result/{0}?expand=artifacts.artifact,stages.stage.results.result.artifacts.artifact";
+
+        private const string PLAN_JOBS = "/rest/api/latest/plan/{0}?expand=stages.stage.plans";
 
         private const string ALL_PLANS_ACTION = "/rest/api/latest/plan?expand=plans.plan";
         private const string FAVOURITE_PLANS_ACTION = "/rest/api/latest/plan?favourite&expand=plans.plan";
@@ -42,8 +55,13 @@ namespace Atlassian.plvs.api.bamboo.rest {
         private const string LOGIN_ACTION = "/api/rest/login.action";
     	private const string LOGOUT_ACTION = "/api/rest/logout.action";
 
+        private const int BUILD_NUMBER_3_0 = 2212;
+
+        private int serverBuildNumber;
+
         public RestSession(BambooServer server) {
             this.server = server;
+            serverBuildNumber = 0;
         }
 
         public bool LoggedIn { get; private set; }
@@ -87,8 +105,37 @@ namespace Atlassian.plvs.api.bamboo.rest {
                 it.MoveNext();
                 authToken = it.Current.Value;
 
+                getServerBuildNumber();
+
                 LoggedIn = true;
                 return this;
+            }
+        }
+
+        // achtung - gobble all exceptions
+        private void getServerBuildNumber() {
+            string endpoint = server.Url + INFO;
+
+            try {
+                using (Stream stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint), true)) {
+                    XPathDocument doc = XPathUtils.getXmlDocument(stream);
+
+                    string code = getRestErrorStatusCode(doc);
+                    if (code != null) {
+                        return;
+                    }
+
+                    XPathNavigator nav = doc.CreateNavigator();
+
+                    XPathExpression expr = nav.Compile("/info/buildNumber");
+                    XPathNodeIterator it = nav.Select(expr);
+
+                    if (it.MoveNext()) {
+                        serverBuildNumber = it.Current.ValueAsInt;
+                    }
+                }
+            } catch (Exception e) {
+                Debug.WriteLine("RestSession.getServerBuildNumber() - exception (ignored): " + e.Message);    
             }
         }
 
@@ -178,17 +225,21 @@ namespace Atlassian.plvs.api.bamboo.rest {
             }
         }
 
+        private string getCorrectEnpointOrXPath(string oldOne, string newOne) {
+            return serverBuildNumber >= BUILD_NUMBER_3_0 ? newOne : oldOne;
+        }
+
         public ICollection<BambooBuild> getLatestBuildsForFavouritePlans() {
-            string endpoint = server.Url + LATEST_BUILDS_FOR_FAVOURITE_PLANS_ACTION;
-            return getBuildsFromUrl(endpoint, true, true, BUILDS_XML_SUBTREE);
+            string endpoint = server.Url + getCorrectEnpointOrXPath(LATEST_BUILDS_FOR_FAVOURITE_PLANS_ACTION, LATEST_BUILDS_FOR_FAVOURITE_PLANS_ACTION_3_0);
+            return getBuildsFromUrl(endpoint, true, true, getCorrectEnpointOrXPath(BUILDS_XML_SUBTREE, BUILDS_XML_SUBTREE_3_0));
         }
     
         public ICollection<BambooBuild> getLatestBuildsForPlanKeys(ICollection<string> keys) {
             List<BambooBuild> result = new List<BambooBuild>();
             foreach (string key in keys) {
-                string buildUrl = string.Format(LATEST_BUILDS_FOR_PLANS_ACTION, key);
+                string buildUrl = string.Format(getCorrectEnpointOrXPath(LATEST_BUILDS_FOR_PLANS_ACTION, LATEST_BUILDS_FOR_PLANS_ACTION_3_0), key);
                 string endpoint = server.Url + buildUrl;
-                ICollection<BambooBuild> builds = getBuildsFromUrl(endpoint, true, false, BUILDS_XML_SUBTREE);
+                ICollection<BambooBuild> builds = getBuildsFromUrl(endpoint, true, false, getCorrectEnpointOrXPath(BUILDS_XML_SUBTREE, BUILDS_XML_SUBTREE_3_0));
                 if (builds != null) {
                     result.AddRange(builds);
                 }
@@ -218,7 +269,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
         }
 
         public ICollection<BuildArtifact> getArtifacts(string buildKey) {
-            string buildUrl = string.Format(ALL_ARTIFACTS, buildKey);
+            string buildUrl = string.Format(getCorrectEnpointOrXPath(ALL_ARTIFACTS, ALL_ARTIFACTS_3_0), buildKey);
             string endpoint = server.Url + buildUrl;
 
             using (Stream stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint), true)) {
@@ -267,6 +318,67 @@ namespace Atlassian.plvs.api.bamboo.rest {
         }
 
         public ICollection<BambooTest> getTestResults(string buildKey) {
+            return serverBuildNumber < BUILD_NUMBER_3_0 ? getTestResultsOlderThan30(buildKey) : getTestResults30(buildKey);
+        }
+
+        private ICollection<BambooTest> getTestResults30(string buildKey) {
+            string number = buildKey.Substring(buildKey.LastIndexOf("-") + 1);
+            string planKey = buildKey.Substring(0, buildKey.Length - number.Length - 1);
+            IEnumerable<string> jobs = getPlanJobs(planKey);
+            List<BambooTest> allTests = new List<BambooTest>();
+            foreach (string job in jobs) {
+                allTests.AddRange(getTestsForJob(job, number));
+            }
+            return allTests;
+        }
+
+        private IEnumerable<BambooTest> getTestsForJob(string job, string number) {
+            string endpoint = server.Url + string.Format(ALL_TESTS_3_0, job, number);
+
+            using (Stream stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint), true)) {
+                XPathDocument doc = XPathUtils.getXmlDocument(stream);
+
+                string code = getRestErrorStatusCode(doc);
+                if (code != null) {
+                    throw new Exception(code);
+                }
+
+                XPathNavigator nav = doc.CreateNavigator();
+
+                XPathExpression expr = nav.Compile("/result/testResults/allTests/testResult");
+                XPathNodeIterator it = nav.Select(expr);
+
+                return retrieveTestsFromXPath(it);
+            }
+
+        }
+
+        private IEnumerable<string> getPlanJobs(string planKey) {
+            string endpoint = server.Url + string.Format(PLAN_JOBS, planKey);
+            using (Stream stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint), true)) {
+                XPathDocument doc = XPathUtils.getXmlDocument(stream);
+
+                string code = getRestErrorStatusCode(doc);
+                if (code != null) {
+                    throw new Exception(code);
+                }
+
+                List<string> result = new List<string>();
+
+                XPathNavigator nav = doc.CreateNavigator();
+                XPathExpression expr = nav.Compile("/plan/stages/stage/plans/plan");
+                XPathNodeIterator it = nav.Select(expr);
+                while (it.MoveNext()) {
+                    string jobKey = XPathUtils.getAttributeSafely(it.Current, "key", null);
+                    if (jobKey != null) {
+                        result.Add(jobKey);
+                    }
+                }
+                return result;
+            }
+        }
+
+        public ICollection<BambooTest> getTestResultsOlderThan30(string buildKey) {
 
             string buildUrl = string.Format(ALL_TESTS, buildKey);
             string endpoint = server.Url + buildUrl;
@@ -289,33 +401,37 @@ namespace Atlassian.plvs.api.bamboo.rest {
                     it = nav.Select(expr);
                 }
 
-                List<BambooTest> tests = new List<BambooTest>();
-
-                while (it.MoveNext()) {
-                    string className = XPathUtils.getAttributeSafely(it.Current, "className", null);
-                    string methodName = XPathUtils.getAttributeSafely(it.Current, "methodName", null);
-                    string status = XPathUtils.getAttributeSafely(it.Current, "status", null);
-                    if (className == null || methodName == null || status == null) continue;
-                    BambooTest.TestResult res = BambooTest.TestResult.UNKNOWN;
-                    switch (status.ToLower()) {
-                        case "successful":
-                            res = BambooTest.TestResult.SUCCESSFUL;
-                            break;
-                        case "failed":
-                            res = BambooTest.TestResult.FAILED;
-                            break;
-                    }
-                    BambooTest test = new BambooTest(className, methodName, res);
-                    tests.Add(test);
-                }
-
-                return tests;
+                return retrieveTestsFromXPath(it);
             }
+        }
+
+        private static ICollection<BambooTest> retrieveTestsFromXPath(XPathNodeIterator it) {
+            List<BambooTest> tests = new List<BambooTest>();
+
+            while (it.MoveNext()) {
+                string className = XPathUtils.getAttributeSafely(it.Current, "className", null);
+                string methodName = XPathUtils.getAttributeSafely(it.Current, "methodName", null);
+                string status = XPathUtils.getAttributeSafely(it.Current, "status", null);
+                if (className == null || methodName == null || status == null) continue;
+                BambooTest.TestResult res = BambooTest.TestResult.UNKNOWN;
+                switch (status.ToLower()) {
+                    case "successful":
+                        res = BambooTest.TestResult.SUCCESSFUL;
+                        break;
+                    case "failed":
+                        res = BambooTest.TestResult.FAILED;
+                        break;
+                }
+                BambooTest test = new BambooTest(className, methodName, res);
+                tests.Add(test);
+            }
+
+            return tests;
         }
 
         public BambooBuild getBuildByKey(string buildKey) {
             List<BambooBuild> result = new List<BambooBuild>();
-            string buildUrl = string.Format(BUILD_BY_KEY_ACTION, buildKey);
+            string buildUrl = string.Format(getCorrectEnpointOrXPath(BUILD_BY_KEY_ACTION, BUILD_BY_KEY_ACTION_3_0), buildKey);
             string endpoint = server.Url + buildUrl;
             ICollection<BambooBuild> builds = getBuildsFromUrl(endpoint, false, false, "");
             if (builds != null) {
@@ -328,8 +444,8 @@ namespace Atlassian.plvs.api.bamboo.rest {
             if (howMany <= 0) {
                 throw new ArgumentException("\"howMany\" parameter must be greater than 0");
             }
-            string endpoint = server.Url + string.Format(LAST_N_BUILDS_ROM_PLAN, planKey, howMany - 1);
-            return getBuildsFromUrl(endpoint, false, false, BUILDS_XML_SUBTREE);
+            string endpoint = server.Url + string.Format(getCorrectEnpointOrXPath(LAST_N_BUILDS_ROM_PLAN, LAST_N_BUILDS_ROM_PLAN_3_0), planKey, howMany - 1);
+            return getBuildsFromUrl(endpoint, false, false, getCorrectEnpointOrXPath(BUILDS_XML_SUBTREE, BUILDS_XML_SUBTREE_3_0));
         }
 
         private ICollection<BambooBuild> getBuildsFromUrl(string endpoint, bool getPlanState, bool withRecursion, string prefix) {
@@ -427,7 +543,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
                 // Yes, recursion here. I hope it works as I think it should. If not, we are all doomed
                 if (withRecursion && totalBuildsCount > maxResult + startIndex) {
-                    builds.AddRange(getBuildsFromUrlWithStartIndex(endpoint, startIndex + maxResult, getPlanState, true, BUILDS_XML_SUBTREE));
+                    builds.AddRange(getBuildsFromUrlWithStartIndex(endpoint, startIndex + maxResult, getPlanState, true, getCorrectEnpointOrXPath(BUILDS_XML_SUBTREE, BUILDS_XML_SUBTREE_3_0)));
                 }
 
                 return builds;
