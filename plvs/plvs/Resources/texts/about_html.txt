@@ -26,7 +26,7 @@ Licensed under the Apache License
 <br>
 Version {0}-{1}, Build {2}
 <br>
-Copyright (c) Atlassian 2009-2010
+Copyright (c) Atlassian 2009-2011
 <br><br>
 <a href="http://confluence.atlassian.com/display/IDEPLUGIN/Atlassian+Connector+for+Visual+Studio">Get help</a>
 
