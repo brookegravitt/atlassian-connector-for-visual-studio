@@ -1,23 +1,24 @@
 using System;
-using System.DHTML;
+using System.Collections;
+using System.Html;
 using System.Gadgets;
-using System.XML;
-using ScriptFX.Net;
-using ScriptFX.UI;
+using System.Net;
+using System.Xml;
+using jQueryApi;
 
 namespace gadget {
 
     public class GadgetScriptlet {
 
-        private static Button pollNowButton;
-        private static DOMElement jiraResponse;
+        private static InputElement pollNowButton;
+        private static Element jiraResponse;
         private static string flyoutIssueDetailsText = "";
         private static string flyoutIssueKeyText = "";
-        private static Label labelInfo;
+        private static Element labelInfo;
 
         private static bool doShowFlyoutAgain;
 
-        private static readonly ArrayList issues = new ArrayList();
+        private static readonly ArrayList Issues = new ArrayList();
 
         private static string projectKey = "";
         private static string serverUrl = "";
@@ -27,12 +28,6 @@ namespace gadget {
         private static Filter currentFilter;
 
         private static bool haveValidSettings;
-
-        static GadgetScriptlet() {
-            if (Document.Body.ID == "gadget") {
-                ScriptHost.Run(typeof(GadgetScriptlet), null);
-            }
-        }
 
         private GadgetScriptlet() {
             Gadget.OnDock = OnDock;
@@ -47,10 +42,10 @@ namespace gadget {
 
             UpdateDockedState();
 
-            pollNowButton = new Button(Document.GetElementById("pollNowButton"));
-            pollNowButton.Click += pollNowButton_Click;
+            pollNowButton = (InputElement) Document.GetElementById("pollNowButton");
+            pollNowButton.AttachEvent("onclick", pollNowButtonClick);
 
-            labelInfo = new Label(Document.GetElementById("info"));
+            labelInfo = Document.GetElementById("info");
 
             jiraResponse = Document.GetElementById("jiraResponse");
 
@@ -65,13 +60,13 @@ namespace gadget {
                     : "";
         }
 
-        private static void pollNowButton_Click(object sender, EventArgs e) {
+        private static void pollNowButtonClick() {
             pollJira();
         }
 
         public static void openFlyout(int issueId) {
             if (issueId >= 0) {
-                Issue issue = (Issue) issues[issueId];
+                Issue issue = (Issue) Issues[issueId];
                 flyoutIssueDetailsText = createIssueDetailsHtml(issue);
                 flyoutIssueKeyText = createIssueKeyHtml(issue);
                 doShowFlyoutAgain = true;
@@ -128,8 +123,8 @@ namespace gadget {
             password = Gadget.Settings.ReadString(SettingsScriptlet.SETTING_PASSWORD);
             if (string.IsNullOrEmpty(serverUrl)) {
                 haveValidSettings = false;
-                pollNowButton.DOMElement.Disabled = true;
-                labelInfo.Text = "Set Up Server Connection First";
+                pollNowButton.Disabled = true;
+                labelInfo.InnerHTML = "Set Up Server Connection First";
                 return;
             }
             currentFilter = new Filter(
@@ -139,29 +134,28 @@ namespace gadget {
             projectKey = Gadget.Settings.ReadString(SettingsScriptlet.SETTING_PROJECTKEY);
 
             haveValidSettings = true;
-            pollNowButton.DOMElement.Disabled = false;
+            pollNowButton.Disabled = false;
             pollJira();
         }
 
         private static void UpdateDockedState() {
-            DOMElement body = Document.Body;
-
             if (Gadget.Docked) {
-                Element.RemoveCSSClass(body, "undocked");
-                Element.AddCSSClass(body, "docked");
-                body.Style.Width = "250px";
-                body.Style.Height = "400px";
+                jQuery.Select("body").RemoveClass("undocked");
+                jQuery.Select("body").AddClass("docked");
+                jQuery.Select("body").Width("250px");
+                jQuery.Select("body").Height("400px");
             } else {
-                Element.AddCSSClass(body, "undocked");
-                Element.RemoveCSSClass(body, "docked");
-                body.Style.Width = "500px";
-                body.Style.Height = "400px";
+                jQuery.Select("body").AddClass("undocked");
+                jQuery.Select("body").RemoveClass("docked");
+                jQuery.Select("body").Width("500px");
+                jQuery.Select("body").Height("400px");
             }
         }
 
+        private static XmlHttpRequest req;
+
         private static void pollJira() {
-            labelInfo.Text = "Polling JIRA server...";
-            pollNowButton.DOMElement.Disabled = true;
+            pollNowButton.Disabled = true;
             string url = 
                 serverUrl 
                 + "/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?jqlQuery=project+%3D+" 
@@ -170,8 +164,27 @@ namespace gadget {
                 + currentFilter.FilterDef 
                 + "&tempMax=1000";
 
-            HTTPRequest req = HTTPRequest.CreateRequest(getAuthenticatedUrl(url), HTTPVerb.GET);
-            req.Invoke(RequestCompleted);
+            labelInfo.InnerHTML = "Polling JIRA server...";
+
+            req = new XmlHttpRequest();
+            req.Open("GET", getAuthenticatedUrl(url));
+            req.OnReadyStateChange = onReadyStateChange;
+            req.Send();
+        }
+
+        private static void onReadyStateChange() {
+            if (req.ReadyState != ReadyState.Loaded) {
+                return;
+            }
+            pollNowButton.Disabled = false;
+            if (req.Status != 200) {
+                labelInfo.InnerHTML = "Error. Status code is " + req.ResponseText;
+            } else {
+                pollNowButton.Disabled = false;
+                labelInfo.InnerHTML = "Last Polled: " + DateTime.Now.ToLocaleDateString() + " " + DateTime.Now.ToLocaleTimeString();
+                createIssueListFromResponseXml(req.ResponseXml);
+                jiraResponse.InnerHTML = createIssueListHtmlFromIssueList();
+            }
         }
 
         private static string getAuthenticatedUrl(string url) {
@@ -182,37 +195,24 @@ namespace gadget {
             return url + "&os_username=" + userName + "&os_password=" + password;
         }
 
-        private static void RequestCompleted(HTTPRequest request, object userContext) {
-            HTTPStatusCode statusCode = request.Response.StatusCode;
-            pollNowButton.DOMElement.Disabled = false;
-            if (statusCode != HTTPStatusCode.OK) {
-                labelInfo.Text = "Error. Status code is " + statusCode;
-            } else {
-                labelInfo.Text = "Last Polled: " + DateTime.Now.ToLocaleDateString() + " " + DateTime.Now.ToLocaleTimeString();
-                XMLDocument resp = request.Response.GetXML();
-                createIssueListFromResponseXml(resp);
-                jiraResponse.InnerHTML = createIssueListHtmlFromIssueList();
-            }
-        }
-
-        private static void createIssueListFromResponseXml(XMLDocument resp) {
-            XMLNodeList issuesXml = resp.SelectNodes("/rss/channel/item");
-            issues.Clear();
-            for (int i = 0; i < issuesXml.Length; ++i) {
-                XMLNode key = issuesXml[i].SelectSingleNode("key");
-                XMLNode link = issuesXml[i].SelectSingleNode("link");
-                XMLNode summary = issuesXml[i].SelectSingleNode("summary");
-                XMLNode type = issuesXml[i].SelectSingleNode("type");
-                XMLNode priority = issuesXml[i].SelectSingleNode("priority");
-                XMLNode status = issuesXml[i].SelectSingleNode("status");
-                XMLNode reporter = issuesXml[i].SelectSingleNode("reporter");
-                XMLNode assignee = issuesXml[i].SelectSingleNode("assignee");
-                XMLNode created = issuesXml[i].SelectSingleNode("created");
-                XMLNode updated = issuesXml[i].SelectSingleNode("updated");
-                XMLNode resolution = issuesXml[i].SelectSingleNode("resolution");
-                XMLNode description = issuesXml[i].SelectSingleNode("description");
-                XMLNode env = issuesXml[i].SelectSingleNode("environment");
-                XMLNode votes = issuesXml[i].SelectSingleNode("votes");
+        private static void createIssueListFromResponseXml(XmlDocument resp) {
+            XmlNodeList issuesXml = resp.SelectNodes("/rss/channel/item");
+            Issues.Clear();
+            for (int i = 0; i < issuesXml.Count; ++i) {
+                XmlNode key = issuesXml[i].SelectSingleNode("key");
+                XmlNode link = issuesXml[i].SelectSingleNode("link");
+                XmlNode summary = issuesXml[i].SelectSingleNode("summary");
+                XmlNode type = issuesXml[i].SelectSingleNode("type");
+                XmlNode priority = issuesXml[i].SelectSingleNode("priority");
+                XmlNode status = issuesXml[i].SelectSingleNode("status");
+                XmlNode reporter = issuesXml[i].SelectSingleNode("reporter");
+                XmlNode assignee = issuesXml[i].SelectSingleNode("assignee");
+                XmlNode created = issuesXml[i].SelectSingleNode("created");
+                XmlNode updated = issuesXml[i].SelectSingleNode("updated");
+                XmlNode resolution = issuesXml[i].SelectSingleNode("resolution");
+                XmlNode description = issuesXml[i].SelectSingleNode("description");
+                XmlNode env = issuesXml[i].SelectSingleNode("environment");
+                XmlNode votes = issuesXml[i].SelectSingleNode("votes");
                 Issue issue = new Issue(
                     safeText(key), safeText(link), safeText(summary), safeText(type), safeAttribute(type, "iconUrl"),
                     safeText(priority), safeAttribute(priority, "iconUrl"),
@@ -223,24 +223,24 @@ namespace gadget {
                     safeText(env), safeText(votes)
                     );
 
-                issues.Add(issue);
+                Issues.Add(issue);
             }
         }
 
-        private static string safeText(XMLNode node) {
-            return node == null ? "" : node.Text;
+        private static string safeText(XmlNode node) {
+            return node == null ? "" : node.Value;
         }
 
-        private static string safeAttribute(XMLNode node, string attr) {
+        private static string safeAttribute(XmlNode node, string attr) {
             if (node == null) return "";
-            XMLNode a = node.Attributes.GetNamedItem(attr);
-            return a != null ? a.Text : "";
+            XmlNode a = node.Attributes.GetNamedItem(attr);
+            return a != null ? a.Value : "";
         }
 
         private static string createIssueListHtmlFromIssueList() {
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < issues.Length; ++i) {
-                Issue issue = (Issue) issues[i];
+            for (int i = 0; i < Issues.Count; ++i) {
+                Issue issue = (Issue) Issues[i];
 
                 sb.Append("<div onclick=\"javascript:gadget.GadgetScriptlet.openFlyout(");
                 sb.Append(i);
