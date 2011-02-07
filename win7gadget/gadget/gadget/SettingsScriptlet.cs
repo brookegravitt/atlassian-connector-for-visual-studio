@@ -1,19 +1,19 @@
 using System;
-using System.DHTML;
+using System.Collections;
+using System.Html;
 using System.Gadgets;
-using ScriptFX.UI;
 
 namespace gadget {
 
     public class SettingsScriptlet {
 
-        private readonly DOMElement dropDownProjects;
-        private readonly Button buttonTestConnection;
-        private readonly Button buttonGetProjects;
-        private static TextBox txtUrl;
-        private static TextBox txtLogin;
-        private static TextBox txtPassword;
-        private static Label labelInfo;
+        private readonly Element dropDownProjects;
+        private readonly InputElement buttonTestConnection;
+        private readonly InputElement buttonGetProjects;
+        private static TextElement txtUrl;
+        private static TextElement txtLogin;
+        private static TextElement txtPassword;
+        private static Element labelInfo;
         
         private const string FILTERS_SELECT = "filters";
         private const string PROJECTS_SELECT = "projects";
@@ -30,41 +30,35 @@ namespace gadget {
 
         private static bool haveProject;
 
-        static SettingsScriptlet() {
-            if (Document.Body.ID == "gadgetSettings") {
-                ScriptHost.Run(typeof(SettingsScriptlet), null);
-            }
-        }
-
         private SettingsScriptlet() {
 
             Gadget.OnSettingsClosing = SettingsClosing;
 
-            DOMElement body = Document.Body;
+            Element body = Document.Body;
             body.Style.Width = "350";
             body.Style.Height = "400";
 
             dropDownProjects = Document.GetElementById("projects");
             dropDownProjects.Disabled = true;
 
-            txtUrl = new TextBox(Document.GetElementById("url"));
-            txtUrl.TextChanged += txtUrl_TextChanged;
-            txtLogin = new TextBox(Document.GetElementById("login"));
-            txtPassword = new TextBox(Document.GetElementById("password"));
+            txtUrl = (TextElement) Document.GetElementById("url");
+            txtUrl.AttachEvent("onchange", txtUrlTextChanged);
+            txtLogin = (TextElement) Document.GetElementById("login");
+            txtPassword = (TextElement) Document.GetElementById("password");
 
-            buttonTestConnection = new Button(Document.GetElementById("testConnection"));
-            buttonTestConnection.Click += buttonTestConnection_Click;
+            buttonTestConnection = (InputElement) Document.GetElementById("testConnection");
+            buttonTestConnection.AttachEvent("onclick", buttonTestConnectionClick);
 
-            buttonGetProjects = new Button(Document.GetElementById("retrieveProjects"));
-            buttonGetProjects.Click += buttonGetProjects_Click;
+            buttonGetProjects = (InputElement) Document.GetElementById("retrieveProjects");
+            buttonGetProjects.AttachEvent("onclick", buttonGetProjectsClick);
 
             updateButtonStates();
 
-            labelInfo = new Label(Document.GetElementById("info"));
+            labelInfo = Document.GetElementById("info");
 
-            txtUrl.Text = Gadget.Settings.ReadString(SETTING_URL);
-            txtLogin.Text = Gadget.Settings.ReadString(SETTING_LOGIN);
-            txtPassword.Text = Gadget.Settings.ReadString(SETTING_PASSWORD);
+            txtUrl.Value = Gadget.Settings.ReadString(SETTING_URL);
+            txtLogin.Value = Gadget.Settings.ReadString(SETTING_LOGIN);
+            txtPassword.Value = Gadget.Settings.ReadString(SETTING_PASSWORD);
 
             string val = Gadget.Settings.ReadString(SETTING_FILTERVALUE);
             if (!string.IsNullOrEmpty(val)) {
@@ -85,19 +79,19 @@ namespace gadget {
             e.Cancel = !saveSettings();
         }
 
-        private static void buttonGetProjects_Click(object sender, EventArgs e) {
-            labelInfo.DOMElement.Style.Color = "#000000";
-            labelInfo.Text = "Retrieving Projects...";
-            rpc.login(txtUrl.Text, txtLogin.Text, txtPassword.Text, gotTokenForGetProjects, connectionError);
+        private static void buttonGetProjectsClick() {
+            labelInfo.Style.Color = "#000000";
+            labelInfo.InnerHTML = "Retrieving Projects...";
+            rpc.login(txtUrl.Value, txtLogin.Value, txtPassword.Value, gotTokenForGetProjects, connectionError);
         }
 
         private static void gotTokenForGetProjects(string token) {
-            rpc.getprojects(txtUrl.Text, token, gotProjects, connectionError);
+            rpc.getprojects(txtUrl.Value, token, gotProjects, connectionError);
         }
 
         private static void gotProjects(object result) {
-            labelInfo.DOMElement.Style.Color = "#000000";
-            labelInfo.Text = "Retrieved Projects";
+            labelInfo.Style.Color = "#000000";
+            labelInfo.InnerHTML = "Retrieved Projects";
 
             string curKey = null;
 
@@ -111,7 +105,7 @@ namespace gadget {
             foreach (DictionaryEntry entry in d) {
                 int nr;
                 try {
-                    nr = (int)int.Parse(entry.Key);
+                    nr = int.Parse(entry.Key);
                 } catch (Exception) {
                     continue;
                 }
@@ -140,35 +134,35 @@ namespace gadget {
             optionreader.addoption(PROJECTS_SELECT, key, name);
         }
 
-        private void txtUrl_TextChanged(object sender, EventArgs e) {
+        private void txtUrlTextChanged() {
             updateButtonStates();
         }
 
         private void updateButtonStates() {
-            string url = txtUrl.Text;
+            string url = txtUrl.Value;
             bool disabled = !isValidUrl(url);
-            buttonTestConnection.DOMElement.Disabled = disabled;
-            buttonGetProjects.DOMElement.Disabled = disabled;
+            buttonTestConnection.Disabled = disabled;
+            buttonGetProjects.Disabled = disabled;
         }
 
         private static bool isValidUrl(string url) {
             return !(url.Length == 0 || !(url.StartsWith("https://") || url.StartsWith("http://")) || url.EndsWith("://"));
         }
 
-        private static void buttonTestConnection_Click(object sender, EventArgs e) {
-            labelInfo.DOMElement.Style.Color = "#000000";
-            labelInfo.Text = "Testing Server Connection...";
-            rpc.login(txtUrl.Text, txtLogin.Text, txtPassword.Text, gotLoginToken, connectionError);
+        private static void buttonTestConnectionClick() {
+            labelInfo.Style.Color = "#000000";
+            labelInfo.InnerHTML = "Testing Server Connection...";
+            rpc.login(txtUrl.Value, txtLogin.Value, txtPassword.Value, gotLoginToken, connectionError);
         }
 
         private static void connectionError(string error) {
-            labelInfo.DOMElement.Style.Color = "#ff0000";
-            labelInfo.Text = "Connection error: " + error;
+            labelInfo.Style.Color = "#ff0000";
+            labelInfo.InnerHTML = "Connection error: " + error;
         }
 
         private static void gotLoginToken(string token) {
-            labelInfo.DOMElement.Style.Color = "#000000";
-            labelInfo.Text = "Connection successful";
+            labelInfo.Style.Color = "#000000";
+            labelInfo.InnerHTML = "Connection successful";
         }
 
         public static void Main(Dictionary arguments) {
@@ -178,10 +172,10 @@ namespace gadget {
         }
 
         private static bool saveSettings() {
-            if (!isValidUrl(txtUrl.Text) || !haveProject) return false;
-            Gadget.Settings.WriteString(SETTING_URL, txtUrl.Text);
-            Gadget.Settings.WriteString(SETTING_LOGIN, txtLogin.Text);
-            Gadget.Settings.WriteString(SETTING_PASSWORD, txtPassword.Text);
+            if (!isValidUrl(txtUrl.Value) || !haveProject) return false;
+            Gadget.Settings.WriteString(SETTING_URL, txtUrl.Value);
+            Gadget.Settings.WriteString(SETTING_LOGIN, txtLogin.Value);
+            Gadget.Settings.WriteString(SETTING_PASSWORD, txtPassword.Value);
             Gadget.Settings.WriteString(SETTING_FILTERVALUE, optionreader.getselectedval(FILTERS_SELECT));
             Gadget.Settings.WriteString(SETTING_FILTERNAME, optionreader.getselectedtext(FILTERS_SELECT));
             Gadget.Settings.Write(SETTING_PROJECTKEY, optionreader.getselectedval(PROJECTS_SELECT));

@@ -7,10 +7,9 @@
   
 </head>
 <body id="gadget" class="docked" unselectable="unselectable" scroll="yes" style="margin:1em;" >
-  <script type="text/javascript" src="sscorlib.js"></script>
-  <script type="text/javascript" src="ssfx.Core.js"></script>
-  <script type="text/javascript" src="ssfx.UI.Forms.js"></script>
-  <script type="text/javascript" src="ssgadgets.js"></script>
+  <script type="text/javascript" src="mscorlib.js"></script>
+  <script type="text/javascript" src="Script.Windows.js"></script>
+  <script type="text/javascript" src="jquery-1.5.min.js"></script>
   <script type="text/javascript" src="gadget.js"></script>
   
   <div style="position:absolute;top:1em;left:1em;"><img src="JiraLogo.png" /></div>
@@ -18,6 +17,10 @@
   <div style="position:absolute;top:4em;right:1em;"><div id="currentFilter" style="font-size:8px;font-style:italic;width:100%;"></div></div>
   <div style="position:absolute;top:7em;left:1em;right:1em;bottom:3em;" id="jiraResponse"></div>
   <div id="info" style="position:absolute;bottom:1em;left:0;width:100%;text-align:center;">Click "Poll Now"</div>
+
+  <script type="text/javascript">
+        gadget.GadgetScriptlet.main();
+  </script>
 
 </body>
 </html>
