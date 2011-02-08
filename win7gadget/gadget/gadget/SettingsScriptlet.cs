@@ -7,14 +7,15 @@ namespace gadget {
 
     public class SettingsScriptlet {
 
-        private readonly Element dropDownProjects;
-        private readonly InputElement buttonTestConnection;
-        private readonly InputElement buttonGetProjects;
+        private static Element dropDownProjects;
+        private static InputElement buttonTestConnection;
+        private static InputElement buttonGetProjects;
         private static TextElement txtUrl;
         private static TextElement txtLogin;
         private static TextElement txtPassword;
         private static Element labelInfo;
-        
+        private static TextElement txtPollingInterval;
+
         private const string FILTERS_SELECT = "filters";
         private const string PROJECTS_SELECT = "projects";
 
@@ -28,15 +29,16 @@ namespace gadget {
         public const string SETTING_PROJECTNAME = "projectName";
         public const string SETTING_PROJECTKEY = "projectKey";
 
+        public const string SETTING_POLLING_INTERVAL = "pollingInterval";
+
         private static bool haveProject;
 
         private SettingsScriptlet() {
+            reinit();
+        }
 
+        private static void reinit() {
             Gadget.OnSettingsClosing = SettingsClosing;
-
-            Element body = Document.Body;
-            body.Style.Width = "350";
-            body.Style.Height = "400";
 
             dropDownProjects = Document.GetElementById("projects");
             dropDownProjects.Disabled = true;
@@ -45,20 +47,21 @@ namespace gadget {
             txtUrl.AttachEvent("onchange", txtUrlTextChanged);
             txtLogin = (TextElement) Document.GetElementById("login");
             txtPassword = (TextElement) Document.GetElementById("password");
+            txtPollingInterval = (TextElement) Document.GetElementById("pollingInterval");
 
-            buttonTestConnection = (InputElement) Document.GetElementById("testConnection");
+            buttonTestConnection = (InputElement)Document.GetElementById("testConnection");
             buttonTestConnection.AttachEvent("onclick", buttonTestConnectionClick);
 
             buttonGetProjects = (InputElement) Document.GetElementById("retrieveProjects");
             buttonGetProjects.AttachEvent("onclick", buttonGetProjectsClick);
-
-            updateButtonStates();
 
             labelInfo = Document.GetElementById("info");
 
             txtUrl.Value = Gadget.Settings.ReadString(SETTING_URL);
             txtLogin.Value = Gadget.Settings.ReadString(SETTING_LOGIN);
             txtPassword.Value = Gadget.Settings.ReadString(SETTING_PASSWORD);
+            string interval = Gadget.Settings.ReadString(SETTING_POLLING_INTERVAL);
+            txtPollingInterval.Value = string.IsNullOrEmpty(interval) ? "5" : interval;
 
             string val = Gadget.Settings.ReadString(SETTING_FILTERVALUE);
             if (!string.IsNullOrEmpty(val)) {
@@ -72,6 +75,8 @@ namespace gadget {
                 optionreader.addoption(PROJECTS_SELECT, projectKey, projectName);
                 haveProject = true;
             }
+
+            updateButtonStates();
         }
 
         private static void SettingsClosing(GadgetSettingsEvent e) {
@@ -134,15 +139,16 @@ namespace gadget {
             optionreader.addoption(PROJECTS_SELECT, key, name);
         }
 
-        private void txtUrlTextChanged() {
+        private static void txtUrlTextChanged() {
             updateButtonStates();
         }
 
-        private void updateButtonStates() {
+        private static void updateButtonStates() {
             string url = txtUrl.Value;
             bool disabled = !isValidUrl(url);
             buttonTestConnection.Disabled = disabled;
             buttonGetProjects.Disabled = disabled;
+//            labelInfo.InnerHTML = "val=" + txtUrl.Value;
         }
 
         private static bool isValidUrl(string url) {
@@ -180,7 +186,10 @@ namespace gadget {
             Gadget.Settings.WriteString(SETTING_FILTERNAME, optionreader.getselectedtext(FILTERS_SELECT));
             Gadget.Settings.Write(SETTING_PROJECTKEY, optionreader.getselectedval(PROJECTS_SELECT));
             Gadget.Settings.Write(SETTING_PROJECTNAME, optionreader.getselectedtext(PROJECTS_SELECT));
-
+            if (Number.IsNaN(int.Parse(txtPollingInterval.Value))) {
+                return false;
+            }
+            Gadget.Settings.WriteString(SETTING_POLLING_INTERVAL, txtPollingInterval.Value);
             return true;
         }
     }

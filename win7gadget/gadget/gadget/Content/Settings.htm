@@ -28,7 +28,7 @@
       </div>
       <div style="position:absolute;top:8em;left:0em;right:3em;">
         <div class="label">Password</div>
-        <div class="txtbox"><input type="password" id="password" size="27"></div>
+        <div class="txtbox"><input type="password" id="password" size="27"/></div>
       </div>
       <div style="position:absolute;top:11em;left:7em;right:3em;">
         <input type="button" size="100" id="testConnection" value="Test Connection"/>
@@ -51,12 +51,19 @@
         <select style="width:15em;" id="filters" name="filters">
             <option value="updated%3E%3D-1w+ORDER+BY+updated+DESC">Updated Recently</option>
             <option value="created%3E%3D-1w+ORDER+BY+updated+DESC">Added Recently</option>
+            <option value="assignee+%3D+currentUser()+ORDER+BY+updated+DESC">Assigned to Me</option>
+            <option value="reporter+%3D+currentUser()+ORDER+BY+updated+DESC">Reported by Me</option>
         </select>
     </div>
   </div>
+  <div style="position:absolute;top:26em;left:0em;right:3em;">
+    <div class="labelBig">Polling Interval [min]</div>
+    <div class="txtbox2"><input type="text" id="pollingInterval" size="6"/></div>
+  </div>
+
   </form>
 
-  <div style="position:absolute;top:27em;left:0em;width:100%;height:4em;" id="info"></div>
+  <div style="position:absolute;top:29em;left:0em;width:100%;height:4em;" id="info"></div>
 
   <script type="text/javascript">
       gadget.SettingsScriptlet.main();
