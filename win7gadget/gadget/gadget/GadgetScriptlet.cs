@@ -29,6 +29,8 @@ namespace gadget {
 
         private static bool haveValidSettings;
 
+        private static int timerHandle;
+
         private GadgetScriptlet() {
             Gadget.OnDock = OnDock;
             Gadget.OnUndock = OnUndock;
@@ -118,24 +120,49 @@ namespace gadget {
         }
 
         private static void reloadSettingsAndPollNow() {
+            setPollTimer();
+
             serverUrl = Gadget.Settings.ReadString(SettingsScriptlet.SETTING_URL);
             userName = Gadget.Settings.ReadString(SettingsScriptlet.SETTING_LOGIN);
             password = Gadget.Settings.ReadString(SettingsScriptlet.SETTING_PASSWORD);
+
             if (string.IsNullOrEmpty(serverUrl)) {
                 haveValidSettings = false;
                 pollNowButton.Disabled = true;
-                labelInfo.InnerHTML = "Set Up Server Connection First";
+                labelInfo.InnerHTML = "Set Up Server Settings First";
                 return;
             }
             currentFilter = new Filter(
                 Gadget.Settings.ReadString(SettingsScriptlet.SETTING_FILTERNAME), 
                 Gadget.Settings.ReadString(SettingsScriptlet.SETTING_FILTERVALUE)
             );
+
             projectKey = Gadget.Settings.ReadString(SettingsScriptlet.SETTING_PROJECTKEY);
 
             haveValidSettings = true;
             pollNowButton.Disabled = false;
             pollJira();
+        }
+
+        private static void timerCallback() {
+            pollJira();
+        }
+
+        private static void clearPollTimer() {
+            Window.ClearTimeout(timerHandle);
+        }
+
+        private static void setPollTimer() {
+            string timeoutStr = Gadget.Settings.ReadString(SettingsScriptlet.SETTING_POLLING_INTERVAL);
+            int timeout = 5;
+            if (!string.IsNullOrEmpty(timeoutStr)) {
+                int val = int.Parse(timeoutStr);
+                if (!Number.IsNaN(val)) {
+                    timeout = val;
+                }
+            }
+            timeout *= 60*1000;
+            timerHandle = Window.SetTimeout(timerCallback, timeout);
         }
 
         private static void UpdateDockedState() {
@@ -155,6 +182,7 @@ namespace gadget {
         private static XmlHttpRequest req;
 
         private static void pollJira() {
+            clearPollTimer();
             pollNowButton.Disabled = true;
             string url = 
                 serverUrl 
@@ -177,6 +205,7 @@ namespace gadget {
                 return;
             }
             pollNowButton.Disabled = false;
+            setPollTimer();
             if (req.Status != 200) {
                 labelInfo.InnerHTML = "Error. Status code is " + req.ResponseText;
             } else {
@@ -228,7 +257,7 @@ namespace gadget {
         }
 
         private static string safeText(XmlNode node) {
-            return node == null ? "" : node.Value;
+            return node == null ? "" : node.InnerText;
         }
 
         private static string safeAttribute(XmlNode node, string attr) {

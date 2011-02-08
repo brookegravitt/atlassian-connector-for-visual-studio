@@ -9,12 +9,7 @@ namespace gadget {
         private readonly InputElement buttonClose;
 
         private FlyoutScriptlet() {
-            Element body = Document.Body;
-            body.Style.Width = "400";
-            body.Style.Height = "600";
-            body.Style.BackgroundColor = "#eeeeee";
-
-            buttonClose = (InputElement) (Document.GetElementById("buttonClose"));
+            buttonClose = (InputElement)(Document.GetElementById("buttonClose"));
             buttonClose.AttachEvent("onclick", buttonCloseClick);
         }
 
