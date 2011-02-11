@@ -47,6 +47,10 @@ namespace Atlassian.plvs.markers.vs2010 {
         }
 
         IEnumerable<ITagSpan<T>> ITagger<T>.GetTags(NormalizedSnapshotSpanCollection spans) {
+            if (GlobalSettings.AllIssueLinksDisabled) {
+                return new List<ITagSpan<T>>();
+            }
+
             if (!tagCache.CacheFilled) {
                 tagCache.fill();
             }

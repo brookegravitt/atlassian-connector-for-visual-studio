@@ -480,5 +480,11 @@ namespace Atlassian.plvs.dialogs {
 
             return editorLineCount < MaxIssueLinksInEditorFileSize;
         }
+
+        public static bool AllIssueLinksDisabled {
+            get {
+                return IssueLinksInEditorDisabled && IssueLinksInEditorDisabledForAllFiles;
+            }
+        }
     }
 }
