@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.Composition;
+using Atlassian.plvs.dialogs;
 using Atlassian.plvs.windows;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
@@ -21,6 +22,10 @@ namespace Atlassian.plvs.markers.vs2010.menu {
         internal IClassifierAggregatorService AggregatorService;
 
         public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
+            if (GlobalSettings.AllIssueLinksDisabled) {
+                return null;
+            }
+
 #if NO_TAGGING
             return null;
 #else

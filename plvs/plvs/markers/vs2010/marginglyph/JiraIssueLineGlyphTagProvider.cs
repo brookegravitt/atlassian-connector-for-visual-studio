@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.Composition;
+using Atlassian.plvs.dialogs;
 using Atlassian.plvs.windows;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
@@ -15,6 +16,10 @@ namespace Atlassian.plvs.markers.vs2010.marginglyph {
             internal IClassifierAggregatorService AggregatorService;
 
             public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag {
+                if (GlobalSettings.AllIssueLinksDisabled) {
+                    return null;
+                }
+
 #if NO_TAGGING
                 return null;
 #else
