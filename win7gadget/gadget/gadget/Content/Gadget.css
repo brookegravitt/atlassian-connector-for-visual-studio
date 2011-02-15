@@ -45,6 +45,7 @@
 
 .oddRow 
 {
+	position:relative;
 	background-color:White;
 	width:100%;
 	cursor:pointer;
@@ -53,9 +54,25 @@
 
 .evenRow 
 {
+	position:relative;
 	background-color:#eeeeee;
 	width:100%;
 	cursor:pointer;
 	padding:0.5em;
+}
+
+.issuetext 
+{
+	position:relative;
+	left:0;
+	top:0;
+	margin-right:50px;
+}
+
+.issueicons 
+{
+	position:absolute;
+	right:0;
+	top:0.5em;
 }
 

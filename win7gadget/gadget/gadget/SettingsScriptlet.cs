@@ -15,6 +15,7 @@ namespace gadget {
         private static TextElement txtPassword;
         private static Element labelInfo;
         private static TextElement txtPollingInterval;
+        private static CheckBoxElement chkHideResolved;
 
         private const string FILTERS_SELECT = "filters";
         private const string PROJECTS_SELECT = "projects";
@@ -30,6 +31,7 @@ namespace gadget {
         public const string SETTING_PROJECTKEY = "projectKey";
 
         public const string SETTING_POLLING_INTERVAL = "pollingInterval";
+        public const string SETTING_HIDE_RESOLVED = "hideResolved";
 
         private static bool haveProject;
 
@@ -54,6 +56,7 @@ namespace gadget {
 
             buttonGetProjects = (InputElement) Document.GetElementById("retrieveProjects");
             buttonGetProjects.AttachEvent("onclick", buttonGetProjectsClick);
+            chkHideResolved = (CheckBoxElement)Document.GetElementById("hideresolved");
 
             labelInfo = Document.GetElementById("info");
 
@@ -62,11 +65,13 @@ namespace gadget {
             txtPassword.Value = Gadget.Settings.ReadString(SETTING_PASSWORD);
             string interval = Gadget.Settings.ReadString(SETTING_POLLING_INTERVAL);
             txtPollingInterval.Value = string.IsNullOrEmpty(interval) ? "5" : interval;
-
             string val = Gadget.Settings.ReadString(SETTING_FILTERVALUE);
             if (!string.IsNullOrEmpty(val)) {
                 optionreader.setselectedval(FILTERS_SELECT, val);
             }
+
+            val = Gadget.Settings.ReadString(SETTING_HIDE_RESOLVED);
+            chkHideResolved.Checked = !string.IsNullOrEmpty(val) && val.CompareTo("1") == 0;
 
             string projectKey = Gadget.Settings.ReadString(SETTING_PROJECTKEY);
             string projectName = Gadget.Settings.ReadString(SETTING_PROJECTNAME);
@@ -190,6 +195,7 @@ namespace gadget {
                 return false;
             }
             Gadget.Settings.WriteString(SETTING_POLLING_INTERVAL, txtPollingInterval.Value);
+            Gadget.Settings.WriteString(SETTING_HIDE_RESOLVED, chkHideResolved.Checked ? "1" : "0");
             return true;
         }
     }
