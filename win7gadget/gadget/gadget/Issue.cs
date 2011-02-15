@@ -18,11 +18,19 @@
         public readonly string Environment;
         public readonly string Votes;
 
+        public bool Read;
+
+        public bool Resolved {
+            get {
+                return !(string.IsNullOrEmpty(Resolution) || Resolution.CompareTo("unresolved", true) == 0);
+            }
+        }
+
         public Issue(
             string key, string link, string summary, string issueType, string issueTypeIconUrl, 
             string priority, string priorityIconUrl, string status, string statusIconUrl, 
             string reporter, string assignee, string created, string updated, string resolution, 
-            string description, string environment, string votes) {
+            string description, string environment, string votes, bool read) {
 
             Key = key;
             Votes = votes;
@@ -41,6 +49,13 @@
             Summary = summary;
             IssueType = issueType;
             IssueTypeIconUrl = issueTypeIconUrl;
+            Read = read;
+        }
+
+
+        public Issue copy() {
+            return new Issue(Key, Link, Summary, IssueType, IssueTypeIconUrl, Priority, PriorityIconUrl, Status, 
+                StatusIconUrl, Reporter, Assignee, Created, Updated, Resolution, Description, Environment, Votes, Read);
         }
     }
 }

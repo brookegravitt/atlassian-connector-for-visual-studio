@@ -20,6 +20,8 @@ namespace gadget {
 
         private static readonly ArrayList Issues = new ArrayList();
 
+        private static readonly ArrayList OldIssues = new ArrayList();
+
         private static string projectKey = "";
         private static string serverUrl = "";
         private static string userName = "";
@@ -30,6 +32,8 @@ namespace gadget {
         private static bool haveValidSettings;
 
         private static int timerHandle;
+
+        private static int prevIssueId = -1;
 
         private GadgetScriptlet() {
             Gadget.OnDock = OnDock;
@@ -63,17 +67,22 @@ namespace gadget {
         }
 
         private static void pollNowButtonClick() {
+            doShowFlyoutAgain = false;
+            Gadget.Flyout.Show = false;
+            prevIssueId = -1;
             pollJira();
         }
 
         public static void openFlyout(int issueId) {
-            if (issueId >= 0) {
-                Issue issue = (Issue) Issues[issueId];
+            if (issueId >= 0 && issueId != prevIssueId) {
+                prevIssueId = issueId;
+                Issue issue = (Issue)Issues[issueId];
+                issue.Read = true;
+                jiraResponse.InnerHTML = createIssueListHtmlFromIssueList();
                 flyoutIssueDetailsText = createIssueDetailsHtml(issue);
                 flyoutIssueKeyText = createIssueKeyHtml(issue);
                 doShowFlyoutAgain = true;
             } else {
-                flyoutIssueDetailsText = null;
                 doShowFlyoutAgain = false;
             }
             if (Gadget.Flyout.Show) {
@@ -123,6 +132,8 @@ namespace gadget {
             setPollTimer();
 
             serverUrl = Gadget.Settings.ReadString(SettingsScriptlet.SETTING_URL);
+//            serverUrl = "https://studio.atlassian.com";
+
             userName = Gadget.Settings.ReadString(SettingsScriptlet.SETTING_LOGIN);
             password = Gadget.Settings.ReadString(SettingsScriptlet.SETTING_PASSWORD);
 
@@ -136,8 +147,10 @@ namespace gadget {
                 Gadget.Settings.ReadString(SettingsScriptlet.SETTING_FILTERNAME), 
                 Gadget.Settings.ReadString(SettingsScriptlet.SETTING_FILTERVALUE)
             );
+//            currentFilter = new Filter("upd", "updated%3E%3D-1w+ORDER+BY+updated+DESC");
 
             projectKey = Gadget.Settings.ReadString(SettingsScriptlet.SETTING_PROJECTKEY);
+//            projectKey = "PLVS";
 
             haveValidSettings = true;
             pollNowButton.Disabled = false;
@@ -226,6 +239,10 @@ namespace gadget {
 
         private static void createIssueListFromResponseXml(XmlDocument resp) {
             XmlNodeList issuesXml = resp.SelectNodes("/rss/channel/item");
+            OldIssues.Clear();
+            foreach (object i in Issues) {
+                OldIssues.Add(((Issue) i).copy());
+            }
             Issues.Clear();
             for (int i = 0; i < issuesXml.Count; ++i) {
                 XmlNode key = issuesXml[i].SelectSingleNode("key");
@@ -242,6 +259,14 @@ namespace gadget {
                 XmlNode description = issuesXml[i].SelectSingleNode("description");
                 XmlNode env = issuesXml[i].SelectSingleNode("environment");
                 XmlNode votes = issuesXml[i].SelectSingleNode("votes");
+
+                bool read = false;
+                foreach (object t in OldIssues) {
+                    Issue oldIssue = ((Issue) t);
+                    if (safeText(key).CompareTo(oldIssue.Key) != 0) continue;
+                    read = oldIssue.Read && safeText(updated).CompareTo(oldIssue.Updated) == 0;
+                }
+
                 Issue issue = new Issue(
                     safeText(key), safeText(link), safeText(summary), safeText(type), safeAttribute(type, "iconUrl"),
                     safeText(priority), safeAttribute(priority, "iconUrl"),
@@ -249,7 +274,8 @@ namespace gadget {
                     safeText(reporter), safeText(assignee),
                     safeText(created), safeText(updated),
                     safeText(resolution), safeText(description), 
-                    safeText(env), safeText(votes)
+                    safeText(env), safeText(votes),
+                    read
                     );
 
                 Issues.Add(issue);
@@ -266,18 +292,36 @@ namespace gadget {
             return a != null ? a.Value : "";
         }
 
+        public static void markUnread(int issueId) {
+            if (issueId < 0) return;
+            prevIssueId = -1;
+            Issue issue = (Issue)Issues[issueId];
+            issue.Read = false;
+            jiraResponse.InnerHTML = createIssueListHtmlFromIssueList();
+        }
+
         private static string createIssueListHtmlFromIssueList() {
+            string val = Gadget.Settings.ReadString(SettingsScriptlet.SETTING_HIDE_RESOLVED);
+            bool hideResolved = !string.IsNullOrEmpty(val) && val.CompareTo("1") == 0;
+
             StringBuilder sb = new StringBuilder();
+            bool zebra = false;
             for (int i = 0; i < Issues.Count; ++i) {
                 Issue issue = (Issue) Issues[i];
 
-                sb.Append("<div onclick=\"javascript:gadget.GadgetScriptlet.openFlyout(");
+                if (issue.Resolved && hideResolved) continue;
+
+                sb.Append("<div ");
+                sb.Append(" onclick=\"javascript:gadget.GadgetScriptlet.openFlyout(");
                 sb.Append(i);
                 sb.Append(")\" class=\"");
-                sb.Append(i % 2 > 0 ? "oddRow" : "evenRow");
+                sb.Append(zebra ? "oddRow" : "evenRow");
                 sb.Append("\" id=\"issue");
                 sb.Append(i);
                 sb.Append("\">");
+                sb.Append("<div class=\"issuetext\"");
+                sb.Append(getStyleForIssue(issue));
+                sb.Append(">");
                 sb.Append("<img align=absmiddle src=\"");
                 sb.Append(issue.IssueTypeIconUrl);
                 sb.Append("\">");
@@ -287,9 +331,36 @@ namespace gadget {
                 sb.Append(issue.Key);
                 sb.Append("</a> ");
                 sb.Append(issue.Summary);
+                sb.Append("</div>");
+                sb.Append("<div class=\"issueicons\">");
+                if (issue.Read) {
+                    sb.Append("<a style=\"text-decoration:underline;font-size:8px;\" ");
+                    sb.Append(" onclick=\"javascript:gadget.GadgetScriptlet.markUnread(");
+                    sb.Append(i);
+                    sb.Append(")\">unread</a>");
+                }
+                sb.Append("<img align=absmiddle src=\"");
+                sb.Append(issue.PriorityIconUrl);
+                sb.Append("\">");
+                sb.Append("<img align=absmiddle src=\"");
+                sb.Append(issue.StatusIconUrl);
+                sb.Append("\">");
+                sb.Append("</div>");
                 sb.Append("<div class=\"filler\">A</div></div>\r\n");
+                zebra = !zebra;
             }
             return sb.ToString();
+        }
+
+        private static string getStyleForIssue(Issue issue) {
+            string txt = "";
+            if (issue.Resolved) {
+                txt = txt + "text-decoration:line-through;";
+            } 
+            if (!issue.Read) {
+                txt = txt + "font-weight:bold;";
+            }
+            return txt.Length > 0 ? "style=\"" + txt + "\"" : "";
         }
 
         private static string createIssueDetailsHtml(Issue issue) {
