@@ -538,12 +538,13 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void loadPastActiveIssuesDetails() {
-            Thread t = PlvsUtils.createThread(() => loadPastActiveIssuesDetailsWorker(generation));
+            LinkedList<ActiveIssue> past = new LinkedList<ActiveIssue>(pastActiveIssues);
+            Thread t = PlvsUtils.createThread(() => loadPastActiveIssuesDetailsWorker(generation, past));
             t.Start();
         }
 
-        private void loadPastActiveIssuesDetailsWorker(int gen) {
-            List<JiraIssue> issues = (from pastIssue in pastActiveIssues
+        private void loadPastActiveIssuesDetailsWorker(int gen, IEnumerable<ActiveIssue> past) {
+            List<JiraIssue> issues = (from pastIssue in past
                                       let server = JiraServerModel.Instance.getServer(new Guid(pastIssue.ServerGuid))
                                       where server != null && server.Enabled
                                       select getIssueFromModelOrServer(server, pastIssue.Key)
