@@ -597,17 +597,22 @@ namespace Atlassian.plvs.ui.jira {
                     }
 
                     status.setInfo("[" + server.Name + "] Loading saved filters...");
+                    PlvsLogger.log("reloadKnownServersWorker() - [" + server.Name + "] Loading saved filters...");
                     List<JiraSavedFilter> filters = Facade.getSavedFilters(server);
+                    PlvsLogger.log("reloadKnownServersWorker() - finished loading saved filters, invoking filter tree population");
                     JiraServer jiraServer = server;
                     Invoke(new MethodInvoker(delegate
                                                  {
                                                      // PLVS-59
                                                      if (myGeneration != currentGeneration) {
+                                                         PlvsLogger.log("reloadKnownServersWorker() - generations don't match");
                                                          return;
                                                      }
+                                                     PlvsLogger.log("reloadKnownServersWorker() - populating filter nodes");
                                                      filtersTree.addFilterGroupNodes(jiraServer);
                                                      filtersTree.addPresetFilterNodes(jiraServer);
                                                      filtersTree.addSavedFilterNodes(jiraServer, filters);
+                                                     PlvsLogger.log("reloadKnownServersWorker() - populated filter nodes");
                                                      status.setInfo("Loaded saved filters for server " + jiraServer.Name);
                                                      filtersTree.addCustomFilterNodes(jiraServer);
                                                  }));

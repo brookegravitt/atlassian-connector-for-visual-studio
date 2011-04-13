@@ -704,12 +704,18 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void issueSummary_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
-            if (!issueSummaryLoaded) return;
+            PlvsLogger.log("issueSummary_Navigating() - enter");
+            if (!issueSummaryLoaded) {
+                PlvsLogger.log("issueSummary_Navigating() - issueSummaryLoaded == false - exiting");
+                return;
+            }
             if (e.Url.Equals("about:blank")) {
+                PlvsLogger.log("issueSummary_Navigating() - URL == about:blank - exiting");
                 e.Cancel = true;
                 return;
             }
             if (e.Url.ToString().StartsWith(PARENT_ISSUE_URL_TYPE)) {
+                PlvsLogger.log("issueSummary_Navigating() - opening issue " + e.Url.ToString().Substring(PARENT_ISSUE_URL_TYPE.Length));
                 AtlassianPanel.Instance.Jira.findAndOpenIssue(
                     e.Url.ToString().Substring(PARENT_ISSUE_URL_TYPE.Length), openIssueFinished);
                 e.Cancel = true;
@@ -717,6 +723,7 @@ namespace Atlassian.plvs.ui.jira {
             }
             string title = null;
             if (e.Url.ToString().StartsWith(ISSUE_EDIT_URL_TYPE)) {
+                PlvsLogger.log("issueSummary_Navigating() - editing issue field " + e.Url.ToString().Substring(ISSUE_EDIT_URL_TYPE.Length));
                 string fieldId = null;
                 switch (e.Url.ToString().Substring(ISSUE_EDIT_URL_TYPE.Length)) {
                     case SUMMARY_EDIT_TAG:
@@ -753,16 +760,21 @@ namespace Atlassian.plvs.ui.jira {
                         break;
                 }
                 if (fieldId != null) {
+                    PlvsLogger.log("issueSummary_Navigating() - editing issue field fieldId == " + fieldId);
+
                     Point pt = Cursor.Position;
                     pt.X = Math.Max(pt.X - EDITOR_OFFSET, 0);
                     pt.Y = Math.Max(pt.Y - EDITOR_OFFSET, 0);
                     
                     FieldEditor editor = new FieldEditor(title, model, facade, issue, fieldId, pt);
                     editor.ShowDialog();
+                } else {
+                    PlvsLogger.log("issueSummary_Navigating() - editing issue field fieldId == null");
                 }
                 e.Cancel = true;
                 return;
             }
+            PlvsLogger.log("issueSummary_Navigating() - navigating to " + e);
             navigate(e);
         }
 
