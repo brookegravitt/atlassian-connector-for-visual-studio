@@ -27,6 +27,8 @@ namespace Atlassian.plvs.dialogs.jira {
         private int customHeight = -1;
 
         public FieldEditor(string title, JiraIssueListModel model, JiraServerFacade facade, JiraIssue issue, string fieldId, Point location) {
+            PlvsLogger.log("FieldEditor - ctor");
+
             this.model = model;
             this.facade = facade;
             this.issue = issue;
@@ -74,6 +76,7 @@ namespace Atlassian.plvs.dialogs.jira {
         }
 
         private void getMetadata() {
+            PlvsLogger.log("FieldEditor.getMetadata()");
 
             object issueSoapObject = facade.getIssueSoapObject(issue);
             List<JiraField> filledFields = JiraActionFieldType.fillFieldValues(issue, issueSoapObject, new List<JiraField> { field });
@@ -93,6 +96,7 @@ namespace Atlassian.plvs.dialogs.jira {
         }
 
         private void createEditorWidget(IEnumerable<JiraNamedEntity> versions, IEnumerable<JiraNamedEntity> comps, object issueSoapObject) {
+            PlvsLogger.log("FieldEditor.createEditorWidget()");
 
             switch (JiraActionFieldType.getFieldTypeForFieldId(fieldId)) {
                 case JiraActionFieldType.WidgetType.SUMMARY:
@@ -143,6 +147,8 @@ namespace Atlassian.plvs.dialogs.jira {
         }
 
         private void addEditorWidget(JiraFieldEditorProvider editor) {
+            PlvsLogger.log("FieldEditor.addEditorWidget()");
+
             Controls.Remove(labelInfo);
             editorControl = editor.Widget;
             editorControl.Location = new Point(MARGIN, MARGIN);
