@@ -437,7 +437,7 @@ namespace Atlassian.plvs.util {
 
         // PLVS-217
         public static bool isConnectorException(Exception e) {
-            return e.StackTrace.Split(new[] { '\n' }).Any(line => line.Contains("Atlassian.plvs."));
+            return e.StackTrace != null && e.StackTrace.Split(new[] { '\n' }).Any(line => line.Contains("Atlassian.plvs."));
         }
     }
 }

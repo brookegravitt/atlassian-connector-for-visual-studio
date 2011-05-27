@@ -1,5 +1,6 @@
 ﻿using System;
 using Atlassian.plvs.dialogs;
+using Atlassian.plvs.util;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.TextManager.Interop;
 using System.Runtime.InteropServices;
@@ -12,11 +13,6 @@ namespace Atlassian.plvs.markers {
         private readonly JiraLinkTextMarkerType textMarkerType = new JiraLinkTextMarkerType();
 
         public int GetTextMarkerType(ref Guid pguidMarker, out IVsPackageDefinedTextMarkerType ppMarkerType) {
-            if (!GlobalSettings.AllIssueLinksDisabled) {
-                ppMarkerType = null;
-                return VSConstants.S_OK;
-            }
-
             // This method is called by Visual Studio when it needs the marker
             // type information in order to retrieve the implementing objects.
             if (pguidMarker == GuidList.JiraLinkMarginMarker) {

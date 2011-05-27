@@ -52,6 +52,7 @@ namespace Atlassian.plvs.eventsinks {
                     return VSConstants.S_OK;
 
                 default:
+                    pcmdf[0] = 0;
                     return VSConstants.S_FALSE;
             }
         }
