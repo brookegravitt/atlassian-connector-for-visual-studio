@@ -17,7 +17,6 @@ namespace Atlassian.plvs.eventsinks {
         public void OnRegisterMarkerType(int iMarkerType) {}
 
         public void OnRegisterView(IVsTextView pView) {
-
             IVsTextLines buffer;
             ErrorHandler.ThrowOnFailure(pView.GetBuffer(out buffer));
             if (buffer == null)

@@ -155,6 +155,7 @@ namespace Atlassian.plvs {
         }
 
         protected override void Initialize() {
+            PlvsLogger.log("plvsPackage.Initialize() - enter");
             base.Initialize();
 
             if (InCommandLineMode) {
@@ -201,7 +202,6 @@ namespace Atlassian.plvs {
             }
 
             SolutionEventSink solutionEventSink = new SolutionEventSink(this, createAtlassianWindow, createIssueDetailsWindow, createBuildDetailsWindow);
-
             IVsSolution solution = (IVsSolution)GetService(typeof(SVsSolution));
             ErrorHandler.ThrowOnFailure(solution.AdviseSolutionEvents(solutionEventSink, out solutionEventCookie));
 
@@ -215,16 +215,17 @@ namespace Atlassian.plvs {
 
             RunningDocTableEventSink runningDocTableEventSink = new RunningDocTableEventSink();
             TextManagerEventSink textManagerEventSink = new TextManagerEventSink();
-            
+
             IConnectionPointContainer textManager = (IConnectionPointContainer)GetService(typeof(SVsTextManager));
             Guid interfaceGuid = typeof (IVsTextManagerEvents).GUID;
+
             try {
                 textManager.FindConnectionPoint(ref interfaceGuid, out tmConnectionPoint);
                 tmConnectionPoint.Advise(textManagerEventSink, out tmConnectionCookie);
 // ReSharper disable EmptyGeneralCatchClause
             }
             catch {}
-// ReSharper restore EmptyGeneralCatchClause
+            // ReSharper restore EmptyGeneralCatchClause
 
             IVsRunningDocumentTable rdt = (IVsRunningDocumentTable) GetService(typeof (SVsRunningDocumentTable));
             ErrorHandler.ThrowOnFailure(rdt.AdviseRunningDocTableEvents(runningDocTableEventSink, out rdtEventCookie));
@@ -233,8 +234,8 @@ namespace Atlassian.plvs {
             // cache is up-to-date.
             ValidateFontAndColorCacheManagerIsUpToDate();
 #endif
-
             ((IServiceContainer)this).AddService(typeof(AnkhSvnJiraConnector), new ServiceCreatorCallback(CreateAnkhSvnConnector), true);
+
         }
 
         private static bool handlerInstalled;

@@ -62,6 +62,7 @@ namespace Atlassian.plvs.eventsinks {
         }
 
         public int OnAfterOpenSolution(object pUnkReserved, int fNewSolution) {
+            PlvsLogger.log("SolutionEventSink.OnAfterOpenSolution()");
             try {
                 GlobalSettings.checkFirstRun();
 
