@@ -13,7 +13,7 @@ namespace Atlassian.plvs.models.jira.fields {
                 return new List<string>();
             }
 
-            string dateString = JiraIssueUtils.getShortDateStringFromDateTime(dueDate.Value);
+            string dateString = JiraIssueUtils.getShortDateStringFromDateTime(issue.ServerLanguage, dueDate.Value);
             List<string> result = new List<string> {dateString};
             return result;
         }

@@ -19,27 +19,27 @@ namespace Atlassian.plvs.util.jira {
         private const string ShortFormatFromJira = "dd/MM/yy";
         private const string ShortFormatToJira = "dd/MMM/yy";
 
-        public static DateTime getDateTimeFromJiraTimeString(string value) {
+        public static DateTime getDateTimeFromJiraTimeString(string locale, string value) {
             int bracket = value.LastIndexOf("(");
             if (bracket != -1) {
                 value = value.Substring(0, bracket);
             }
 
             try {
-                return DateTime.ParseExact(value.Trim(), JiraFormat, new CultureInfo("en-US"), DateTimeStyles.None);
+                return DateTime.ParseExact(value.Trim(), JiraFormat, new CultureInfo(locale ?? "en-US"), DateTimeStyles.None);
             }
             catch (FormatException) {
                 return DateTime.MinValue;
             }
         }
 
-        public static DateTime getDateTimeFromShortString(string value) {
+        public static DateTime getDateTimeFromShortString(string locale, string value) {
             // let's try both formats
             try {
-                return DateTime.ParseExact(value.Trim(), ShortFormatFromJira, new CultureInfo("en-US"), DateTimeStyles.None);
+                return DateTime.ParseExact(value.Trim(), ShortFormatFromJira, new CultureInfo(locale ?? "en-US"), DateTimeStyles.None);
             } catch (FormatException) {
                 try {
-                    return DateTime.ParseExact(value.Trim(), ShortFormatToJira, new CultureInfo("en-US"), DateTimeStyles.None);
+                    return DateTime.ParseExact(value.Trim(), ShortFormatToJira, new CultureInfo(locale ?? "en-US"), DateTimeStyles.None);
                 } catch (FormatException) {
                     return DateTime.MinValue;
                 }
@@ -53,8 +53,8 @@ namespace Atlassian.plvs.util.jira {
             return time.ToShortDateString() + " " + time.ToShortTimeString();
         }
 
-        public static string getShortDateStringFromDateTime(DateTime time) {
-            return time.ToString(ShortFormatToJira, new CultureInfo("en-US"));
+        public static string getShortDateStringFromDateTime(string locale, DateTime time) {
+            return time.ToString(ShortFormatToJira, new CultureInfo(locale ?? "en-US"));
         }
 
         public static string addSpacesToTimeSpec(string text) {

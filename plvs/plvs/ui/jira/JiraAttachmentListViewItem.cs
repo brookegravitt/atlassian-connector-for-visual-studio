@@ -11,7 +11,7 @@ namespace Atlassian.plvs.ui.jira {
         public string Url { get { return issue.Server.Url + "/" + Attachment.RelativeUrl; } }
 
         public JiraAttachmentListViewItem(JiraIssue issue, JiraAttachment att) 
-            : base(new [] { att.Name, att.Author, att.Size.ToString(), JiraIssueUtils.getShortDateStringFromDateTime(att.Created) }) {
+            : base(new [] { att.Name, att.Author, att.Size.ToString(), JiraIssueUtils.getShortDateStringFromDateTime(issue.ServerLanguage, att.Created) }) {
 
             this.issue = issue;
             Attachment = att;

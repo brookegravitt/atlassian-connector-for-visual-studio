@@ -313,7 +313,7 @@ namespace Atlassian.plvs.ui.jira {
                     .Append("<div class=\"author\">").Append(
                     JiraServerCache.Instance.getUsers(issue.Server).getUser(issue.Comments[i].Author))
                     .Append(" <span class=\"date\">").Append(
-                    JiraIssueUtils.getTimeStringFromIssueDateTime(JiraIssueUtils.getDateTimeFromJiraTimeString(issue.Comments[i].Created)))
+                    JiraIssueUtils.getTimeStringFromIssueDateTime(JiraIssueUtils.getDateTimeFromJiraTimeString(issue.ServerLanguage, issue.Comments[i].Created)))
                     .Append("</span></div>")
                     .Append("<a href=\"javascript:toggle('")
                     .Append(i).Append("', '").Append(i).Append("control');\"><div class=\"toggler\" id=\"")
