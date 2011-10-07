@@ -36,6 +36,8 @@ namespace Atlassian.plvs.api.jira {
             }
         }
 
+        public string ServerLanguage { get; private set; }
+
         private readonly List<Comment> comments = new List<Comment>();
 
         private List<string> versions = new List<string>();
@@ -48,10 +50,13 @@ namespace Atlassian.plvs.api.jira {
 
         private readonly List<IssueLinkType> issueLinks = new List<IssueLinkType>();
 
-        public JiraIssue() {}
+        public JiraIssue() {
+            ServerLanguage = null;
+        }
 
-        public JiraIssue(JiraServer server, XPathNavigator nav) {
+        public JiraIssue(JiraServer server, string serverLanguage, XPathNavigator nav) {
             Server = server;
+            ServerLanguage = serverLanguage;
 
             nav.MoveToFirstChild();
             do {
@@ -102,10 +107,10 @@ namespace Atlassian.plvs.api.jira {
                         JiraServerCache.Instance.getUsers(server).putUser(new JiraUser(Reporter, reporterName));
                         break;
                     case "created":
-                        CreationDate = JiraIssueUtils.getDateTimeFromJiraTimeString(nav.Value);
+                        CreationDate = JiraIssueUtils.getDateTimeFromJiraTimeString(serverLanguage, nav.Value);
                         break;
                     case "updated":
-                        UpdateDate = JiraIssueUtils.getDateTimeFromJiraTimeString(nav.Value);
+                        UpdateDate = JiraIssueUtils.getDateTimeFromJiraTimeString(serverLanguage, nav.Value);
                         break;
                     case "resolution":
                         Resolution = nav.Value;
@@ -159,7 +164,7 @@ namespace Atlassian.plvs.api.jira {
                 JiraAttachment a = new JiraAttachment(
                     int.Parse(XPathUtils.getAttributeSafely(it.Current, "id", "0")),
                     XPathUtils.getAttributeSafely(it.Current, "name", "none"),
-                    JiraIssueUtils.getDateTimeFromJiraTimeString(XPathUtils.getAttributeSafely(it.Current, "created", "none")),
+                    JiraIssueUtils.getDateTimeFromJiraTimeString(ServerLanguage, XPathUtils.getAttributeSafely(it.Current, "created", "none")),
                     XPathUtils.getAttributeSafely(it.Current, "author", "none"),
                     int.Parse(XPathUtils.getAttributeSafely(it.Current, "size", "0")));
                 attachments.Add(a);

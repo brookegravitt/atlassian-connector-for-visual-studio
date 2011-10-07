@@ -184,9 +184,9 @@ namespace Atlassian.plvs.dialogs.jira {
                         editor = new UserFieldEditorProvider(issue.Server, field, field.Values.IsNullOrEmpty() ? "" : field.Values[0], fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.DUE_DATE:
-                        editor = new DateFieldEditorProvider(field, field.Values.IsNullOrEmpty()
+                        editor = new DateFieldEditorProvider(issue.ServerLanguage, field, field.Values.IsNullOrEmpty()
                                                                         ? (DateTime?) null 
-                                                                        : JiraIssueUtils.getDateTimeFromShortString(field.Values[0]), fieldValid);
+                                                                        : JiraIssueUtils.getDateTimeFromShortString(issue.ServerLanguage, field.Values[0]), fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.COMPONENTS:
                         editor = new NamedEntityListFieldEditorProvider(field, issue.Components, comps, fieldValid);

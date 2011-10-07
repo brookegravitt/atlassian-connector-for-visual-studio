@@ -48,7 +48,8 @@ namespace Atlassian.plvs.util {
                 // make sure we read some data
                 if (count == 0) continue;
                 // translate from bytes to ASCII text
-                string tempString = Encoding.ASCII.GetString(buf, 0, count);
+//                string tempString = Encoding.ASCII.GetString(buf, 0, count);
+                string tempString = Encoding.UTF8.GetString(buf, 0, count);
 
                 // continue building the string
                 sb.Append(tempString);

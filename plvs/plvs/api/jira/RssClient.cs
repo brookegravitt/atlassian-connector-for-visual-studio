@@ -105,12 +105,20 @@ namespace Atlassian.plvs.api.jira {
             XPathDocument doc = XPathUtils.getXmlDocument(s);
 
             XPathNavigator nav = doc.CreateNavigator();
+
+            XPathExpression localeExpr = nav.Compile("/rss/channel/language");
+            XPathNodeIterator localeIt = nav.Select(localeExpr);
+            string locale = null;
+            if (localeIt.MoveNext()) {
+                locale = localeIt.Current.Value;    
+            }
+
             XPathExpression expr = nav.Compile("/rss/channel/item");
             XPathNodeIterator it = nav.Select(expr);
 
             List<JiraIssue> list = new List<JiraIssue>();
             while (it.MoveNext()) {
-                list.Add(new JiraIssue(server, it.Current));
+                list.Add(new JiraIssue(server, locale, it.Current));
             }
 
             return list;
