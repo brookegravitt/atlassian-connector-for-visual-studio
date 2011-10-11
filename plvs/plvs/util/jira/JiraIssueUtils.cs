@@ -26,21 +26,27 @@ namespace Atlassian.plvs.util.jira {
             }
 
             try {
-                return DateTime.ParseExact(value.Trim(), JiraFormat, new CultureInfo(locale ?? "en-US"), DateTimeStyles.None);
-            }
-            catch (FormatException) {
+                return DateTime.ParseExact(value.Trim(), JiraFormat, new CultureInfo(fixLocale(locale) ?? "en-US"), DateTimeStyles.None);
+            } catch (Exception) {
                 return DateTime.MinValue;
+            } 
+        }
+
+        private static string fixLocale(string locale) {
+            if (locale != null && !locale.ToLower().Equals("en-us") && locale.ToLower().StartsWith("en-")) {
+                return "en-gb";
             }
+            return locale;
         }
 
         public static DateTime getDateTimeFromShortString(string locale, string value) {
             // let's try both formats
             try {
-                return DateTime.ParseExact(value.Trim(), ShortFormatFromJira, new CultureInfo(locale ?? "en-US"), DateTimeStyles.None);
-            } catch (FormatException) {
+                return DateTime.ParseExact(value.Trim(), ShortFormatFromJira, new CultureInfo(fixLocale(locale) ?? "en-US"), DateTimeStyles.None);
+            } catch (Exception) {
                 try {
-                    return DateTime.ParseExact(value.Trim(), ShortFormatToJira, new CultureInfo(locale ?? "en-US"), DateTimeStyles.None);
-                } catch (FormatException) {
+                    return DateTime.ParseExact(value.Trim(), ShortFormatToJira, new CultureInfo(fixLocale(locale) ?? "en-US"), DateTimeStyles.None);
+                } catch (Exception) {
                     return DateTime.MinValue;
                 }
             }
@@ -54,7 +60,7 @@ namespace Atlassian.plvs.util.jira {
         }
 
         public static string getShortDateStringFromDateTime(string locale, DateTime time) {
-            return time.ToString(ShortFormatToJira, new CultureInfo(locale ?? "en-US"));
+            return time.ToString(ShortFormatToJira, new CultureInfo(fixLocale(locale) ?? "en-US"));
         }
 
         public static string addSpacesToTimeSpec(string text) {
