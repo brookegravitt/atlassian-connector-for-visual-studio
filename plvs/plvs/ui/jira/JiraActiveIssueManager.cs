@@ -460,11 +460,20 @@ namespace Atlassian.plvs.ui.jira {
                             ++mods;
                         }
                         List<JiraNamedEntity> actions = JiraServerFacade.Instance.getActionsForIssue(issue);
-                        foreach (JiraNamedEntity action in actions.Where(action => action.Id.Equals(START_PROGRESS_ACTION_ID))) {
+                        JiraNamedEntity action = actions.Find(a => a.Id.Equals(START_PROGRESS_ACTION_ID));
+                        if (action == null) {
+                            container.safeInvoke(new MethodInvoker(delegate {
+                                ActionSelector sel = new ActionSelector(actions);
+                                if (sel.ShowDialog() == DialogResult.OK) {
+                                    action = sel.SelectedAction;
+                                }
+                            }));
+                        }
+//                        foreach (JiraNamedEntity action in actions.Where(action => action.Id.Equals(START_PROGRESS_ACTION_ID))) {
+                        if (action != null) {
                             jiraStatus.setInfo("Setting issue in progress...");
                             JiraServerFacade.Instance.runIssueActionWithoutParams(issue, action);
                             ++mods;
-                            break;
                         }
                         if (mods > 0) {
                             issue = JiraServerFacade.Instance.getIssue(server, CurrentActiveIssue.Key);

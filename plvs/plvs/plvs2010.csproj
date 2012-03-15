@@ -139,6 +139,12 @@
     <Compile Include="dialogs\ExceptionViewer.Designer.cs">
       <DependentUpon>ExceptionViewer.cs</DependentUpon>
     </Compile>
+    <Compile Include="dialogs\jira\ActionSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\jira\ActionSelector.Designer.cs">
+      <DependentUpon>ActionSelector.cs</DependentUpon>
+    </Compile>
     <Compile Include="dialogs\jira\AddOrEditJiraServer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -624,6 +630,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\ExceptionViewer.resx">
       <DependentUpon>ExceptionViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\jira\ActionSelector.resx">
+      <DependentUpon>ActionSelector.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\jira\AddOrEditJiraServer.resx">
       <DependentUpon>AddOrEditJiraServer.cs</DependentUpon>
