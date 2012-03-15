@@ -15,7 +15,7 @@
   <property name="scp.key" value="c:/Users/kalamon/putty.keys/dac.new.bamboo.priv.ppk" overwrite="false" />
   <property name="scp.opts" value="-i ${scp.key} -noagent -v -batch" overwrite="false" />
   <property name="scp.login" value="jgorycki" overwrite="false" />
-  <property name="nsis" value="c:/progra~1/nsis/makensis.exe" />
+  <property name="nsis" value="c:/progra~1/nsis/makensis.exe" overwrite="false" />
   <property name="msbuild35" value="C:/Windows/Microsoft.NET/Framework/v3.5/MSBuild.exe" overwrite="false" />
   <property name="msbuild40" value="C:/Windows/Microsoft.NET/Framework/v4.0.30319/MSBuild.exe" overwrite="false" />
   
