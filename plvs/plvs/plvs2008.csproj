@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -113,6 +113,12 @@
     </Compile>
     <Compile Include="dialogs\ExceptionViewer.Designer.cs">
       <DependentUpon>ExceptionViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dialogs\jira\ActionSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dialogs\jira\ActionSelector.Designer.cs">
+      <DependentUpon>ActionSelector.cs</DependentUpon>
     </Compile>
     <Compile Include="dialogs\jira\AddOrEditJiraServer.cs">
       <SubType>Form</SubType>
@@ -570,6 +576,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\ExceptionViewer.resx">
       <DependentUpon>ExceptionViewer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dialogs\jira\ActionSelector.resx">
+      <DependentUpon>ActionSelector.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="dialogs\jira\AddOrEditJiraServer.resx">
