@@ -135,10 +135,14 @@ namespace Atlassian.plvs.ui.jira {
 
         private void maybeAddMazioMenu() {
             string mazioDir = null;
+#if !VS_2008
             if (Environment.Is64BitOperatingSystem) {
                 mazioDir = RegistryWOW6432.GetRegKey64(RegHive.HKEY_LOCAL_MACHINE, @"SOFTWARE\Kalamon\Mazio", "Install_Dir");
                 
             } else {
+#else
+            {
+#endif
                 RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Kalamon\Mazio");
                 if (key != null) mazioDir = key.GetValue("Install_Dir") as string;
             }
