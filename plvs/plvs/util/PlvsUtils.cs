@@ -371,7 +371,7 @@ namespace Atlassian.plvs.util {
                 control.Invoke(action);
             } catch (InvalidOperationException e) {
                 Debug.WriteLine("PlvsUtils.safeInvoke() - exception: " + e.Message);
-#if !VS_2008
+#if VS2010
             } catch (CultureNotFoundException e) {
                 // PLVS-323
                 Debug.WriteLine("PlvsUtils.safeInvoke() - exception: " + e.Message);
