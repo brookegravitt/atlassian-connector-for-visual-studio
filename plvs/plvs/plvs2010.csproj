@@ -454,6 +454,9 @@
     <Compile Include="ui\OwnerDrawListBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ui\TabControlWithCloseButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ui\TextBoxWithSpellChecker.cs">
       <SubType>UserControl</SubType>
     </Compile>

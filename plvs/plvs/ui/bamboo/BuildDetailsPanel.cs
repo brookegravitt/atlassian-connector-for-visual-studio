@@ -30,8 +30,8 @@ namespace Atlassian.plvs.ui.bamboo {
 
         private bool unableToRetrieveDetails;
 
-        private readonly TabPage myTab;
-        private readonly Action<TabPage> buttonCloseClicked;
+//        private readonly TabPage myTab;
+//        private readonly Action<TabPage> buttonCloseClicked;
 
         private BambooTestResultTree testResultTree;
 
@@ -45,12 +45,13 @@ namespace Atlassian.plvs.ui.bamboo {
 
         private readonly StatusLabel status;
 
-        public BuildDetailsPanel(Solution solution, BambooBuild build, TabPage myTab, BuildDetailsWindow parent, Action<TabPage> buttonCloseClicked) {
+        public BuildDetailsPanel(Solution solution, BambooBuild build, TabPage myTab, 
+            BuildDetailsWindow parent) { //}, Action<TabPage> buttonCloseClicked) {
             
             this.solution = solution;
             this.build = build;
-            this.myTab = myTab;
-            this.buttonCloseClicked = buttonCloseClicked;
+//            this.myTab = myTab;
+//            this.buttonCloseClicked = buttonCloseClicked;
             
             InitializeComponent();
 
@@ -429,11 +430,11 @@ namespace Atlassian.plvs.ui.bamboo {
             return build.Server.Name + " (<a href=" + build.Server.Url + ">" + build.Server.Url + "</a>)"; 
         }
 
-        private void buttonClose_Click(object sender, EventArgs e) {
-            if (buttonCloseClicked != null) {
-                buttonCloseClicked(myTab);
-            }
-        }
+//        private void buttonClose_Click(object sender, EventArgs e) {
+//            if (buttonCloseClicked != null) {
+//                buttonCloseClicked(myTab);
+//            }
+//        }
 
         private void buttonRun_Click(object sender, EventArgs e) {
             string key = BambooBuildUtils.getPlanKey(build);

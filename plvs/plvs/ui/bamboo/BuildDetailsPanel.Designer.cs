@@ -30,6 +30,9 @@
             this.tabSummary = new System.Windows.Forms.TabPage();
             this.webSummary = new System.Windows.Forms.WebBrowser();
             this.tabLog = new System.Windows.Forms.TabPage();
+            this.tabLogPanels = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.webLog = new System.Windows.Forms.WebBrowser();
             this.tabTests = new System.Windows.Forms.TabPage();
             this.labelNoTestsFound = new System.Windows.Forms.Label();
@@ -37,15 +40,11 @@
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.buttonViewInBrowser = new System.Windows.Forms.ToolStripButton();
             this.buttonRun = new System.Windows.Forms.ToolStripButton();
-            this.buttonClose = new System.Windows.Forms.ToolStripButton();
             this.testResultsToolStrip = new System.Windows.Forms.ToolStrip();
             this.buttonFailedOnly = new System.Windows.Forms.ToolStripButton();
             this.buttonOpenTest = new System.Windows.Forms.ToolStripButton();
             this.buttonRunTestInVs = new System.Windows.Forms.ToolStripButton();
             this.buttonDebugTestInVs = new System.Windows.Forms.ToolStripButton();
-            this.tabLogPanels = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -54,10 +53,10 @@
             this.tabControl.SuspendLayout();
             this.tabSummary.SuspendLayout();
             this.tabLog.SuspendLayout();
+            this.tabLogPanels.SuspendLayout();
             this.tabTests.SuspendLayout();
             this.toolStripContainerTests.SuspendLayout();
             this.toolStrip1.SuspendLayout();
-            this.tabLogPanels.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStripContainer1
@@ -100,9 +99,9 @@
             // 
             // tabControl
             // 
-            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl.Controls.Add(this.tabSummary);
             this.tabControl.Controls.Add(this.tabLog);
             this.tabControl.Controls.Add(this.tabTests);
@@ -135,8 +134,8 @@
             this.webSummary.Size = new System.Drawing.Size(649, 167);
             this.webSummary.TabIndex = 0;
             this.webSummary.WebBrowserShortcutsEnabled = false;
-            this.webSummary.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webSummary_Navigating);
             this.webSummary.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webSummary_DocumentCompleted);
+            this.webSummary.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webSummary_Navigating);
             // 
             // tabLog
             // 
@@ -149,6 +148,39 @@
             this.tabLog.TabIndex = 1;
             this.tabLog.Text = "Build Logs";
             this.tabLog.UseVisualStyleBackColor = true;
+            // 
+            // tabLogPanels
+            // 
+            this.tabLogPanels.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabLogPanels.Controls.Add(this.tabPage1);
+            this.tabLogPanels.Controls.Add(this.tabPage2);
+            this.tabLogPanels.Location = new System.Drawing.Point(21, 17);
+            this.tabLogPanels.Name = "tabLogPanels";
+            this.tabLogPanels.SelectedIndex = 0;
+            this.tabLogPanels.Size = new System.Drawing.Size(543, 137);
+            this.tabLogPanels.TabIndex = 1;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(535, 111);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "tabPage1";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(535, 111);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "tabPage2";
+            this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // webLog
             // 
@@ -203,11 +235,10 @@
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.buttonViewInBrowser,
-            this.buttonRun,
-            this.buttonClose});
+            this.buttonRun});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(72, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(49, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonViewInBrowser
@@ -229,16 +260,6 @@
             this.buttonRun.Size = new System.Drawing.Size(23, 22);
             this.buttonRun.Text = "Run Build";
             this.buttonRun.Click += new System.EventHandler(this.buttonRun_Click);
-            // 
-            // buttonClose
-            // 
-            this.buttonClose.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonClose.Image = global::Atlassian.plvs.Resources.close;
-            this.buttonClose.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonClose.Name = "buttonClose";
-            this.buttonClose.Size = new System.Drawing.Size(23, 22);
-            this.buttonClose.Text = "Close";
-            this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
             // 
             // testResultsToolStrip
             // 
@@ -284,39 +305,6 @@
             this.buttonDebugTestInVs.Size = new System.Drawing.Size(23, 22);
             this.buttonDebugTestInVs.Text = "Debug Test";
             // 
-            // tabLogPanels
-            // 
-            this.tabLogPanels.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabLogPanels.Controls.Add(this.tabPage1);
-            this.tabLogPanels.Controls.Add(this.tabPage2);
-            this.tabLogPanels.Location = new System.Drawing.Point(21, 17);
-            this.tabLogPanels.Name = "tabLogPanels";
-            this.tabLogPanels.SelectedIndex = 0;
-            this.tabLogPanels.Size = new System.Drawing.Size(543, 137);
-            this.tabLogPanels.TabIndex = 1;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(535, 111);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "tabPage1";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(192, 74);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "tabPage2";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
             // BuildDetailsPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -336,12 +324,12 @@
             this.tabControl.ResumeLayout(false);
             this.tabSummary.ResumeLayout(false);
             this.tabLog.ResumeLayout(false);
+            this.tabLogPanels.ResumeLayout(false);
             this.tabTests.ResumeLayout(false);
             this.toolStripContainerTests.ResumeLayout(false);
             this.toolStripContainerTests.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
-            this.tabLogPanels.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -354,7 +342,6 @@
         private System.Windows.Forms.TabPage tabSummary;
         private System.Windows.Forms.TabPage tabLog;
         private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton buttonClose;
         private System.Windows.Forms.ToolStripStatusLabel labelStatus;
         private System.Windows.Forms.WebBrowser webSummary;
         private System.Windows.Forms.WebBrowser webLog;

@@ -27,7 +27,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.issueTabs = new System.Windows.Forms.TabControl();
+            this.issueTabs = new TabControlWithCloseButton();
             this.SuspendLayout();
             // 
             // issueTabs
@@ -39,7 +39,6 @@
             this.issueTabs.ShowToolTips = true;
             this.issueTabs.Size = new System.Drawing.Size(866, 320);
             this.issueTabs.TabIndex = 0;
-            this.issueTabs.MouseClick += new System.Windows.Forms.MouseEventHandler(this.issueTabs_MouseClick);
             // 
             // IssueDetailsWindow
             // 
@@ -54,6 +53,6 @@
 
         #endregion
 
-        private System.Windows.Forms.TabControl issueTabs;
+        private TabControlWithCloseButton issueTabs;
     }
 }

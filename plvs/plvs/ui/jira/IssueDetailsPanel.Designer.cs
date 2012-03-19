@@ -54,23 +54,22 @@ namespace Atlassian.plvs.ui.jira {
             this.tabAttachments = new System.Windows.Forms.TabPage();
             this.splitContainerAttachments = new System.Windows.Forms.SplitContainer();
             this.toolStripContainer3 = new System.Windows.Forms.ToolStripContainer();
-            this.listViewAttachments = new ui.AutosizeListView();
-            this.columnName = new System.Windows.Forms.ColumnHeader();
-            this.columnAuthor = new System.Windows.Forms.ColumnHeader();
-            this.columnSize = new System.Windows.Forms.ColumnHeader();
-            this.columnDate = new System.Windows.Forms.ColumnHeader();
+            this.listViewAttachments = new AutosizeListView();
+            this.columnName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnAuthor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.toolStripAttachmentsMenu = new System.Windows.Forms.ToolStrip();
             this.buttonSaveAttachmentAs = new System.Windows.Forms.ToolStripButton();
             this.buttonUploadNew = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.buttonViewInBrowser = new System.Windows.Forms.ToolStripButton();
             this.buttonRefresh = new System.Windows.Forms.ToolStripButton();
-            this.buttonClose = new System.Windows.Forms.ToolStripButton();
+            this.buttonStartStopProgress = new System.Windows.Forms.ToolStripButton();
             this.buttonLogWork = new System.Windows.Forms.ToolStripButton();
             this.dropDownIssueActions = new System.Windows.Forms.ToolStripDropDownButton();
             this.label1 = new System.Windows.Forms.Label();
             this.toolTipAttachments = new System.Windows.Forms.ToolTip(this.components);
-            this.buttonStartStopProgress = new System.Windows.Forms.ToolStripButton();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -79,6 +78,7 @@ namespace Atlassian.plvs.ui.jira {
             this.issueTabs.SuspendLayout();
             this.tabSummary.SuspendLayout();
             this.tabDescriptionAndComments.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel2.SuspendLayout();
             this.splitContainer.SuspendLayout();
             this.toolStripContainer2.ContentPanel.SuspendLayout();
@@ -88,6 +88,7 @@ namespace Atlassian.plvs.ui.jira {
             this.tabLinks.SuspendLayout();
             this.tabSubtasks.SuspendLayout();
             this.tabAttachments.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerAttachments)).BeginInit();
             this.splitContainerAttachments.Panel1.SuspendLayout();
             this.splitContainerAttachments.SuspendLayout();
             this.toolStripContainer3.ContentPanel.SuspendLayout();
@@ -171,8 +172,8 @@ namespace Atlassian.plvs.ui.jira {
             this.issueSummary.Size = new System.Drawing.Size(771, 396);
             this.issueSummary.TabIndex = 0;
             this.issueSummary.WebBrowserShortcutsEnabled = false;
-            this.issueSummary.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.issueSummary_Navigating);
             this.issueSummary.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.issueSummary_DocumentCompleted);
+            this.issueSummary.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.issueSummary_Navigating);
             // 
             // tabDescriptionAndComments
             // 
@@ -226,8 +227,8 @@ namespace Atlassian.plvs.ui.jira {
             this.issueComments.Size = new System.Drawing.Size(494, 371);
             this.issueComments.TabIndex = 0;
             this.issueComments.WebBrowserShortcutsEnabled = false;
-            this.issueComments.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.issueComments_Navigating);
             this.issueComments.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.issueComments_DocumentCompleted);
+            this.issueComments.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.issueComments_Navigating);
             // 
             // toolStrip2
             // 
@@ -300,8 +301,8 @@ namespace Atlassian.plvs.ui.jira {
             this.webLinkedIssues.Size = new System.Drawing.Size(777, 402);
             this.webLinkedIssues.TabIndex = 0;
             this.webLinkedIssues.WebBrowserShortcutsEnabled = false;
-            this.webLinkedIssues.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webLinkedIssues_Navigating);
             this.webLinkedIssues.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webLinkedIssues_DocumentCompleted);
+            this.webLinkedIssues.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webLinkedIssues_Navigating);
             // 
             // tabSubtasks
             // 
@@ -324,8 +325,8 @@ namespace Atlassian.plvs.ui.jira {
             this.webSubtasks.Size = new System.Drawing.Size(771, 396);
             this.webSubtasks.TabIndex = 0;
             this.webSubtasks.WebBrowserShortcutsEnabled = false;
-            this.webSubtasks.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webSubtasks_Navigating);
             this.webSubtasks.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webSubtasks_DocumentCompleted);
+            this.webSubtasks.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webSubtasks_Navigating);
             // 
             // tabAttachments
             // 
@@ -389,9 +390,9 @@ namespace Atlassian.plvs.ui.jira {
             this.listViewAttachments.View = System.Windows.Forms.View.Details;
             this.listViewAttachments.SelectedIndexChanged += new System.EventHandler(this.listViewAttachments_SelectedIndexChanged);
             this.listViewAttachments.SizeChanged += new System.EventHandler(this.listViewAttachments_SizeChanged);
+            this.listViewAttachments.Click += new System.EventHandler(this.listViewAttachments_Click);
             this.listViewAttachments.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewAttachments_DragDrop);
             this.listViewAttachments.DragEnter += new System.Windows.Forms.DragEventHandler(this.listViewAttachments_DragEnter);
-            this.listViewAttachments.Click += new System.EventHandler(this.listViewAttachments_Click);
             // 
             // columnName
             // 
@@ -451,13 +452,12 @@ namespace Atlassian.plvs.ui.jira {
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.buttonViewInBrowser,
             this.buttonRefresh,
-            this.buttonClose,
             this.buttonStartStopProgress,
             this.buttonLogWork,
             this.dropDownIssueActions});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(178, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(124, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // buttonViewInBrowser
@@ -480,15 +480,15 @@ namespace Atlassian.plvs.ui.jira {
             this.buttonRefresh.Text = "Refresh";
             this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
             // 
-            // buttonClose
+            // buttonStartStopProgress
             // 
-            this.buttonClose.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonClose.Image = global::Atlassian.plvs.Resources.close;
-            this.buttonClose.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonClose.Name = "buttonClose";
-            this.buttonClose.Size = new System.Drawing.Size(23, 22);
-            this.buttonClose.Text = "Close";
-            this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
+            this.buttonStartStopProgress.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.buttonStartStopProgress.Image = ((System.Drawing.Image)(resources.GetObject("buttonStartStopProgress.Image")));
+            this.buttonStartStopProgress.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonStartStopProgress.Name = "buttonStartStopProgress";
+            this.buttonStartStopProgress.Size = new System.Drawing.Size(23, 22);
+            this.buttonStartStopProgress.Text = "Start Progress";
+            this.buttonStartStopProgress.Click += new System.EventHandler(this.buttonStartStopProgress_Click);
             // 
             // buttonLogWork
             // 
@@ -510,8 +510,8 @@ namespace Atlassian.plvs.ui.jira {
             this.dropDownIssueActions.Size = new System.Drawing.Size(29, 22);
             this.dropDownIssueActions.Text = "Issue Actions";
             this.dropDownIssueActions.ToolTipText = "Issue Actions";
-            this.dropDownIssueActions.MouseEnter += new System.EventHandler(this.dropDownIssueActions_MouseEnter);
             this.dropDownIssueActions.DropDownOpened += new System.EventHandler(this.dropDownIssueActions_DropDownOpened);
+            this.dropDownIssueActions.MouseEnter += new System.EventHandler(this.dropDownIssueActions_MouseEnter);
             // 
             // label1
             // 
@@ -522,16 +522,6 @@ namespace Atlassian.plvs.ui.jira {
             this.label1.Size = new System.Drawing.Size(60, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Description";
-            // 
-            // buttonStartStopProgress
-            // 
-            this.buttonStartStopProgress.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.buttonStartStopProgress.Image = ((System.Drawing.Image)(resources.GetObject("buttonStartStopProgress.Image")));
-            this.buttonStartStopProgress.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonStartStopProgress.Name = "buttonStartStopProgress";
-            this.buttonStartStopProgress.Size = new System.Drawing.Size(23, 22);
-            this.buttonStartStopProgress.Text = "Start Progress";
-            this.buttonStartStopProgress.Click += new System.EventHandler(this.buttonStartStopProgress_Click);
             // 
             // IssueDetailsPanel
             // 
@@ -553,6 +543,7 @@ namespace Atlassian.plvs.ui.jira {
             this.tabSummary.ResumeLayout(false);
             this.tabDescriptionAndComments.ResumeLayout(false);
             this.splitContainer.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
             this.splitContainer.ResumeLayout(false);
             this.toolStripContainer2.ContentPanel.ResumeLayout(false);
             this.toolStripContainer2.TopToolStripPanel.ResumeLayout(false);
@@ -565,6 +556,7 @@ namespace Atlassian.plvs.ui.jira {
             this.tabSubtasks.ResumeLayout(false);
             this.tabAttachments.ResumeLayout(false);
             this.splitContainerAttachments.Panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerAttachments)).EndInit();
             this.splitContainerAttachments.ResumeLayout(false);
             this.toolStripContainer3.ContentPanel.ResumeLayout(false);
             this.toolStripContainer3.TopToolStripPanel.ResumeLayout(false);
@@ -597,7 +589,6 @@ namespace Atlassian.plvs.ui.jira {
         private System.Windows.Forms.ToolStripButton buttonExpandAll;
         private System.Windows.Forms.ToolStripButton buttonCollapseAll;
         private System.Windows.Forms.ToolStripButton buttonRefresh;
-        private System.Windows.Forms.ToolStripButton buttonClose;
         private System.Windows.Forms.ToolStripStatusLabel jiraStatus;
         private System.Windows.Forms.ToolStripButton buttonViewInBrowser;
         private System.Windows.Forms.ToolStripDropDownButton dropDownIssueActions;
