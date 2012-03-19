@@ -143,7 +143,7 @@ namespace Atlassian.plvs.ui.jira {
                                                        Thread t = PlvsUtils.createThread(() => {
                                                            string token = facade.getSoapToken(issue.Server);
                                                            if (token == null) return;
-                                                           Invoke(new MethodInvoker(() => runMazio(token)));
+                                                           this.safeInvoke(new MethodInvoker(() => runMazio(token)));
                                                        });
                                                        t.Start();
                                                    });
@@ -241,7 +241,7 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void model_ModelChanged(object sender, EventArgs e) {
-            Invoke(new MethodInvoker(delegate {
+            this.safeInvoke(new MethodInvoker(delegate {
                                          // this is crude. But issueChanged() will do its job of 
                                          // filtering out the proper issue if it still exists in 
                                          // the model and comparing it what we currently have
@@ -263,16 +263,16 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void rebuildAllPanels(bool enableRefresh) {
-            Invoke(new MethodInvoker(delegate
-                                         {
-                                             rebuildSummaryPanel();
-                                             rebuildDescriptionPanel();
-                                             rebuildCommentsPanel(true);
-                                             rebuildSubtasksPanel();
-                                             rebuildLinksPanel();
-                                             rebuildAttachmentsPanel();
-                                             buttonRefresh.Enabled = enableRefresh;
-                                         }));
+            this.safeInvoke(new MethodInvoker(delegate
+                                        {
+                                            rebuildSummaryPanel();
+                                            rebuildDescriptionPanel();
+                                            rebuildCommentsPanel(true);
+                                            rebuildSubtasksPanel();
+                                            rebuildLinksPanel();
+                                            rebuildAttachmentsPanel();
+                                            buttonRefresh.Enabled = enableRefresh;
+                                        }));
         }
 
         private void runRefreshThread() {
@@ -284,14 +284,14 @@ namespace Atlassian.plvs.ui.jira {
 
                                                            // PLVS-133 - this should never happen but does?
                                                            if (model == null) {
-                                                               Invoke(new MethodInvoker(() 
+                                                               this.safeInvoke(new MethodInvoker(() 
                                                                                         =>
                                                                                         PlvsUtils.showError("Issue List Model was null, please report this as a bug", 
                                                                                                             new Exception("IssueDetailsPanel.runRefreshThread()"))));
                                                                model = JiraIssueListModelImpl.Instance;
                                                            }
 
-                                                           Invoke(new MethodInvoker(() => model.updateIssue(issue)));
+                                                           this.safeInvoke(new MethodInvoker(() => model.updateIssue(issue)));
                                                        } catch (Exception e) {
                                                            status.setError("Failed to retrieve issue details", e);
                                                        }
@@ -556,7 +556,7 @@ namespace Atlassian.plvs.ui.jira {
                     }
                 }
                 sb.Append("\n</body>\n</html>\n");
-                Invoke(new MethodInvoker(delegate { webLinkedIssues.DocumentText = sb.ToString(); }));
+                this.safeInvoke(new MethodInvoker(delegate { webLinkedIssues.DocumentText = sb.ToString(); }));
 
             } catch (Exception e) {
                 this.safeInvoke(new MethodInvoker(() => setWebBrowserWidgetText(webLinkedIssues, "Failed to retrieve issue links")));
@@ -571,7 +571,7 @@ namespace Atlassian.plvs.ui.jira {
                 foreach (JiraIssue sub in subsToQuery.Select(key => facade.getIssue(issue.Server, key))) {
                     subsInModel.Add(sub);
                 }
-                Invoke(new MethodInvoker(delegate {
+                this.safeInvoke(new MethodInvoker(delegate {
                     sb.Append("<html>\n<head>\n").Append(Resources.summary_and_description_css)
                         .Append("\n</head>\n<body>\n<table class=\"summary\">\n");
                     foreach (JiraIssue sub in subsInModel) {
@@ -849,7 +849,7 @@ namespace Atlassian.plvs.ui.jira {
                 status.setError("Failed to retrieve issue actions", ex);
             }
             if (actions == null || actions.Count == 0) {
-                Invoke(new MethodInvoker(delegate {
+                this.safeInvoke(new MethodInvoker(delegate {
                                              dropDownIssueActions.DropDownItems.Clear();
                                              dropDownIssueActions.DropDownItems.Add(new ToolStripMenuItem
                                                                                     {
@@ -861,7 +861,7 @@ namespace Atlassian.plvs.ui.jira {
                 return;
             }
 
-            Invoke(new MethodInvoker(delegate {
+            this.safeInvoke(new MethodInvoker(delegate {
                                          dropDownIssueActions.DropDownItems.Clear();
                                          PlvsUtils.addPhonyMenuItemFixingPlvs109(dropDownIssueActions);
                                          foreach (ToolStripMenuItem item in from action in actions
@@ -1035,11 +1035,11 @@ namespace Atlassian.plvs.ui.jira {
                 facade.uploadAttachment(issue, name, attachment);
                 JiraIssue updatedIssue = facade.getIssue(issue.Server, issue.Key);
                 status.setInfo("Uploaded attachment \"" + name + "\"");
-                Invoke(new MethodInvoker(() => model.updateIssue(updatedIssue)));
+                this.safeInvoke(new MethodInvoker(() => model.updateIssue(updatedIssue)));
             } catch (Exception e) {
                 status.setError("Failed to upload attachment \"" + name + "\"", e);
             } finally {
-                Invoke(new MethodInvoker(delegate { listViewAttachments.AllowDrop = true; }));
+                this.safeInvoke(new MethodInvoker(delegate { listViewAttachments.AllowDrop = true; }));
             }
         }
 
