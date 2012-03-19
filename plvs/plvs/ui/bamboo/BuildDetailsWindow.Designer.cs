@@ -23,7 +23,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.tabBuilds = new System.Windows.Forms.TabControl();
+            this.tabBuilds = new TabControlWithCloseButton();
             this.SuspendLayout();
             // 
             // tabBuilds
@@ -35,7 +35,6 @@
             this.tabBuilds.ShowToolTips = true;
             this.tabBuilds.Size = new System.Drawing.Size(803, 294);
             this.tabBuilds.TabIndex = 0;
-            this.tabBuilds.MouseClick += new System.Windows.Forms.MouseEventHandler(this.tabBuilds_MouseClick);
             // 
             // BuildDetailsWindow
             // 
@@ -50,6 +49,6 @@
 
         #endregion
 
-        private System.Windows.Forms.TabControl tabBuilds;
+        private TabControlWithCloseButton tabBuilds;
     }
 }
