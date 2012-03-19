@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing.Printing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -368,6 +369,9 @@ namespace Atlassian.plvs.util {
             try {
                 control.Invoke(action);
             } catch (InvalidOperationException e) {
+                Debug.WriteLine("PlvsUtils.safeInvoke() - exception: " + e.Message);
+            } catch (CultureNotFoundException e) {
+                // PLVS-323
                 Debug.WriteLine("PlvsUtils.safeInvoke() - exception: " + e.Message);
             }
         }
