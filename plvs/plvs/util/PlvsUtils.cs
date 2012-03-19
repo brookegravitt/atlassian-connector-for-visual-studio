@@ -374,6 +374,9 @@ namespace Atlassian.plvs.util {
             } catch (CultureNotFoundException e) {
                 // PLVS-323
                 Debug.WriteLine("PlvsUtils.safeInvoke() - exception: " + e.Message);
+            } catch(Exception e) {
+                // PLVS-321 - no idea. We are getting COMException. Can't reproduce, but let's just catch this here and see what happens
+                Debug.WriteLine("PlvsUtils.safeInvoke() - exception: " + e.Message);
             }
         }
 
