@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models;
@@ -22,7 +23,7 @@ namespace Atlassian.plvs.ui.jira.issues {
         }
 
         public override string Name {
-            get { return Issue.Key + " - " + Issue.Summary.Replace("&", "&&"); }
+            get { return Issue.Key + " - " + trimmedSummary().Replace("&", "&&"); }
         }
 
         public Image PriorityIcon {
@@ -39,6 +40,13 @@ namespace Atlassian.plvs.ui.jira.issues {
 
         public string Updated {
             get { return JiraIssueUtils.getTimeStringFromIssueDateTime(Issue.UpdateDate); }
+        }
+
+        private string trimmedSummary() {
+            if (Issue.Summary.Contains("\n")) {
+                return Issue.Summary.Substring(0, Issue.Summary.IndexOf("\n")) + "...";
+            }
+            return Issue.Summary;
         }
     }
 }
