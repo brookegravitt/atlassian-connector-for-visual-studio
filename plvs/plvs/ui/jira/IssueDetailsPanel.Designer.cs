@@ -78,7 +78,6 @@ namespace Atlassian.plvs.ui.jira {
             this.issueTabs.SuspendLayout();
             this.tabSummary.SuspendLayout();
             this.tabDescriptionAndComments.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel2.SuspendLayout();
             this.splitContainer.SuspendLayout();
             this.toolStripContainer2.ContentPanel.SuspendLayout();
@@ -88,7 +87,6 @@ namespace Atlassian.plvs.ui.jira {
             this.tabLinks.SuspendLayout();
             this.tabSubtasks.SuspendLayout();
             this.tabAttachments.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainerAttachments)).BeginInit();
             this.splitContainerAttachments.Panel1.SuspendLayout();
             this.splitContainerAttachments.SuspendLayout();
             this.toolStripContainer3.ContentPanel.SuspendLayout();
@@ -543,7 +541,6 @@ namespace Atlassian.plvs.ui.jira {
             this.tabSummary.ResumeLayout(false);
             this.tabDescriptionAndComments.ResumeLayout(false);
             this.splitContainer.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
             this.splitContainer.ResumeLayout(false);
             this.toolStripContainer2.ContentPanel.ResumeLayout(false);
             this.toolStripContainer2.TopToolStripPanel.ResumeLayout(false);
@@ -556,7 +553,6 @@ namespace Atlassian.plvs.ui.jira {
             this.tabSubtasks.ResumeLayout(false);
             this.tabAttachments.ResumeLayout(false);
             this.splitContainerAttachments.Panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainerAttachments)).EndInit();
             this.splitContainerAttachments.ResumeLayout(false);
             this.toolStripContainer3.ContentPanel.ResumeLayout(false);
             this.toolStripContainer3.TopToolStripPanel.ResumeLayout(false);
