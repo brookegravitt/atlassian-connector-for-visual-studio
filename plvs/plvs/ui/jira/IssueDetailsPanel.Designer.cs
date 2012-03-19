@@ -70,6 +70,7 @@ namespace Atlassian.plvs.ui.jira {
             this.dropDownIssueActions = new System.Windows.Forms.ToolStripDropDownButton();
             this.label1 = new System.Windows.Forms.Label();
             this.toolTipAttachments = new System.Windows.Forms.ToolTip(this.components);
+            this.buttonPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -419,10 +420,11 @@ namespace Atlassian.plvs.ui.jira {
             this.toolStripAttachmentsMenu.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStripAttachmentsMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.buttonSaveAttachmentAs,
-            this.buttonUploadNew});
+            this.buttonUploadNew,
+            this.buttonPaste});
             this.toolStripAttachmentsMenu.Location = new System.Drawing.Point(3, 0);
             this.toolStripAttachmentsMenu.Name = "toolStripAttachmentsMenu";
-            this.toolStripAttachmentsMenu.Size = new System.Drawing.Size(148, 25);
+            this.toolStripAttachmentsMenu.Size = new System.Drawing.Size(218, 25);
             this.toolStripAttachmentsMenu.TabIndex = 0;
             // 
             // buttonSaveAttachmentAs
@@ -521,6 +523,16 @@ namespace Atlassian.plvs.ui.jira {
             this.label1.TabIndex = 0;
             this.label1.Text = "Description";
             // 
+            // buttonPaste
+            // 
+            this.buttonPaste.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.buttonPaste.Image = ((System.Drawing.Image)(resources.GetObject("buttonPaste.Image")));
+            this.buttonPaste.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonPaste.Name = "buttonPaste";
+            this.buttonPaste.Size = new System.Drawing.Size(39, 22);
+            this.buttonPaste.Text = "Paste";
+            this.buttonPaste.Click += new System.EventHandler(this.buttonPaste_Click);
+            // 
             // IssueDetailsPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -607,5 +619,6 @@ namespace Atlassian.plvs.ui.jira {
         private System.Windows.Forms.TabPage tabLinks;
         private System.Windows.Forms.WebBrowser webLinkedIssues;
         private System.Windows.Forms.ToolStripButton buttonStartStopProgress;
+        private System.Windows.Forms.ToolStripButton buttonPaste;
     }
 }

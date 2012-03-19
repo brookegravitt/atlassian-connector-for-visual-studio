@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -22,6 +23,7 @@ using Atlassian.plvs.windows;
 using Atlassian.plvs.util;
 using EnvDTE;
 using Microsoft.Win32;
+using Read64bitRegistryFrom32bitApp;
 using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 using Process=System.Diagnostics.Process;
 using SaveFileDialog = System.Windows.Forms.SaveFileDialog;
@@ -56,6 +58,21 @@ namespace Atlassian.plvs.ui.jira {
 
         private WebBrowser issueDescription;
         private WebBrowserWithLabel webAttachmentView;
+
+        [DllImport("User32.dll", CharSet = CharSet.Auto)]
+        public static extern IntPtr SetClipboardViewer(IntPtr hWndNewViewer);
+        
+        [DllImport("User32.dll", CharSet = CharSet.Auto)]
+        public static extern bool ChangeClipboardChain(IntPtr hWndRemove, IntPtr hWndNewNext);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern int SendMessage(IntPtr hwnd, int wMsg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("shell32.dll", CharSet = CharSet.Auto)]
+        static extern uint ExtractIconEx(string szFileName, int nIconIndex,
+           IntPtr[] phiconLarge, IntPtr[] phiconSmall, uint nIcons);
+
+        private IntPtr nextClipboardViewer;
 
         public IssueDetailsPanel(
             JiraIssueListModel model, Solution solution, JiraIssue issue, //TabPage myTab, 
@@ -99,6 +116,9 @@ namespace Atlassian.plvs.ui.jira {
             issueSummary.ScriptErrorsSuppressed = true;
 
             reinitializeAttachmentView(null);
+
+            nextClipboardViewer = SetClipboardViewer(Handle); 
+            onClipboardChanged();            
         }
 
         private void activeIssueManager_ActiveIssueChanged(object sender, EventArgs e) {
@@ -113,15 +133,15 @@ namespace Atlassian.plvs.ui.jira {
             buttonStartStopProgress.Text = thisIssueActive ? "Stop Work" : "Start Work";
         }
 
-        [DllImport("shell32.dll", CharSet = CharSet.Auto)]
-        static extern uint ExtractIconEx(string szFileName, int nIconIndex,
-           IntPtr[] phiconLarge, IntPtr[] phiconSmall, uint nIcons);
-
         private void maybeAddMazioMenu() {
-            RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Kalamon\Mazio");
-            if (key == null) return;
-
-            string mazioDir = key.GetValue("Install_Dir") as string;
+            string mazioDir = null;
+            if (Environment.Is64BitOperatingSystem) {
+                mazioDir = RegistryWOW6432.GetRegKey64(RegHive.HKEY_LOCAL_MACHINE, @"SOFTWARE\Kalamon\Mazio", "Install_Dir");
+                
+            } else {
+                RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Kalamon\Mazio");
+                if (key != null) mazioDir = key.GetValue("Install_Dir") as string;
+            }
             if (mazioDir == null) return;
 
             IntPtr[] hLarge = new[] { IntPtr.Zero };
@@ -631,6 +651,11 @@ namespace Atlassian.plvs.ui.jira {
             runRefreshThread();
         }
 
+        public void closed() {
+            removeModelListeners();
+            ChangeClipboardChain(Handle, nextClipboardViewer);
+        }
+
 //        private void buttonClose_Click(object sender, EventArgs e) {
 //            removeModelListeners();
 
@@ -938,6 +963,28 @@ namespace Atlassian.plvs.ui.jira {
             t.Start();
         }
 
+        private const int WM_DRAWCLIPBOARD = 0x0308;
+        private const int WM_CHANGECBCHAIN = 0x030D;
+
+        protected override void WndProc(ref Message m) {
+            switch (m.Msg) {
+                case WM_DRAWCLIPBOARD:
+                    onClipboardChanged();
+                    SendMessage(nextClipboardViewer, m.Msg, m.WParam, m.LParam);
+                    break;
+                case WM_CHANGECBCHAIN:
+                    if (m.WParam == nextClipboardViewer) {
+                        nextClipboardViewer = m.LParam;
+                    } else {
+                        SendMessage(nextClipboardViewer, m.Msg, m.WParam, m.LParam);
+                    }
+                    break;
+                default:
+                    base.WndProc(ref m);
+                    break;
+            }
+        }
+
         private void attachmentsMenuOpening(object sender, System.ComponentModel.CancelEventArgs e) {
             e.Cancel = !(listViewAttachments.SelectedItems.Count > 0);
         }
@@ -1095,6 +1142,33 @@ namespace Atlassian.plvs.ui.jira {
 
         private void buttonStartStopProgress_Click(object sender, EventArgs e) {
             activeIssueManager.toggleActiveState(issue);
+        }
+
+        private void onClipboardChanged() {
+            buttonPaste.Enabled = Clipboard.ContainsImage();
+        }
+
+        private void buttonPaste_Click(object sender, EventArgs e) {
+            if (Clipboard.ContainsImage()) {
+                Image image = Clipboard.GetImage();
+                if (image == null) return;
+                string ext = null;
+                if (ImageFormat.Jpeg.Equals(image.RawFormat)) {
+                    ext = ".jpg";
+                } else if (ImageFormat.Png.Equals(image.RawFormat)) {
+                    ext = ".png";
+                } else if (ImageFormat.Gif.Equals(image.RawFormat)) {
+                    ext = ".gif";
+                }
+                string tempFileName = Path.GetTempFileName();
+                image.Save(tempFileName, ext != null ? image.RawFormat : ImageFormat.Png);
+                if (ext == null) {
+                    ext = ".png";
+                }
+                image.Dispose();
+                FileStream stream = new FileStream(tempFileName, FileMode.Open);
+                readFileFromStreamAndUpload(stream, "from-clipboard-" + DateTime.Now.ToString("yyyyMMdd-HHmm") + ext);
+            }
         }
     }
 }

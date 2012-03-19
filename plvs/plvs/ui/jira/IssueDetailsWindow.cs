@@ -61,6 +61,7 @@ namespace Atlassian.plvs.ui.jira {
                 issuePanel.Dock = DockStyle.Fill;
                 issueTabs.TabPages.Add(issueTab);
                 issueTabs.PostRemoveTabPage = idx => {
+                                                  issuePanel.closed();
                                                   if (issueTabs.TabPages.Count == 0) {
                                                       Instance.FrameVisible = false;
                                                   }
