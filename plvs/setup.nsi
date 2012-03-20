@@ -58,7 +58,7 @@ Function .onInit
 	Call CheckVS
 	FindWindow $0 "${WNDCLASS}"
 	${If} $0 != 0
-	    MessageBox MB_ICONSTOP|MB_OK "Visual Studio is running. Close it and try again."
+	    MessageBox MB_ICONSTOP|MB_OK "Visual Studio is running. Close it and try again." /SD IDOK
 		Abort
 	${EndIf}	
 
@@ -72,7 +72,7 @@ FunctionEnd
 Function un.onInit
 	FindWindow $0 "${WNDCLASS}"
 	${If} $0 != 0
-	    MessageBox MB_ICONSTOP|MB_OK "Visual Studio is running. Close it and try again."
+	    MessageBox MB_ICONSTOP|MB_OK "Visual Studio is running. Close it and try again." /SD IDOK
 		Abort
 	${EndIf}	
 FunctionEnd
@@ -110,7 +110,7 @@ Function CheckVS
 FunctionEnd
 
 Function AbortOnNoVS
-	MessageBox MB_ICONSTOP|MB_OK "Neither Visual Studio 2008 nor Visual Studio 2010 is installed. Setup will now close."
+	MessageBox MB_ICONSTOP|MB_OK "Neither Visual Studio 2008 nor Visual Studio 2010 is installed. Setup will now close." /SD IDOK
 	Abort
 FunctionEnd
 
@@ -175,6 +175,8 @@ Function un.Unregister2008
 FunctionEnd
 
 Function LaunchVS
+	IfSilent noLaunchVs
+
 	${If} $FoundAll = 3
 		${If} $CheckboxVS2011_State == ${BST_CHECKED} 
 			ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\11.0" "InstallDir"
@@ -198,6 +200,8 @@ Function LaunchVS
 			Exec "$0\devenv.exe"
 		${EndIf}
 	${Endif}	
+
+	noLaunchVs:
 FunctionEnd
 
 ; Pages
@@ -307,7 +311,7 @@ Function nsComponentsPageLeave
 	${If} $CheckboxVS2011_State == ${BST_UNCHECKED}
 		${AndIf} $CheckboxVS2010_State == ${BST_UNCHECKED}
 			${AndIf} $CheckboxVS2008_State == ${BST_UNCHECKED}
-				MessageBox MB_OK|MB_ICONSTOP "At least one version of Visual Studio has to be selected"
+				MessageBox MB_OK|MB_ICONSTOP "At least one version of Visual Studio has to be selected" /SD IDOK
 				Abort
 	${EndIf}		
 
@@ -345,6 +349,8 @@ Section "Connector Files"
 	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Plvs" "NoRepair" 1
 	WriteUninstaller "uninstall.exe"
   
+	IfSilent silentReg
+
 	${If} $FoundVS2008 = 1
 		${If} $FoundAll > 1 
 		${AndIf} $CheckboxVS2008_State == ${BST_CHECKED} 
@@ -369,6 +375,22 @@ Section "Connector Files"
 		${EndIf}
 	${EndIf}	
 	
+	Goto endFiles
+
+	silentReg:
+		${If} $FoundVS2008 = 1
+			Call Integrate2008
+		${EndIf}
+		
+		${If} $FoundVS2010 = 1
+			Call Integrate2010
+		${EndIf}	
+
+		${If} $FoundVS2011 = 1
+			Call Integrate2011
+		${EndIf}	
+		
+	endFiles:
 SectionEnd
 
 Section "Start Menu Shortcuts"
