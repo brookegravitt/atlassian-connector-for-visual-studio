@@ -14,6 +14,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Web.Services.Protocols;
 using System.Windows.Forms;
 #if VS2010
 using System.Windows.Media.Imaging;
@@ -96,10 +97,13 @@ namespace Atlassian.plvs.util {
                 foreach (Exception e in exceptions) {
                     FiveOhThreeJiraException e503 = e as FiveOhThreeJiraException;
                     XPathUtils.InvalidXmlDocumentException eXml = e as XPathUtils.InvalidXmlDocumentException;
+                    SoapException eSoap = e as SoapException;
                     if (e503 != null) {
                         show503Error(e503, msg);
                     } else if (eXml != null) {
                         showXmlDocumentError(eXml, msg);
+                    } else if (eSoap != null) {
+                        showSoapError(eSoap, msg);
                     } else {
                         showNonJira503Errors(exceptions, msg);
                     }
@@ -175,6 +179,14 @@ namespace Atlassian.plvs.util {
                 e.Message + getExceptionDetailsLink("eXml"),
                 () => Clipboard.SetText((msg != null ? msg + "\r\n\r\n" : "") + e.SourceDoc),
                 delegate { new ExceptionViewer(e.SourceDoc, e).ShowDialog(); });
+        }
+
+        private static void showSoapError(SoapException e, string msg) {
+            MessageBoxWithHtml.showError(
+                Constants.ERROR_CAPTION,
+                e.Message + getExceptionDetailsLink("eSoap"),
+                () => Clipboard.SetText(e.Detail.Name + ": " + e.Detail.Value + "\r\n\r\n" + getFullExceptionTextDetails(msg, e)),
+                delegate { new ExceptionViewer(e.Detail.Name + ": " + e.Detail.Value, e).ShowDialog(); });
         }
 
         private static string getExceptionDetailsLink(string tag) {
