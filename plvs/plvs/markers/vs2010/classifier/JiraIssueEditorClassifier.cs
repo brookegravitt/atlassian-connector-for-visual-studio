@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.Utilities;
 namespace Atlassian.plvs.markers.vs2010.classifier {
 
     [Export(typeof(IClassifierProvider))]
-    [ContentType("text")]
+    [ContentType("code")]
     internal class JiraIssueEditorClassifierProvider : IClassifierProvider {
         [Import]
         internal IClassificationTypeRegistryService ClassificationRegistry; 
