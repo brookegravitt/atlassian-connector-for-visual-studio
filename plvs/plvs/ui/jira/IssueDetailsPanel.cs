@@ -118,7 +118,9 @@ namespace Atlassian.plvs.ui.jira {
             reinitializeAttachmentView(null);
 
             nextClipboardViewer = SetClipboardViewer(Handle); 
-            onClipboardChanged();            
+            onClipboardChanged();
+
+            issueComments.WebBrowserShortcutsEnabled = true;
         }
 
         private void activeIssueManager_ActiveIssueChanged(object sender, EventArgs e) {
@@ -202,7 +204,7 @@ namespace Atlassian.plvs.ui.jira {
                                    Name = "issueDescription",
                                    Size = new Size(126, 124),
                                    TabIndex = 1,
-                                   WebBrowserShortcutsEnabled = false
+                                   WebBrowserShortcutsEnabled = true
                                };
 
             issueDescription.Navigating += issueDescription_Navigating;
