@@ -56,7 +56,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
     	private const string LOGOUT_ACTION = "/api/rest/logout.action";
 
         private const int BUILD_NUMBER_3_0 = 2212;
-        private const int BUILD_NUMBER_4_0 = 2907;
+        private const int BUILD_NUMBER_4_0 = 2906;
 
         private int serverBuildNumber;
 
