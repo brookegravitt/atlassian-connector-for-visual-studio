@@ -39,12 +39,12 @@ namespace Atlassian.plvs.api.bamboo {
 
         public ICollection<BambooPlan> getPlanList(BambooServer server) {
             RestSession session = createSessionAndLogin(server);
-            return wrapExceptions(session, () => session.getAllPlans());
+            return wrapExceptions(session, session.getAllPlans);
         }
 
         public ICollection<BambooBuild> getLatestBuildsForFavouritePlans(BambooServer server) {
             RestSession session = createSessionAndLogin(server);
-            return wrapExceptions(session, () => session.getLatestBuildsForFavouritePlans());
+            return wrapExceptions(session, session.getLatestBuildsForFavouritePlans);
         }
 
         public ICollection<BambooBuild> getLatestBuildsForPlanKeys(BambooServer server, ICollection<string> keys) {
