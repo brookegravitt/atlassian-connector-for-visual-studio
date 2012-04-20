@@ -46,7 +46,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
         private const string FAVOURITE_PLANS_ACTION = "/rest/api/latest/plan?favourite&expand=plans.plan";
         private const string PLAN_DETAILS = "/rest/api/latest/plan/{0}";
 
-        private const string RUN_BUILD_ACTION_NEW_AND_IT_DOES_NOT_WORK = "/rest/api/latest/queue";
+        private const string RUN_BUILD_ACTION_NEW = "/rest/api/latest/queue";
         private const string RUN_BUILD_ACTION_OLD = "/api/rest/executeBuild.action";
 
        	private const string ADD_COMMENT_ACTION = "/api/rest/addCommentToBuildResults.action";
@@ -56,6 +56,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
     	private const string LOGOUT_ACTION = "/api/rest/logout.action";
 
         private const int BUILD_NUMBER_3_0 = 2212;
+        private const int BUILD_NUMBER_4_0 = 2907;
 
         private int serverBuildNumber;
 
@@ -608,31 +609,31 @@ namespace Atlassian.plvs.api.bamboo.rest {
         }
 
         public void runBuild(string planKey) {
-#if false
-            string endpoint = server.Url + RUN_BUILD_ACTION_NEW_AND_IT_DOES_NOT_WORK + "/" + planKey;
+            if (serverBuildNumber >= BUILD_NUMBER_4_0) {
+                string endpoint = server.Url + RUN_BUILD_ACTION_NEW + "/" + planKey;
 
-            Stream stream = postWithNullBody(endpoint + getBasicAuthParameter(endpoint), true);
+                Stream stream = postWithNullBody(endpoint + getBasicAuthParameter(endpoint), true);
 
-            XPathDocument doc = XPathUtils.getDocument(stream);
-
-            string code = getRestErrorStatusCode(doc);
-            if (code != null) {
-                throw new Exception(code);
-            }
-#else 
-            string endpoint = server.Url + RUN_BUILD_ACTION_OLD 
-                + "?buildKey=" + planKey 
-                + "&auth=" + HttpUtility.UrlEncode(authToken, Encoding.UTF8);
-
-            using (Stream stream = getQueryResultStream(endpoint, false)) {
                 XPathDocument doc = XPathUtils.getXmlDocument(stream);
 
-                string code = getRemoteExceptionMessages(doc);
+                string code = getRestErrorStatusCode(doc);
                 if (code != null) {
                     throw new Exception(code);
                 }
+            } else {
+                string endpoint = server.Url + RUN_BUILD_ACTION_OLD 
+                    + "?buildKey=" + planKey 
+                    + "&auth=" + HttpUtility.UrlEncode(authToken, Encoding.UTF8);
+
+                using (Stream stream = getQueryResultStream(endpoint, false)) {
+                    XPathDocument doc = XPathUtils.getXmlDocument(stream);
+
+                    string code = getRemoteExceptionMessages(doc);
+                    if (code != null) {
+                        throw new Exception(code);
+                    }
+                }
             }
-#endif
         }
 
         public void addComment(string planKey, int buildNumber, string comment) {
@@ -711,7 +712,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
             req.Timeout = GlobalSettings.NetworkTimeout * 1000;
             req.ReadWriteTimeout = GlobalSettings.NetworkTimeout * 2000;
             req.Method = "POST";
-            req.ContentType = "text/xml";
+            req.ContentType = "application/xml";
             // required for PLVS-83
             req.Accept = "application/xml";
             req.ContentLength = 0;

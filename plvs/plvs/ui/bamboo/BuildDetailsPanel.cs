@@ -455,9 +455,7 @@ namespace Atlassian.plvs.ui.bamboo {
 
         private void buttonViewInBrowser_Click(object sender, EventArgs e) {
             try {
-                Process.Start(
-                    build.Server.Url + "/build/viewBuildResults.action?buildKey="
-                    + BambooBuildUtils.getPlanKey(build) + "&buildNumber=" + build.Number);
+                Process.Start(build.Server.Url + "/browse/" + build.Key);
             } catch (Exception ex) {
                 Debug.WriteLine("buttonViewInBrowser_Click - exception: " + ex.Message);
             }
