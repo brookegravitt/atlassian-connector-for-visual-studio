@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using Atlassian.plvs.api;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs.jira;
@@ -453,9 +454,10 @@ namespace Atlassian.plvs.ui.jira {
                     int mods = 0;
                     JiraIssue issue = JiraServerFacade.Instance.getIssue(server, CurrentActiveIssue.Key);
                     if (issue != null) {
-                        if (issue.Assignee == null || !issue.Assignee.Equals(server.UserName)) {
+                        string me = CredentialUtils.getUserNameWithoutDomain(server.UserName);
+                        if (issue.Assignee == null || !issue.Assignee.Equals(me)) {
                             jiraStatus.setInfo("Assigning issue to me...");
-                            JiraField assignee = new JiraField("assignee", null) { Values = new List<string> { server.UserName } };
+                            JiraField assignee = new JiraField("assignee", null) { Values = new List<string> { me } };
                             JiraServerFacade.Instance.updateIssue(issue, new List<JiraField> { assignee });
                             ++mods;
                         }
