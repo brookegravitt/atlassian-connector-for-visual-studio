@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.dialogs.jira {
     public sealed class TestJiraConnection : AbstractTestConnection {
-        private readonly JiraServerFacade facade;
+        private readonly AbstractJiraServerFacade facade;
         private readonly JiraServer server;
 
-        public TestJiraConnection(JiraServerFacade facade, JiraServer server) : base(server) {
+        public TestJiraConnection(AbstractJiraServerFacade facade, JiraServer server) : base(server) {
             this.facade = facade;
             this.server = server;
         }

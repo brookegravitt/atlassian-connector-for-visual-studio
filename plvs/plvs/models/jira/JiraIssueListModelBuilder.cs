@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 using Atlassian.plvs.dialogs;
 
 namespace Atlassian.plvs.models.jira {
     public class JiraIssueListModelBuilder {
-        private readonly JiraServerFacade facade;
+        private readonly AbstractJiraServerFacade facade;
 
-        public JiraIssueListModelBuilder(JiraServerFacade facade) {
+        public JiraIssueListModelBuilder(AbstractJiraServerFacade facade) {
             this.facade = facade;
         }
 

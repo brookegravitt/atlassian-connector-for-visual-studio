@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using Atlassian.plvs.api;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 using Atlassian.plvs.explorer.treeNodes;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
@@ -12,13 +13,13 @@ namespace Atlassian.plvs.explorer {
     public sealed partial class JiraServerExplorer : Form {
         private readonly JiraIssueListModel model;
         private readonly JiraServer server;
-        private readonly JiraServerFacade facade;
+        private readonly AbstractJiraServerFacade facade;
 
         private readonly StatusLabel status;
 
         private static readonly Dictionary<string, JiraServerExplorer> activeExplorers = new Dictionary<string, JiraServerExplorer>();
 
-        public static void showJiraServerExplorerFor(JiraIssueListModel model, JiraServer server, JiraServerFacade facade) {
+        public static void showJiraServerExplorerFor(JiraIssueListModel model, JiraServer server, AbstractJiraServerFacade facade) {
             if (activeExplorers.ContainsKey(server.GUID.ToString())) {
                 activeExplorers[server.GUID.ToString()].BringToFront();
             } else {
@@ -26,7 +27,7 @@ namespace Atlassian.plvs.explorer {
             }
         }
 
-        private JiraServerExplorer(JiraIssueListModel model, JiraServer server, JiraServerFacade facade) {
+        private JiraServerExplorer(JiraIssueListModel model, JiraServer server, AbstractJiraServerFacade facade) {
             this.model = model;
             this.server = server;
             this.facade = facade;

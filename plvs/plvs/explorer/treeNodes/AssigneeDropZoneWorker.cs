@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 
 namespace Atlassian.plvs.explorer.treeNodes {
     class AssigneeDropZoneWorker : DropZone.DropZoneWorker {
-        private readonly JiraServerFacade facade;
+        private readonly AbstractJiraServerFacade facade;
         private readonly JiraServer server;
         private readonly JiraUser user;
 
-        public AssigneeDropZoneWorker(JiraServerFacade facade, JiraServer server, JiraUser user) {
+        public AssigneeDropZoneWorker(AbstractJiraServerFacade facade, JiraServer server, JiraUser user) {
             this.facade = facade;
             this.server = server;
             this.user = user;

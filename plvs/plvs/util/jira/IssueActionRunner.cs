@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs.jira;
 using Atlassian.plvs.models.jira;
@@ -14,7 +15,7 @@ namespace Atlassian.plvs.util.jira {
             Thread runner = PlvsUtils.createThread(delegate {
                                                        try {
                                                            status.setInfo("Retrieving fields for action \"" + action.Name + "\"...");
-                                                           List<JiraField> fields = JiraServerFacade.Instance.getFieldsForAction(issue, action.Id);
+                                                           List<JiraField> fields = SmartJiraServerFacade.Instance.getFieldsForAction(issue, action.Id);
                                                            runAction(owner, action, model, issue, fields, status, onFinish);
                                                        } catch (Exception e) {
                                                            status.setError("Failed to run action " + action.Name + " on issue " + issue.Key, e);
@@ -26,9 +27,9 @@ namespace Atlassian.plvs.util.jira {
         private static void runAction(Control owner, JiraNamedEntity action, JiraIssueListModel model,
                                       JiraIssue issue, List<JiraField> fields, StatusLabel status, Action onFinish) {
 
-            JiraIssue issueWithTime = JiraServerFacade.Instance.getIssue(issue.Server, issue.Key);
-            issueWithTime.SecurityLevel = JiraServerFacade.Instance.getSecurityLevel(issue);
-            object soapIssueObject = JiraServerFacade.Instance.getIssueSoapObject(issue);
+            JiraIssue issueWithTime = SmartJiraServerFacade.Instance.getIssue(issue.Server, issue.Key);
+            issueWithTime.SecurityLevel = SmartJiraServerFacade.Instance.getSecurityLevel(issue);
+            object soapIssueObject = SmartJiraServerFacade.Instance.getIssueSoapObject(issue);
             List<JiraField> fieldsWithValues = JiraActionFieldType.fillFieldValues(issue, soapIssueObject, fields);
             
             // PLVS-133 - this should never happen but does?
@@ -53,9 +54,9 @@ namespace Atlassian.plvs.util.jira {
             JiraIssue issue, StatusLabel status, Action onFinish) {
 
             status.setInfo("Running action \"" + action.Name + "\" on issue " + issue.Key + "...");
-            JiraServerFacade.Instance.runIssueActionWithoutParams(issue, action);
+            SmartJiraServerFacade.Instance.runIssueActionWithoutParams(issue, action);
             status.setInfo("Action \"" + action.Name + "\" successfully run on issue " + issue.Key);
-            var newIssue = JiraServerFacade.Instance.getIssue(issue.Server, issue.Key);
+            var newIssue = SmartJiraServerFacade.Instance.getIssue(issue.Server, issue.Key);
             UsageCollector.Instance.bumpJiraIssuesOpen();
             owner.Invoke(new MethodInvoker(() => { model.updateIssue(newIssue); if (onFinish != null) onFinish(); }));
         }

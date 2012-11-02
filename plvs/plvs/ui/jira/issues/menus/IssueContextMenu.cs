@@ -5,6 +5,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Aga.Controls.Tree;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.util;
 using Atlassian.plvs.util.jira;
@@ -53,7 +54,7 @@ namespace Atlassian.plvs.ui.jira.issues.menus {
         private void addIssueActionItems(int generation) {
             List<JiraNamedEntity> actions = null;
             try {
-                actions = JiraServerFacade.Instance.getActionsForIssue(issue);
+                actions = SmartJiraServerFacade.Instance.getActionsForIssue(issue);
             } catch (Exception e) {
                 status.setError("Failed to retrieve issue actions", e);
             }

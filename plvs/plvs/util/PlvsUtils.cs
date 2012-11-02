@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Printing;
 using System.Globalization;
@@ -27,6 +28,7 @@ using Atlassian.plvs.models;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.windows;
 using EnvDTE;
+using Process = System.Diagnostics.Process;
 using Timer = System.Windows.Forms.Timer;
 
 namespace Atlassian.plvs.util {
@@ -460,6 +462,21 @@ namespace Atlassian.plvs.util {
         // PLVS-217
         public static bool isConnectorException(Exception e) {
             return e.StackTrace != null && e.StackTrace.Split(new[] { '\n' }).Any(line => line.Contains("Atlassian.plvs."));
+        }
+
+        public static void runBrowser(string url) {
+            try {
+                // see http://stackoverflow.com/questions/12206368/process-starturl-broken-on-windows-8-chrome-are-there-alternatives
+                Process.Start(url);
+            } catch (Win32Exception e) {
+                try {
+                    Debug.WriteLine(e.Message);
+                    var startInfo = new ProcessStartInfo("iexplore.exe", url);
+                    Process.Start(startInfo);
+                } catch (Exception ex) {
+                    Debug.WriteLine(ex.Message);
+                }
+            }
         }
     }
 }

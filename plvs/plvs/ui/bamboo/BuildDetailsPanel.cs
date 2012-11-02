@@ -455,7 +455,7 @@ namespace Atlassian.plvs.ui.bamboo {
 
         private void buttonViewInBrowser_Click(object sender, EventArgs e) {
             try {
-                Process.Start(build.Server.Url + "/browse/" + build.Key);
+                PlvsUtils.runBrowser(build.Server.Url + "/browse/" + build.Key);
             } catch (Exception ex) {
                 Debug.WriteLine("buttonViewInBrowser_Click - exception: " + ex.Message);
             }
@@ -479,7 +479,7 @@ namespace Atlassian.plvs.ui.bamboo {
 
         private static void viewUrlInTheBrowser(string url) {
             try {
-                Process.Start(url);
+                PlvsUtils.runBrowser(url);
             } catch (Exception ex) {
                 Debug.WriteLine("viewUrlInTheBrowser - exception: " + ex.Message);
             }

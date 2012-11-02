@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
+using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.dialogs {
     public sealed partial class AutoUpdateDialog : Form {
@@ -27,7 +28,7 @@ namespace Atlassian.plvs.dialogs {
 
         void buttonUpdate_Click(object sender, EventArgs e) {
             try {
-                Process.Start(updateUrl);
+                PlvsUtils.runBrowser(updateUrl);
                 // ReSharper disable EmptyGeneralCatchClause
             } catch {
                 // ReSharper restore EmptyGeneralCatchClause
@@ -43,7 +44,7 @@ namespace Atlassian.plvs.dialogs {
             if (!pageLoaded) return;
             string url = e.Url.ToString();
             try {
-                Process.Start(url);
+                PlvsUtils.runBrowser(url);
 // ReSharper disable EmptyGeneralCatchClause
             } catch {
 // ReSharper restore EmptyGeneralCatchClause
@@ -69,7 +70,7 @@ namespace Atlassian.plvs.dialogs {
 
         private void buttonReleaseNotes_Click(object sender, EventArgs e) {
             try {
-                Process.Start(releaseNotesUrl);
+                PlvsUtils.runBrowser(releaseNotesUrl);
 // ReSharper disable EmptyGeneralCatchClause
             } catch {
 // ReSharper restore EmptyGeneralCatchClause

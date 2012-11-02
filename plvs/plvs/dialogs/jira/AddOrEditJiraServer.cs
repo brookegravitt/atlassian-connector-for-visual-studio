@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 
 namespace Atlassian.plvs.dialogs.jira {
     public partial class AddOrEditJiraServer : Form {
-        private readonly JiraServerFacade facade;
+        private readonly AbstractJiraServerFacade facade;
         private static int invocations;
 
         private readonly bool editing;
 
         private readonly JiraServer server;
 
-        public AddOrEditJiraServer(JiraServer server, JiraServerFacade facade) {
+        public AddOrEditJiraServer(JiraServer server, AbstractJiraServerFacade facade) {
             this.facade = facade;
             InitializeComponent();
 

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
+using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.dialogs {
     public partial class MessageBoxWithHtml : Form {
@@ -59,7 +60,7 @@ namespace Atlassian.plvs.dialogs {
                 }
             } else {
                 try {
-                    Process.Start(url);
+                    PlvsUtils.runBrowser(url);
                     // ReSharper disable EmptyGeneralCatchClause
                 } catch {
                     // ReSharper restore EmptyGeneralCatchClause

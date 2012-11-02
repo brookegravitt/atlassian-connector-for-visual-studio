@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 using Atlassian.plvs.models;
 using Atlassian.plvs.store;
 using Atlassian.plvs.ui;
@@ -88,7 +89,7 @@ namespace Atlassian.plvs.dialogs.jira {
             jiraAssigneePicker.init(server, null, true);
 
             textDescription.Server = server;
-            textDescription.Facade = JiraServerFacade.Instance;
+            textDescription.Facade = SmartJiraServerFacade.Instance;
         }
 
         private void buttonCancel_Click(object sender, EventArgs e) {
@@ -111,9 +112,9 @@ namespace Atlassian.plvs.dialogs.jira {
             ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
 
             List<JiraNamedEntity> issueTypes =
-                JiraServerFacade.Instance.getIssueTypes(server, project);
-            List<JiraNamedEntity> comps = JiraServerFacade.Instance.getComponents(server, project);
-            List<JiraNamedEntity> versions = JiraServerFacade.Instance.getVersions(server, project);
+                SmartJiraServerFacade.Instance.getIssueTypes(server, project);
+            List<JiraNamedEntity> comps = SmartJiraServerFacade.Instance.getComponents(server, project);
+            List<JiraNamedEntity> versions = SmartJiraServerFacade.Instance.getVersions(server, project);
             // newest versions first
             versions.Reverse();
             this.safeInvoke(new MethodInvoker(delegate {
@@ -324,7 +325,7 @@ namespace Atlassian.plvs.dialogs.jira {
 
         private void createIssueWorker(JiraIssue issue, bool keepDialogOpen) {
             try {
-                string key = JiraServerFacade.Instance.createIssue(server, issue);
+                string key = SmartJiraServerFacade.Instance.createIssue(server, issue);
                 this.safeInvoke(new MethodInvoker(delegate {
                                                       setAllEnabled(true);
                                                       buttonCancel.Enabled = true;

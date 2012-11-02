@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using Atlassian.plvs.api;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs.jira;
 using Atlassian.plvs.models;
@@ -35,7 +36,7 @@ namespace Atlassian.plvs.ui.jira {
         private JiraIssueListModel model;
         private readonly Solution solution;
 
-        private readonly JiraServerFacade facade = JiraServerFacade.Instance;
+        private readonly SmartJiraServerFacade facade = SmartJiraServerFacade.Instance;
 
         private readonly StatusLabel status;
 
@@ -108,7 +109,9 @@ namespace Atlassian.plvs.ui.jira {
 
             createIssueDescriptionPanel();
 
+#if USE_MAZIO
             maybeAddMazioMenu();
+#endif
 
             buttonUploadNew.Image = Resources.icon_addattachment;
             buttonUploadNew.DisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
@@ -135,6 +138,7 @@ namespace Atlassian.plvs.ui.jira {
             buttonStartStopProgress.Text = thisIssueActive ? "Stop Work" : "Start Work";
         }
 
+#if USE_MAZIO
         private void maybeAddMazioMenu() {
             string mazioDir = null;
 #if VS2010
@@ -177,6 +181,7 @@ namespace Atlassian.plvs.ui.jira {
                 Debug.WriteLine("IssueDetailsPanel.maybeAddMazioMenu() - exception: " + e.Message);
             }
         }
+#endif
 
         private void runMazio(string token) {
             try {
@@ -838,7 +843,7 @@ namespace Atlassian.plvs.ui.jira {
         private static void navigate(WebBrowserNavigatingEventArgs e) {
             string url = e.Url.ToString();
             try {
-                Process.Start(url);
+                PlvsUtils.runBrowser(url);
 // ReSharper disable EmptyGeneralCatchClause
             } catch (Exception) {
 // ReSharper restore EmptyGeneralCatchClause
@@ -848,7 +853,7 @@ namespace Atlassian.plvs.ui.jira {
 
         private void buttonViewInBrowser_Click(object sender, EventArgs e) {
             try {
-                Process.Start(issue.Server.Url + "/browse/" + issue.Key);
+                PlvsUtils.runBrowser(issue.Server.Url + "/browse/" + issue.Key);
             } catch (Exception ex) {
                 Debug.WriteLine("IssueDetailsPanel.buttonViewInBrowser_Click() - exception: " + ex);
             }
@@ -874,7 +879,7 @@ namespace Atlassian.plvs.ui.jira {
             List<JiraNamedEntity> actions = null;
             try {
                 status.setInfo("Retrieving issue actions...");
-                actions = JiraServerFacade.Instance.getActionsForIssue(issue);
+                actions = SmartJiraServerFacade.Instance.getActionsForIssue(issue);
                 status.setInfo("Issue actions retrieved");
             } catch (Exception ex) {
                 status.setError("Failed to retrieve issue actions", ex);

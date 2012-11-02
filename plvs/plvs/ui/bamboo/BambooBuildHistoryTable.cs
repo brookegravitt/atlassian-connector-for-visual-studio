@@ -82,7 +82,7 @@ namespace Atlassian.plvs.ui.bamboo {
             BambooBuild b = getSelectedBuild();
             if (b == null) return;
             try {
-                Process.Start(b.Server.Url + "/build/viewBuildResults.action?buildKey="
+                PlvsUtils.runBrowser(b.Server.Url + "/build/viewBuildResults.action?buildKey="
                               + BambooBuildUtils.getPlanKey(b) + "&buildNumber=" + b.Number);
             } catch (Exception ex) {
                 Debug.WriteLine("buttonViewInBrowser_Click - exception: " + ex.Message);

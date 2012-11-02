@@ -124,7 +124,7 @@ namespace Atlassian.plvs.ui.jira {
                 return;
             }
             foreach (JiraSavedFilter filter in filters) {
-                node.Nodes.Add(new JiraSavedFilterTreeNode(server, filter, 1));
+                node.Nodes.Add(new JiraSavedFilterTreeNode(server, filter, 1, new SavedFilterContextMenu(filter)));
             }
         }
 

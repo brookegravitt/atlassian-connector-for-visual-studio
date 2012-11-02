@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.dialogs {
     public partial class About : Form {
@@ -23,7 +24,7 @@ namespace Atlassian.plvs.dialogs {
         private void browser_Navigating(object sender, WebBrowserNavigatingEventArgs e) {
             if (!pageLoaded) return;
             string url = e.Url.ToString();
-            Process.Start(url);
+            PlvsUtils.runBrowser(url);
             e.Cancel = true;
         }
 
