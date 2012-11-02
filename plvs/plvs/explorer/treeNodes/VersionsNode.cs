@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
 using Atlassian.plvs.util;
@@ -14,7 +15,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
 
         private bool versionsLoaded;
 
-        public VersionsNode(Control parent, JiraIssueListModel model, JiraServerFacade facade, JiraServer server, JiraProject project)
+        public VersionsNode(Control parent, JiraIssueListModel model, AbstractJiraServerFacade facade, JiraServer server, JiraProject project)
             : base(model, facade, server, "Versions", 0) {
 
             this.parent = parent;
@@ -34,7 +35,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
             t.Start();
         }
 
-        private void loadVersions(JiraServerFacade facade, StatusLabel status) {
+        private void loadVersions(AbstractJiraServerFacade facade, StatusLabel status) {
             try {
                 List<JiraNamedEntity> versions = facade.getVersions(Server, project);
                 parent.Invoke(new MethodInvoker(()=> populateVersions(versions)));

@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
@@ -15,7 +16,7 @@ namespace Atlassian.plvs.dialogs.jira {
     public partial class LogWork : Form {
         private readonly Control parent;
         protected readonly JiraIssueListModel model;
-        protected readonly JiraServerFacade facade;
+        protected readonly AbstractJiraServerFacade facade;
         protected readonly JiraIssue issue;
         protected readonly StatusLabel status;
         private readonly JiraActiveIssueManager activeIssueManager;
@@ -27,7 +28,7 @@ namespace Atlassian.plvs.dialogs.jira {
         protected Button ButtonCancel { get { return buttonCancel; } }
 
         public LogWork(
-            Control parent, JiraIssueListModel model, JiraServerFacade facade, JiraIssue issue, 
+            Control parent, JiraIssueListModel model, AbstractJiraServerFacade facade, JiraIssue issue, 
             StatusLabel status, JiraActiveIssueManager activeIssueManager) {
 
             this.parent = parent;

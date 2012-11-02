@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
@@ -86,10 +87,10 @@ namespace Atlassian.plvs.dialogs.jira {
             if (projects.ContainsKey(issue.ProjectKey)) {
                 status.setInfo("Retrieving issue field data...");
                 JiraProject project = projects[issue.ProjectKey];
-                issueTypes = JiraServerFacade.Instance.getIssueTypes(issue.Server, project);
-                subtaskIssueTypes = JiraServerFacade.Instance.getSubtaskIssueTypes(issue.Server, project);
-                versions = JiraServerFacade.Instance.getVersions(issue.Server, project);
-                comps = JiraServerFacade.Instance.getComponents(issue.Server, project);
+                issueTypes = SmartJiraServerFacade.Instance.getIssueTypes(issue.Server, project);
+                subtaskIssueTypes = SmartJiraServerFacade.Instance.getSubtaskIssueTypes(issue.Server, project);
+                versions = SmartJiraServerFacade.Instance.getVersions(issue.Server, project);
+                comps = SmartJiraServerFacade.Instance.getComponents(issue.Server, project);
 
                 status.setInfo("");
 
@@ -163,10 +164,10 @@ namespace Atlassian.plvs.dialogs.jira {
                         editor = new TextLineFieldEditorProvider(field, field.Values.IsNullOrEmpty() ? "" : field.Values[0], fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.DESCRIPTION:
-                        editor = new TextAreaFieldEditorProvider(JiraServerFacade.Instance, issue, field, field.Values.IsNullOrEmpty() ? "" : field.Values[0], fieldValid);
+                        editor = new TextAreaFieldEditorProvider(SmartJiraServerFacade.Instance, issue, field, field.Values.IsNullOrEmpty() ? "" : field.Values[0], fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.ENVIRONMENT:
-                        editor = new TextAreaFieldEditorProvider(JiraServerFacade.Instance, issue, field, field.Values.IsNullOrEmpty() ? "" : field.Values[0], fieldValid);
+                        editor = new TextAreaFieldEditorProvider(SmartJiraServerFacade.Instance, issue, field, field.Values.IsNullOrEmpty() ? "" : field.Values[0], fieldValid);
                         break;
                     case JiraActionFieldType.WidgetType.ISSUE_TYPE:
                         editor = new NamedEntityComboEditorProvider(issue.Server, field, issue.IssueTypeId, issue.IsSubtask ? subtaskIssueTypes : issueTypes, fieldValid);
@@ -247,7 +248,7 @@ namespace Atlassian.plvs.dialogs.jira {
             textComment.Location = new Point(FIELD_X_POS, verticalPosition);
             textComment.Size = new Size(calculatedFieldWidth(), JiraFieldEditorProvider.MULTI_LINE_EDITOR_HEIGHT);
             textComment.TabIndex = tabIndex++;
-            textComment.Facade = JiraServerFacade.Instance;
+            textComment.Facade = SmartJiraServerFacade.Instance;
             textComment.Issue = issue;
 
             verticalPosition += JiraFieldEditorProvider.MULTI_LINE_EDITOR_HEIGHT + MARGIN;
@@ -275,9 +276,9 @@ namespace Atlassian.plvs.dialogs.jira {
             ICollection<JiraField> updatedFields = mergeFieldsFromEditors();
             Thread t = PlvsUtils.createThread(delegate {
                                                   try {
-                                                      JiraServerFacade.Instance.runIssueActionWithParams(
+                                                      SmartJiraServerFacade.Instance.runIssueActionWithParams(
                                                           issue, action, updatedFields, textComment.Text.Length > 0 ? textComment.Text : null);
-                                                      var newIssue = JiraServerFacade.Instance.getIssue(issue.Server, issue.Key);
+                                                      var newIssue = SmartJiraServerFacade.Instance.getIssue(issue.Server, issue.Key);
                                                       UsageCollector.Instance.bumpJiraIssuesOpen();
                                                       status.setInfo("Action \"" + action.Name + "\" successfully run on issue " + issue.Key);
                                                       this.safeInvoke(new MethodInvoker(delegate {

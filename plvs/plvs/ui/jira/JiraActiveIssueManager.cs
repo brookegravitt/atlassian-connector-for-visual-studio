@@ -7,6 +7,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs.jira;
 using Atlassian.plvs.models;
@@ -112,8 +113,8 @@ namespace Atlassian.plvs.ui.jira {
             buttonLogWork = new ToolStripButton(Resources.ico_logworkonissue) { Text = LOG_WORK, DisplayStyle = ToolStripItemDisplayStyle.Image };
             buttonLogWork.Click += (s, e) => 
                 loadIssueAndRunAction((server, issue) => 
-                    container.safeInvoke(new MethodInvoker(() => 
-                        new LogWork(container, JiraIssueListModelImpl.Instance, JiraServerFacade.Instance, issue, jiraStatus, this).ShowDialog())), 
+                    container.safeInvoke(new MethodInvoker(() =>
+                        new LogWork(container, JiraIssueListModelImpl.Instance, SmartJiraServerFacade.Instance, issue, jiraStatus, this).ShowDialog())), 
                     CurrentActiveIssue);
             buttonComment = new ToolStripButton(Resources.new_comment) { Text = COMMENT, DisplayStyle = ToolStripItemDisplayStyle.Image };
             buttonComment.Click += (s, e) => 
@@ -158,7 +159,7 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private void addComment(JiraIssue issue) {
-            JiraServerFacade facade = JiraServerFacade.Instance;
+            SmartJiraServerFacade facade = SmartJiraServerFacade.Instance;
             NewIssueComment dlg = new NewIssueComment(issue, facade);
             dlg.ShowDialog();
             if (dlg.DialogResult != DialogResult.OK) return;
@@ -307,7 +308,7 @@ namespace Atlassian.plvs.ui.jira {
             if (server == null) return;
 
             try {
-                JiraIssue jiraIssue = JiraServerFacade.Instance.getIssue(server, issue.Key);
+                JiraIssue jiraIssue = SmartJiraServerFacade.Instance.getIssue(server, issue.Key);
                 if (jiraIssue != null) {
                     loaded(server, jiraIssue);
                 }
@@ -452,16 +453,16 @@ namespace Atlassian.plvs.ui.jira {
             if (server != null) {
                 try {
                     int mods = 0;
-                    JiraIssue issue = JiraServerFacade.Instance.getIssue(server, CurrentActiveIssue.Key);
+                    JiraIssue issue = SmartJiraServerFacade.Instance.getIssue(server, CurrentActiveIssue.Key);
                     if (issue != null) {
                         string me = CredentialUtils.getUserNameWithoutDomain(server.UserName);
                         if (issue.Assignee == null || !issue.Assignee.Equals(me)) {
                             jiraStatus.setInfo("Assigning issue to me...");
                             JiraField assignee = new JiraField("assignee", null) { Values = new List<string> { me } };
-                            JiraServerFacade.Instance.updateIssue(issue, new List<JiraField> { assignee });
+                            SmartJiraServerFacade.Instance.updateIssue(issue, new List<JiraField> { assignee });
                             ++mods;
                         }
-                        List<JiraNamedEntity> actions = JiraServerFacade.Instance.getActionsForIssue(issue);
+                        List<JiraNamedEntity> actions = SmartJiraServerFacade.Instance.getActionsForIssue(issue);
                         JiraNamedEntity action = actions.Find(a => a.Id.Equals(START_PROGRESS_ACTION_ID));
                         if (action == null) {
                             container.safeInvoke(new MethodInvoker(delegate {
@@ -474,11 +475,11 @@ namespace Atlassian.plvs.ui.jira {
 //                        foreach (JiraNamedEntity action in actions.Where(action => action.Id.Equals(START_PROGRESS_ACTION_ID))) {
                         if (action != null) {
                             jiraStatus.setInfo("Setting issue in progress...");
-                            JiraServerFacade.Instance.runIssueActionWithoutParams(issue, action);
+                            SmartJiraServerFacade.Instance.runIssueActionWithoutParams(issue, action);
                             ++mods;
                         }
                         if (mods > 0) {
-                            issue = JiraServerFacade.Instance.getIssue(server, CurrentActiveIssue.Key);
+                            issue = SmartJiraServerFacade.Instance.getIssue(server, CurrentActiveIssue.Key);
                         }
                     }
                     jiraStatus.setInfo("Work on issue " + CurrentActiveIssue.Key + " started");
@@ -506,15 +507,15 @@ namespace Atlassian.plvs.ui.jira {
             JiraServer server = JiraServerModel.Instance.getServer(new Guid(CurrentActiveIssue.ServerGuid));
             if (server != null) {
                 try {
-                    JiraIssue issue = JiraServerFacade.Instance.getIssue(server, CurrentActiveIssue.Key);
+                    JiraIssue issue = SmartJiraServerFacade.Instance.getIssue(server, CurrentActiveIssue.Key);
                     if (issue != null) {
-                        List<JiraNamedEntity> actions = JiraServerFacade.Instance.getActionsForIssue(issue);
+                        List<JiraNamedEntity> actions = SmartJiraServerFacade.Instance.getActionsForIssue(issue);
                         container.safeInvoke(
                             new MethodInvoker(
                                 () => new DeactivateIssue(newActiveIssue != null ? string.Format(EXPLANATION_TEXT, issue.Key, newActiveIssue) : null,
                                                           container, 
                                                           JiraIssueListModelImpl.Instance,
-                                                          JiraServerFacade.Instance,
+                                                          SmartJiraServerFacade.Instance,
                                                           ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.ACTIVE_ISSUES),
                                                           issue, 
                                                           jiraStatus, 
@@ -583,7 +584,7 @@ namespace Atlassian.plvs.ui.jira {
         private static JiraIssue getIssueFromModelOrServer(JiraServer server, string issueKey) {
             try {
                 JiraIssue issue = JiraIssueListModelImpl.Instance.getIssue(issueKey, server);
-                return issue ?? JiraServerFacade.Instance.getIssue(server, issueKey);
+                return issue ?? SmartJiraServerFacade.Instance.getIssue(server, issueKey);
             } catch (Exception e) {
                 Debug.WriteLine("JiraActiveIssueManager.getIssueFromModelOrServer() - exception: " + e);
             }

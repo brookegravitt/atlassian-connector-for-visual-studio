@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
 
@@ -11,7 +12,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
         private readonly JiraNamedEntity version;
         private readonly List<ToolStripItem> menuItems = new List<ToolStripItem>();
 
-        public VersionNode(JiraIssueListModel model, JiraServerFacade facade, JiraServer server, JiraProject project, JiraNamedEntity version)
+        public VersionNode(JiraIssueListModel model, AbstractJiraServerFacade facade, JiraServer server, JiraProject project, JiraNamedEntity version)
             : base(model, facade, server, version.Name, 0) {
             this.project = project;
             this.version = version;

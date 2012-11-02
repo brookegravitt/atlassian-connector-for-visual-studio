@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 
 namespace Atlassian.plvs.dialogs.jira {
     public partial class NewIssueComment : Form {
 
-        public NewIssueComment(JiraIssue issue, JiraServerFacade facade) {
+        public NewIssueComment(JiraIssue issue, AbstractJiraServerFacade facade) {
             InitializeComponent();
             buttonOk.Enabled = false;
 

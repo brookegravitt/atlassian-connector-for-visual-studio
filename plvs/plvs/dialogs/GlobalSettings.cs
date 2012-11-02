@@ -312,7 +312,7 @@ namespace Atlassian.plvs.dialogs {
 
         private void linkUsageStatsDetails_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             try {
-                Process.Start(
+                PlvsUtils.runBrowser(
                     "http://confluence.atlassian.com/display/IDEPLUGIN/Collecting+Usage+Statistics+for+the+Visual+Studio+Connector");
             } catch (Exception ex) {
                 Debug.WriteLine("GlobalSettings.linkUsageStatsDetails_LinkClicked() - exception: " + ex.Message);

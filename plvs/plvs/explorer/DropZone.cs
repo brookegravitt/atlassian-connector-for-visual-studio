@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.util;
 
@@ -11,7 +12,7 @@ namespace Atlassian.plvs.explorer {
     public sealed partial class DropZone : Form {
         private readonly JiraIssueListModel model;
         private readonly JiraServer server;
-        private readonly JiraServerFacade facade;
+        private readonly AbstractJiraServerFacade facade;
         private readonly DropZoneWorker worker;
 
         public delegate void PerformAction(JiraIssue issue, bool add);
@@ -28,7 +29,7 @@ namespace Atlassian.plvs.explorer {
             string InitialText { get; }
         }
 
-        public static void showDropZoneFor(JiraIssueListModel model, JiraServer server, JiraServerFacade facade, DropZoneWorker worker) {
+        public static void showDropZoneFor(JiraIssueListModel model, JiraServer server, AbstractJiraServerFacade facade, DropZoneWorker worker) {
             if (activeDropZones.ContainsKey(worker.ZoneKey)) {
                 activeDropZones[worker.ZoneKey].BringToFront();
             } else {
@@ -36,7 +37,7 @@ namespace Atlassian.plvs.explorer {
             }
         }
 
-        private DropZone(JiraIssueListModel model, JiraServer server, JiraServerFacade facade, DropZoneWorker worker) {
+        private DropZone(JiraIssueListModel model, JiraServer server, AbstractJiraServerFacade facade, DropZoneWorker worker) {
             this.model = model;
             this.server = server;
             this.facade = facade;

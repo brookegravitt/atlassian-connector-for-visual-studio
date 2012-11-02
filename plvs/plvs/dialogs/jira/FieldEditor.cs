@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui.jira.fields;
 using Atlassian.plvs.util;
@@ -13,7 +14,7 @@ using Atlassian.plvs.util.jira;
 namespace Atlassian.plvs.dialogs.jira {
     public partial class FieldEditor : Form {
         private readonly JiraIssueListModel model;
-        private readonly JiraServerFacade facade;
+        private readonly AbstractJiraServerFacade facade;
         private readonly JiraIssue issue;
         private readonly string fieldId;
         private JiraField field;
@@ -26,7 +27,7 @@ namespace Atlassian.plvs.dialogs.jira {
         private int customWidth = -1;
         private int customHeight = -1;
 
-        public FieldEditor(string title, JiraIssueListModel model, JiraServerFacade facade, JiraIssue issue, string fieldId, Point location) {
+        public FieldEditor(string title, JiraIssueListModel model, AbstractJiraServerFacade facade, JiraIssue issue, string fieldId, Point location) {
             PlvsLogger.log("FieldEditor - ctor");
 
             this.model = model;

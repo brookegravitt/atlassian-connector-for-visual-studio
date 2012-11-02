@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 using Atlassian.plvs.models;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
@@ -12,7 +13,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
 
         private readonly List<ToolStripItem> menuItems = new List<ToolStripItem>();
 
-        public PriorityNode(JiraIssueListModel model, JiraServerFacade facade, JiraServer server, JiraNamedEntity priority)
+        public PriorityNode(JiraIssueListModel model, AbstractJiraServerFacade facade, JiraServer server, JiraNamedEntity priority)
             : base(model, facade, server, priority.Name, 0) {
             this.priority = priority;
 

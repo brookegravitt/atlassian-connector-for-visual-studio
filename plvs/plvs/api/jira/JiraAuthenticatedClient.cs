@@ -7,7 +7,7 @@ using System.Web;
 using Atlassian.plvs.dialogs;
 
 namespace Atlassian.plvs.api.jira {
-    internal class JiraAuthenticatedClient : IDisposable {
+    public class JiraAuthenticatedClient : IDisposable {
         private readonly bool dontUseProxy;
 
         protected string UserName { get; private set; }

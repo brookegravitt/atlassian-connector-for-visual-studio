@@ -72,7 +72,7 @@ namespace Atlassian.plvs.dialogs.jira {
             }
             else {
                 string url = Server.Url + "/secure/QuickSearch.jspa?searchString=" + HttpUtility.UrlEncode(query);
-                Process.Start(url);
+                PlvsUtils.runBrowser(url);
             }
             Close();
         }

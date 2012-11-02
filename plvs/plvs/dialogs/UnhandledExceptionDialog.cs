@@ -34,7 +34,7 @@ namespace Atlassian.plvs.dialogs {
                 env.Append("\nCPU count: ").Append(Environment.ProcessorCount);
                 url.Append(HttpUtility.UrlEncode(env.ToString()));
                 url.Append("&description=").Append(HttpUtility.UrlEncode(textException.Text));
-                System.Diagnostics.Process.Start(url.ToString());
+                PlvsUtils.runBrowser(url.ToString());
                 // ReSharper disable EmptyGeneralCatchClause
             } catch (Exception) {
                 // ReSharper restore EmptyGeneralCatchClause

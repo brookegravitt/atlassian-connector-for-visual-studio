@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
 using Atlassian.plvs.util;
@@ -13,7 +14,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
 
         private bool prioritiesLoaded;
 
-        public PrioritiesNode(Control parent, JiraIssueListModel model, JiraServerFacade facade, JiraServer server)
+        public PrioritiesNode(Control parent, JiraIssueListModel model, AbstractJiraServerFacade facade, JiraServer server)
             : base(model, facade, server, "Priorities", 0) {
 
             this.parent = parent;
@@ -30,7 +31,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
             t.Start();
         }
 
-        private void loadPriorities(JiraServerFacade facade, StatusLabel status) {
+        private void loadPriorities(AbstractJiraServerFacade facade, StatusLabel status) {
             try {
                 List<JiraNamedEntity> priorities = facade.getPriorities(Server);
                 parent.Invoke(new MethodInvoker(()=> populatePriorities(priorities)));

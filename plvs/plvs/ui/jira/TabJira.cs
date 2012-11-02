@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.dialogs.jira;
@@ -157,8 +158,8 @@ namespace Atlassian.plvs.ui.jira {
 
         public event EventHandler<EventArgs> AddNewServerLinkClicked;
 
-        public JiraServerFacade Facade {
-            get { return JiraServerFacade.Instance; }
+        public AbstractJiraServerFacade Facade {
+            get { return SmartJiraServerFacade.Instance; }
         }
 
         private void setupGroupByCombo() {
@@ -384,7 +385,7 @@ namespace Atlassian.plvs.ui.jira {
 
         private static void browseSelectedIssue(JiraIssue issue) {
             try {
-                Process.Start(issue.Server.Url + "/browse/" + issue.Key);
+                PlvsUtils.runBrowser(issue.Server.Url + "/browse/" + issue.Key);
             } catch (Exception e) {
                 Debug.WriteLine("TabJira.browseSelectedIssue() - exception: " + e.Message);
             }
@@ -401,7 +402,7 @@ namespace Atlassian.plvs.ui.jira {
 
         private static void browseEditSelectedIssue(JiraIssue issue) {
             try {
-                Process.Start(issue.Server.Url + "/secure/EditIssue!default.jspa?id=" + issue.Id);
+                PlvsUtils.runBrowser(issue.Server.Url + "/secure/EditIssue!default.jspa?id=" + issue.Id);
             } catch (Exception e) {
                 Debug.WriteLine("TabJira.browseEditSelectedIssue() - exception: " + e.Message);
             }
@@ -557,6 +558,9 @@ namespace Atlassian.plvs.ui.jira {
                 JiraServerCache.Instance.clearResolutions();
 
                 foreach (JiraServer server in servers) {
+
+                    status.setInfo("[" + server.Name + "] Authenticating...");
+                    Facade.login(server);
 
                     status.setInfo("[" + server.Name + "] Loading project definitions...");
                     List<JiraProject> projects = Facade.getProjects(server);
@@ -918,7 +922,7 @@ namespace Atlassian.plvs.ui.jira {
             try {
                 status.setInfo("Fetching issue " + key + "...");
                 JiraIssue issue =
-                    JiraServerFacade.Instance.getIssue(server, key);
+                    SmartJiraServerFacade.Instance.getIssue(server, key);
                 if (issue != null) {
                     status.setInfo("Issue " + key + " found");
                     Invoke(new MethodInvoker(delegate
@@ -1063,7 +1067,7 @@ namespace Atlassian.plvs.ui.jira {
 
         private void buttonHelp_Click(object sender, EventArgs e) {
             try {
-                Process.Start("http://confluence.atlassian.com/display/IDEPLUGIN/Using+JIRA+in+the+Visual+Studio+Connector");
+                PlvsUtils.runBrowser("http://confluence.atlassian.com/display/IDEPLUGIN/Using+JIRA+in+the+Visual+Studio+Connector");
             } catch (Exception ex) {
                 Debug.WriteLine("TabJira.buttonHelp_Click() - exception: " + ex.Message);
             }

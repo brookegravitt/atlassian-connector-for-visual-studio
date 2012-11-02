@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 
 namespace Atlassian.plvs.ui.jira.fields {
     public class TextAreaFieldEditorProvider : JiraFieldEditorProvider {
@@ -10,7 +11,7 @@ namespace Atlassian.plvs.ui.jira.fields {
                                           };
 
         public TextAreaFieldEditorProvider(
-            JiraServerFacade facade, JiraIssue issue, JiraField field, string value, FieldValidListener validListener)
+            AbstractJiraServerFacade facade, JiraIssue issue, JiraField field, string value, FieldValidListener validListener)
             : base(field, validListener) {
 
             editor.Issue = issue;

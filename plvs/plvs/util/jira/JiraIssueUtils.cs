@@ -122,7 +122,7 @@ namespace Atlassian.plvs.util.jira {
             try {
                 JiraServer server = AtlassianPanel.Instance.Jira.CurrentlySelectedServerOrDefault;
                 if (server != null) {
-                    Process.Start(server.Url + "/browse/" + issueKey);
+                    PlvsUtils.runBrowser(server.Url + "/browse/" + issueKey);
                 } else {
                     MessageBox.Show("No JIRA server selected", Constants.ERROR_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }

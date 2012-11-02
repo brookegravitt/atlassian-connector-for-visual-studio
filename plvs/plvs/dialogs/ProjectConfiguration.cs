@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Atlassian.plvs.api;
 using Atlassian.plvs.api.bamboo;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 using Atlassian.plvs.dialogs.bamboo;
 using Atlassian.plvs.dialogs.jira;
 using Atlassian.plvs.models.bamboo;
@@ -27,7 +28,7 @@ namespace Atlassian.plvs.dialogs {
 
         private readonly JiraServerModel jiraServerModel;
         private readonly BambooServerModel bambooServerModel;
-        private readonly JiraServerFacade jiraFacade;
+        private readonly AbstractJiraServerFacade jiraFacade;
         private readonly BambooServerFacade bambooFacade;
 
         private readonly ImageList imageList;
@@ -36,7 +37,7 @@ namespace Atlassian.plvs.dialogs {
 
         public ProjectConfiguration(
             Guid? serverTypeToCreate, JiraServerModel jiraServerModel, BambooServerModel bambooServerModel, 
-            JiraServerFacade jiraFacade, BambooServerFacade bambooFacade) {
+            AbstractJiraServerFacade jiraFacade, BambooServerFacade bambooFacade) {
 
             InitializeComponent();
 
@@ -244,7 +245,7 @@ namespace Atlassian.plvs.dialogs {
             e.Cancel = true;
             try {
                 string url = e.Url.ToString();
-                Process.Start(url);
+                PlvsUtils.runBrowser(url);
 // ReSharper disable EmptyGeneralCatchClause
             } catch (Exception) {
 // ReSharper restore EmptyGeneralCatchClause

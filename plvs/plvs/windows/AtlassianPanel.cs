@@ -148,7 +148,7 @@ namespace Atlassian.plvs.windows {
 
         private void buttonReportBug_Click(object sender, EventArgs e) {
             try {
-                System.Diagnostics.Process.Start("https://studio.atlassian.com/secure/CreateIssue.jspa?pid=10500");
+                PlvsUtils.runBrowser("https://studio.atlassian.com/secure/CreateIssue.jspa?pid=10500");
 // ReSharper disable EmptyGeneralCatchClause
             } catch (Exception) {
 // ReSharper restore EmptyGeneralCatchClause

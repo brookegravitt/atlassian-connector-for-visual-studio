@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.ui.jira {
@@ -23,7 +24,7 @@ namespace Atlassian.plvs.ui.jira {
             set { textMarkup.Text = value; }
         }
 
-        public JiraServerFacade Facade { get; set; }
+        public AbstractJiraServerFacade Facade { get; set; }
 
         public JiraServer Server { get; set; }
 
@@ -83,7 +84,7 @@ namespace Atlassian.plvs.ui.jira {
             }
             try {
                 e.Cancel = true;
-                Process.Start(e.Url.ToString());
+                PlvsUtils.runBrowser(e.Url.ToString());
             } catch (Exception ex) {
                 Debug.WriteLine("JiraTextAreaWithWikiPreview.webPreview_Navigating() - exception: " + ex.Message);
             }

@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.store;
 using Atlassian.plvs.ui;
@@ -23,7 +24,7 @@ namespace Atlassian.plvs.dialogs.jira {
         private const string DEACTIVATE_ISSUE_LOG_WORK_CHECKED = "deactivateIssueLogWorkChecked";
 
         public DeactivateIssue(
-            string explanationText, Control parent, JiraIssueListModel model, JiraServerFacade facade, ParameterStore store,
+            string explanationText, Control parent, JiraIssueListModel model, AbstractJiraServerFacade facade, ParameterStore store,
             JiraIssue issue, StatusLabel status, JiraActiveIssueManager activeIssueManager, 
             IEnumerable<JiraNamedEntity> actions, Action onFinished) 
             : base(parent, model, facade, issue, status, activeIssueManager) {

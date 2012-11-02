@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 using Atlassian.plvs.models;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui.jira;
@@ -262,10 +263,10 @@ namespace Atlassian.plvs.dialogs.jira {
 
         private void setProjectRelatedValuesRunner(JiraProject project) {
             try {
-                List<JiraNamedEntity> issueTypes = JiraServerFacade.Instance.getIssueTypes(server, project);
-                issueTypes.AddRange(JiraServerFacade.Instance.getSubtaskIssueTypes(server, project));
-                List<JiraNamedEntity> comps = JiraServerFacade.Instance.getComponents(server, project);
-                List<JiraNamedEntity> versions = JiraServerFacade.Instance.getVersions(server, project);
+                List<JiraNamedEntity> issueTypes = SmartJiraServerFacade.Instance.getIssueTypes(server, project);
+                issueTypes.AddRange(SmartJiraServerFacade.Instance.getSubtaskIssueTypes(server, project));
+                List<JiraNamedEntity> comps = SmartJiraServerFacade.Instance.getComponents(server, project);
+                List<JiraNamedEntity> versions = SmartJiraServerFacade.Instance.getVersions(server, project);
 
                 versions.Reverse();
                 this.safeInvoke(new MethodInvoker(delegate {
@@ -280,7 +281,7 @@ namespace Atlassian.plvs.dialogs.jira {
                                          }));
             }
             catch (Exception ex) {
-                PlvsUtils.showError("Unable to retrieve project-related data", ex);
+                this.safeInvoke(new MethodInvoker(delegate { PlvsUtils.showError("Unable to retrieve project-related data", ex); }));
             }
         }
 

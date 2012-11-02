@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.ui.jira.issuefilternodes;
+using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.ui.jira.issues.menus {
     public sealed class CustomFilterContextMenu : ContextMenuStrip {
@@ -47,7 +48,7 @@ namespace Atlassian.plvs.ui.jira.issues.menus {
         private void browseFilter(object sender, EventArgs e) {
             string url = server.Url;
             try {
-                Process.Start(url + filterNode.Filter.getBrowserQueryString());
+                PlvsUtils.runBrowser(url + filterNode.Filter.getBrowserQueryString());
             }
             catch (Exception ex) {
                 Debug.WriteLine(ex.Message);

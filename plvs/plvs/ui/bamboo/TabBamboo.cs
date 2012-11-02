@@ -347,7 +347,7 @@ namespace Atlassian.plvs.ui.bamboo {
         private void buttonViewInBrowser_Click(object sender, EventArgs e) {
             runOnSelectedNode(delegate(BambooBuild b) {
                                   try {
-                                      Process.Start(b.Server.Url + "/browse/" + b.Key);
+                                      PlvsUtils.runBrowser(b.Server.Url + "/browse/" + b.Key);
                                   } catch (Exception ex) {
                                       Debug.WriteLine("buttonViewInBrowser_Click - exception: " + ex.Message);
                                   }
@@ -399,7 +399,7 @@ namespace Atlassian.plvs.ui.bamboo {
 
         private void buttonHelp_Click(object sender, EventArgs e) {
             try {
-                Process.Start("http://confluence.atlassian.com/display/IDEPLUGIN/Using+Bamboo+in+the+Visual+Studio+Connector");
+                PlvsUtils.runBrowser("http://confluence.atlassian.com/display/IDEPLUGIN/Using+Bamboo+in+the+Visual+Studio+Connector");
             } catch (Exception ex) {
                 Debug.WriteLine("TabBamboo.buttonHelp_Click() - exception: " + ex.Message);
             }

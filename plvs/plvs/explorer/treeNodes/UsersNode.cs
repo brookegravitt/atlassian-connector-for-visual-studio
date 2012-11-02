@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
 
@@ -11,7 +12,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
 
         private readonly List<ToolStripItem> menuItems = new List<ToolStripItem>();
 
-        public UsersNode(JiraIssueListModel model, JiraServerFacade facade, JiraServer server)
+        public UsersNode(JiraIssueListModel model, AbstractJiraServerFacade facade, JiraServer server)
             : base(model, facade, server, "Users", 0) {
 
             ContextMenuStrip = new ContextMenuStrip();

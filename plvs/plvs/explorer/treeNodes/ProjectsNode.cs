@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.facade;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui;
 using Atlassian.plvs.util;
@@ -13,7 +14,7 @@ namespace Atlassian.plvs.explorer.treeNodes {
 
         private bool projectsLoaded;
 
-        public ProjectsNode(Control parent, JiraIssueListModel model, JiraServerFacade facade, JiraServer server)
+        public ProjectsNode(Control parent, JiraIssueListModel model, AbstractJiraServerFacade facade, JiraServer server)
             : base(model, facade, server, "Projects", 0) {
 
             this.parent = parent;
