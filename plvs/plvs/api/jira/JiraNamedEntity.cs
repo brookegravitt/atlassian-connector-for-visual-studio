@@ -9,7 +9,10 @@ namespace Atlassian.plvs.api.jira {
             IconUrl = iconUrl;
         }
 
-        public JiraNamedEntity(JToken entity) : this(entity["id"].Value<int>(), entity["name"].Value<string>(), entity["iconUrl"].Value<string>()){
+        public JiraNamedEntity(JToken entity) {
+            Id = entity["id"] != null ? entity["id"].Value<int>() : 0;
+            Name = entity["name"] != null ? entity["name"].Value<string>() : null;
+            IconUrl = entity["iconUrl"] != null ? entity["iconUrl"].Value<string>() : null;
         }
 
         public int Id { get; private set; }

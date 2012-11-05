@@ -65,7 +65,7 @@ namespace Atlassian.plvs.api.jira.facade {
 
         public abstract string createIssue(JiraServer server, JiraIssue issue);
 
-        public abstract object getIssueSoapObject(JiraIssue issue);
+        public abstract object getRawIssueObject(JiraIssue issue);
 
         public abstract JiraNamedEntity getSecurityLevel(JiraIssue issue);
 

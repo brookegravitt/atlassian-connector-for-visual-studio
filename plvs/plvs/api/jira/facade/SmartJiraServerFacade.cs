@@ -34,11 +34,15 @@ namespace Atlassian.plvs.api.jira.facade {
         }
 
         public override List<JiraIssue> getCustomFilterIssues(JiraServer server, JiraFilter filter, int start, int count) {
-            throw new NotImplementedException();
+            return delegated(server,
+                             delegate { return restFacade.getCustomFilterIssues(server, filter, start, count); },
+                             delegate { return classicFacade.getCustomFilterIssues(server, filter, start, count); });
         }
 
         public override JiraIssue getIssue(JiraServer server, string key) {
-            throw new NotImplementedException();
+            return delegated(server,
+                             delegate { return restFacade.getIssue(server, key); },
+                             delegate { return classicFacade.getIssue(server, key); });
         }
 
         public override string getRenderedContent(JiraIssue issue, string markup) {
@@ -104,23 +108,33 @@ namespace Atlassian.plvs.api.jira.facade {
         }
 
         public override void addComment(JiraIssue issue, string comment) {
-            throw new NotImplementedException();
+            delegatedVoid(issue.Server,
+                delegate { restFacade.addComment(issue, comment); },
+                delegate { classicFacade.addComment(issue, comment); });
         }
 
         public override List<JiraNamedEntity> getActionsForIssue(JiraIssue issue) {
-            throw new NotImplementedException();
+            return delegated(issue.Server,
+                             delegate { return restFacade.getActionsForIssue(issue); },
+                             delegate { return classicFacade.getActionsForIssue(issue); });
         }
 
         public override List<JiraField> getFieldsForAction(JiraIssue issue, int actionId) {
-            throw new NotImplementedException();
+            return delegated(issue.Server,
+                             delegate { return restFacade.getFieldsForAction(issue, actionId); },
+                             delegate { return classicFacade.getFieldsForAction(issue, actionId); });
         }
 
         public override void runIssueActionWithoutParams(JiraIssue issue, JiraNamedEntity action) {
-            throw new NotImplementedException();
+            delegatedVoid(issue.Server,
+                delegate { restFacade.runIssueActionWithoutParams(issue, action); },
+                delegate { classicFacade.runIssueActionWithoutParams(issue, action); });
         }
 
         public override void runIssueActionWithParams(JiraIssue issue, JiraNamedEntity action, ICollection<JiraField> fields, string comment) {
-            throw new NotImplementedException();
+            delegatedVoid(issue.Server,
+                delegate { restFacade.runIssueActionWithParams(issue, action, fields, comment); },
+                delegate { classicFacade.runIssueActionWithParams(issue, action, fields, comment); });
         }
 
         public override List<JiraNamedEntity> getComponents(JiraServer server, JiraProject project) {
@@ -136,35 +150,51 @@ namespace Atlassian.plvs.api.jira.facade {
         }
 
         public override string createIssue(JiraServer server, JiraIssue issue) {
-            throw new NotImplementedException();
+            return delegated(server,
+                             delegate { return restFacade.createIssue(server, issue); },
+                             delegate { return classicFacade.createIssue(server, issue); });
         }
 
-        public override object getIssueSoapObject(JiraIssue issue) {
-            throw new NotImplementedException();
+        public override object getRawIssueObject(JiraIssue issue) {
+            return delegated(issue.Server,
+                             delegate { return restFacade.getRawIssueObject(issue); },
+                             delegate { return classicFacade.getRawIssueObject(issue); });
         }
 
         public override JiraNamedEntity getSecurityLevel(JiraIssue issue) {
-            throw new NotImplementedException();
+            return delegated(issue.Server,
+                             delegate { return restFacade.getSecurityLevel(issue); },
+                             delegate { return classicFacade.getSecurityLevel(issue); });
         }
 
         public override void logWorkAndAutoUpdateRemaining(JiraIssue issue, string timeSpent, DateTime startDate, string comment) {
-            throw new NotImplementedException();
+            delegatedVoid(issue.Server,
+                delegate { restFacade.logWorkAndAutoUpdateRemaining(issue, timeSpent, startDate, comment); },
+                delegate { classicFacade.logWorkAndAutoUpdateRemaining(issue, timeSpent, startDate, comment); });
         }
 
         public override void logWorkAndLeaveRemainingUnchanged(JiraIssue issue, string timeSpent, DateTime startDate, string comment) {
-            throw new NotImplementedException();
+            delegatedVoid(issue.Server,
+                delegate { restFacade.logWorkAndLeaveRemainingUnchanged(issue, timeSpent, startDate, comment); },
+                delegate { classicFacade.logWorkAndLeaveRemainingUnchanged(issue, timeSpent, startDate, comment); });
         }
 
         public override void logWorkAndUpdateRemainingManually(JiraIssue issue, string timeSpent, DateTime startDate, string remainingEstimate, string comment) {
-            throw new NotImplementedException();
+            delegatedVoid(issue.Server,
+                delegate { restFacade.logWorkAndUpdateRemainingManually(issue, timeSpent, startDate, remainingEstimate, comment); },
+                delegate { classicFacade.logWorkAndUpdateRemainingManually(issue, timeSpent, startDate, remainingEstimate, comment); });
         }
 
         public override void updateIssue(JiraIssue issue, ICollection<JiraField> fields) {
-            throw new NotImplementedException();
+            delegatedVoid(issue.Server,
+                delegate { restFacade.updateIssue(issue, fields); },
+                delegate { classicFacade.updateIssue(issue, fields); });
         }
 
         public override void uploadAttachment(JiraIssue issue, string name, byte[] attachment) {
-            throw new NotImplementedException();
+            delegatedVoid(issue.Server,
+                delegate { restFacade.uploadAttachment(issue, name, attachment); },
+                delegate { classicFacade.uploadAttachment(issue, name, attachment); });
         }
 
         protected delegate T Delegate<T>(JiraServer server);

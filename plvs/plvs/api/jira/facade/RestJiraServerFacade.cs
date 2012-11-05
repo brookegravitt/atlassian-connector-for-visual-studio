@@ -12,15 +12,21 @@ namespace Atlassian.plvs.api.jira.facade {
         }
 
         public override List<JiraIssue> getSavedFilterIssues(JiraServer server, JiraSavedFilter filter, int start, int count) {
-            throw new NotImplementedException();
+            using (var rest = new RestClient(server)) {
+                return rest.getSavedFilterIssues(filter, start, count);
+            }
         }
 
         public override List<JiraIssue> getCustomFilterIssues(JiraServer server, JiraFilter filter, int start, int count) {
-            throw new NotImplementedException();
+            using (var rest = new RestClient(server)) {
+                return rest.getCustomFilterIssues(filter, start, count);
+            }
         }
 
         public override JiraIssue getIssue(JiraServer server, string key) {
-            throw new NotImplementedException();
+            using (var rest = new RestClient(server)) {
+                return rest.getIssue(key);
+            }
         }
 
         public override string getRenderedContent(JiraIssue issue, string markup) {
@@ -95,7 +101,9 @@ namespace Atlassian.plvs.api.jira.facade {
         }
 
         public override List<JiraNamedEntity> getActionsForIssue(JiraIssue issue) {
-            throw new NotImplementedException();
+            using (var rest = new RestClient(issue.Server)) {
+                return rest.getActionsForIssue(issue);
+            }
         }
 
         public override List<JiraField> getFieldsForAction(JiraIssue issue, int actionId) {
@@ -126,8 +134,10 @@ namespace Atlassian.plvs.api.jira.facade {
             throw new NotImplementedException();
         }
 
-        public override object getIssueSoapObject(JiraIssue issue) {
-            throw new NotImplementedException();
+        public override object getRawIssueObject(JiraIssue issue) {
+            using (var rest = new RestClient(issue.Server)) {
+                return rest.getRawIssueObject(issue.Key);
+            }
         }
 
         public override JiraNamedEntity getSecurityLevel(JiraIssue issue) {

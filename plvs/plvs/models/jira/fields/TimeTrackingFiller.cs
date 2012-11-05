@@ -3,7 +3,7 @@ using Atlassian.plvs.api.jira;
 
 namespace Atlassian.plvs.models.jira.fields {
     public class TimeTrackingFiller : FieldFiller {
-        public List<string> getFieldValues(string field, JiraIssue issue, object soapIssueObject) {
+        public List<string> getFieldValues(string field, JiraIssue issue, object rawIssueObject) {
             return issue.TimeSpent == null 
                        ? new List<string> {translate(issue.OriginalEstimate)} 
                        : new List<string> {translate(issue.RemainingEstimate)};

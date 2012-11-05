@@ -166,7 +166,7 @@ namespace Atlassian.plvs.api.jira.facade {
             }
         }
 
-        public override object getIssueSoapObject(JiraIssue issue) {
+        public override object getRawIssueObject(JiraIssue issue) {
             using (var s = createSoapSession(issue.Server)) {
                 return setSoapTokenAndWrapExceptions(issue.Server, s, () => s.getIssueSoapObject(issue.Key));
             }

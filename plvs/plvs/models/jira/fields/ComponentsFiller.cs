@@ -5,9 +5,9 @@ using Atlassian.plvs.util.jira;
 
 namespace Atlassian.plvs.models.jira.fields {
     public class ComponentsFiller : FieldFiller {
-        public List<string> getFieldValues(string field, JiraIssue issue, object soapIssueObject) {
+        public List<string> getFieldValues(string field, JiraIssue issue, object rawIssueObject) {
 
-            object[] value = JiraIssueUtils.getIssueSoapObjectPropertyValue<object[]>(soapIssueObject, "components");
+            object[] value = JiraIssueUtils.getRawIssueObjectPropertyValue<object[]>(rawIssueObject, "components");
 
             if (value == null || value.Length == 0) {
                 return null;

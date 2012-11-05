@@ -5,9 +5,9 @@ using Atlassian.plvs.util.jira;
 
 namespace Atlassian.plvs.models.jira.fields {
     public class DueDateFiller : FieldFiller {
-        public List<string> getFieldValues(string field, JiraIssue issue, object soapIssueObject) {
+        public List<string> getFieldValues(string field, JiraIssue issue, object rawIssueObject) {
 
-            DateTime? dueDate = JiraIssueUtils.getIssueSoapObjectPropertyValue<DateTime?>(soapIssueObject, "duedate");
+            DateTime? dueDate = JiraIssueUtils.getRawIssueObjectPropertyValue<DateTime?>(rawIssueObject, "duedate");
 
             if (!dueDate.HasValue) {
                 return new List<string>();
