@@ -381,19 +381,21 @@ namespace Atlassian.plvs.ui.jira {
         private const string STACKLINE_LINE_NUMBER_SEPARATOR = "@";
 
         private static string createHyperlinedStackTrace(string body) {
-            StringReader sr = new StringReader(body);
+            var result = new StringBuilder();
 
-            StringBuilder result = new StringBuilder();
+            if (body != null) {
+                var sr = new StringReader(body);
 
-            string line = sr.ReadLine();
-            while (line != null) {
-                if (STACK_REGEX.IsMatch(line)) {
-                    line = STACK_REGEX.Replace(line,
-                                               "$1<a href=\"" + STACKLINE_URL_TYPE + "$2" +
-                                               STACKLINE_LINE_NUMBER_SEPARATOR + "$4\">$2$3$4</a>");
+                var line = sr.ReadLine();
+                while (line != null) {
+                    if (STACK_REGEX.IsMatch(line)) {
+                        line = STACK_REGEX.Replace(line,
+                                                   "$1<a href=\"" + STACKLINE_URL_TYPE + "$2" +
+                                                   STACKLINE_LINE_NUMBER_SEPARATOR + "$4\">$2$3$4</a>");
+                    }
+                    result.Append(line).Append('\n');
+                    line = sr.ReadLine();
                 }
-                result.Append(line).Append('\n');
-                line = sr.ReadLine();
             }
 
             return result.ToString();

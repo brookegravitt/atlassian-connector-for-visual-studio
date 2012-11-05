@@ -46,7 +46,7 @@ namespace Atlassian.plvs.api.jira {
 
                 object json = new {
                                       rendererType = "atlassian-wiki-renderer",
-                                      unrenderedMarkup = PlvsUtils.JsonEncode(markup),
+                                      unrenderedMarkup = markup,
                                       issueKey = issueKey,
                                       issueType = issueType,
                                       projectId = projectId
@@ -79,8 +79,13 @@ namespace Atlassian.plvs.api.jira {
                 var jToken = resp["buildNumber"];
                 if (jToken == null) return false;
                 var buildNumber = jToken.Value<int>();
-                // JIRA 5.0.1
+                server.BuildNumber = buildNumber;
+                server.Version = resp["version"].Value<string>();
+                server.ServerTitle = resp["serverTitle"].Value<string>();
+
+                 // JIRA 5.0.1)
                 return buildNumber >= 721;
+
             } catch(WebException e) {
                 if (e.Message.StartsWith(UNEXPECTED)) {
                     return false;
@@ -96,7 +101,7 @@ namespace Atlassian.plvs.api.jira {
         }
 
         public List<JiraNamedEntity> getIssueTypes(bool subtasks, JiraProject project = null) {
-            var url = BaseUrl + REST + (project != null ? "project" : "issuetype");
+            var url = BaseUrl + REST + (project != null ? "project/" + project.Key : "issuetype");
             JToken resp = getJson(url);
             if (project != null) {
                 resp = resp["issueTypes"];
@@ -123,11 +128,11 @@ namespace Atlassian.plvs.api.jira {
         }
 
         public List<JiraNamedEntity> getComponents(JiraProject project) {
-            return getNamedEntities("project", "components");
+            return getNamedEntities("project/" + project.Key, "components");
         }
 
         public List<JiraNamedEntity> getVersions(JiraProject project) {
-            return getNamedEntities("project", "versions");
+            return getNamedEntities("project/" + project.Key, "versions");
         }
 
         private List<JiraNamedEntity> getNamedEntities(string what, string sub = null) {
@@ -136,6 +141,29 @@ namespace Atlassian.plvs.api.jira {
             return sub != null 
                 ? resp[sub].Select(item => new JiraNamedEntity(item)).ToList() 
                 : resp.Select(item => new JiraNamedEntity(item)).ToList();
+        }
+
+        public List<JiraIssue> getSavedFilterIssues(JiraSavedFilter filter, int start, int count) {
+            var res = getJson(filter.SearchUrl + "&startAt=" + start + "&maxResults=" + count + "&expand=renderedFields");
+            return res["issues"].Select(issue => new JiraIssue(server, issue)).ToList();
+        }
+
+        public List<JiraIssue> getCustomFilterIssues(JiraFilter filter, int start, int count) {
+            throw new NotImplementedException();
+        }
+
+        public JiraIssue getIssue(string key) {
+            var res = getRawIssueObject(key);
+            return new JiraIssue(server, res);
+        }
+
+        public List<JiraNamedEntity> getActionsForIssue(JiraIssue issue) {
+            var res = getJson(BaseUrl + REST + "issue/" + issue.Key + "/transitions");
+            return res["transitions"].Select(t => new JiraNamedEntity(t)).ToList();
+        }
+
+        public JToken getRawIssueObject(string key) {
+            return getJson(BaseUrl + REST + "issue/" + key + "?expand=renderedFields");
         }
 
         private JContainer getJson(string url) {
@@ -150,8 +178,14 @@ namespace Atlassian.plvs.api.jira {
             req.Headers["Authorization"] = "Basic " + authInfo;
         }
 
-        private JContainer jsonOp(string method, string url, object json, HttpStatusCode expectedCode) {
-            var req = (HttpWebRequest) WebRequest.Create(url);
+        private JContainer jsonOp(string method, string tgtUrl, object json, HttpStatusCode expectedCode) {
+            var url = new StringBuilder(tgtUrl);
+
+            if (server.OldSkoolAuth) {
+                url.Append(appendAuthentication(true));
+            }
+
+            var req = (HttpWebRequest) WebRequest.Create(url.ToString());
             req.Proxy = server.NoProxy ? null : GlobalSettings.Proxy;
 
             req.Method = method;

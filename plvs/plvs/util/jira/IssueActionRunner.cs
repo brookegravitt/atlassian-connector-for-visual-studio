@@ -29,8 +29,8 @@ namespace Atlassian.plvs.util.jira {
 
             JiraIssue issueWithTime = SmartJiraServerFacade.Instance.getIssue(issue.Server, issue.Key);
             issueWithTime.SecurityLevel = SmartJiraServerFacade.Instance.getSecurityLevel(issue);
-            object soapIssueObject = SmartJiraServerFacade.Instance.getIssueSoapObject(issue);
-            List<JiraField> fieldsWithValues = JiraActionFieldType.fillFieldValues(issue, soapIssueObject, fields);
+            object rawIssueObject = SmartJiraServerFacade.Instance.getRawIssueObject(issue);
+            List<JiraField> fieldsWithValues = JiraActionFieldType.fillFieldValues(issue, rawIssueObject, fields);
             
             // PLVS-133 - this should never happen but does?
             if (model == null) {

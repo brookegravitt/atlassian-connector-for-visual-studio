@@ -4,6 +4,7 @@ using System.IO;
 using System.Xml.XPath;
 using Atlassian.plvs.util;
 using Atlassian.plvs.util.jira;
+using Newtonsoft.Json.Linq;
 
 namespace Atlassian.plvs.api.jira {
     public class JiraIssue {
@@ -52,6 +53,71 @@ namespace Atlassian.plvs.api.jira {
 
         public JiraIssue() {
             ServerLanguage = null;
+        }
+
+        public JiraIssue(JiraServer server, JToken issue) {
+            Server = server;
+
+            Key = issue["key"].Value<string>();
+            Id = issue["id"].Value<int>();
+            ProjectKey = Key.Substring(0, Key.LastIndexOf('-'));
+
+            var fields = issue["fields"];
+
+            ParentKey = fields["parent"] != null && fields["parent"].HasValues ? fields["parent"]["key"].Value<string>() : null;
+            getSubtasks(fields["subtasks"]);
+            Summary = fields["summary"].Value<string>();
+            getAttachments(fields["attachment"]);
+            Status = fields["status"]["name"].Value<string>();
+            StatusIconUrl = fields["status"]["iconUrl"].Value<string>();
+            StatusId = fields["status"]["id"].Value<int>();
+            Priority = fields["priority"]["name"].Value<string>();
+            PriorityIconUrl = fields["priority"]["iconUrl"].Value<string>();
+            PriorityId = fields["priority"]["id"].Value<int>();
+            
+            var renderedDescription = issue["renderedFields"]["description"];
+            Description = renderedDescription != null ? renderedDescription.Value<string>() : fields["description"].Value<string>();
+            
+            IssueType = fields["issuetype"]["name"].Value<string>();
+            IssueTypeIconUrl = fields["issuetype"]["iconUrl"].Value<string>();
+            IssueTypeId = fields["issuetype"]["id"].Value<int>();
+            if (fields["assignee"] != null && fields["assignee"].HasValues) {
+                Assignee = fields["assignee"]["name"].Value<string>(); 
+                JiraServerCache.Instance.getUsers(server).putUser(new JiraUser(Assignee, fields["assignee"]["displayName"].Value<string>()));
+            } else {
+                Assignee = "Unknown";
+            }
+            if (fields["reporter"] != null && fields["reporter"].HasValues) {
+                Reporter = fields["reporter"]["name"].Value<string>(); 
+                JiraServerCache.Instance.getUsers(server).putUser(new JiraUser(Reporter, fields["reporter"]["displayName"].Value<string>()));
+            } else {
+                Reporter = "Unknown";
+            }
+            CreationDate = DateTime.Parse(fields["created"].Value<string>());
+            UpdateDate = DateTime.Parse(fields["updated"].Value<string>());
+            Resolution = fields["resolution"] != null && fields["resolution"].HasValues ? fields["resolution"]["name"].Value<string>() : null;
+            ResolutionId = Resolution != null ? fields["resolution"]["id"].Value<int>() : UNKNOWN;
+
+            getTimeFieldsFromJson(issue);
+
+            if (fields["versions"] != null) {
+                foreach (var v in fields["versions"]) {
+                    Versions.Add(v["name"].Value<string>());
+                }
+            }
+            if (fields["fixVersions"] != null) {
+                foreach (var v in fields["fixVersions"]) {
+                    FixVersions.Add(v["name"].Value<string>());
+                }
+            }
+            if (fields["components"] != null) {
+                foreach (var v in fields["components"]) {
+                    Components.Add(v["name"].Value<string>());
+                }
+            }
+            Environment = fields["environment"].Value<string>();
+            getComments(fields["comment"], issue["renderedFields"]["comment"]);
+            getIssueLinks(fields["issuelinks"]);
         }
 
         public JiraIssue(JiraServer server, string serverLanguage, XPathNavigator nav) {
@@ -172,6 +238,39 @@ namespace Atlassian.plvs.api.jira {
             nav.MoveToParent();
         }
 
+        private void getAttachments(JToken atts) {
+            if (atts == null) return;
+            foreach (var att in atts) {
+                attachments.Add(new JiraAttachment(att));
+            }
+        }
+
+        private void getIssueLinks(JToken links) {
+            if (links == null) return;
+            var d = new Dictionary<int, IssueLinkType>();
+            foreach (var link in links) {
+                var type = link["type"];
+                var id = link["id"].Value<int>();
+                var ilt = new IssueLinkType(id, type["name"].Value<string>(), type["outward"].Value<string>(), type["inward"].Value<string>());
+                d[id] = ilt;
+            }
+            foreach (var link in links) {
+                var id = link["id"].Value<int>();
+                if (link["inwardIssue"] != null && link["inwardIssue"].HasValues) {
+                    d[id].InwardLinks.Add(link["inwardIssue"]["key"].Value<string>());
+                }
+                if (link["outwardIssue"] != null && link["outwardIssue"].HasValues) {
+                    d[id].OutwardLinks.Add(link["outwardIssue"]["key"].Value<string>());
+                }
+            }
+            foreach (var link in d.Values) {
+                if (link.InwardLinks.Count == 0) link.InwardLinksName = null;
+                if (link.OutwardLinks.Count == 0) link.OutwardLinksName = null;
+            }
+
+            issueLinks.AddRange(d.Values);
+        }
+
         private void getIssueLinks(XPathNavigator nav) {
             XPathExpression expr = nav.Compile("issuelinktype");
             XPathNodeIterator it = nav.Select(expr);
@@ -256,16 +355,58 @@ namespace Atlassian.plvs.api.jira {
             nav.MoveToParent();
         }
 
+        private void getComments(JToken cmts, JToken rendered) {
+            if (cmts == null) return;
+            var list = rendered != null ? rendered["comments"] : cmts["comments"];
+            var cmtTimes = new Dictionary<int, DateTime>();
+            foreach (var cmt in cmts["comments"]) {
+                cmtTimes[cmt["id"].Value<int>()] = DateTime.Parse(cmt["created"].Value<string>());
+            }
+            foreach (var comment in list) {
+                var id = comment["id"].Value<int>();
+                comments.Add(new Comment {
+                                               Body = comment["body"].Value<string>(),
+                                               Author = comment["author"] != null && comment["author"]["displayName"] != null 
+                                                    ? comment["author"]["displayName"].Value<string>() 
+                                                    : "Unknown",
+                                               Created = JiraIssueUtils.getJiraFormattedTimeString(cmtTimes[id])
+                                           });
+            }
+        }
+
         private void getSubtasks(XPathNavigator nav) {
-            XPathExpression expr = nav.Compile("subtask");
-            XPathNodeIterator it = nav.Select(expr);
+            var expr = nav.Compile("subtask");
+            var it = nav.Select(expr);
 
             if (!nav.MoveToFirstChild()) return;
             while (it.MoveNext()) {
-                string subKey = it.Current.Value;
+                var subKey = it.Current.Value;
                 SubtaskKeys.Add(subKey);
             }
             nav.MoveToParent();
+        }
+
+        private void getSubtasks(JToken subs) {
+            if (subs == null) return;
+            foreach (var sub in subs) {
+                SubtaskKeys.Add(sub["key"].Value<string>());
+            }
+        }
+
+        private void getTimeFieldsFromJson(JToken issue) {
+            JToken r = issue["renderedFields"];
+            JToken tt = issue["fields"]["timetracking"];
+            if (r == null) return;
+            OriginalEstimate = getValSafely<string>(r["timeoriginalestimate"], null);
+            RemainingEstimate = getValSafely<string>(r["timeestimate"], null);
+            TimeSpent = getValSafely<string>(r["timespent"], null);
+            OriginalEstimateInSeconds = getValSafely(tt != null ? tt["originalEstimateSeconds"] : null, 0);
+            RemainingEstimateInSeconds = getValSafely(tt != null ? tt["remainingEstimateSeconds"] : null, 0);
+            TimeSpentInSeconds = getValSafely(tt != null ? tt["timeSpentSeconds"] : null, 0);
+        }
+
+        private static T getValSafely<T>(JToken jToken, T defVal) {
+            return jToken == null ? defVal : jToken.Value<T>();
         }
 
         public JiraServer Server { get; private set; }

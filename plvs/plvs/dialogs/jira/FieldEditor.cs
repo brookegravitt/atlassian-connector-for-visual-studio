@@ -79,8 +79,8 @@ namespace Atlassian.plvs.dialogs.jira {
         private void getMetadata() {
             PlvsLogger.log("FieldEditor.getMetadata()");
 
-            object issueSoapObject = facade.getIssueSoapObject(issue);
-            List<JiraField> filledFields = JiraActionFieldType.fillFieldValues(issue, issueSoapObject, new List<JiraField> { field });
+            object rawIssueObject = facade.getRawIssueObject(issue);
+            List<JiraField> filledFields = JiraActionFieldType.fillFieldValues(issue, rawIssueObject, new List<JiraField> { field });
             field = filledFields[0];
 
             SortedDictionary<string, JiraProject> projects = JiraServerCache.Instance.getProjects(issue.Server);
@@ -93,10 +93,10 @@ namespace Atlassian.plvs.dialogs.jira {
             versions.Reverse();
             List<JiraNamedEntity> comps = facade.getComponents(issue.Server, project);
 
-            this.safeInvoke(new MethodInvoker(() => createEditorWidget(versions, comps, issueSoapObject)));
+            this.safeInvoke(new MethodInvoker(() => createEditorWidget(versions, comps, rawIssueObject)));
         }
 
-        private void createEditorWidget(IEnumerable<JiraNamedEntity> versions, IEnumerable<JiraNamedEntity> comps, object issueSoapObject) {
+        private void createEditorWidget(IEnumerable<JiraNamedEntity> versions, IEnumerable<JiraNamedEntity> comps, object rawIssueObject) {
             PlvsLogger.log("FieldEditor.createEditorWidget()");
 
             switch (JiraActionFieldType.getFieldTypeForFieldId(fieldId)) {
@@ -104,11 +104,11 @@ namespace Atlassian.plvs.dialogs.jira {
                     editorProvider = new TextLineFieldEditorProvider(field, issue.Summary, fieldValid);
                     break;
                 case JiraActionFieldType.WidgetType.DESCRIPTION:
-                    string descr = JiraIssueUtils.getIssueSoapObjectPropertyValue<string>(issueSoapObject, "description") ?? "";
+                    string descr = JiraIssueUtils.getRawIssueObjectPropertyValue<string>(rawIssueObject, "description") ?? "";
                     editorProvider = new TextAreaFieldEditorProvider(facade, issue, field, descr, fieldValid);
                     break;
                 case JiraActionFieldType.WidgetType.ENVIRONMENT:
-                    string env = JiraIssueUtils.getIssueSoapObjectPropertyValue<string>(issueSoapObject, "environment") ?? "";
+                    string env = JiraIssueUtils.getRawIssueObjectPropertyValue<string>(rawIssueObject, "environment") ?? "";
                     editorProvider = new TextAreaFieldEditorProvider(facade, issue, field, env, fieldValid);
                     break;
                 case JiraActionFieldType.WidgetType.VERSIONS:
@@ -130,7 +130,7 @@ namespace Atlassian.plvs.dialogs.jira {
                                                                 fieldValid);
                     break;
                 case JiraActionFieldType.WidgetType.TIMETRACKING:
-                    List<JiraField> fields = JiraActionFieldType.fillFieldValues(issue, issueSoapObject, new List<JiraField> {field});
+                    List<JiraField> fields = JiraActionFieldType.fillFieldValues(issue, rawIssueObject, new List<JiraField> {field});
                     editorProvider = new TimeTrackingEditorProvider(field, fields[0].Values[0], fieldValid);
                     break;
                 default:

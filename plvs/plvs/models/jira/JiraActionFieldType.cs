@@ -72,14 +72,14 @@ namespace Atlassian.plvs.models.jira {
             return TypeMap.ContainsKey(fieldId) ? TypeMap[fieldId].TypeOfWidget : WidgetType.UNSUPPORTED;
         }
 
-        public static List<JiraField> fillFieldValues(JiraIssue issue, object soapIssueObject, List<JiraField> fields) {
+        public static List<JiraField> fillFieldValues(JiraIssue issue, object rawIssueObject, List<JiraField> fields) {
             List<JiraField> result = new List<JiraField>();
 
             if (fields == null) {
                 return result;
             }
 
-            result.AddRange(fields.Select(field => fillField(issue, soapIssueObject, field)).Where(filledField => filledField != null));
+            result.AddRange(fields.Select(field => fillField(issue, rawIssueObject, field)).Where(filledField => filledField != null));
 
             addTimeFields(issue, result);
 
@@ -112,13 +112,13 @@ namespace Atlassian.plvs.models.jira {
             return field.Id.Equals(TIMEESTIMATE) || field.Id.Equals(TIMEORIGINALESTIMATE) || field.Id.Equals(TIMESPENT);
         }
 
-        private static JiraField fillField(JiraIssue issue, object soapIssueObject, JiraField field) {
+        private static JiraField fillField(JiraIssue issue, object rawIssueObject, JiraField field) {
             JiraField result = new JiraField(field);
             if (TypeMap.ContainsKey(field.Id)) {
                 WidgetTypeAndFieldFiller widgetTypeAndFieldFiller = TypeMap[field.Id];
-                result.Values = widgetTypeAndFieldFiller.Filler.getFieldValues(field.Id, issue, soapIssueObject);
+                result.Values = widgetTypeAndFieldFiller.Filler.getFieldValues(field.Id, issue, rawIssueObject);
             } else {
-                result.Values = CustomFieldFiller.getFieldValues(field.Id, issue, soapIssueObject);
+                result.Values = CustomFieldFiller.getFieldValues(field.Id, issue, rawIssueObject);
             }
             return result;
         }

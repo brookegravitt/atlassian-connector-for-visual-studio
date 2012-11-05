@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json.Linq;
 
 namespace Atlassian.plvs.api.jira {
     public class JiraAttachment {
@@ -9,6 +10,14 @@ namespace Atlassian.plvs.api.jira {
             Created = created;
             Author = author;
             Size = size;
+        }
+
+        public JiraAttachment(JToken att) {
+            Id = att["id"].Value<int>();
+            Name = att["filename"].Value<string>();
+            Created = DateTime.Parse(att["created"].Value<string>());
+            Author = att["author"]["name"].Value<string>();
+            Size = att["size"].Value<int>();
         }
 
         public int Id { get; private set; }

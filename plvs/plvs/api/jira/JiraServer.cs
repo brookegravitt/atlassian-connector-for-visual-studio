@@ -3,6 +3,11 @@ using System.Text;
 
 namespace Atlassian.plvs.api.jira {
     public class JiraServer : Server {
+
+        public int BuildNumber { get; set; }
+        public string Version { get; set; }
+        public string ServerTitle { get; set; }
+
         public bool OldSkoolAuth { get; set; }
 
         public JiraServer(string name, string url, string userName, string password, bool noProxy, bool oldSkoolAuth) 

@@ -9,6 +9,7 @@ using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.ui.jira;
 using Atlassian.plvs.windows;
+using Newtonsoft.Json.Linq;
 
 namespace Atlassian.plvs.util.jira {
     public sealed class JiraIssueUtils {
@@ -30,6 +31,10 @@ namespace Atlassian.plvs.util.jira {
             } catch (Exception) {
                 return DateTime.MinValue;
             } 
+        }
+
+        public static string getJiraFormattedTimeString(DateTime dt) {
+            return dt.ToString(JiraFormat, CultureInfo.InvariantCulture);
         }
 
         private static string fixLocale(string locale) {
@@ -84,15 +89,21 @@ namespace Atlassian.plvs.util.jira {
             return result.Trim();
         }
 
-        public static T getIssueSoapObjectPropertyValue<T>(object soapObject, string name) {
-            if (soapObject == null) {
+        public static T getRawIssueObjectPropertyValue<T>(object rawObject, string name) {
+
+            if (rawObject == null) {
                 return default(T);
             }
-            PropertyInfo property = soapObject.GetType().GetProperty(name);
+
+            if (rawObject is JToken) {
+                throw new NotImplementedException();
+            }
+
+            var property = rawObject.GetType().GetProperty(name);
             if (property == null) {
                 return default(T);
             }
-            return (T) property.GetValue(soapObject, null);
+            return (T) property.GetValue(rawObject, null);
         }
 
         public static void openInIde(string issueKey) {

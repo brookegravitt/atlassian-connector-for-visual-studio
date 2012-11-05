@@ -3,7 +3,7 @@ using Atlassian.plvs.api.jira;
 
 namespace Atlassian.plvs.models.jira.fields {
     public class SecurityFiller : FieldFiller {
-        public List<string> getFieldValues(string field, JiraIssue issue, object soapIssueObject) {
+        public List<string> getFieldValues(string field, JiraIssue issue, object rawIssueObject) {
             if (issue.SecurityLevel == null) {
                 return null;
             }

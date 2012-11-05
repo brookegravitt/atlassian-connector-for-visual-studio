@@ -15,8 +15,8 @@ namespace Atlassian.plvs.api.jira {
 
         public int Id { get; private set; }
         public string Name { get; private set; }
-        public string OutwardLinksName { get; private set; }
-        public string InwardLinksName { get; private set; }
+        public string OutwardLinksName { get; set; }
+        public string InwardLinksName { get; set; }
         public List<string> OutwardLinks { get; private set; }
         public List<string> InwardLinks { get; private set; }
 

@@ -4,8 +4,8 @@ using Atlassian.plvs.util.jira;
 
 namespace Atlassian.plvs.models.jira.fields {
     public class AssigneeFiller : FieldFiller {
-        public List<string> getFieldValues(string field, JiraIssue issue, object soapIssueObject) {
-            string value = JiraIssueUtils.getIssueSoapObjectPropertyValue<string>(soapIssueObject, "assignee");
+        public List<string> getFieldValues(string field, JiraIssue issue, object rawIssueObject) {
+            string value = JiraIssueUtils.getRawIssueObjectPropertyValue<string>(rawIssueObject, "assignee");
             return value != null ? new List<string> {value} : null; 
         }
     }
