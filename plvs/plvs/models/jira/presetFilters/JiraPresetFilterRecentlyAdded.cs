@@ -1,4 +1,5 @@
-﻿using Atlassian.plvs.api.jira;
+﻿using System;
+using Atlassian.plvs.api.jira;
 
 namespace Atlassian.plvs.models.jira.presetFilters {
     public class JiraPresetFilterRecentlyAdded: JiraPresetFilter {
@@ -8,6 +9,10 @@ namespace Atlassian.plvs.models.jira.presetFilters {
 
         public override string getFilterQueryStringNoProject() {
             return "created:previous=-1w";
+        }
+
+        public override string getJqlNoProject() {
+            return "created < -1w";
         }
 
         public override string getSortBy() {

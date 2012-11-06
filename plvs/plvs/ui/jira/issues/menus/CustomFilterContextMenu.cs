@@ -48,7 +48,12 @@ namespace Atlassian.plvs.ui.jira.issues.menus {
         private void browseFilter(object sender, EventArgs e) {
             string url = server.Url;
             try {
-                PlvsUtils.runBrowser(url + filterNode.Filter.getBrowserQueryString());
+                if (server.BuildNumber > 0) {
+                    // we have REST
+                    PlvsUtils.runBrowser(url + filterNode.Filter.getBrowserJqlQueryString());
+                } else {
+                    PlvsUtils.runBrowser(url + filterNode.Filter.getOldstyleBrowserQueryString());
+                }
             }
             catch (Exception ex) {
                 Debug.WriteLine(ex.Message);

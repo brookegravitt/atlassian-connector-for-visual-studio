@@ -1,6 +1,7 @@
 ﻿namespace Atlassian.plvs.api.jira {
     public interface JiraFilter {
-        string getFilterQueryString();
+        string getOldstyleFilterQueryString();
+        string getJql();
         string getSortBy();
     }
 }

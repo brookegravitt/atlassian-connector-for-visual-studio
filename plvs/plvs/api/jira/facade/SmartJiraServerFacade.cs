@@ -103,8 +103,8 @@ namespace Atlassian.plvs.api.jira.facade {
 
         public override List<JiraNamedEntity> getResolutions(JiraServer server) {
             return delegated(server,
-                delegate { return restFacade.getStatuses(server); },
-                delegate { return classicFacade.getStatuses(server); });
+                delegate { return restFacade.getResolutions(server); },
+                delegate { return classicFacade.getResolutions(server); });
         }
 
         public override void addComment(JiraIssue issue, string comment) {
@@ -139,8 +139,8 @@ namespace Atlassian.plvs.api.jira.facade {
 
         public override List<JiraNamedEntity> getComponents(JiraServer server, JiraProject project) {
             return delegated(server,
-                delegate { return restFacade.getVersions(server, project); },
-                delegate { return classicFacade.getVersions(server, project); });
+                delegate { return restFacade.getComponents(server, project); },
+                delegate { return classicFacade.getComponents(server, project); });
         }
 
         public override List<JiraNamedEntity> getVersions(JiraServer server, JiraProject project) {

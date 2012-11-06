@@ -1,4 +1,5 @@
-﻿using Atlassian.plvs.api.jira;
+﻿using System;
+using Atlassian.plvs.api.jira;
 
 namespace Atlassian.plvs.models.jira.presetFilters {
     public class JiraPresetFilterOutstanding : JiraPresetFilter {
@@ -8,6 +9,10 @@ namespace Atlassian.plvs.models.jira.presetFilters {
 
         public override string getFilterQueryStringNoProject() {
             return "resolution=-1";
+        }
+
+        public override string getJqlNoProject() {
+            return "resolution = Unresolved";
         }
 
         public override string getSortBy() {
