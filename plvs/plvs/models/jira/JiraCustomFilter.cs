@@ -12,10 +12,11 @@ namespace Atlassian.plvs.models.jira {
         private JiraServer server;
         public readonly Guid Guid;
 
-        private const string ISSUE_NAVIGATOR =
-            "/secure/IssueNavigator.jspa?refreshFilter=false&reset=update&show=View+%3E%3E";
+        private const string ISSUE_NAVIGATOR = "/secure/IssueNavigator.jspa?refreshFilter=false&reset=update&show=View+%3E%3E";
 
         private const string BROWSER_QUERY_SUFFIX = "&pager/start=-1&tempMax=100";
+
+        private const string ISSUE_NAVIGATOR_JQL = "/secure/IssueNavigator.jspa?reset=true&jqlQuery=";
 
         private const string FILTER_COUNT = "_jiraCustomFilterCount";
         private const string FILTER_GUID = "_jiraCustormFilterGuid_";
@@ -142,50 +143,93 @@ namespace Atlassian.plvs.models.jira {
             FILTERS.Clear();
         }
 
-        public string getBrowserQueryString() {
+        public string getOldstyleBrowserQueryString() {
             StringBuilder sb = new StringBuilder();
             sb.Append(ISSUE_NAVIGATOR).Append("&");
 
-            sb.Append(getQueryParameters());
+            sb.Append(getOldStyleQueryParameters());
 
             sb.Append(BROWSER_QUERY_SUFFIX);
 
             return sb.ToString();
         }
 
-        public string getFilterQueryString() {
-            StringBuilder sb = new StringBuilder();
+        public string getBrowserJqlQueryString() {
+            return ISSUE_NAVIGATOR_JQL + getJql();
+        }
 
-            sb.Append(getQueryParameters());
+        public string getOldstyleFilterQueryString() {
+            var sb = new StringBuilder();
+
+            sb.Append(getOldStyleQueryParameters());
 
             return sb.ToString();
+        }
+
+        public string getJql() {
+            var sb = new StringBuilder();
+            var cnt = joinEnumerables(sb, Projects, "project", p => ((JiraProject) p).Key);
+            cnt += joinEnumerables(sb, IssueTypes, "type");
+            cnt += joinEnumerables(sb, AffectsVersions, "affectedVersion");
+            cnt += joinEnumerables(sb, FixForVersions, "fixVersion");
+            cnt += joinEnumerables(sb, Components, "component");
+            cnt += joinEnumerables(sb, Resolutions, "resolution", r => r.Id != -1 ? r.Name : "Unresolved");
+            cnt += joinEnumerables(sb, Statuses, "status");
+            cnt += joinEnumerables(sb, Priorities, "priority");
+            if (Reporter == UserType.CURRENT)
+                sb.Append(cnt++ == 0 ? "" : " and ").Append("reporter = ").Append(server.UserName);
+            switch (Assignee) {
+                case UserType.CURRENT:
+                    sb.Append(cnt == 0 ? "" : " and ").Append("assignee = currentUser()");
+                    break;
+                case UserType.UNASSIGNED:
+                    sb.Append(cnt == 0 ? "" : " and ").Append("assignee is EMPTY");
+                    break;
+                default:
+                    break;
+            }
+
+            return sb.ToString();
+        }
+
+        private delegate string GetVal(JiraNamedEntity ent);
+        private static int joinEnumerables(StringBuilder sb, IEnumerable<JiraNamedEntity> ents, string name, GetVal gv) {
+            var cnt = 0;
+            joinJqlGroups(sb, ents, () => { foreach (var ent in ents) sb.Append(cnt++ == 0 ? "" : " or ").Append(name + " = \"").Append(gv(ent)).Append('"'); });
+            return cnt;
+        }
+
+        private static int joinEnumerables(StringBuilder sb, IEnumerable<JiraNamedEntity> ents, string name) {
+            var cnt = 0;
+            joinJqlGroups(sb, ents, () => { foreach (var ent in ents) sb.Append(cnt++ == 0 ? "" : " or ").Append(name + " = \"").Append(ent.Name).Append('"'); });
+            return cnt;
+        }
+
+        private static void joinJqlGroups(StringBuilder sb, IEnumerable<object> what, Action a) {
+            if (what.Count() <= 0) return;
+
+            if (sb.Length > 0) sb.Append(" and ");
+            sb.Append("(");
+            a();
+            sb.Append(")");
         }
 
         public string getSortBy() {
             return "priority";
         }
 
-        private string getQueryParameters() {
-            StringBuilder sb = new StringBuilder();
-            int first = 0;
-            foreach (JiraProject project in Projects)
-                sb.Append(first++ == 0 ? "" : "&").Append("pid=").Append(project.Id);
-            foreach (JiraNamedEntity issueType in IssueTypes)
-                sb.Append(first++ == 0 ? "" : "&").Append("type=").Append(issueType.Id);
-            foreach (JiraNamedEntity version in AffectsVersions)
-                sb.Append(first++ == 0 ? "" : "&").Append("version=").Append(version.Id);
-            foreach (JiraNamedEntity version in FixForVersions)
-                sb.Append(first++ == 0 ? "" : "&").Append("fixfor=").Append(version.Id);
-            foreach (JiraNamedEntity comp in Components)
-                sb.Append(first++ == 0 ? "" : "&").Append("component=").Append(comp.Id);
-            foreach (JiraNamedEntity resolution in Resolutions)
-                sb.Append(first++ == 0 ? "" : "&").Append("resolution=").Append(resolution.Id);
-            foreach (JiraNamedEntity status in Statuses)
-                sb.Append(first++ == 0 ? "" : "&").Append("status=").Append(status.Id);
-            foreach (JiraNamedEntity priority in Priorities)
-                sb.Append(first++ == 0 ? "" : "&").Append("priority=").Append(priority.Id);
-            if (Reporter == UserType.CURRENT)
-                sb.Append(first++ == 0 ? "" : "&").Append("reporter=").Append(server.UserName);
+        private string getOldStyleQueryParameters() {
+            var sb = new StringBuilder();
+            var first = 0;
+            foreach (var project in Projects) sb.Append(first++ == 0 ? "" : "&").Append("pid=").Append(project.Id);
+            foreach (var issueType in IssueTypes) sb.Append(first++ == 0 ? "" : "&").Append("type=").Append(issueType.Id);
+            foreach (var version in AffectsVersions) sb.Append(first++ == 0 ? "" : "&").Append("version=").Append(version.Id);
+            foreach (var version in FixForVersions) sb.Append(first++ == 0 ? "" : "&").Append("fixfor=").Append(version.Id);
+            foreach (var comp in Components) sb.Append(first++ == 0 ? "" : "&").Append("component=").Append(comp.Id);
+            foreach (var resolution in Resolutions) sb.Append(first++ == 0 ? "" : "&").Append("resolution=").Append(resolution.Id);
+            foreach (var status in Statuses) sb.Append(first++ == 0 ? "" : "&").Append("status=").Append(status.Id);
+            foreach (var priority in Priorities) sb.Append(first++ == 0 ? "" : "&").Append("priority=").Append(priority.Id);
+            if (Reporter == UserType.CURRENT) sb.Append(first++ == 0 ? "" : "&").Append("reporter=").Append(server.UserName);
             switch (Assignee) {
                 case UserType.CURRENT:
                     sb.Append(first == 0 ? "" : "&").Append("assigneeSelect=issue_current_user");

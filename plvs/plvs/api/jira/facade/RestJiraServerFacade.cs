@@ -13,13 +13,13 @@ namespace Atlassian.plvs.api.jira.facade {
 
         public override List<JiraIssue> getSavedFilterIssues(JiraServer server, JiraSavedFilter filter, int start, int count) {
             using (var rest = new RestClient(server)) {
-                return rest.getSavedFilterIssues(filter, start, count);
+                return rest.getSavedFilterIssues(filter, "priority", "desc", start, count);
             }
         }
 
         public override List<JiraIssue> getCustomFilterIssues(JiraServer server, JiraFilter filter, int start, int count) {
             using (var rest = new RestClient(server)) {
-                return rest.getCustomFilterIssues(filter, start, count);
+                return rest.getCustomFilterIssues(filter, "desc", start, count);
             }
         }
 
@@ -107,7 +107,9 @@ namespace Atlassian.plvs.api.jira.facade {
         }
 
         public override List<JiraField> getFieldsForAction(JiraIssue issue, int actionId) {
-            throw new NotImplementedException();
+            using (var rest = new RestClient(issue.Server)) {
+                return rest.getFieldsForAction(issue, actionId);
+            }
         }
 
         public override void runIssueActionWithoutParams(JiraIssue issue, JiraNamedEntity action) {
@@ -141,7 +143,9 @@ namespace Atlassian.plvs.api.jira.facade {
         }
 
         public override JiraNamedEntity getSecurityLevel(JiraIssue issue) {
-            throw new NotImplementedException();
+            using (var rest = new RestClient(issue.Server)) {
+                return rest.getSecurityLevel(issue);
+            }
         }
 
         public override void logWorkAndAutoUpdateRemaining(JiraIssue issue, string timeSpent, DateTime startDate, string comment) {

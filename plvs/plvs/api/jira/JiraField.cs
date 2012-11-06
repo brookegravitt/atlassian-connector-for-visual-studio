@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 
 namespace Atlassian.plvs.api.jira {
     public class JiraField {
@@ -14,6 +15,12 @@ namespace Atlassian.plvs.api.jira {
             Id = other.Id;
             Name = other.Name;
             Values = new List<string>(other.Values);
+        }
+
+        public JiraField(JToken fields, string name) {
+            Id = name;
+            Name = fields[name]["name"].Value<string>();
+            Values = new List<string>();
         }
 
         public string Id { get; private set; }

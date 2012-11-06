@@ -54,7 +54,7 @@ namespace Atlassian.plvs.api.jira.facade {
             using (var rss = new RssClient(server)) {
                 return setSessionCookieAndWrapExceptions(
                     server, rss,
-                    () => rss.getCustomFilterIssues(filter.getFilterQueryString(), filter.getSortBy(), "DESC", start, count));
+                    () => rss.getCustomFilterIssues(filter.getOldstyleFilterQueryString(), filter.getSortBy(), "DESC", start, count));
             }
         }
 

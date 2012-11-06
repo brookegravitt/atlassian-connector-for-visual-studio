@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
@@ -65,36 +66,37 @@ namespace Atlassian.plvs.dialogs.jira {
             manageSelections();
 
             listViewProjects.Focus();
+
+            // a hack to make all list views actuall set their selection. ListView is a spawn of satan
+            tabControl1.SelectTab(2);
+            tabControl1.SelectTab(1);
+            tabControl1.SelectTab(0);
         }
 
         private void manageSelections() {
-            foreach (JiraProject project in filter.Projects) {
-                foreach (ListViewItem item in listViewProjects.Items) {
-                    if (!project.Key.Equals(((JiraProjectListViewItem) item).Project.Key)) continue;
+            foreach (var project in filter.Projects) {
+                foreach (var item in listViewProjects.Items.Cast<ListViewItem>().Where(item => project.Key.Equals(((JiraProjectListViewItem) item).Project.Key))) {
                     item.Selected = true;
                     item.EnsureVisible();
                     break;
                 }
             }
-            foreach (JiraNamedEntity priority in filter.Priorities) {
-                foreach (ListViewItem item in listViewPriorities.Items) {
-                    if (priority.Id != (((JiraNamedEntityListViewItem)item).Entity.Id)) continue;
+            foreach (var priority in filter.Priorities) {
+                foreach (var item in listViewPriorities.Items.Cast<ListViewItem>().Where(item => priority.Id == (((JiraNamedEntityListViewItem) item).Entity.Id))) {
                     item.Selected = true;
                     item.EnsureVisible();
                     break;
                 }
             }
-            foreach (JiraNamedEntity status in filter.Statuses) {
-                foreach (ListViewItem item in listViewStatuses.Items) {
-                    if (status.Id != (((JiraNamedEntityListViewItem)item).Entity.Id)) continue;
+            foreach (var status in filter.Statuses) {
+                foreach (ListViewItem item in listViewStatuses.Items.Cast<ListViewItem>().Where(item => status.Id == (((JiraNamedEntityListViewItem) item).Entity.Id))) {
                     item.Selected = true;
                     item.EnsureVisible();
                     break;
                 }
             }
-            foreach (JiraNamedEntity resolution in filter.Resolutions) {
-                foreach (ListViewItem item in listViewResolutions.Items) {
-                    if (resolution.Id != (((JiraNamedEntityListViewItem)item).Entity.Id)) continue;
+            foreach (var resolution in filter.Resolutions) {
+                foreach (ListViewItem item in listViewResolutions.Items.Cast<ListViewItem>().Where(item => resolution.Id == (((JiraNamedEntityListViewItem) item).Entity.Id))) {
                     item.Selected = true;
                     item.EnsureVisible();
                     break;
@@ -102,17 +104,13 @@ namespace Atlassian.plvs.dialogs.jira {
             }
 
             comboBoxReporter.SelectedItem = comboBoxReporter.Items[0];
-            foreach (var item in comboBoxReporter.Items) {
-                if (!(item is UserTypeComboBoxItem)) continue;
-                if ((item as UserTypeComboBoxItem).Type != filter.Reporter) continue;
+            foreach (var item in comboBoxReporter.Items.OfType<UserTypeComboBoxItem>().Where(item => item.Type == filter.Reporter)) {
                 comboBoxReporter.SelectedItem = item;
                 break;
             }
 
             comboBoxAssignee.SelectedItem = comboBoxAssignee.Items[0];
-            foreach (var item in comboBoxAssignee.Items) {
-                if (!(item is UserTypeComboBoxItem)) continue;
-                if ((item as UserTypeComboBoxItem).Type != filter.Assignee) continue;
+            foreach (var item in comboBoxAssignee.Items.OfType<UserTypeComboBoxItem>().Where(item => item.Type == filter.Assignee)) {
                 comboBoxAssignee.SelectedItem = item;
                 break;
             }
@@ -433,6 +431,7 @@ namespace Atlassian.plvs.dialogs.jira {
             comboBoxAssignee.SelectedItem = comboBoxAssignee.Items[0];
             // make it last, so that project-related updates are not triggered too early
             listViewProjects.SelectedItems.Clear();
+            listViewIssueTypes.SelectedItems.Clear();
         }
 
         private void clearFilterValues() {

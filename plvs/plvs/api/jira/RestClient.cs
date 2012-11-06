@@ -143,13 +143,14 @@ namespace Atlassian.plvs.api.jira {
                 : resp.Select(item => new JiraNamedEntity(item)).ToList();
         }
 
-        public List<JiraIssue> getSavedFilterIssues(JiraSavedFilter filter, int start, int count) {
-            var res = getJson(filter.SearchUrl + "&startAt=" + start + "&maxResults=" + count + "&expand=renderedFields");
+        public List<JiraIssue> getSavedFilterIssues(JiraSavedFilter filter, string sortBy, string sortOrder, int start, int count) {
+            var res = getJson(BaseUrl + REST + "search?jql=" + filter.Jql + " order by " + sortBy + " " + sortOrder + "&startAt=" + start + "&maxResults=" + count + "&expand=renderedFields");
             return res["issues"].Select(issue => new JiraIssue(server, issue)).ToList();
         }
 
-        public List<JiraIssue> getCustomFilterIssues(JiraFilter filter, int start, int count) {
-            throw new NotImplementedException();
+        public List<JiraIssue> getCustomFilterIssues(JiraFilter filter, string sortOrder, int start, int count) {
+            var res = getJson(BaseUrl + REST + "search?jql=" + filter.getJql() + " order by " + filter.getSortBy() + " " + sortOrder + "&startAt=" + start + "&maxResults=" + count + "&expand=renderedFields");
+            return res["issues"].Select(issue => new JiraIssue(server, issue)).ToList();
         }
 
         public JiraIssue getIssue(string key) {
@@ -160,6 +161,22 @@ namespace Atlassian.plvs.api.jira {
         public List<JiraNamedEntity> getActionsForIssue(JiraIssue issue) {
             var res = getJson(BaseUrl + REST + "issue/" + issue.Key + "/transitions");
             return res["transitions"].Select(t => new JiraNamedEntity(t)).ToList();
+        }
+
+        public List<JiraField> getFieldsForAction(JiraIssue issue, int actionId) {
+            var res = getJson(BaseUrl + REST + "issue/" + issue.Key + "/transitions?expand=transitions.fields");
+            return (
+                from tr in res["transitions"] 
+                where tr["id"].Value<int>() == actionId
+                select tr["fields"].Select(fld => new JiraField(tr["fields"], ((JProperty)fld).Name)).ToList()
+            ).FirstOrDefault();
+        }
+
+        public JiraNamedEntity getSecurityLevel(JiraIssue issue) {
+            var i = getJson(BaseUrl + REST + "issue/" + issue.Key);
+            var sec = i["security"];
+            if (sec == null || !sec.HasValues) return null;
+            return new JiraNamedEntity(sec);
         }
 
         public JToken getRawIssueObject(string key) {

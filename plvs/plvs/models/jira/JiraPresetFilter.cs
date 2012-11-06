@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.store;
 
@@ -60,15 +61,25 @@ namespace Atlassian.plvs.models.jira {
             setNameAndProject();
         }
 
-        public string getFilterQueryString() {
-            string query = getFilterQueryStringNoProject();
+        public string getOldstyleFilterQueryString() {
+            var query = getFilterQueryStringNoProject();
             if (Project != null) {
                 return query + "&pid=" + Project.Id;
             }
             return query;
         }
 
+        public string getJql() {
+            var query = getJqlNoProject();
+            if (Project != null) {
+                return query + " and project = " + Project.Key;
+            }
+            return query;
+        }
+
         public abstract string getFilterQueryStringNoProject();
+
+        public abstract string getJqlNoProject();
 
         public abstract string getSortBy();
     }
