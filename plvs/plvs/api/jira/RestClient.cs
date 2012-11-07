@@ -180,11 +180,61 @@ namespace Atlassian.plvs.api.jira {
         }
 
         public JToken getRawIssueObject(string key) {
-            return getJson(BaseUrl + REST + "issue/" + key + "?expand=renderedFields");
+            return getJson(BaseUrl + REST + "issue/" + key + "?expand=renderedFields,editmeta");
+        }
+
+        public void runIssueActionWithoutParams(JiraIssue issue, JiraNamedEntity action) {
+            var data = new {
+                transition = new {
+                    id = action.Id
+                }
+            };
+            postJson(BaseUrl + REST + "issue/" + issue.Key + "/transitions", data);
+        }
+
+        public void runIssueActionWithParams(JiraIssue issue, JiraNamedEntity action, ICollection<JiraField> fields, string comment) {
+            object data;
+            var fldsObj = new Dictionary<string, object>();
+            foreach (var field in fields) {
+                fldsObj[field.Id] = field.getJsonValue();
+            }
+            if (comment != null) {
+                var commentObj = new List<object> { new { add = new { body = comment } } };
+                data = new {
+                    update = new { comment = commentObj },
+                    transition = new { id = action.Id },
+                    fields = fldsObj
+                };
+            } else {
+                data = new {
+                    transition = new { id = action.Id },
+                    fields = fldsObj
+                };
+            }
+
+            postJson(BaseUrl + REST + "issue/" + issue.Key + "/transitions", data);
+        }
+
+        public void updateIssue(JiraIssue issue, ICollection<JiraField> fields) {
+            var fldsObj = new Dictionary<string, object>();
+            foreach (var field in fields) {
+                fldsObj[field.Id] = field.getJsonValue();
+            }
+            object data = new { fields = fldsObj };
+
+            putJson(BaseUrl + REST + "issue/" + issue.Key, data);
         }
 
         private JContainer getJson(string url) {
             return jsonOp("GET", url, null, HttpStatusCode.OK);
+        }
+
+        private void postJson(string url, object data) {
+            jsonOp("POST", url, data, HttpStatusCode.NoContent);
+        }
+
+        private void putJson(string url, object data) {
+            jsonOp("PUT", url, data, HttpStatusCode.NoContent);
         }
 
         private void setBasicAuthHeader(WebRequest req) {
@@ -206,31 +256,48 @@ namespace Atlassian.plvs.api.jira {
             req.Proxy = server.NoProxy ? null : GlobalSettings.Proxy;
 
             req.Method = method;
-            req.Timeout = GlobalSettings.NetworkTimeout * 1000;
-            req.ReadWriteTimeout = GlobalSettings.NetworkTimeout * 2000;
+            req.Timeout = GlobalSettings.NetworkTimeout*1000;
+            req.ReadWriteTimeout = GlobalSettings.NetworkTimeout*2000;
             req.ContentType = "application/json";
             setBasicAuthHeader(req);
+
+            string data = null;
 
             if (!method.Equals("GET")) {
                 using (var requestStream = req.GetRequestStream()) {
                     var sw = new StreamWriter(requestStream);
-                    var value = JsonConvert.SerializeObject(json);
-                    sw.Write(value);
+                    data = JsonConvert.SerializeObject(json);
+                    sw.Write(data);
                     sw.Flush();
                 }
             }
-            var response = (HttpWebResponse)req.GetResponse();
-            if (response.StatusCode == expectedCode) {
-                using (var stream = response.GetResponseStream()) {
+
+            HttpWebResponse response = null;
+            try {
+                response = (HttpWebResponse) req.GetResponse();
+                if (response.StatusCode == expectedCode) {
+                    using (var stream = response.GetResponseStream()) {
+                        if (stream != null) {
+                            var reader = new StreamReader(stream);
+                            var value = reader.ReadToEnd();
+                            var result = JsonConvert.DeserializeObject(value) as JContainer;
+                            return result;
+                        }
+                        return null;
+                    }
+                }
+            } catch (WebException e) {
+                using (var stream = e.Response.GetResponseStream()) {
                     if (stream != null) {
                         var reader = new StreamReader(stream);
                         var value = reader.ReadToEnd();
-                        var result = JsonConvert.DeserializeObject(value) as JContainer;
-                        return result;
+//                        var result = JsonConvert.DeserializeObject(value) as JContainer;
+                        throw new WebException(e.Message + "<br><br>Url: " + tgtUrl + (data != null ? ("<br>Data: " + data) : "") + "<br>Response: " + value + "<br>");
                     }
-                    return null;
                 }
+                throw;
             }
+
 
             throw new WebException(UNEXPECTED + response.StatusCode);
         }

@@ -17,5 +17,9 @@ namespace Atlassian.plvs.models.jira.fields {
             List<string> result = new List<string> {dateString};
             return result;
         }
+
+        public string getSettablePropertyName(string id, JiraIssue issue, object rawIssueObject) {
+            return null;
+        }
     }
 }

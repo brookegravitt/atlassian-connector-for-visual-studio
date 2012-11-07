@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Atlassian.plvs.api.jira;
 
 namespace Atlassian.plvs.models.jira.fields {
@@ -7,6 +8,10 @@ namespace Atlassian.plvs.models.jira.fields {
             return issue.TimeSpent == null 
                        ? new List<string> {translate(issue.OriginalEstimate)} 
                        : new List<string> {translate(issue.RemainingEstimate)};
+        }
+
+        public string getSettablePropertyName(string id, JiraIssue issue, object rawIssueObject) {
+            return null;
         }
 
         private static string translate(string displayValue) {

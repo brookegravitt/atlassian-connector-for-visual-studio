@@ -113,11 +113,15 @@ namespace Atlassian.plvs.api.jira.facade {
         }
 
         public override void runIssueActionWithoutParams(JiraIssue issue, JiraNamedEntity action) {
-            throw new NotImplementedException();
+            using (var rest = new RestClient(issue.Server)) {
+                rest.runIssueActionWithoutParams(issue, action);
+            }
         }
 
         public override void runIssueActionWithParams(JiraIssue issue, JiraNamedEntity action, ICollection<JiraField> fields, string comment) {
-            throw new NotImplementedException();
+            using (var rest = new RestClient(issue.Server)) {
+                rest.runIssueActionWithParams(issue, action, fields, comment);
+            }
         }
 
         public override List<JiraNamedEntity> getComponents(JiraServer server, JiraProject project) {
@@ -161,7 +165,9 @@ namespace Atlassian.plvs.api.jira.facade {
         }
 
         public override void updateIssue(JiraIssue issue, ICollection<JiraField> fields) {
-            throw new NotImplementedException();
+            using (var rest = new RestClient(issue.Server)) {
+                rest.updateIssue(issue, fields);
+            }
         }
 
         public override void uploadAttachment(JiraIssue issue, string name, byte[] attachment) {
