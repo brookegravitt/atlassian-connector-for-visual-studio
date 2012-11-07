@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -95,8 +96,11 @@ namespace Atlassian.plvs.util.jira {
                 return default(T);
             }
 
-            if (rawObject is JToken) {
-                throw new NotImplementedException();
+            var t = rawObject as JToken;
+            if (t != null) {
+                var prop = t["fields"][name];
+                if (prop == null) return default(T);
+                return prop.HasValues ? prop["name"].Value<T>() : prop.Value<T>();
             }
 
             var property = rawObject.GetType().GetProperty(name);
@@ -104,6 +108,27 @@ namespace Atlassian.plvs.util.jira {
                 return default(T);
             }
             return (T) property.GetValue(rawObject, null);
+        }
+
+        public static T[] getRawIssueObjectPropertyValueArray<T>(object rawObject, string name)  {
+
+            if (rawObject == null) {
+                return default(T[]);
+            }
+
+            var t = rawObject as JToken;
+            if (t != null) {
+                var prop = t["fields"][name];
+                return prop == null 
+                    ? default(T[]) 
+                    : prop.Select(ch => (T) ((object) ch)).ToArray();
+            }
+
+            var property = rawObject.GetType().GetProperty(name);
+            if (property == null) {
+                return default(T[]);
+            }
+            return (T[])property.GetValue(rawObject, null);
         }
 
         public static void openInIde(string issueKey) {

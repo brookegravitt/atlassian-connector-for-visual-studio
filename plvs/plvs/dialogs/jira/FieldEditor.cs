@@ -82,6 +82,7 @@ namespace Atlassian.plvs.dialogs.jira {
             object rawIssueObject = facade.getRawIssueObject(issue);
             List<JiraField> filledFields = JiraActionFieldType.fillFieldValues(issue, rawIssueObject, new List<JiraField> { field });
             field = filledFields[0];
+            field.setRawIssueObject(rawIssueObject);
 
             SortedDictionary<string, JiraProject> projects = JiraServerCache.Instance.getProjects(issue.Server);
             if (!projects.ContainsKey(issue.ProjectKey)) return;

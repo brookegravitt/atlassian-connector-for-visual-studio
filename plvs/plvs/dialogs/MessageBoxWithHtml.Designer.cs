@@ -34,6 +34,7 @@
             // 
             // buttonOk
             // 
+            this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonOk.Location = new System.Drawing.Point(377, 151);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
@@ -44,6 +45,9 @@
             // 
             // webContent
             // 
+            this.webContent.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.webContent.IsWebBrowserContextMenuEnabled = false;
             this.webContent.Location = new System.Drawing.Point(67, 12);
             this.webContent.MinimumSize = new System.Drawing.Size(20, 20);
@@ -65,6 +69,9 @@
             // 
             // panel1
             // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BackColor = System.Drawing.Color.White;
             this.panel1.Controls.Add(this.labelIcon);
             this.panel1.Controls.Add(this.webContent);
@@ -75,6 +82,7 @@
             // 
             // linkCopyToClipboard
             // 
+            this.linkCopyToClipboard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.linkCopyToClipboard.AutoSize = true;
             this.linkCopyToClipboard.Location = new System.Drawing.Point(15, 151);
             this.linkCopyToClipboard.Name = "linkCopyToClipboard";
@@ -92,7 +100,6 @@
             this.Controls.Add(this.linkCopyToClipboard);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.buttonOk);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;

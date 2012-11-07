@@ -9,7 +9,13 @@ namespace Atlassian.plvs.models.jira.fields {
     public class CustomFieldFiller : FieldFiller {
         public List<string> getFieldValues(string field, JiraIssue issue, object rawIssueObject) {
 
-            var customFieldValues = JiraIssueUtils.getRawIssueObjectPropertyValue<object[]>(rawIssueObject, "customFieldValues");
+            var issueToken = rawIssueObject as JToken;
+            if (issueToken != null) {
+                var value = JiraIssueUtils.getRawIssueObjectPropertyValue<object>(rawIssueObject, field);
+                return value != null ? new List<string> { value.ToString() } : null;
+            }
+
+            var customFieldValues = JiraIssueUtils.getRawIssueObjectPropertyValueArray<object>(rawIssueObject, "customFieldValues");
 
             if (customFieldValues == null || customFieldValues.Length == 0) {
                 return null;
@@ -26,6 +32,10 @@ namespace Atlassian.plvs.models.jira.fields {
 
                 return (from val in values select val.ToString()).ToList();
             }
+            return null;
+        }
+
+        public string getSettablePropertyName(string id, JiraIssue issue, object rawIssueObject) {
             return null;
         }
     }

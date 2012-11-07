@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.models.jira.fields;
+using Newtonsoft.Json.Linq;
 
 namespace Atlassian.plvs.models.jira {
     class JiraActionFieldType {
@@ -81,28 +83,30 @@ namespace Atlassian.plvs.models.jira {
 
             result.AddRange(fields.Select(field => fillField(issue, rawIssueObject, field)).Where(filledField => filledField != null));
 
-            addTimeFields(issue, result);
+            addTimeFields(issue, rawIssueObject is JToken, result);
 
             return result;
         }
 
-        private static void addTimeFields(JiraIssue issue, ICollection<JiraField> result) {
-            int originalEstimate = issue.OriginalEstimateInSeconds;
-            int remainingEstimate = issue.RemainingEstimateInSeconds;
-            int timeSpent = issue.TimeSpentInSeconds;
+        private static void addTimeFields(JiraIssue issue, bool useRestApi, ICollection<JiraField> result) {
+            if (useRestApi) return;
+
+            var originalEstimate = issue.OriginalEstimateInSeconds;
+            var remainingEstimate = issue.RemainingEstimateInSeconds;
+            var timeSpent = issue.TimeSpentInSeconds;
 
             if (originalEstimate != 0) {
-                JiraField originalEstimateField = new JiraField(TIMEORIGINALESTIMATE, "Original Estimate");
+                var originalEstimateField = new JiraField(TIMEORIGINALESTIMATE, "Original Estimate");
                 originalEstimateField.Values.Add(originalEstimate.ToString());
                 result.Add(originalEstimateField);
             }
             if (remainingEstimate != 0) {
-                JiraField remainingEstimateField = new JiraField(TIMEESTIMATE, "Remaining Estimate");
+                var remainingEstimateField = new JiraField(TIMEESTIMATE, "Remaining Estimate");
                 remainingEstimateField.Values.Add(remainingEstimate.ToString());
                 result.Add(remainingEstimateField);
             }
             if (timeSpent != 0) {
-                JiraField timeSpentField = new JiraField(TIMESPENT, "Time Spent");
+                var timeSpentField = new JiraField(TIMESPENT, "Time Spent");
                 timeSpentField.Values.Add(timeSpent.ToString());
                 result.Add(timeSpentField);
             }
@@ -117,8 +121,15 @@ namespace Atlassian.plvs.models.jira {
             if (TypeMap.ContainsKey(field.Id)) {
                 WidgetTypeAndFieldFiller widgetTypeAndFieldFiller = TypeMap[field.Id];
                 result.Values = widgetTypeAndFieldFiller.Filler.getFieldValues(field.Id, issue, rawIssueObject);
+                result.SettablePropertyName = widgetTypeAndFieldFiller.Filler.getSettablePropertyName(field.Id, issue, rawIssueObject);
             } else {
-                result.Values = CustomFieldFiller.getFieldValues(field.Id, issue, rawIssueObject);
+                try {
+                    result.Values = CustomFieldFiller.getFieldValues(field.Id, issue, rawIssueObject);
+                    result.SettablePropertyName = CustomFieldFiller.getSettablePropertyName(field.Id, issue, rawIssueObject);
+                } catch (Exception) {
+                    if (!field.Required) return null;
+                    throw;
+                }
             }
             return result;
         }
