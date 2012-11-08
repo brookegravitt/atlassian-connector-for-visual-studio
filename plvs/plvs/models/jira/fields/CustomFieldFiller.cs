@@ -12,7 +12,9 @@ namespace Atlassian.plvs.models.jira.fields {
             var issueToken = rawIssueObject as JToken;
             if (issueToken != null) {
                 var value = JiraIssueUtils.getRawIssueObjectPropertyValue<object>(rawIssueObject, field);
-                return value != null ? new List<string> { value.ToString() } : null;
+                if (value == null) return null;
+                var arr = value as JArray;
+                return arr != null ? arr.Select(el => el.ToString()).ToList() : new List<string> { value.ToString() };
             }
 
             var customFieldValues = JiraIssueUtils.getRawIssueObjectPropertyValueArray<object>(rawIssueObject, "customFieldValues");
