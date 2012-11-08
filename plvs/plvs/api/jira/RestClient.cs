@@ -87,6 +87,8 @@ namespace Atlassian.plvs.api.jira {
                 return buildNumber >= 721;
 
             } catch(WebException e) {
+                if (((HttpWebResponse)e.Response).StatusCode == HttpStatusCode.NotFound) return false;
+//                if (e.Status == WebExceptionStatus.ProtocolError && e.Response.)
                 if (e.Message.StartsWith(UNEXPECTED)) {
                     return false;
                 }
@@ -309,7 +311,7 @@ namespace Atlassian.plvs.api.jira {
                         var reader = new StreamReader(stream);
                         var value = reader.ReadToEnd();
 //                        var result = JsonConvert.DeserializeObject(value) as JContainer;
-                        throw new WebException(e.Message + "<br><br>Url: " + tgtUrl + (data != null ? ("<br>Data: " + data) : "") + "<br>Response: " + value + "<br>");
+                        throw new WebException(e.Message + "<br><br>Url: " + tgtUrl + (data != null ? ("<br>Data: " + data) : "") + "<br>Response: " + value + "<br>", e.InnerException, e.Status, e.Response);
                     }
                 }
                 throw;
