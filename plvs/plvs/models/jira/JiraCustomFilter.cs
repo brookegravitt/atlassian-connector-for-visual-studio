@@ -168,14 +168,14 @@ namespace Atlassian.plvs.models.jira {
 
         public string getJql() {
             var sb = new StringBuilder();
-            var cnt = joinEnumerables(sb, Projects, "project", p => ((JiraProject) p).Key);
-            cnt += joinEnumerables(sb, IssueTypes, "type");
-            cnt += joinEnumerables(sb, AffectsVersions, "affectedVersion");
-            cnt += joinEnumerables(sb, FixForVersions, "fixVersion");
-            cnt += joinEnumerables(sb, Components, "component");
+            var cnt = joinEnumerables(sb, Projects, "project", p => p.Key);
+            cnt += joinEnumerables(sb, IssueTypes, "type", t => t.Name);
+            cnt += joinEnumerables(sb, AffectsVersions, "affectedVersion", v => v.Name);
+            cnt += joinEnumerables(sb, FixForVersions, "fixVersion", f => f.Name);
+            cnt += joinEnumerables(sb, Components, "component", c => c.Name);
             cnt += joinEnumerables(sb, Resolutions, "resolution", r => r.Id != -1 ? r.Name : "Unresolved");
-            cnt += joinEnumerables(sb, Statuses, "status");
-            cnt += joinEnumerables(sb, Priorities, "priority");
+            cnt += joinEnumerables(sb, Statuses, "status", s => s.Name);
+            cnt += joinEnumerables(sb, Priorities, "priority", p => p.Name);
             if (Reporter == UserType.CURRENT)
                 sb.Append(cnt++ == 0 ? "" : " and ").Append("reporter = ").Append(server.UserName);
             switch (Assignee) {
@@ -192,20 +192,20 @@ namespace Atlassian.plvs.models.jira {
             return sb.ToString();
         }
 
-        private delegate string GetVal(JiraNamedEntity ent);
-        private static int joinEnumerables(StringBuilder sb, IEnumerable<JiraNamedEntity> ents, string name, GetVal gv) {
+        private delegate string GetVal<T>(T ent);
+        private static int joinEnumerables<T>(StringBuilder sb, IEnumerable<T> ents, string name, GetVal<T> gv) {
             var cnt = 0;
             joinJqlGroups(sb, ents, () => { foreach (var ent in ents) sb.Append(cnt++ == 0 ? "" : " or ").Append(name + " = \"").Append(gv(ent)).Append('"'); });
             return cnt;
         }
 
-        private static int joinEnumerables(StringBuilder sb, IEnumerable<JiraNamedEntity> ents, string name) {
-            var cnt = 0;
-            joinJqlGroups(sb, ents, () => { foreach (var ent in ents) sb.Append(cnt++ == 0 ? "" : " or ").Append(name + " = \"").Append(ent.Name).Append('"'); });
-            return cnt;
-        }
+//        private static int joinEnumerables<T>(StringBuilder sb, IEnumerable<T> ents, string name) {
+//            var cnt = 0;
+//            joinJqlGroups(sb, ents, () => { foreach (var ent in ents) sb.Append(cnt++ == 0 ? "" : " or ").Append(name + " = \"").Append(ent.Name).Append('"'); });
+//            return cnt;
+//        }
 
-        private static void joinJqlGroups(StringBuilder sb, IEnumerable<object> what, Action a) {
+        private static void joinJqlGroups<T>(StringBuilder sb, IEnumerable<T> what, Action a) {
             if (what.Count() <= 0) return;
 
             if (sb.Length > 0) sb.Append(" and ");
@@ -245,7 +245,7 @@ namespace Atlassian.plvs.models.jira {
         }
 
         public override string ToString() {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             if (Empty)
                 return "Filter not defined\n\nRight-click to define the filter";
@@ -254,28 +254,23 @@ namespace Atlassian.plvs.models.jira {
 
             if (Projects.Count > 0) {
                 sb.Append("\nProjects: ");
-                foreach (JiraProject project in Projects)
-                    sb.Append(project.Key).Append(" ");
+                foreach (var project in Projects) sb.Append(project.Key).Append(" ");
             }
             if (IssueTypes.Count > 0) {
                 sb.Append("\nIssue Types: ");
-                foreach (JiraNamedEntity issueType in IssueTypes)
-                    sb.Append(issueType.Name).Append(" ");
+                foreach (var issueType in IssueTypes) sb.Append(issueType.Name).Append(" ");
             }
             if (AffectsVersions.Count > 0) {
                 sb.Append("\nAffects Versions: ");
-                foreach (JiraNamedEntity version in AffectsVersions)
-                    sb.Append(version.Name).Append(" ");
+                foreach (var version in AffectsVersions) sb.Append(version.Name).Append(" ");
             }
             if (FixForVersions.Count > 0) {
                 sb.Append("\nFix For Versions: ");
-                foreach (JiraNamedEntity version in FixForVersions)
-                    sb.Append(version.Name).Append(" ");
+                foreach (var version in FixForVersions) sb.Append(version.Name).Append(" ");
             }
             if (Components.Count > 0) {
                 sb.Append("\nComponents: ");
-                foreach (JiraNamedEntity comp in Components)
-                    sb.Append(comp.Name).Append(" ");
+                foreach (var comp in Components) sb.Append(comp.Name).Append(" ");
             }
             if (Reporter != UserType.UNDEFINED) {
                 sb.Append("\nReporter: ").Append(Reporter.GetStringValue());
@@ -285,18 +280,15 @@ namespace Atlassian.plvs.models.jira {
             }
             if (Statuses.Count > 0) {
                 sb.Append("\nStatuses: ");
-                foreach (JiraNamedEntity status in Statuses)
-                    sb.Append(status.Name).Append(" ");
+                foreach (var status in Statuses) sb.Append(status.Name).Append(" ");
             }
             if (Resolutions.Count > 0) {
                 sb.Append("\nResolutions: ");
-                foreach (JiraNamedEntity resolution in Resolutions)
-                    sb.Append(resolution.Name).Append(" ");
+                foreach (var resolution in Resolutions) sb.Append(resolution.Name).Append(" ");
             }
             if (Priorities.Count > 0) {
                 sb.Append("\nPriorities: ");
-                foreach (JiraNamedEntity priority in Priorities)
-                    sb.Append(priority.Name).Append(" ");
+                foreach (var priority in Priorities) sb.Append(priority.Name).Append(" ");
             }
  
             sb.Append("\n\nRight-click for filter operations");
@@ -307,20 +299,20 @@ namespace Atlassian.plvs.models.jira {
         public static void load() {
             FILTERS.Clear();
 
-            ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
+            var store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
 
-            int filtersCount = store.loadParameter(FILTER_COUNT, 0);
-            ICollection<JiraServer> servers = JiraServerModel.Instance.getAllServers();
+            var filtersCount = store.loadParameter(FILTER_COUNT, 0);
+            var servers = JiraServerModel.Instance.getAllServers();
 
             for (int i = 0; i < filtersCount; ++i) {
-                string filterGuidStr = store.loadParameter(FILTER_GUID + i, null);
-                Guid filterGuid = new Guid(filterGuidStr);
-                string filterServerGuidStr = store.loadParameter(getParamKey(filterGuid, FILTER_SERVER_GUID + filterGuidStr), null);
-                Guid serverGuid = new Guid(filterServerGuidStr);
-                JiraServer server = servers.FirstOrDefault(s => s.GUID.Equals(serverGuid));
+                var filterGuidStr = store.loadParameter(FILTER_GUID + i, null);
+                var filterGuid = new Guid(filterGuidStr);
+                var filterServerGuidStr = store.loadParameter(getParamKey(filterGuid, FILTER_SERVER_GUID + filterGuidStr), null);
+                var serverGuid = new Guid(filterServerGuidStr);
+                var server = servers.FirstOrDefault(s => s.GUID.Equals(serverGuid));
                 if (server == null) continue;
 
-                JiraCustomFilter filter = new JiraCustomFilter(server, filterGuid)
+                var filter = new JiraCustomFilter(server, filterGuid)
                                           {
                                               Name = store.loadParameter(getParamKey(filterGuid, FILTER_NAME + filterGuidStr), CUSTOM_FILTER_DEFAULT_NAME)
                                           };
@@ -341,15 +333,15 @@ namespace Atlassian.plvs.models.jira {
         }
 
         public static void save() {
-            ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
+            var store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
 
             store.storeParameter(FILTER_COUNT, FILTERS.Count);
-            int i = 0;
+            var i = 0;
             foreach (var filter in FILTERS) {
                 store.storeParameter(FILTER_GUID + i, filter.Key.ToString());
                 store.storeParameter(getParamKey(filter.Key, FILTER_SERVER_GUID + filter.Key), filter.Value.server.GUID.ToString());
 
-                JiraCustomFilter f = filter.Value;
+                var f = filter.Value;
 
                 store.storeParameter(getParamKey(filter.Key, FILTER_NAME + filter.Key), filter.Value.Name);
 

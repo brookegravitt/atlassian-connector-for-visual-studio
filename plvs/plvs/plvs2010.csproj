@@ -919,10 +919,13 @@
     <Content Include="Resources\icons\dropzone.png" />
     <Content Include="Resources\icons\edit.png" />
     <Content Include="Resources\icons\expand_all.png" />
+    <Content Include="Resources\icons\find-bamboo.png" />
     <Content Include="Resources\icons\find-jira.png" />
     <Content Include="Resources\icons\folder-bamboo.png" />
     <Content Include="Resources\icons\folder-jira.png" />
     <Content Include="Resources\icons\global_properties.png" />
+    <Content Include="Resources\icons\icn_comment.gif" />
+    <Content Include="Resources\icons\icn_label.gif" />
     <Content Include="Resources\icons\icn_plan_disabled.gif" />
     <Content Include="Resources\icons\icn_plan_failed.gif" />
     <Content Include="Resources\icons\icn_plan_passed.gif" />
@@ -991,6 +994,7 @@
     <None Include="third party\ankh\LICENSE.rtf" />
     <Content Include="Resources\icons\vs2008.bmp" />
     <Content Include="Resources\icons\vs2010.bmp" />
+    <Content Include="Resources\icons\vs2012.bmp" />
     <Content Include="Resources\icons\VSObject_Class.png" />
     <Content Include="Resources\icons\VSObject_Namespace.png" />
     <Content Include="Resources\texts\attachment_download_html.txt" />
@@ -1004,6 +1008,7 @@
     <Content Include="Resources\texts\throbber_html.txt" />
     <None Include="source.extension.vsixmanifest" />
     <Content Include="third party\ankh\Ankh.ExtensionPoints.dll" />
+    <Content Include="third party\newtonsoft\Newtonsoft.Json.dll" />
     <Content Include="third party\treeviewadv\Aga.Controls.dll" />
     <Content Include="third party\treeviewadv\license.txt" />
   </ItemGroup>

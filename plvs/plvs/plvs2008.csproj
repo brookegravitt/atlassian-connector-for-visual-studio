@@ -31,6 +31,7 @@
     <Reference Include="Microsoft.VisualStudio.TextManager.Interop" />
     <Reference Include="Microsoft.VisualStudio.Shell.9.0" />
     <Reference Include="Microsoft.VisualStudio.TextManager.Interop.8.0, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
     <Reference Include="PresentationCore">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
@@ -65,6 +66,10 @@
     <Compile Include="api\bamboo\BuildArtifact.cs" />
     <Compile Include="api\bamboo\rest\RestSession.cs" />
     <Compile Include="api\CredentialUtils.cs" />
+    <Compile Include="api\jira\facade\AbstractJiraServerFacade.cs" />
+    <Compile Include="api\jira\facade\ClassicJiraServerFacade.cs" />
+    <Compile Include="api\jira\facade\RestJiraServerFacade.cs" />
+    <Compile Include="api\jira\facade\SmartJiraServerFacade.cs" />
     <Compile Include="api\jira\FiveOhThreeJiraException.cs" />
     <Compile Include="api\jira\JiraAuthenticatedClient.cs" />
     <Compile Include="api\jira\RestClient.cs" />
@@ -77,7 +82,6 @@
     <Compile Include="api\jira\JiraProject.cs" />
     <Compile Include="api\jira\JiraSavedFilter.cs" />
     <Compile Include="api\jira\JiraServer.cs" />
-    <Compile Include="api\jira\JiraServerFacade.cs" />
     <Compile Include="api\jira\JiraUser.cs" />
     <Compile Include="api\jira\RssClient.cs" />
     <Compile Include="api\LoginException.cs" />
@@ -361,6 +365,9 @@
       <DependentUpon>TabCrucible.cs</DependentUpon>
     </Compile>
     <Compile Include="ui\jira\fields\ResolutionEditorProvider.cs" />
+    <Compile Include="ui\jira\issues\menus\SavedFilterContextMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ui\jira\JiraActiveIssueManager.cs" />
     <Compile Include="ui\jira\JiraProjectListViewItem.cs" />
     <Compile Include="ui\jira\fields\DateFieldEditorProvider.cs" />
@@ -929,6 +936,7 @@
     <Content Include="Resources\icons\vs2010.bmp" />
     <None Include="Resources\icons\VSObject_Class.png" />
     <None Include="Resources\icons\VSObject_Namespace.png" />
+    <Content Include="Resources\icons\vs2012.bmp" />
     <Content Include="Resources\texts\attachment_download_html.txt" />
     <Content Include="Resources\texts\autoupdate_html.txt" />
     <Content Include="Resources\texts\build_summary_html.txt" />
@@ -939,6 +947,7 @@
     <Content Include="Resources\texts\issue_summary_original_estimate_editable_html.txt" />
     <Content Include="Resources\texts\throbber_html.txt" />
     <Content Include="third party\ankh\Ankh.ExtensionPoints.dll" />
+    <Content Include="third party\newtonsoft\Newtonsoft.Json.dll" />
     <Content Include="third party\treeviewadv\Aga.Controls.dll" />
     <Content Include="third party\treeviewadv\license.txt" />
   </ItemGroup>

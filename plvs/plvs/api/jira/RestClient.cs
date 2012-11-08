@@ -100,7 +100,11 @@ namespace Atlassian.plvs.api.jira {
             return resp.Select(project => new JiraProject(project)).ToList();
         }
 
-        public List<JiraNamedEntity> getIssueTypes(bool subtasks, JiraProject project = null) {
+        public List<JiraNamedEntity> getIssueTypes(bool subtasks) {
+            return getIssueTypes(subtasks, null);
+        }
+
+        public List<JiraNamedEntity> getIssueTypes(bool subtasks, JiraProject project) {
             var url = BaseUrl + REST + (project != null ? "project/" + project.Key : "issuetype");
             JToken resp = getJson(url);
             if (project != null) {
@@ -135,7 +139,11 @@ namespace Atlassian.plvs.api.jira {
             return getNamedEntities("project/" + project.Key, "versions");
         }
 
-        private List<JiraNamedEntity> getNamedEntities(string what, string sub = null) {
+        private List<JiraNamedEntity> getNamedEntities(string what) {
+            return getNamedEntities(what, null);
+        }
+
+        private List<JiraNamedEntity> getNamedEntities(string what, string sub) {
             var url = BaseUrl + REST + what;
             var resp = getJson(url);
             return sub != null 
@@ -225,12 +233,21 @@ namespace Atlassian.plvs.api.jira {
             putJson(BaseUrl + REST + "issue/" + issue.Key, data);
         }
 
+        public void addComment(JiraIssue issue, string comment) {
+            var data = new { body = comment };
+            postJson(BaseUrl + REST + "issue/" + issue.Key + "/comment", data, HttpStatusCode.Created);
+        }
+
         private JContainer getJson(string url) {
             return jsonOp("GET", url, null, HttpStatusCode.OK);
         }
 
         private void postJson(string url, object data) {
-            jsonOp("POST", url, data, HttpStatusCode.NoContent);
+            postJson(url, data, HttpStatusCode.NoContent);
+        }
+
+        private void postJson(string url, object data, HttpStatusCode code) {
+            jsonOp("POST", url, data, code);
         }
 
         private void putJson(string url, object data) {
@@ -272,7 +289,7 @@ namespace Atlassian.plvs.api.jira {
                 }
             }
 
-            HttpWebResponse response = null;
+            HttpWebResponse response;
             try {
                 response = (HttpWebResponse) req.GetResponse();
                 if (response.StatusCode == expectedCode) {

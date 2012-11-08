@@ -66,19 +66,19 @@ namespace Atlassian.plvs.api.jira.facade {
 
         public override List<JiraProject> getProjects(JiraServer server) {
             using (var s = createSoapSession(server)) {
-                return setSoapTokenAndWrapExceptions(server, s, s.getProjects);
+                return setSoapTokenAndWrapExceptions(server, s, () => s.getProjects());
             }
         }
 
         public override List<JiraNamedEntity> getIssueTypes(JiraServer server) {
             using (var s = createSoapSession(server)) {
-                return setSoapTokenAndWrapExceptions(server, s, s.getIssueTypes);
+                return setSoapTokenAndWrapExceptions(server, s, () => s.getIssueTypes());
             }
         }
 
         public override List<JiraNamedEntity> getSubtaskIssueTypes(JiraServer server) {
             using (var s = createSoapSession(server)) {
-                return setSoapTokenAndWrapExceptions(server, s, s.getSubtaskIssueTypes);
+                return setSoapTokenAndWrapExceptions(server, s, () => s.getSubtaskIssueTypes());
             }
         }
 
@@ -96,25 +96,25 @@ namespace Atlassian.plvs.api.jira.facade {
 
         public override List<JiraSavedFilter> getSavedFilters(JiraServer server) {
             using (var s = createSoapSession(server)) {
-                return setSoapTokenAndWrapExceptions(server, s, s.getSavedFilters);
+                return setSoapTokenAndWrapExceptions(server, s, () => s.getSavedFilters());
             }
         }
 
         public override List<JiraNamedEntity> getPriorities(JiraServer server) {
             using (SoapSession s = createSoapSession(server)) {
-                return setSoapTokenAndWrapExceptions(server, s, s.getPriorities);
+                return setSoapTokenAndWrapExceptions(server, s, () => s.getPriorities());
             }
         }
 
         public override List<JiraNamedEntity> getStatuses(JiraServer server) {
             using (var s = createSoapSession(server)) {
-                return setSoapTokenAndWrapExceptions(server, s, s.getStatuses);
+                return setSoapTokenAndWrapExceptions(server, s, () => s.getStatuses());
             }
         }
 
         public override List<JiraNamedEntity> getResolutions(JiraServer server) {
             using (var s = createSoapSession(server)) {
-                return setSoapTokenAndWrapExceptions(server, s, s.getResolutions);
+                return setSoapTokenAndWrapExceptions(server, s, () => s.getResolutions());
             }
         }
 
