@@ -234,6 +234,49 @@ namespace Atlassian.plvs.api.jira {
             postJson(BaseUrl + REST + "issue/" + issue.Key + "/comment", data, HttpStatusCode.Created);
         }
 
+        public void uploadAttachment(JiraIssue issue, string name, byte[] attachment) {
+//            PlvsLogger.log("Posting attachment: " + name + " (" + attachment.Length + ") to JIRA issue " + issue.Key);
+
+            var file = saveAttachmentContents(name, attachment);
+            try {
+                var url = BaseUrl + REST + "issue/" + issue.Key + "/attachments";
+                if (server.OldSkoolAuth) {
+                    url = url + appendAuthentication(true);
+                }
+
+                using (var response = FormUpload.multipartFormDataPost(url, 
+                    req => {
+                        setBasicAuthHeader(req);
+                        req.Headers["X-Atlassian-Token"] = "nocheck";
+                    }, 
+                    new Dictionary<string, string> { {"file", "file://" + file} })) {
+                    
+                    if (response.StatusCode != HttpStatusCode.OK) {
+                        throw new WebException("Failed to upload attachment, error code: " + response.StatusCode);
+                    }
+                    using (var responseStream = response.GetResponseStream()) {
+                        if (responseStream != null) {
+                            using (var responseReader = new StreamReader(responseStream)) {
+                                responseReader.ReadToEnd();
+                            }
+                        }
+                    }
+                }
+            } finally {
+                File.Delete(file);
+            }
+        }
+
+        private static string saveAttachmentContents(string name, byte[] attachment) {
+            DirectoryInfo dir = Directory.CreateDirectory(Path.GetTempPath() + Path.DirectorySeparatorChar + "plvsatts");
+            var tempFileName = dir.FullName + Path.DirectorySeparatorChar + name;
+            File.Delete(tempFileName);
+            using (var fs = File.OpenWrite(tempFileName)) {
+                fs.Write(attachment, 0, attachment.Length);
+            }
+            return tempFileName;
+        }
+
         private JContainer getJson(string url) {
             return jsonOp("GET", url, null, HttpStatusCode.OK);
         }
@@ -316,6 +359,81 @@ namespace Atlassian.plvs.api.jira {
 
 
             throw new WebException(UNEXPECTED + response.StatusCode);
+        }
+    }
+
+    public static class FormUpload {
+        private static string NewDataBoundary() {
+            var rnd = new Random();
+            var formDataBoundary = "";
+            while (formDataBoundary.Length < 15) {
+                formDataBoundary = formDataBoundary + rnd.Next();
+            }
+            formDataBoundary = formDataBoundary.Substring(0, 15);
+            formDataBoundary = "-----------------------------" + formDataBoundary;
+            return formDataBoundary;
+        }
+
+        public static HttpWebResponse multipartFormDataPost(string postUrl, Action<HttpWebRequest> prepareRequest, Dictionary<string, string> postParameters) {
+            var boundary = NewDataBoundary();
+
+            var request = (HttpWebRequest)WebRequest.Create(postUrl);
+
+            request.Method = "POST";
+            request.ContentType = "multipart/form-data; boundary=" + boundary;
+            prepareRequest(request);
+
+            using (var formDataStream = request.GetRequestStream()) {
+                foreach (var param in postParameters) {
+                    if (param.Value.StartsWith("file://")) {
+                        var filepath = param.Value.Substring(7);
+
+                        var header = string.Format("--{0}\r\nContent-Disposition: form-data; name=\"{1}\"; filename=\"{2}\";\r\nContent-Type: {3}\r\n\r\n",
+                                                      boundary,
+                                                      param.Key,
+                                                      Path.GetFileName(filepath) ?? param.Key,
+                                                      getMimeType(filepath));
+
+                        formDataStream.Write(Encoding.UTF8.GetBytes(header), 0, header.Length);
+
+                        var buffer = new byte[2048];
+
+                        var fs = new FileStream(filepath, FileMode.Open);
+
+                        for (var i = 0; i < fs.Length; ) {
+                            var k = fs.Read(buffer, 0, buffer.Length);
+                            if (k > 0) {
+                                formDataStream.Write(buffer, 0, k);
+                            }
+                            i = i + k;
+                        }
+
+                        fs.Close();
+                    } else {
+                        var postData = string.Format("--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n",
+                                                        boundary,
+                                                        param.Key,
+                                                        param.Value);
+                        formDataStream.Write(Encoding.UTF8.GetBytes(postData), 0, postData.Length);
+                    }
+                }
+                var footer = Encoding.UTF8.GetBytes("\r\n--" + boundary + "--\r\n");
+                formDataStream.Write(footer, 0, footer.Length);
+                formDataStream.Close();
+            }
+
+            return request.GetResponse() as HttpWebResponse;
+        }
+
+        private static string getMimeType(string fileName) {
+            var mimeType = "application/unknown";
+            var ext = Path.GetExtension(fileName);
+            if (ext != null) {
+                using (var regKey = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey(ext.ToLower())) {
+                    if (regKey != null && regKey.GetValue("Content Type") != null) mimeType = regKey.GetValue("Content Type").ToString();
+                }
+            }
+            return mimeType;
         }
     }
 }
