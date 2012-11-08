@@ -173,7 +173,9 @@ namespace Atlassian.plvs.api.jira.facade {
         }
 
         public override void uploadAttachment(JiraIssue issue, string name, byte[] attachment) {
-            throw new NotImplementedException();
+            using (var rest = new RestClient(issue.Server)) {
+                rest.uploadAttachment(issue, name, attachment);
+            }
         }
 
         public bool restSupported(JiraServer server) {
