@@ -85,14 +85,8 @@ namespace Atlassian.plvs.api.jira {
 
                  // JIRA 5.0.1)
                 return buildNumber >= 721;
-
-            } catch(WebException e) {
-                if (((HttpWebResponse)e.Response).StatusCode == HttpStatusCode.NotFound) return false;
-//                if (e.Status == WebExceptionStatus.ProtocolError && e.Response.)
-                if (e.Message.StartsWith(UNEXPECTED)) {
-                    return false;
-                }
-                throw;
+            } catch(WebException) {
+                return false;
             }
         }
 
