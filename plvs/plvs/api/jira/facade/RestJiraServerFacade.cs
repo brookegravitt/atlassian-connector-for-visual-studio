@@ -97,7 +97,9 @@ namespace Atlassian.plvs.api.jira.facade {
         }
 
         public override void addComment(JiraIssue issue, string comment) {
-            throw new NotImplementedException();
+            using (var rest = new RestClient(issue.Server)) {
+                rest.addComment(issue, comment);
+            }
         }
 
         public override List<JiraNamedEntity> getActionsForIssue(JiraIssue issue) {

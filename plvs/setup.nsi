@@ -65,7 +65,7 @@ Function .onInit
 	InitPluginsDir
 	File /oname=$PLUGINSDIR\vs2008.bmp "plvs\Resources\icons\vs2008.bmp"
 	File /oname=$PLUGINSDIR\vs2010.bmp "plvs\Resources\icons\vs2010.bmp"
-	File /oname=$PLUGINSDIR\vs2011.bmp "plvs\Resources\icons\vs2010.bmp"
+	File /oname=$PLUGINSDIR\vs2011.bmp "plvs\Resources\icons\vs2012.bmp"
 	
 FunctionEnd
 
@@ -256,27 +256,27 @@ Function nsComponentsPage
 		${EndIf}
 	
 		${If} $FoundVS2010 = 1
-			${NSD_CreateCheckbox} 35u 56u 100% 10u "Visual Studio 201&0"
+			${NSD_CreateCheckbox} 35u 60u 100% 10u "Visual Studio 201&0"
 			Pop $CheckboxVS2010
 			${NSD_Check} $CheckboxVS2010
 			${If} $CheckboxVS2010_State == ${BST_UNCHECKED}
 				${NSD_Uncheck} $CheckboxVS2010
 			${EndIf}
 
-			${NSD_CreateBitmap} 0 45u 100% 100% ""
+			${NSD_CreateBitmap} 0 49u 100% 100% ""
 			Pop $Image2010
 			${NSD_SetImage} $Image2010 $PLUGINSDIR\vs2010.bmp $Image2010Handle
 		${EndIf}
 
 		${If} $FoundVS2011 = 1
-			${NSD_CreateCheckbox} 35u 80u 100% 10u "Visual Studio 201&1"
+			${NSD_CreateCheckbox} 35u 88u 100% 10u "Visual Studio 201&2"
 			Pop $CheckboxVS2011
 			${NSD_Check} $CheckboxVS2011
 			${If} $CheckboxVS2011_State == ${BST_UNCHECKED}
 				${NSD_Uncheck} $CheckboxVS2011
 			${EndIf}
 
-			${NSD_CreateBitmap} 0 70u 100% 100% ""
+			${NSD_CreateBitmap} 0 79u 100% 100% ""
 			Pop $Image2011
 			${NSD_SetImage} $Image2011 $PLUGINSDIR\vs2011.bmp $Image2011Handle
 		${EndIf}
@@ -329,6 +329,7 @@ Section "Connector Files"
 	File "plvs\bin\Release\plvs2010.dll"
 	File "plvs\bin\Release\Ankh.ExtensionPoints.dll"
 	File "plvs\bin\Release\Aga.Controls.dll"
+	File "plvs\third party\newtonsoft\Newtonsoft.Json.dll"
 	File "plvs\bin\Release\edit.png"
 	File "plvs\bin\Release\ajax-loader.gif"
 	File "plvs\bin\Release\nothing.png"
@@ -485,6 +486,7 @@ Function Integrate2010
 		File "plvs\bin\Release\plvs2010.dll"
 		File "plvs\bin\Release\Ankh.ExtensionPoints.dll"
 		File "plvs\bin\Release\Aga.Controls.dll"
+		File "plvs\third party\newtonsoft\Newtonsoft.Json.dll"
 		File "plvs\bin\Release\edit.png"
 		File "plvs\bin\Release\ajax-loader.gif"
 		File "plvs\bin\Release\nothing.png"
@@ -525,6 +527,7 @@ Function Integrate2011
 		File "plvs\bin\Release\plvs2010.dll"
 		File "plvs\bin\Release\Ankh.ExtensionPoints.dll"
 		File "plvs\bin\Release\Aga.Controls.dll"
+		File "plvs\third party\newtonsoft\Newtonsoft.Json.dll"
 		File "plvs\bin\Release\edit.png"
 		File "plvs\bin\Release\ajax-loader.gif"
 		File "plvs\bin\Release\nothing.png"
@@ -572,6 +575,7 @@ Section "Uninstall"
 	Delete $INSTDIR\plvs2010.dll
 	Delete $INSTDIR\Ankh.ExtensionPoints.dll
 	Delete $INSTDIR\Aga.Controls.dll
+	Delete $INSTDIR\Newtonsoft.Json.dll
 	Delete $INSTDIR\edit.png
 	Delete $INSTDIR\ajax-loader.gif
 	Delete $INSTDIR\nothing.png
