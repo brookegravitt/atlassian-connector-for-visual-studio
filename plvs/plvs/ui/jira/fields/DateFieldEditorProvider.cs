@@ -36,7 +36,11 @@ namespace Atlassian.plvs.ui.jira.fields {
 
         public override List<string> getValues() {
             return picker.Checked
-                ? new List<string> { JiraIssueUtils.getShortDateStringFromDateTime(serverLanguage, picker.Value) } 
+                ? new List<string> {
+                                       Field.FieldDefinition == null 
+                                        ? JiraIssueUtils.getShortDateStringFromDateTime(serverLanguage, picker.Value)
+                                        : JiraIssueUtils.getShortRestDateStringFromDateTime(picker.Value)
+                                   } 
                 : new List<string>();
         }
     }

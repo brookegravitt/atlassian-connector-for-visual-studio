@@ -20,41 +20,43 @@ namespace Atlassian.plvs.api.jira {
             Name = other.Name;
             Values = new List<string>(other.Values);
             Required = other.Required;
-            fieldDefinition = other.fieldDefinition;
+            FieldDefinition = other.FieldDefinition;
         }
 
         public JiraField(JToken fields, string name) {
-            fieldDefinition = fields[name];
+            FieldDefinition = fields[name];
             Id = name;
-            Name = fieldDefinition["name"].Value<string>();
-            Required = fieldDefinition["required"].Value<bool>();
+            Name = FieldDefinition["name"].Value<string>();
+            Required = FieldDefinition["required"].Value<bool>();
             Values = new List<string>();
         }
 
         public void setRawIssueObject(object rawIssueObject) {
             var issue = rawIssueObject as JToken;
             if (issue == null) return;
-            fieldDefinition = issue["editmeta"]["fields"][Id];
+            FieldDefinition = issue["editmeta"]["fields"][Id];
         }
 
         public string Id { get; private set; }
         public string Name { get; private set; }
         public bool Required { get; private set; }
         public string SettablePropertyName { get; set; }
-        private JToken fieldDefinition;
+        public JToken FieldDefinition { get; private set; }
 
         public object getJsonValue() {
-            if (fieldDefinition == null) return null;
+            if (FieldDefinition == null) return null;
+            
+            var fieldType = FieldDefinition["schema"]["type"].Value<string>();
 
-            var simple = !"user".Equals(fieldDefinition["schema"]["type"].Value<string>()) && fieldDefinition["allowedValues"] == null;
+            var simple = !"user".Equals(fieldType) && !"timetracking".Equals(fieldType) && FieldDefinition["allowedValues"] == null;
             if (simple) {
                 return Values.Count == 0 ? null : Values[0];
             }
 
-            if ("array".Equals(fieldDefinition["schema"]["type"].Value<string>())) {
+            if ("array".Equals(fieldType)) {
                 if (Values.Count == 0) return new List<object>();
 
-                var stringItems = "string".Equals(fieldDefinition["schema"]["items"].Value<string>());
+                var stringItems = "string".Equals(FieldDefinition["schema"]["items"].Value<string>());
                 return Values.Select(value => stringItems ? value : getPair(SettablePropertyName, value)).ToList();
             }
 

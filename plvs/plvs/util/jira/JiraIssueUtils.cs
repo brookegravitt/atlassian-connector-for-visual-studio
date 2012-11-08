@@ -20,6 +20,7 @@ namespace Atlassian.plvs.util.jira {
         private const string JiraFormat = "ddd, d MMM yyyy HH:mm:ss zzz";
         private const string ShortFormatFromJira = "dd/MM/yy";
         private const string ShortFormatToJira = "dd/MMM/yy";
+        private const string ShortRestFormatToJira = "yyyy-MM-dd";
 
         public static DateTime getDateTimeFromJiraTimeString(string locale, string value) {
             int bracket = value.LastIndexOf("(");
@@ -67,6 +68,10 @@ namespace Atlassian.plvs.util.jira {
 
         public static string getShortDateStringFromDateTime(string locale, DateTime time) {
             return time.ToString(ShortFormatToJira, new CultureInfo(fixLocale(locale) ?? "en-US"));
+        }
+
+        public static string getShortRestDateStringFromDateTime(DateTime time) {
+            return time.ToString(ShortRestFormatToJira, new CultureInfo("en-US"));
         }
 
         public static string addSpacesToTimeSpec(string text) {

@@ -9,7 +9,6 @@ using Atlassian.plvs.util.jira;
 
 namespace Atlassian.plvs.ui.jira.fields {
     public class TimeTrackingEditorProvider : FixedHeightFieldEditorProvider {
-
         private readonly Panel panel = new Panel();
 
         private readonly TextBox trackingBox = new TextBox {
@@ -22,8 +21,7 @@ namespace Atlassian.plvs.ui.jira.fields {
                                                          Location = new Point(140, 3),
                                                      };
 
-        public TimeTrackingEditorProvider(JiraField field, string value, FieldValidListener validListener)
-            : base(field, validListener) {
+        public TimeTrackingEditorProvider(JiraField field, string value, FieldValidListener validListener) : base(field, validListener) {
             trackingBox.TextChanged += trackingBox_TextChanged;
             trackingBox.Width = 120;
             if (value != null) {

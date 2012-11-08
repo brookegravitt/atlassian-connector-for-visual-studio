@@ -300,15 +300,18 @@ namespace Atlassian.plvs.api.jira {
                     }
                 }
             } catch (WebException e) {
-                using (var stream = e.Response.GetResponseStream()) {
-                    if (stream != null) {
-                        var reader = new StreamReader(stream);
-                        var value = reader.ReadToEnd();
-//                        var result = JsonConvert.DeserializeObject(value) as JContainer;
-                        throw new WebException(e.Message + "<br><br>Url: " + tgtUrl + (data != null ? ("<br>Data: " + data) : "") + "<br>Response: " + value + "<br>", e.InnerException, e.Status, e.Response);
+                if (e.Response != null) {
+                    using (var stream = e.Response.GetResponseStream()) {
+                        if (stream != null) {
+                            var reader = new StreamReader(stream);
+                            var value = reader.ReadToEnd();
+                            //                        var result = JsonConvert.DeserializeObject(value) as JContainer;
+                            throw new WebException(e.Message + "<br><br>Url: " + tgtUrl + (data != null ? ("<br>Data: " + data) : "") + "<br>Response: " + value + "<br>", e.InnerException, e.Status,
+                                                   e.Response);
+                        }
                     }
                 }
-                throw;
+                throw new WebException(e.Message + "<br><br>Url: " + tgtUrl + (data != null ? ("<br>Data: " + data) : "") + "<br>", e.InnerException, e.Status, e.Response);
             }
 
 
