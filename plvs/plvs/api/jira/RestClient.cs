@@ -7,6 +7,7 @@ using System.Text;
 using System.Net;
 using System.Diagnostics;
 using Atlassian.plvs.dialogs;
+using Atlassian.plvs.models.jira.fields;
 using Atlassian.plvs.util;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -18,7 +19,8 @@ namespace Atlassian.plvs.api.jira {
         private const string REST = "/rest/api/2/";
         private const string UNEXPECTED = "Unexpected response code: ";
 
-        public RestClient(JiraServer server) : base(server.Url, server.UserName, server.Password, server.NoProxy) {
+        public RestClient(JiraServer server)
+            : base(server.Url, server.UserName, server.Password, server.NoProxy) {
             this.server = server;
         }
 
@@ -31,7 +33,7 @@ namespace Atlassian.plvs.api.jira {
 
             try {
 
-                var req = (HttpWebRequest) WebRequest.Create(url.ToString());
+                var req = (HttpWebRequest)WebRequest.Create(url.ToString());
                 req.Proxy = server.NoProxy ? null : GlobalSettings.Proxy;
 
                 req.Credentials = CredentialUtils.getCredentialsForUserAndPassword(url.ToString(), UserName, Password);
@@ -46,16 +48,16 @@ namespace Atlassian.plvs.api.jira {
                 var encoding = new ASCIIEncoding();
 
                 object json = new {
-                                      rendererType = "atlassian-wiki-renderer",
-                                      unrenderedMarkup = markup,
-                                      issueKey = issueKey,
-                                      issueType = issueType,
-                                      projectId = projectId
-                                  };
-                    
+                    rendererType = "atlassian-wiki-renderer",
+                    unrenderedMarkup = markup,
+                    issueKey = issueKey,
+                    issueType = issueType,
+                    projectId = projectId
+                };
+
                 var serialized = JsonConvert.SerializeObject(json);
                 var buffer = encoding.GetBytes(serialized);
-                
+
                 requestStream.Write(buffer, 0, buffer.Length);
                 requestStream.Flush();
                 requestStream.Close();
@@ -84,9 +86,9 @@ namespace Atlassian.plvs.api.jira {
                 server.Version = resp["version"].Value<string>();
                 server.ServerTitle = resp["serverTitle"].Value<string>();
 
-                 // JIRA 5.0.1)
+                // JIRA 5.0.1)
                 return buildNumber >= 721;
-            } catch(WebException) {
+            } catch (WebException) {
                 return false;
             }
         }
@@ -143,8 +145,8 @@ namespace Atlassian.plvs.api.jira {
         private List<JiraNamedEntity> getNamedEntities(string what, string sub) {
             var url = BaseUrl + REST + what;
             var resp = getJson(url);
-            return sub != null 
-                ? resp[sub].Select(item => new JiraNamedEntity(item)).ToList() 
+            return sub != null
+                ? resp[sub].Select(item => new JiraNamedEntity(item)).ToList()
                 : resp.Select(item => new JiraNamedEntity(item)).ToList();
         }
 
@@ -171,7 +173,7 @@ namespace Atlassian.plvs.api.jira {
         public List<JiraField> getFieldsForAction(JiraIssue issue, int actionId) {
             var res = getJson(BaseUrl + REST + "issue/" + issue.Key + "/transitions?expand=transitions.fields");
             return (
-                from tr in res["transitions"] 
+                from tr in res["transitions"]
                 where tr["id"].Value<int>() == actionId
                 select tr["fields"].Select(fld => new JiraField(tr["fields"], ((JProperty)fld).Name)).ToList()
             ).FirstOrDefault();
@@ -221,6 +223,11 @@ namespace Atlassian.plvs.api.jira {
         }
 
         public void updateIssue(JiraIssue issue, ICollection<JiraField> fields) {
+#if false
+            var needAdjustOriginalEstimate = fields.Any(field => "remainingEstimate".Equals(field.SettablePropertyName));
+            var originalEstimate = needAdjustOriginalEstimate && issue.TimeSpent != null ? issue.OriginalEstimate : null;
+#endif
+
             var fldsObj = new Dictionary<string, object>();
             foreach (var field in fields) {
                 fldsObj[field.Id] = field.getJsonValue();
@@ -228,6 +235,10 @@ namespace Atlassian.plvs.api.jira {
             object data = new { fields = fldsObj };
 
             putJson(BaseUrl + REST + "issue/" + issue.Key, data);
+
+#if false
+            fixOriginalEstimate(issue, originalEstimate);
+#endif
         }
 
         public void addComment(JiraIssue issue, string comment) {
@@ -243,13 +254,13 @@ namespace Atlassian.plvs.api.jira {
                     url = url + appendAuthentication(true);
                 }
 
-                using (var response = FormUpload.multipartFormDataPost(url, 
+                using (var response = FormUpload.multipartFormDataPost(url,
                     req => {
                         setBasicAuthHeader(req);
                         req.Headers["X-Atlassian-Token"] = "nocheck";
-                    }, 
-                    new Dictionary<string, string> { {"file", "file://" + file} })) {
-                    
+                    },
+                    new Dictionary<string, string> { { "file", "file://" + file } })) {
+
                     if (response.StatusCode != HttpStatusCode.OK) {
                         throw new WebException("Failed to upload attachment, error code: " + response.StatusCode);
                     }
@@ -278,6 +289,36 @@ namespace Atlassian.plvs.api.jira {
             logWorkAtUrl(BaseUrl + REST + "issue/" + issue.Key + "/worklog?adjustEstimate=auto", timeSpent, startDate, comment);
         }
 
+        public string createIssue(JiraIssue issue) {
+//            JContainer meta = getJson(BaseUrl + REST + "issue/createmeta?projectKeys=" + issue.ProjectKey + "&issuetypeIds=" + issue.IssueTypeId + "&expand=projects.issuetypes.fields");
+//            var fields = meta["projects"]["issuetypes"]["fields"];
+            var assignee = issue.Assignee != null ? new {name = issue.Assignee} : null;
+            var fixVersions = issue.FixVersions != null 
+                ? (object) issue.FixVersions.Select(fv => new { name = fv }).ToList()
+                : new List<object>();
+            var versions = issue.Versions != null
+                ? (object) issue.Versions.Select(v => new { name = v }).ToList()
+                : new List<object>();
+            var components = issue.Components != null
+                ? (object) issue.Components.Select(c => new { name = c }).ToList()
+                : new List<object>();
+            var data = new {
+                fields = new {
+                    project = new { key = issue.ProjectKey },
+                    summary = issue.Summary,
+                    description = issue.Description,
+                    issuetype = new { id = issue.IssueTypeId.ToString() },
+                    priority = new { id = issue.PriorityId.ToString() },
+                    assignee = assignee,
+                    fixVersions = fixVersions,
+                    versions = versions,
+                    components = components
+                }
+            };
+            var result = postJson(BaseUrl + REST + "issue", data, HttpStatusCode.Created);
+            return result["key"].Value<string>();
+        }
+
         private void logWorkAtUrl(string url, string timeSpent, DateTime startDate, string comment) {
             var startDateString = startDate.ToString("yyyy-MM-ddTHH:mm:ss.fffzz00", CultureInfo.InvariantCulture);
             var data = new {
@@ -286,6 +327,14 @@ namespace Atlassian.plvs.api.jira {
                 started = startDateString
             };
             postJson(url, data, HttpStatusCode.Created);
+        }
+
+        private void fixOriginalEstimate(JiraIssue issue, string originalEstimate) {
+#if false
+            if (originalEstimate == null) return;
+            var data = new { fields = new { timetracking = new { originalEstimate = TimeTrackingFiller.translate(originalEstimate) } } };
+            putJson(BaseUrl + REST + "issue/" + issue.Key, data);
+#endif
         }
 
         private static string saveAttachmentContents(string name, byte[] attachment) {
@@ -306,8 +355,8 @@ namespace Atlassian.plvs.api.jira {
             postJson(url, data, HttpStatusCode.NoContent);
         }
 
-        private void postJson(string url, object data, HttpStatusCode code) {
-            jsonOp("POST", url, data, code);
+        private JContainer postJson(string url, object data, HttpStatusCode code) {
+            return jsonOp("POST", url, data, code);
         }
 
         private void putJson(string url, object data) {
@@ -329,12 +378,12 @@ namespace Atlassian.plvs.api.jira {
                 url.Append(appendAuthentication(true));
             }
 
-            var req = (HttpWebRequest) WebRequest.Create(url.ToString());
+            var req = (HttpWebRequest)WebRequest.Create(url.ToString());
             req.Proxy = server.NoProxy ? null : GlobalSettings.Proxy;
 
             req.Method = method;
-            req.Timeout = GlobalSettings.NetworkTimeout*1000;
-            req.ReadWriteTimeout = GlobalSettings.NetworkTimeout*2000;
+            req.Timeout = GlobalSettings.NetworkTimeout * 1000;
+            req.ReadWriteTimeout = GlobalSettings.NetworkTimeout * 2000;
             req.ContentType = "application/json";
             setBasicAuthHeader(req);
 
@@ -351,7 +400,7 @@ namespace Atlassian.plvs.api.jira {
 
             HttpWebResponse response;
             try {
-                response = (HttpWebResponse) req.GetResponse();
+                response = (HttpWebResponse)req.GetResponse();
                 if (response.StatusCode == expectedCode) {
                     using (var stream = response.GetResponseStream()) {
                         if (stream != null) {

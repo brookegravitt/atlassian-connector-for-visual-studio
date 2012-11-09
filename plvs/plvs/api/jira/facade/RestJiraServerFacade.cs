@@ -139,7 +139,9 @@ namespace Atlassian.plvs.api.jira.facade {
         }
 
         public override string createIssue(JiraServer server, JiraIssue issue) {
-            throw new NotImplementedException();
+            using (var rest = new RestClient(server)) {
+                return rest.createIssue(issue);
+            }
         }
 
         public override object getRawIssueObject(JiraIssue issue) {
