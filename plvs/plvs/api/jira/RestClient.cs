@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -235,8 +236,6 @@ namespace Atlassian.plvs.api.jira {
         }
 
         public void uploadAttachment(JiraIssue issue, string name, byte[] attachment) {
-//            PlvsLogger.log("Posting attachment: " + name + " (" + attachment.Length + ") to JIRA issue " + issue.Key);
-
             var file = saveAttachmentContents(name, attachment);
             try {
                 var url = BaseUrl + REST + "issue/" + issue.Key + "/attachments";
@@ -267,8 +266,30 @@ namespace Atlassian.plvs.api.jira {
             }
         }
 
+        public void logWorkAndUpdateRemainingManually(JiraIssue issue, string timeSpent, DateTime startDate, string remainingEstimate, string comment) {
+            logWorkAtUrl(BaseUrl + REST + "issue/" + issue.Key + "/worklog?adjustEstimate=new&newEstimate=" + remainingEstimate, timeSpent, startDate, comment);
+        }
+
+        public void logWorkAndLeaveRemainingUnchanged(JiraIssue issue, string timeSpent, DateTime startDate, string comment) {
+            logWorkAtUrl(BaseUrl + REST + "issue/" + issue.Key + "/worklog?adjustEstimate=leave", timeSpent, startDate, comment);
+        }
+
+        public void logWorkAndAutoUpdateRemaining(JiraIssue issue, string timeSpent, DateTime startDate, string comment) {
+            logWorkAtUrl(BaseUrl + REST + "issue/" + issue.Key + "/worklog?adjustEstimate=auto", timeSpent, startDate, comment);
+        }
+
+        private void logWorkAtUrl(string url, string timeSpent, DateTime startDate, string comment) {
+            var startDateString = startDate.ToString("yyyy-MM-ddTHH:mm:ss.fffzz00", CultureInfo.InvariantCulture);
+            var data = new {
+                comment = comment,
+                timeSpent = timeSpent,
+                started = startDateString
+            };
+            postJson(url, data, HttpStatusCode.Created);
+        }
+
         private static string saveAttachmentContents(string name, byte[] attachment) {
-            DirectoryInfo dir = Directory.CreateDirectory(Path.GetTempPath() + Path.DirectorySeparatorChar + "plvsatts");
+            var dir = Directory.CreateDirectory(Path.GetTempPath() + Path.DirectorySeparatorChar + "plvsatts");
             var tempFileName = dir.FullName + Path.DirectorySeparatorChar + name;
             File.Delete(tempFileName);
             using (var fs = File.OpenWrite(tempFileName)) {
