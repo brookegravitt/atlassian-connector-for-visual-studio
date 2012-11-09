@@ -155,15 +155,21 @@ namespace Atlassian.plvs.api.jira.facade {
         }
 
         public override void logWorkAndAutoUpdateRemaining(JiraIssue issue, string timeSpent, DateTime startDate, string comment) {
-            throw new NotImplementedException();
+            using (var rest = new RestClient(issue.Server)) {
+                rest.logWorkAndAutoUpdateRemaining(issue, timeSpent, startDate, comment);
+            }
         }
 
         public override void logWorkAndLeaveRemainingUnchanged(JiraIssue issue, string timeSpent, DateTime startDate, string comment) {
-            throw new NotImplementedException();
+            using (var rest = new RestClient(issue.Server)) {
+                rest.logWorkAndLeaveRemainingUnchanged(issue, timeSpent, startDate, comment);
+            }
         }
 
         public override void logWorkAndUpdateRemainingManually(JiraIssue issue, string timeSpent, DateTime startDate, string remainingEstimate, string comment) {
-            throw new NotImplementedException();
+            using (var rest = new RestClient(issue.Server)) {
+                rest.logWorkAndUpdateRemainingManually(issue, timeSpent, startDate, remainingEstimate, comment);
+            }
         }
 
         public override void updateIssue(JiraIssue issue, ICollection<JiraField> fields) {
