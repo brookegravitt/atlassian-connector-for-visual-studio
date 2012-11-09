@@ -14,7 +14,7 @@ namespace Atlassian.plvs.models.jira.fields {
             return issue.TimeSpent == null ? "originalEstimate" : "remainingEstimate";
         }
 
-        private static string translate(string displayValue) {
+        public static string translate(string displayValue) {
             if (displayValue != null) {
                 displayValue = displayValue.Replace(" weeks", "w");
                 displayValue = displayValue.Replace(" week", "w");
