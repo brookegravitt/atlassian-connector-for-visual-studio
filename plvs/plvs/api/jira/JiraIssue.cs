@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Xml.XPath;
 using Atlassian.plvs.util;
@@ -97,8 +98,8 @@ namespace Atlassian.plvs.api.jira {
                 } else {
                     Reporter = "Unknown";
                 }
-                CreationDate = DateTime.Parse(fields["created"].Value<string>());
-                UpdateDate = DateTime.Parse(fields["updated"].Value<string>());
+                CreationDate = DateTime.Parse(fields["created"].Value<string>(), CultureInfo.InvariantCulture);
+                UpdateDate = DateTime.Parse(fields["updated"].Value<string>(), CultureInfo.InvariantCulture);
                 Resolution = fields["resolution"] != null && fields["resolution"].HasValues ? fields["resolution"]["name"].Value<string>() : null;
                 ResolutionId = Resolution != null ? fields["resolution"]["id"].Value<int>() : UNKNOWN;
 

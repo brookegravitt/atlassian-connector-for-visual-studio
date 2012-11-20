@@ -63,6 +63,23 @@ namespace Unit_Test {
         /// <summary>
         ///   Looks up a localized string similar to {
         ///&quot;expand&quot;: &quot;editmeta,renderedFields,transitions,changelog,operations&quot;,
+        ///&quot;id&quot;: &quot;17301&quot;,
+        ///&quot;self&quot;: &quot;http://jira.oebb.at/jira/rest/api/2/issue/17301&quot;,
+        ///&quot;key&quot;: &quot;ADM-13&quot;,
+        ///&quot;fields&quot;: {
+        ///&quot;summary&quot;: &quot;Wiki Erweiterung&quot;,
+        ///&quot;progress&quot;: { &quot;progress&quot;: 0, &quot;total&quot;: 0 },
+        ///&quot;issuetype&quot;: { &quot;self&quot;: &quot;http://jira.oebb.at/jira/rest/api/2/issuetype/7&quot;, &quot;id&quot;: &quot;7&quot;, &quot;description&quot;: &quot;Vorgang um Anforderungen an die abteilungsinterne Administration zu stellen.&quot;, &quot;iconUrl&quot;: &quot;http://jira.oebb.at/jira/images/icons/improvement.gif&quot;, &quot;name&quot;: [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string plvs_374_bad_date {
+            get {
+                return ResourceManager.GetString("plvs-374-bad-date", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {
+        ///&quot;expand&quot;: &quot;editmeta,renderedFields,transitions,changelog,operations&quot;,
         ///&quot;id&quot;: &quot;14078&quot;,
         ///&quot;self&quot;: &quot;http://jira.oebb.at/jira/rest/api/2/issue/14078&quot;,
         ///&quot;key&quot;: &quot;EFB-88&quot;,
@@ -72,9 +89,9 @@ namespace Unit_Test {
         ///&quot;issuetype&quot;: { &quot;self&quot;: &quot;http://jira.oebb.at/jira/rest/api/2/issuetype/3&quot;, &quot;id&quot;: &quot;3&quot;, &quot;description&quot;: &quot;Eine Aufgabe, die erledigt werden muss.&quot;, &quot;iconUrl&quot;: &quot;http://jira.oebb.at/jira/images/icons/task.gif&quot;, &quot;name&quot;: &quot;Aufgabe&quot;, &quot;subtask&quot;: false },
         ///&quot;vot [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string plvs_374 {
+        internal static string plvs_374_no_priority {
             get {
-                return ResourceManager.GetString("plvs_374", resourceCulture);
+                return ResourceManager.GetString("plvs_374_no_priority", resourceCulture);
             }
         }
     }
