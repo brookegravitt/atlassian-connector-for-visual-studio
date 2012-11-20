@@ -152,14 +152,17 @@ namespace Atlassian.plvs.api.jira {
         }
 
         public List<JiraIssue> getSavedFilterIssues(JiraSavedFilter filter, string sortBy, string sortOrder, int start, int count) {
-            var jql = HttpUtility.UrlEncode(filter.Jql + " order by " + sortBy + " " + sortOrder);
+            var order = filter.Jql.ToLower().Contains("order by") ? "" : " order by " + sortBy + " " + sortOrder;
+            var jql = HttpUtility.UrlEncode(filter.Jql + order);
             var url = BaseUrl + REST + "search?jql=" + jql + "&startAt=" + start + "&maxResults=" + count + "&expand=renderedFields";
             var res = getJson(url);
             return res["issues"].Select(issue => new JiraIssue(server, issue)).ToList();
         }
 
         public List<JiraIssue> getCustomFilterIssues(JiraFilter filter, string sortOrder, int start, int count) {
-            var jql = HttpUtility.UrlEncode(filter.getJql() + " order by " + filter.getSortBy() + " " + sortOrder);
+            var rawJql = filter.getJql();
+            var order = rawJql.ToLower().Contains("order by") ? "" : " order by " + filter.getSortBy() + " " + sortOrder;
+            var jql = HttpUtility.UrlEncode(rawJql + order);
             var url = BaseUrl + REST + "search?jql=" + jql + "&startAt=" + start + "&maxResults=" + count + "&expand=renderedFields";
             var res = getJson(url);
             return res["issues"].Select(issue => new JiraIssue(server, issue)).ToList();
