@@ -68,13 +68,16 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\plvs-374.txt" />
+    <None Include="Resources\plvs-374-no-priority.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\plvs\plvs2010.csproj">
       <Project>{A79DF670-278F-4D8E-AC58-72E4A08F09D6}</Project>
       <Name>plvs2010</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\plvs-374-bad-date.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
