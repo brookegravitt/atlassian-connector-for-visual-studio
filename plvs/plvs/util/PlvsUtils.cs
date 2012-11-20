@@ -436,6 +436,10 @@ namespace Atlassian.plvs.util {
             return t;
         }
 
+        public static string unescape(this string s) {
+            return s.Replace("\\\"", "\"");
+        }
+
         public static DTE Dte { get; set; }
 
         public static string getThroberPath() {

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Net;
 using System.Diagnostics;
+using System.Web;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.models.jira.fields;
 using Atlassian.plvs.util;
@@ -151,12 +152,16 @@ namespace Atlassian.plvs.api.jira {
         }
 
         public List<JiraIssue> getSavedFilterIssues(JiraSavedFilter filter, string sortBy, string sortOrder, int start, int count) {
-            var res = getJson(BaseUrl + REST + "search?jql=" + filter.Jql + " order by " + sortBy + " " + sortOrder + "&startAt=" + start + "&maxResults=" + count + "&expand=renderedFields");
+            var jql = HttpUtility.UrlEncode(filter.Jql + " order by " + sortBy + " " + sortOrder);
+            var url = BaseUrl + REST + "search?jql=" + jql + "&startAt=" + start + "&maxResults=" + count + "&expand=renderedFields";
+            var res = getJson(url);
             return res["issues"].Select(issue => new JiraIssue(server, issue)).ToList();
         }
 
         public List<JiraIssue> getCustomFilterIssues(JiraFilter filter, string sortOrder, int start, int count) {
-            var res = getJson(BaseUrl + REST + "search?jql=" + filter.getJql() + " order by " + filter.getSortBy() + " " + sortOrder + "&startAt=" + start + "&maxResults=" + count + "&expand=renderedFields");
+            var jql = HttpUtility.UrlEncode(filter.getJql() + " order by " + filter.getSortBy() + " " + sortOrder);
+            var url = BaseUrl + REST + "search?jql=" + jql + "&startAt=" + start + "&maxResults=" + count + "&expand=renderedFields";
+            var res = getJson(url);
             return res["issues"].Select(issue => new JiraIssue(server, issue)).ToList();
         }
 
@@ -364,7 +369,8 @@ namespace Atlassian.plvs.api.jira {
         }
 
         private void setBasicAuthHeader(WebRequest req) {
-            var u = CredentialUtils.getUserNameWithoutDomain(server.UserName);
+            // PLVS-374
+            var u = server.UserName;// CredentialUtils.getUserNameWithoutDomain(server.UserName);
             var p = server.Password;
             var authInfo = u + ":" + p;
             authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));

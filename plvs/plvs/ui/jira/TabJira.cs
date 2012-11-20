@@ -659,7 +659,7 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private static bool probablyHaveMoreIssues() {
-            return MODEL.Issues.Count%GlobalSettings.JiraIssuesBatch == 0;
+            return MODEL.Issues.Count % GlobalSettings.JiraIssuesBatch == 0;
         }
 
         private void buttonRefreshAll_Click(object sender, EventArgs e) {
