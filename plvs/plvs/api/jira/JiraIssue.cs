@@ -72,9 +72,12 @@ namespace Atlassian.plvs.api.jira {
                 Status = fields["status"]["name"].Value<string>();
                 StatusIconUrl = fields["status"]["iconUrl"].Value<string>();
                 StatusId = fields["status"]["id"].Value<int>();
-                Priority = fields["priority"]["name"].Value<string>();
-                PriorityIconUrl = fields["priority"]["iconUrl"].Value<string>();
-                PriorityId = fields["priority"]["id"].Value<int>();
+                var prio = fields["priority"];
+                if (prio != null && prio.HasValues) {
+                    Priority = prio["name"].Value<string>();
+                    PriorityIconUrl = fields["priority"]["iconUrl"].Value<string>();
+                    PriorityId = fields["priority"]["id"].Value<int>();
+                }
 
                 var renderedDescription = issue["renderedFields"]["description"];
                 Description = renderedDescription != null ? renderedDescription.Value<string>() : fields["description"].Value<string>();
@@ -119,7 +122,7 @@ namespace Atlassian.plvs.api.jira {
                 Environment = fields["environment"].Value<string>();
                 getComments(fields["comment"], issue["renderedFields"]["comment"]);
                 getIssueLinks(fields["issuelinks"]);
-            } catch (InvalidOperationException e) {
+            } catch (Exception e) {
                 throw new InvalidOperationException("Unable to parse issue JSON object: " + issue, e);
             }
         }
