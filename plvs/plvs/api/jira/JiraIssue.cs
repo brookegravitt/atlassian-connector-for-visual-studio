@@ -56,68 +56,72 @@ namespace Atlassian.plvs.api.jira {
         }
 
         public JiraIssue(JiraServer server, JToken issue) {
-            Server = server;
+            try {
+                Server = server;
 
-            Key = issue["key"].Value<string>();
-            Id = issue["id"].Value<int>();
-            ProjectKey = Key.Substring(0, Key.LastIndexOf('-'));
+                Key = issue["key"].Value<string>();
+                Id = issue["id"].Value<int>();
+                ProjectKey = Key.Substring(0, Key.LastIndexOf('-'));
 
-            var fields = issue["fields"];
+                var fields = issue["fields"];
 
-            ParentKey = fields["parent"] != null && fields["parent"].HasValues ? fields["parent"]["key"].Value<string>() : null;
-            getSubtasks(fields["subtasks"]);
-            Summary = fields["summary"].Value<string>();
-            getAttachments(fields["attachment"]);
-            Status = fields["status"]["name"].Value<string>();
-            StatusIconUrl = fields["status"]["iconUrl"].Value<string>();
-            StatusId = fields["status"]["id"].Value<int>();
-            Priority = fields["priority"]["name"].Value<string>();
-            PriorityIconUrl = fields["priority"]["iconUrl"].Value<string>();
-            PriorityId = fields["priority"]["id"].Value<int>();
-            
-            var renderedDescription = issue["renderedFields"]["description"];
-            Description = renderedDescription != null ? renderedDescription.Value<string>() : fields["description"].Value<string>();
-            
-            IssueType = fields["issuetype"]["name"].Value<string>();
-            IssueTypeIconUrl = fields["issuetype"]["iconUrl"].Value<string>();
-            IssueTypeId = fields["issuetype"]["id"].Value<int>();
-            if (fields["assignee"] != null && fields["assignee"].HasValues) {
-                Assignee = fields["assignee"]["name"].Value<string>(); 
-                JiraServerCache.Instance.getUsers(server).putUser(new JiraUser(Assignee, fields["assignee"]["displayName"].Value<string>()));
-            } else {
-                Assignee = "Unknown";
-            }
-            if (fields["reporter"] != null && fields["reporter"].HasValues) {
-                Reporter = fields["reporter"]["name"].Value<string>(); 
-                JiraServerCache.Instance.getUsers(server).putUser(new JiraUser(Reporter, fields["reporter"]["displayName"].Value<string>()));
-            } else {
-                Reporter = "Unknown";
-            }
-            CreationDate = DateTime.Parse(fields["created"].Value<string>());
-            UpdateDate = DateTime.Parse(fields["updated"].Value<string>());
-            Resolution = fields["resolution"] != null && fields["resolution"].HasValues ? fields["resolution"]["name"].Value<string>() : null;
-            ResolutionId = Resolution != null ? fields["resolution"]["id"].Value<int>() : UNKNOWN;
+                ParentKey = fields["parent"] != null && fields["parent"].HasValues ? fields["parent"]["key"].Value<string>() : null;
+                getSubtasks(fields["subtasks"]);
+                Summary = fields["summary"].Value<string>();
+                getAttachments(fields["attachment"]);
+                Status = fields["status"]["name"].Value<string>();
+                StatusIconUrl = fields["status"]["iconUrl"].Value<string>();
+                StatusId = fields["status"]["id"].Value<int>();
+                Priority = fields["priority"]["name"].Value<string>();
+                PriorityIconUrl = fields["priority"]["iconUrl"].Value<string>();
+                PriorityId = fields["priority"]["id"].Value<int>();
 
-            getTimeFieldsFromJson(issue);
+                var renderedDescription = issue["renderedFields"]["description"];
+                Description = renderedDescription != null ? renderedDescription.Value<string>() : fields["description"].Value<string>();
 
-            if (fields["versions"] != null) {
-                foreach (var v in fields["versions"]) {
-                    Versions.Add(v["name"].Value<string>());
+                IssueType = fields["issuetype"]["name"].Value<string>();
+                IssueTypeIconUrl = fields["issuetype"]["iconUrl"].Value<string>();
+                IssueTypeId = fields["issuetype"]["id"].Value<int>();
+                if (fields["assignee"] != null && fields["assignee"].HasValues) {
+                    Assignee = fields["assignee"]["name"].Value<string>();
+                    JiraServerCache.Instance.getUsers(server).putUser(new JiraUser(Assignee, fields["assignee"]["displayName"].Value<string>()));
+                } else {
+                    Assignee = "Unknown";
                 }
-            }
-            if (fields["fixVersions"] != null) {
-                foreach (var v in fields["fixVersions"]) {
-                    FixVersions.Add(v["name"].Value<string>());
+                if (fields["reporter"] != null && fields["reporter"].HasValues) {
+                    Reporter = fields["reporter"]["name"].Value<string>();
+                    JiraServerCache.Instance.getUsers(server).putUser(new JiraUser(Reporter, fields["reporter"]["displayName"].Value<string>()));
+                } else {
+                    Reporter = "Unknown";
                 }
-            }
-            if (fields["components"] != null) {
-                foreach (var v in fields["components"]) {
-                    Components.Add(v["name"].Value<string>());
+                CreationDate = DateTime.Parse(fields["created"].Value<string>());
+                UpdateDate = DateTime.Parse(fields["updated"].Value<string>());
+                Resolution = fields["resolution"] != null && fields["resolution"].HasValues ? fields["resolution"]["name"].Value<string>() : null;
+                ResolutionId = Resolution != null ? fields["resolution"]["id"].Value<int>() : UNKNOWN;
+
+                getTimeFieldsFromJson(issue);
+
+                if (fields["versions"] != null) {
+                    foreach (var v in fields["versions"]) {
+                        Versions.Add(v["name"].Value<string>());
+                    }
                 }
+                if (fields["fixVersions"] != null) {
+                    foreach (var v in fields["fixVersions"]) {
+                        FixVersions.Add(v["name"].Value<string>());
+                    }
+                }
+                if (fields["components"] != null) {
+                    foreach (var v in fields["components"]) {
+                        Components.Add(v["name"].Value<string>());
+                    }
+                }
+                Environment = fields["environment"].Value<string>();
+                getComments(fields["comment"], issue["renderedFields"]["comment"]);
+                getIssueLinks(fields["issuelinks"]);
+            } catch (InvalidOperationException e) {
+                throw new InvalidOperationException("Unable to parse issue JSON object: " + issue, e);
             }
-            Environment = fields["environment"].Value<string>();
-            getComments(fields["comment"], issue["renderedFields"]["comment"]);
-            getIssueLinks(fields["issuelinks"]);
         }
 
         public JiraIssue(JiraServer server, string serverLanguage, XPathNavigator nav) {
