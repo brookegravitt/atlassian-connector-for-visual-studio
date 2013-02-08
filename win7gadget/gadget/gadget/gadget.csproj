@@ -45,13 +45,19 @@
     <DocumentationFile>bin\Release\gadget.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib, Version=0.6.1.0, Culture=neutral, PublicKeyToken=8fc0e3af5abcb6c4, processorArchitecture=MSIL" />
+    <Reference Include="mscorlib, Version=0.6.1.0, Culture=neutral, PublicKeyToken=8fc0e3af5abcb6c4, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\ScriptSharp\v1.0\Framework\mscorlib.dll</HintPath>
+    </Reference>
     <Reference Include="Script.jQuery, Version=0.6.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\ScriptSharp\v1.0\Framework\Script.jQuery.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\ScriptSharp\v1.0\Framework\Script.jQuery.dll</HintPath>
     </Reference>
-    <Reference Include="Script.Web" />
-    <Reference Include="Script.Windows" />
+    <Reference Include="Script.Web">
+      <HintPath>C:\Program Files (x86)\ScriptSharp\v1.0\Framework\Script.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Script.Windows">
+      <HintPath>C:\Program Files (x86)\ScriptSharp\v1.0\Framework\Script.Windows.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\JiraLogo.png" />
