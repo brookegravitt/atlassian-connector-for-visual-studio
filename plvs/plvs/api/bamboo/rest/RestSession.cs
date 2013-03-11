@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Web;
+using System.Xml.Linq;
 using System.Xml.XPath;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.util;
@@ -44,6 +47,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
         private const string ALL_PLANS_ACTION = "/rest/api/latest/plan?expand=plans.plan";
         private const string FAVOURITE_PLANS_ACTION = "/rest/api/latest/plan?favourite&expand=plans.plan";
+        private const string BRANCHES_ACTION = "/rest/api/latest/plan/{0}?expand=branches.branch";
         private const string PLAN_DETAILS = "/rest/api/latest/plan/{0}";
 
         private const string RUN_BUILD_ACTION_NEW = "/rest/api/latest/queue";
@@ -55,8 +59,9 @@ namespace Atlassian.plvs.api.bamboo.rest {
         private const string LOGIN_ACTION = "/api/rest/login.action";
     	private const string LOGOUT_ACTION = "/api/rest/logout.action";
 
-        private const int BUILD_NUMBER_3_0 = 2212;
-        private const int BUILD_NUMBER_4_0 = 2906;
+        public const int BUILD_NUMBER_3_0 = 2212;
+        public const int BUILD_NUMBER_4_0 = 2906;
+        public const int BUILD_NUMBER_5_0 = 3600;
 
         private int serverBuildNumber;
 
@@ -114,7 +119,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
         }
 
         // achtung - gobble all exceptions
-        private void getServerBuildNumber() {
+        public int getServerBuildNumber() {
             string endpoint = server.Url + INFO;
 
             try {
@@ -123,7 +128,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
                     string code = getRestErrorStatusCode(doc);
                     if (code != null) {
-                        return;
+                        return 0;
                     }
 
                     XPathNavigator nav = doc.CreateNavigator();
@@ -138,6 +143,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
             } catch (Exception e) {
                 Debug.WriteLine("RestSession.getServerBuildNumber() - exception (ignored): " + e.Message);    
             }
+            return serverBuildNumber;
         }
 
         public void logout() {
@@ -162,6 +168,18 @@ namespace Atlassian.plvs.api.bamboo.rest {
         public ICollection<BambooPlan> getFavouritePlans() {
             return getPlansFromUrl(server.Url + FAVOURITE_PLANS_ACTION);
         }
+
+//        public ICollection<BambooPlan> getAllPlans() {
+//            return server.ShowBranches 
+//                ? getPlansFromUrl(server.Url + ALL_BRANCHES_ACTION + (server.ShowMyBranchesOnly ? "&my" : "")) 
+//                : getPlansFromUrl(server.Url + ALL_PLANS_ACTION);
+//        }
+//
+//        public ICollection<BambooPlan> getFavouritePlans() {
+//            return server.ShowBranches 
+//                ? getPlansFromUrl(server.Url + FAVOURITE_BRANCHES_ACTION + (server.ShowMyBranchesOnly ? "&my" : "")) 
+//                : getPlansFromUrl(server.Url + FAVOURITE_PLANS_ACTION);
+//        }
 
         private ICollection<BambooPlan> getPlansFromUrl(string endpoint) {
             return getPlansFromUrlWithStartIndex(endpoint, 0);
@@ -231,19 +249,43 @@ namespace Atlassian.plvs.api.bamboo.rest {
         }
 
         public ICollection<BambooBuild> getLatestBuildsForFavouritePlans() {
-            string endpoint = server.Url + getCorrectEnpointOrXPath(LATEST_BUILDS_FOR_FAVOURITE_PLANS_ACTION, LATEST_BUILDS_FOR_FAVOURITE_PLANS_ACTION_3_0);
-            return getBuildsFromUrl(endpoint, true, true, getCorrectEnpointOrXPath(BUILDS_XML_SUBTREE, BUILDS_XML_SUBTREE_3_0));
+            var favouritePlans = getFavouritePlans();
+            return getLatestBuildsForPlanKeys(favouritePlans.Select(p => p.Key).ToList());
         }
     
-        public ICollection<BambooBuild> getLatestBuildsForPlanKeys(ICollection<string> keys) {
-            List<BambooBuild> result = new List<BambooBuild>();
-            foreach (string key in keys) {
-                string buildUrl = string.Format(getCorrectEnpointOrXPath(LATEST_BUILDS_FOR_PLANS_ACTION, LATEST_BUILDS_FOR_PLANS_ACTION_3_0), key);
-                string endpoint = server.Url + buildUrl;
-                ICollection<BambooBuild> builds = getBuildsFromUrl(endpoint, true, false, getCorrectEnpointOrXPath(BUILDS_XML_SUBTREE, BUILDS_XML_SUBTREE_3_0));
-                if (builds != null) {
-                    result.AddRange(builds);
+        private IEnumerable<string> getBranchKeys(string planKey) {
+            var endpoint = server.Url + string.Format(BRANCHES_ACTION, planKey);
+            var result = new List<string>();
+            using (var stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint), true)) {
+                var xdoc = XDocument.Load(stream);
+                foreach (var branch in xdoc.XPathSelectElements("/plan/branches/branch")) {
+                    if (server.ShowMyBranchesOnly) {
+                        if (branch.Descendants("isFavourite").First().Value.Equals("false")) continue;
+                    } 
+                    var a = branch.Attribute("key");
+                    if (a != null) result.Add(a.Value);
                 }
+            }
+            return result;
+        }
+
+        public ICollection<BambooBuild> getLatestBuildsForPlanKeys(ICollection<string> keys) {
+            var src = new List<string>();
+            if (server.ShowBranches) {
+                foreach (var key in keys) {
+                    src.AddRange(getBranchKeys(key));
+                    src.Add(key);
+                }
+            } else {
+                src.AddRange(keys);
+            }
+            var result = new List<BambooBuild>();
+            foreach (var builds in
+                src.Select(key => string.Format(getCorrectEnpointOrXPath(LATEST_BUILDS_FOR_PLANS_ACTION, LATEST_BUILDS_FOR_PLANS_ACTION_3_0), key))
+                    .Select(buildUrl => server.Url + buildUrl)
+                    .Select(endpoint => getBuildsFromUrl(endpoint, true, false, getCorrectEnpointOrXPath(BUILDS_XML_SUBTREE, BUILDS_XML_SUBTREE_3_0)))
+                    .Where(builds => builds != null)) {
+                result.AddRange(builds);
             }
             return result;
         }
@@ -499,6 +541,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
                     it.Current.MoveToFirstChild();
                     string buildRelativeTime = null;
                     string buildDurationDescription = null;
+                    string masterKey = null;
                     int successfulTestCount = 0;
                     int failedTestCount = 0;
                     string buildReason = null;
@@ -506,6 +549,9 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
                     do {
                         switch (it.Current.Name) {
+                            case "master":
+                                masterKey = XPathUtils.getAttributeSafely(it.Current, "key", null);
+                                break;
                             case "buildRelativeTime":
                                 buildRelativeTime = it.Current.Value;
                                 break;
@@ -523,21 +569,23 @@ namespace Atlassian.plvs.api.bamboo.rest {
                                 break;
                             case "jiraIssues":
                                 if (it.Current.HasChildren) {
-                                    XPathNavigator chnav = it.Clone().Current;
-                                    chnav.MoveToFirstChild();
-                                    do {
-                                        BambooBuild.RelatedIssue issue = getRelatedIssue(chnav);
-                                        if (issue != null) relatedIssues.Add(issue);
-                                    } while (chnav.MoveToNext());
+                                    var chnav = it.Clone().Current;
+                                    if (chnav != null) {
+                                        chnav.MoveToFirstChild();
+                                        do {
+                                            var issue = getRelatedIssue(chnav);
+                                            if (issue != null) relatedIssues.Add(issue);
+                                        } while (chnav.MoveToNext());
+                                    }
                                 }
                                 break;
                         }
                     } while (it.Current.MoveToNext());
                     if (key == null) continue;
 
-                    BambooBuild.PlanState planState = getPlanState ? getPlanStateForBuild(key) : BambooBuild.PlanState.IDLE;
-                    BambooBuild build = new BambooBuild(server,
-                        key, BambooBuild.stringToResult(state), number, buildRelativeTime,
+                    var planState = getPlanState ? getPlanStateForBuild(key) : BambooBuild.PlanState.IDLE;
+                    var build = new BambooBuild(server,
+                        key, masterKey, BambooBuild.stringToResult(state), number, buildRelativeTime,
                         buildDurationDescription, successfulTestCount, failedTestCount, buildReason, planState, relatedIssues);
                     builds.Add(build);
                 }

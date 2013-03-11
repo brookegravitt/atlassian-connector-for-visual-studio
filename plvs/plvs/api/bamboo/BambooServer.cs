@@ -7,6 +7,9 @@ namespace Atlassian.plvs.api.bamboo {
 
         public bool UseFavourites { get; set; }
 
+        public bool ShowBranches { get; set; }
+        public bool ShowMyBranchesOnly { get; set; }
+
         public List<string> PlanKeys { get; set; }
 
         public BambooServer(string name, string url, string userName, string password, bool noProxy) 
@@ -20,6 +23,9 @@ namespace Atlassian.plvs.api.bamboo {
         public BambooServer(BambooServer other) : base(other) {
             if (other == null) return;
             UseFavourites = other.UseFavourites;
+            ShowBranches = other.ShowBranches;
+            ShowMyBranchesOnly = other.ShowMyBranchesOnly;
+
             if (other.PlanKeys != null) {
                 PlanKeys = new List<string>(other.PlanKeys);
             }
@@ -33,6 +39,10 @@ namespace Atlassian.plvs.api.bamboo {
             sb.Append(serverdetailsHtmlTableStart());
             sb.Append(serverBaseDetailsHtml());
 
+            sb.Append("<tr VALIGN=TOP><td width=\"200\">Show Plan Branches</td><td>").Append(ShowBranches ? "Yes" : "No").Append("</td></tr>\r\n");
+            if (ShowBranches) {
+                sb.Append("<tr VALIGN=TOP><td width=\"200\">Show My Branches Only</td><td>").Append(ShowMyBranchesOnly ? "Yes" : "No").Append("</td></tr>\r\n");
+            }
             sb.Append("<tr VALIGN=TOP><td width=\"200\">Monitor Favourite Plans</td><td>").Append(UseFavourites ? "Yes" : "No").Append("</td></tr>\r\n");
             if (!UseFavourites) {
                 if (PlanKeys != null && PlanKeys.Count > 0) {
