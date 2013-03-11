@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Web;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Atlassian.plvs.dialogs;
@@ -257,7 +258,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
             var endpoint = server.Url + string.Format(BRANCHES_ACTION, planKey);
             var result = new List<string>();
             using (var stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint), true)) {
-                var xdoc = XDocument.Load(stream);
+                var xdoc = XDocument.Load(XmlReader.Create(stream));
                 foreach (var branch in xdoc.XPathSelectElements("/plan/branches/branch")) {
                     if (server.ShowMyBranchesOnly) {
                         if (branch.Descendants("isFavourite").First().Value.Equals("false")) continue;
