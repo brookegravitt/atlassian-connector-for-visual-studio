@@ -170,18 +170,6 @@ namespace Atlassian.plvs.api.bamboo.rest {
             return getPlansFromUrl(server.Url + FAVOURITE_PLANS_ACTION);
         }
 
-//        public ICollection<BambooPlan> getAllPlans() {
-//            return server.ShowBranches 
-//                ? getPlansFromUrl(server.Url + ALL_BRANCHES_ACTION + (server.ShowMyBranchesOnly ? "&my" : "")) 
-//                : getPlansFromUrl(server.Url + ALL_PLANS_ACTION);
-//        }
-//
-//        public ICollection<BambooPlan> getFavouritePlans() {
-//            return server.ShowBranches 
-//                ? getPlansFromUrl(server.Url + FAVOURITE_BRANCHES_ACTION + (server.ShowMyBranchesOnly ? "&my" : "")) 
-//                : getPlansFromUrl(server.Url + FAVOURITE_PLANS_ACTION);
-//        }
-
         private ICollection<BambooPlan> getPlansFromUrl(string endpoint) {
             return getPlansFromUrlWithStartIndex(endpoint, 0);
         }
