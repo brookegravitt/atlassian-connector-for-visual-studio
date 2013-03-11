@@ -14,6 +14,8 @@ namespace Atlassian.plvs.models.bamboo {
         private static readonly BambooServerModel INSTANCE = new BambooServerModel();
         
         private const string USE_FAVOURITES = "UseFavourites";
+        private const string SHOW_BRANCHES = "ShowBranches";
+        private const string MY_BRANCHES_ONLY = "MyBranchesOnly";
         private const string PLAN_KEYS = "PlanKeys";
 
         public static BambooServerModel Instance { get { return INSTANCE; } }
@@ -23,13 +25,17 @@ namespace Atlassian.plvs.models.bamboo {
 
         protected override void loadCustomServerParameters(ParameterStore store, BambooServer server) {
             server.UseFavourites = store.loadParameter(USE_FAVOURITES + "_" + server.GUID, 1) > 0;
+            server.ShowBranches = store.loadParameter(SHOW_BRANCHES + "_" + server.GUID, 1) > 0;
+            server.ShowMyBranchesOnly = store.loadParameter(MY_BRANCHES_ONLY + "_" + server.GUID, 0) > 0;
             string keyString = store.loadParameter(PLAN_KEYS + "_" + server.GUID, "");
             setPlanKeysFromString(server, keyString);
         }
 
         protected override void loadCustomServerParameters(RegistryKey key, BambooServer server) {
             server.UseFavourites = (int) key.GetValue(USE_FAVOURITES, 1) > 0;
-            string keyString = (string) key.GetValue(PLAN_KEYS, "");
+            server.ShowBranches = (int)key.GetValue(SHOW_BRANCHES, 1) > 0;
+            server.ShowMyBranchesOnly = (int)key.GetValue(MY_BRANCHES_ONLY, 0) > 0;
+            string keyString = (string)key.GetValue(PLAN_KEYS, "");
             setPlanKeysFromString(server, keyString);
         }
 
@@ -42,6 +48,8 @@ namespace Atlassian.plvs.models.bamboo {
 
         protected override void saveCustomServerParameters(ParameterStore store, BambooServer server) {
             store.storeParameter(USE_FAVOURITES + "_" + server.GUID, server.UseFavourites ? 1 : 0);
+            store.storeParameter(SHOW_BRANCHES + "_" + server.GUID, server.ShowBranches ? 1 : 0);
+            store.storeParameter(MY_BRANCHES_ONLY + "_" + server.GUID, server.ShowMyBranchesOnly ? 1 : 0);
 
             string planKeys = getPlanKeysStringFromPlans(server);
             store.storeParameter(PLAN_KEYS + "_" + server.GUID, planKeys.Trim());
@@ -49,6 +57,8 @@ namespace Atlassian.plvs.models.bamboo {
 
         protected override void saveCustomServerParameters(RegistryKey key, BambooServer server) {
             key.SetValue(USE_FAVOURITES, server.UseFavourites ? 1 : 0);
+            key.SetValue(SHOW_BRANCHES, server.ShowBranches ? 1 : 0);
+            key.SetValue(MY_BRANCHES_ONLY, server.ShowMyBranchesOnly ? 1 : 0);
 
             string planKeys = getPlanKeysStringFromPlans(server);
             key.SetValue(PLAN_KEYS, planKeys.Trim());

@@ -37,6 +37,11 @@ namespace Atlassian.plvs.api.bamboo {
             new RestSession(server).login(server.UserName, server.Password);
         }
 
+        public int getServerBuildNumber(BambooServer server) {
+            var session = createSessionAndLogin(server);
+            return wrapExceptions<int>(session, () => session.getServerBuildNumber());
+        }
+
         public ICollection<BambooPlan> getPlanList(BambooServer server) {
             RestSession session = createSessionAndLogin(server);
             return wrapExceptions(session, () => session.getAllPlans());

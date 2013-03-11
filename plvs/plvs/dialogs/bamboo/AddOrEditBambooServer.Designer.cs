@@ -46,6 +46,8 @@
             this.buttonTestConnection = new System.Windows.Forms.Button();
             this.checkDontUseProxy = new System.Windows.Forms.CheckBox();
             this.checkShared = new System.Windows.Forms.CheckBox();
+            this.checkShowBranches = new System.Windows.Forms.CheckBox();
+            this.checkMyBranches = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // buttonCancel
@@ -68,7 +70,7 @@
             this.buttonAddOrEdit.TabIndex = 1;
             this.buttonAddOrEdit.Text = "AddOrEdit";
             this.buttonAddOrEdit.UseVisualStyleBackColor = true;
-            this.buttonAddOrEdit.Click += new System.EventHandler(this.buttonAddOrEdit_Click);
+            this.buttonAddOrEdit.Click += new System.EventHandler(this.buttonAddOrEditClick);
             // 
             // label1
             // 
@@ -108,38 +110,38 @@
             // 
             // name
             // 
-            this.name.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.name.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.name.Location = new System.Drawing.Point(97, 20);
             this.name.Name = "name";
             this.name.Size = new System.Drawing.Size(355, 20);
             this.name.TabIndex = 6;
-            this.name.TextChanged += new System.EventHandler(this.name_TextChanged);
+            this.name.TextChanged += new System.EventHandler(this.nameTextChanged);
             // 
             // url
             // 
-            this.url.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.url.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.url.Location = new System.Drawing.Point(97, 92);
             this.url.Name = "url";
             this.url.Size = new System.Drawing.Size(355, 20);
             this.url.TabIndex = 7;
-            this.url.TextChanged += new System.EventHandler(this.url_TextChanged);
+            this.url.TextChanged += new System.EventHandler(this.urlTextChanged);
             // 
             // user
             // 
-            this.user.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.user.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.user.Location = new System.Drawing.Point(97, 141);
             this.user.Name = "user";
             this.user.Size = new System.Drawing.Size(355, 20);
             this.user.TabIndex = 8;
-            this.user.TextChanged += new System.EventHandler(this.user_TextChanged);
+            this.user.TextChanged += new System.EventHandler(this.userTextChanged);
             // 
             // password
             // 
-            this.password.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.password.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.password.Location = new System.Drawing.Point(97, 167);
             this.password.Name = "password";
             this.password.PasswordChar = '*';
@@ -156,7 +158,7 @@
             this.radioUseFavourites.TabStop = true;
             this.radioUseFavourites.Text = "Monitor Favourite Plans";
             this.radioUseFavourites.UseVisualStyleBackColor = true;
-            this.radioUseFavourites.CheckedChanged += new System.EventHandler(this.radioUseFavourites_CheckedChanged);
+            this.radioUseFavourites.CheckedChanged += new System.EventHandler(this.radioUseFavouritesCheckedChanged);
             // 
             // radioSelectManually
             // 
@@ -168,30 +170,30 @@
             this.radioSelectManually.TabStop = true;
             this.radioSelectManually.Text = "Select Plans to Monitor";
             this.radioSelectManually.UseVisualStyleBackColor = true;
-            this.radioSelectManually.CheckedChanged += new System.EventHandler(this.radioSelectManually_CheckedChanged);
+            this.radioSelectManually.CheckedChanged += new System.EventHandler(this.radioSelectManuallyCheckedChanged);
             // 
             // checkedListBuilds
             // 
-            this.checkedListBuilds.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkedListBuilds.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.checkedListBuilds.FormattingEnabled = true;
             this.checkedListBuilds.Location = new System.Drawing.Point(97, 249);
             this.checkedListBuilds.Name = "checkedListBuilds";
-            this.checkedListBuilds.Size = new System.Drawing.Size(355, 289);
+            this.checkedListBuilds.Size = new System.Drawing.Size(355, 259);
             this.checkedListBuilds.TabIndex = 12;
             // 
             // buttonGetBuilds
             // 
-            this.buttonGetBuilds.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonGetBuilds.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonGetBuilds.Location = new System.Drawing.Point(335, 213);
             this.buttonGetBuilds.Name = "buttonGetBuilds";
             this.buttonGetBuilds.Size = new System.Drawing.Size(117, 23);
             this.buttonGetBuilds.TabIndex = 13;
             this.buttonGetBuilds.Text = "Get Plan List";
             this.buttonGetBuilds.UseVisualStyleBackColor = true;
-            this.buttonGetBuilds.Click += new System.EventHandler(this.buttonGetBuilds_Click);
+            this.buttonGetBuilds.Click += new System.EventHandler(this.buttonGetBuildsClick);
             // 
             // checkEnabled
             // 
@@ -202,7 +204,7 @@
             this.checkEnabled.TabIndex = 14;
             this.checkEnabled.Text = "Server Enabled";
             this.checkEnabled.UseVisualStyleBackColor = true;
-            this.checkEnabled.CheckedChanged += new System.EventHandler(this.checkEnabled_CheckedChanged);
+            this.checkEnabled.CheckedChanged += new System.EventHandler(this.checkEnabledCheckedChanged);
             // 
             // buttonTestConnection
             // 
@@ -213,7 +215,7 @@
             this.buttonTestConnection.TabIndex = 15;
             this.buttonTestConnection.Text = "Test Connection";
             this.buttonTestConnection.UseVisualStyleBackColor = true;
-            this.buttonTestConnection.Click += new System.EventHandler(this.buttonTestConnection_Click);
+            this.buttonTestConnection.Click += new System.EventHandler(this.buttonTestConnectionClick);
             // 
             // checkDontUseProxy
             // 
@@ -224,7 +226,7 @@
             this.checkDontUseProxy.TabIndex = 16;
             this.checkDontUseProxy.Text = "Do Not Use Proxy";
             this.checkDontUseProxy.UseVisualStyleBackColor = true;
-            this.checkDontUseProxy.CheckedChanged += new System.EventHandler(this.checkUseProxy_CheckedChanged);
+            this.checkDontUseProxy.CheckedChanged += new System.EventHandler(this.checkUseProxyCheckedChanged);
             // 
             // checkShared
             // 
@@ -235,13 +237,37 @@
             this.checkShared.TabIndex = 17;
             this.checkShared.Text = "Server Shared Between Solutions";
             this.checkShared.UseVisualStyleBackColor = true;
-            this.checkShared.CheckedChanged += new System.EventHandler(this.checkShared_CheckedChanged);
+            this.checkShared.CheckedChanged += new System.EventHandler(this.checkSharedCheckedChanged);
+            // 
+            // checkShowBranches
+            // 
+            this.checkShowBranches.AutoSize = true;
+            this.checkShowBranches.Location = new System.Drawing.Point(97, 515);
+            this.checkShowBranches.Name = "checkShowBranches";
+            this.checkShowBranches.Size = new System.Drawing.Size(125, 17);
+            this.checkShowBranches.TabIndex = 18;
+            this.checkShowBranches.Text = "Show Plan Branches";
+            this.checkShowBranches.UseVisualStyleBackColor = true;
+            this.checkShowBranches.CheckedChanged += new System.EventHandler(this.checkShowBranchesCheckedChanged);
+            // 
+            // checkMyBranches
+            // 
+            this.checkMyBranches.AutoSize = true;
+            this.checkMyBranches.Location = new System.Drawing.Point(279, 515);
+            this.checkMyBranches.Name = "checkMyBranches";
+            this.checkMyBranches.Size = new System.Drawing.Size(112, 17);
+            this.checkMyBranches.TabIndex = 19;
+            this.checkMyBranches.Text = "Only My Branches";
+            this.checkMyBranches.UseVisualStyleBackColor = true;
+            this.checkMyBranches.CheckedChanged += new System.EventHandler(this.checkMyBranchesCheckedChanged);
             // 
             // AddOrEditBambooServer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(464, 582);
+            this.Controls.Add(this.checkMyBranches);
+            this.Controls.Add(this.checkShowBranches);
             this.Controls.Add(this.checkShared);
             this.Controls.Add(this.checkDontUseProxy);
             this.Controls.Add(this.buttonTestConnection);
@@ -293,5 +319,7 @@
         private System.Windows.Forms.Button buttonTestConnection;
         private System.Windows.Forms.CheckBox checkDontUseProxy;
         private System.Windows.Forms.CheckBox checkShared;
+        private System.Windows.Forms.CheckBox checkShowBranches;
+        private System.Windows.Forms.CheckBox checkMyBranches;
     }
 }

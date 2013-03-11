@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using Atlassian.plvs.api.bamboo;
+using Atlassian.plvs.api.bamboo.rest;
 using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.dialogs.bamboo {
@@ -43,6 +44,13 @@ namespace Atlassian.plvs.dialogs.bamboo {
                         planKeys.AddRange(server.PlanKeys);
                     }
 
+                    checkShowBranches.Checked = server.ShowBranches;
+                    checkMyBranches.Checked = server.ShowMyBranchesOnly;
+                    checkShowBranches.Enabled = false;
+                    checkMyBranches.Enabled = false;
+
+                    getServerVersion();
+
                     if (!server.UseFavourites) {
                         getPlans();
                     }
@@ -63,6 +71,9 @@ namespace Atlassian.plvs.dialogs.bamboo {
                 checkEnabled.Checked = true;
                 checkShared.Checked = false;
                 checkDontUseProxy.Checked = false;
+                checkShowBranches.Checked = true;
+                checkShowBranches.Enabled = true;
+                checkMyBranches.Enabled = true;
             }
 
             StartPosition = FormStartPosition.CenterParent;
@@ -73,7 +84,7 @@ namespace Atlassian.plvs.dialogs.bamboo {
             set { base.Text = value; }
         }
 
-        private void buttonAddOrEdit_Click(object sender, EventArgs e) {
+        private void buttonAddOrEditClick(object sender, EventArgs e) {
             fillServerData();
 
             server.UseFavourites = radioUseFavourites.Checked;
@@ -108,17 +119,19 @@ namespace Atlassian.plvs.dialogs.bamboo {
             server.Enabled = checkEnabled.Checked;
             server.IsShared = checkShared.Checked;
             server.NoProxy = checkDontUseProxy.Checked;
+            server.ShowBranches = checkShowBranches.Checked;
+            server.ShowMyBranchesOnly = checkMyBranches.Checked;
         }
 
-        private void name_TextChanged(object sender, EventArgs e) {
+        private void nameTextChanged(object sender, EventArgs e) {
             checkIfValid();
         }
 
-        private void url_TextChanged(object sender, EventArgs e) {
+        private void urlTextChanged(object sender, EventArgs e) {
             checkIfValid();
         }
 
-        private void user_TextChanged(object sender, EventArgs e) {
+        private void userTextChanged(object sender, EventArgs e) {
             checkIfValid();
         }
 
@@ -141,21 +154,21 @@ namespace Atlassian.plvs.dialogs.bamboo {
             Close();
         }
 
-        private void radioUseFavourites_CheckedChanged(object sender, EventArgs e) {
+        private void radioUseFavouritesCheckedChanged(object sender, EventArgs e) {
             checkIfValid();
         }
 
-        private void radioSelectManually_CheckedChanged(object sender, EventArgs e) {
+        private void radioSelectManuallyCheckedChanged(object sender, EventArgs e) {
             checkIfValid();
         }
 
-        private void buttonGetBuilds_Click(object sender, EventArgs e) {
+        private void buttonGetBuildsClick(object sender, EventArgs e) {
             getPlans();
         }
 
         private void getPlans() {
             gettingPlans = true;
-            buttonCancel.Enabled = false;
+//            buttonCancel.Enabled = false;
             buttonAddOrEdit.Enabled = false;
             radioUseFavourites.Enabled = false;
             radioSelectManually.Enabled = false;
@@ -174,28 +187,44 @@ namespace Atlassian.plvs.dialogs.bamboo {
             t.Start();
         }
 
+        private void getServerVersion() {
+            var t = PlvsUtils.createThread(() => {
+                try {
+                    var buildNumber = facade.getServerBuildNumber(server);
+                    this.safeInvoke(new MethodInvoker(delegate {
+                        checkShowBranches.Enabled = RestSession.BUILD_NUMBER_4_0 <= buildNumber;
+                        checkMyBranches.Enabled = RestSession.BUILD_NUMBER_5_0 <= buildNumber;
+                    }));
+                } catch(Exception e) {
+                    this.safeInvoke(new MethodInvoker(() => PlvsUtils.showError("Unable to retrieve server version", e)));
+                }
+
+            });
+            t.Start();
+        }
+
         private void getPlansWorker() {
             fillServerData();
             try {
                 ICollection<BambooPlan> plans  = facade.getPlanList(server);
-                Invoke(new MethodInvoker(() => fillPlanList(plans)));
+                this.safeInvoke(new MethodInvoker(() => fillPlanList(plans)));
             } catch (Exception e) {
-                Invoke(new MethodInvoker(() => PlvsUtils.showError("Unable to retrieve build plans", e)));
+                this.safeInvoke(new MethodInvoker(() => PlvsUtils.showError("Unable to retrieve build plans", e)));
             } finally {
                 gettingPlans = false;
 
-                Invoke(new MethodInvoker(delegate {
-                                             buttonCancel.Enabled = true;
-                                             radioUseFavourites.Enabled = true;
-                                             radioSelectManually.Enabled = true;
-                                             name.Enabled = true;
-                                             url.Enabled = true;
-                                             user.Enabled = true;
-                                             password.Enabled = true;
-                                             checkEnabled.Enabled = true;
-                                             checkShared.Enabled = true;
-                                             checkDontUseProxy.Enabled = true;
-                                             checkIfValid();
+                this.safeInvoke(new MethodInvoker(delegate {
+//                    buttonCancel.Enabled = true;
+                    radioUseFavourites.Enabled = true;
+                    radioSelectManually.Enabled = true;
+                    name.Enabled = true;
+                    url.Enabled = true;
+                    user.Enabled = true;
+                    password.Enabled = true;
+                    checkEnabled.Enabled = true;
+                    checkShared.Enabled = true;
+                    checkDontUseProxy.Enabled = true;
+                    checkIfValid();
                 }));
             }
         }
@@ -216,20 +245,28 @@ namespace Atlassian.plvs.dialogs.bamboo {
             }
         }
 
-        private void checkEnabled_CheckedChanged(object sender, EventArgs e) {
+        private void checkEnabledCheckedChanged(object sender, EventArgs e) {
             checkIfValid();
         }
 
-        private void buttonTestConnection_Click(object sender, EventArgs e) {
+        private void buttonTestConnectionClick(object sender, EventArgs e) {
             fillServerData();
             new TestBambooConnection(facade, server).ShowDialog();
         }
 
-        private void checkUseProxy_CheckedChanged(object sender, EventArgs e) {
+        private void checkUseProxyCheckedChanged(object sender, EventArgs e) {
             checkIfValid();
         }
 
-        private void checkShared_CheckedChanged(object sender, EventArgs e) {
+        private void checkSharedCheckedChanged(object sender, EventArgs e) {
+            checkIfValid();
+        }
+
+        private void checkShowBranchesCheckedChanged(object sender, EventArgs e) {
+            checkIfValid();
+        }
+
+        private void checkMyBranchesCheckedChanged(object sender, EventArgs e) {
             checkIfValid();
         }
     }
