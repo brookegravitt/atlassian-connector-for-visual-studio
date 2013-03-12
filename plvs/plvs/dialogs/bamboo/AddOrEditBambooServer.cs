@@ -77,6 +77,7 @@ namespace Atlassian.plvs.dialogs.bamboo {
             }
 
             StartPosition = FormStartPosition.CenterParent;
+            toolTip.SetToolTip(checkMyBranches, "Only show branches where the last commit is mine");
         }
 
         public override sealed string Text {

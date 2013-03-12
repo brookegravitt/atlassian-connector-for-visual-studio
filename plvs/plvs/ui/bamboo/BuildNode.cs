@@ -1,9 +1,10 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Text.RegularExpressions;
 using Atlassian.plvs.api.bamboo;
 
 namespace Atlassian.plvs.ui.bamboo {
-    public class BuildNode {
+    public class BuildNode : TreeNodeCollapseExpandStatusManager.TreeNodeRememberingCollapseState {
 
         private const int PROBABLE_GARBAGE_REASON_LENGTH = 300;
 
@@ -59,5 +60,13 @@ namespace Atlassian.plvs.ui.bamboo {
         public string Duration { get { return Build.Duration; } }
 
         public string Server { get { return Build.Server.Name; } }
+
+        public List<BuildNode> BranchNodes { get; set; }
+
+        public string NodeKey {
+            get { return Build.Server.GUID + Build.Key; }
+        }
+
+        public bool NodeExpanded { get; set; }
     }
 }

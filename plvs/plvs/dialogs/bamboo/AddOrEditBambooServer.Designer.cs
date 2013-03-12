@@ -27,6 +27,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddOrEditBambooServer));
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonAddOrEdit = new System.Windows.Forms.Button();
@@ -48,6 +49,7 @@
             this.checkShared = new System.Windows.Forms.CheckBox();
             this.checkShowBranches = new System.Windows.Forms.CheckBox();
             this.checkMyBranches = new System.Windows.Forms.CheckBox();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // buttonCancel
@@ -321,5 +323,6 @@
         private System.Windows.Forms.CheckBox checkShared;
         private System.Windows.Forms.CheckBox checkShowBranches;
         private System.Windows.Forms.CheckBox checkMyBranches;
+        private System.Windows.Forms.ToolTip toolTip;
     }
 }

@@ -75,11 +75,11 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
             return true;
         }
 
-        protected override void model_ModelChanged(object sender, EventArgs e) {
+        protected override void modelModelChanged(object sender, EventArgs e) {
             fillModel(Model.Issues);
         }
 
-        protected override void model_IssueChanged(object sender, IssueChangedEventArgs e) {
+        protected override void modelIssueChanged(object sender, IssueChangedEventArgs e) {
             foreach (var node in nodes) {
                 if (GroupSubtasksUnderParent && e.Issue.IsSubtask) {
                     if (!node.Issue.Key.Equals(e.Issue.ParentKey)) continue;

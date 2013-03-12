@@ -21,23 +21,23 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
 
         public void init() {
             fillModel(Model.Issues);
-            Model.ModelChanged += model_ModelChanged;
-            Model.IssueChanged += model_IssueChanged;
-            groupSubtasksButton.CheckedChanged += groupSubtasksButton_CheckedChanged;
+            Model.ModelChanged += modelModelChanged;
+            Model.IssueChanged += modelIssueChanged;
+            groupSubtasksButton.CheckedChanged += groupSubtasksButtonCheckedChanged;
         }
 
-        protected void groupSubtasksButton_CheckedChanged(object sender, EventArgs e) {
+        protected void groupSubtasksButtonCheckedChanged(object sender, EventArgs e) {
             fillModel(Model.Issues);
         }
 
-        protected abstract void model_IssueChanged(object sender, IssueChangedEventArgs e);
+        protected abstract void modelIssueChanged(object sender, IssueChangedEventArgs e);
 
-        protected abstract void model_ModelChanged(object sender, EventArgs e);
+        protected abstract void modelModelChanged(object sender, EventArgs e);
 
         public void shutdown() {
-            Model.ModelChanged -= model_ModelChanged;
-            Model.IssueChanged -= model_IssueChanged;
-            groupSubtasksButton.CheckedChanged -= groupSubtasksButton_CheckedChanged;
+            Model.ModelChanged -= modelModelChanged;
+            Model.IssueChanged -= modelIssueChanged;
+            groupSubtasksButton.CheckedChanged -= groupSubtasksButtonCheckedChanged;
         }
 
         protected abstract void fillModel(IEnumerable<JiraIssue> issues);

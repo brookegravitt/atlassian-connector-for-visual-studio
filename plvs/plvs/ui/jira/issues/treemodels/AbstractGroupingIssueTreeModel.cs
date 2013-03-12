@@ -99,7 +99,7 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
             return true;
         }
 
-        protected override void model_ModelChanged(object sender, EventArgs e) {
+        protected override void modelModelChanged(object sender, EventArgs e) {
             if (TreeAboutToChange != null) {
                 TreeAboutToChange(this, new EventArgs());
             }
@@ -107,7 +107,7 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
             fillModel(Model.Issues);
         }
 
-        protected override void model_IssueChanged(object sender, IssueChangedEventArgs e) {
+        protected override void modelIssueChanged(object sender, IssueChangedEventArgs e) {
             foreach (var groupNode in getGroupNodes()) {
 
                 if (GroupSubtasksUnderParent && e.Issue.IsSubtask) {

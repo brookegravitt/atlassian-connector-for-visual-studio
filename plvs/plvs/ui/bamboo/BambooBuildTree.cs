@@ -9,6 +9,8 @@ namespace Atlassian.plvs.ui.bamboo {
     public sealed class BambooBuildTree : TreeViewAdv {
         private readonly Control parent;
 
+        public TreeNodeCollapseExpandStatusManager CollapseExpandManager { get; set; }
+
         private readonly TreeColumn colStatusAndKey = new TreeColumn();
         private readonly TreeColumn colTests = new TreeColumn();
         private readonly TreeColumn colReason = new TreeColumn();
@@ -148,6 +150,9 @@ namespace Atlassian.plvs.ui.bamboo {
             colCompleted.WidthChanged += columnWidthChanged;
             colDuration.WidthChanged += columnWidthChanged;
             colServer.WidthChanged += columnWidthChanged;
+
+            Expanded += treeExpanded;
+            Collapsed += treeCollapsed;
         }
 
         private void loadColumnWidths() {
@@ -201,6 +206,44 @@ namespace Atlassian.plvs.ui.bamboo {
             colReason.Width = reasonWidth;
             colReason.MinColumnWidth = reasonWidth;
             colReason.MaxColumnWidth = reasonWidth;
+        }
+
+        private bool isRestoring;
+
+        public void restoreExpandCollapseStates() {
+            if (CollapseExpandManager == null) {
+                ExpandAll();
+                return;
+            }
+            isRestoring = true;
+            foreach (var node in AllNodes) {
+                restoreExpandCollapseState(node);
+            }
+            isRestoring = false;
+        }
+
+        private void restoreExpandCollapseState(TreeNodeAdv node) {
+            if (CollapseExpandManager == null) return;
+            bool expanded = CollapseExpandManager.restoreNodeState(node.Tag);
+            if (expanded) node.Expand(true); else node.Collapse(true);
+        }
+
+        private void rememberExpandCollapseState(TreeNodeAdv node) {
+            if (CollapseExpandManager == null) return;
+
+            var n = node.Tag as TreeNodeCollapseExpandStatusManager.TreeNodeRememberingCollapseState;
+            if (n == null) return;
+            n.NodeExpanded = node.IsExpanded;
+            CollapseExpandManager.rememberNodeState(node.Tag);
+        }
+
+        private void treeCollapsed(object sender, TreeViewAdvEventArgs e) {
+            if (isRestoring) return;
+            rememberExpandCollapseState(e.Node);
+        }
+        private void treeExpanded(object sender, TreeViewAdvEventArgs e) {
+            if (isRestoring) return;
+            rememberExpandCollapseState(e.Node);
         }
     }
 }
