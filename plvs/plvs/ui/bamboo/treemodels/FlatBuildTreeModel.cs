@@ -1,25 +1,26 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Aga.Controls.Tree;
 using Atlassian.plvs.api.bamboo;
+using Atlassian.plvs.models.bamboo;
 using Atlassian.plvs.util.bamboo;
-using Atlassian.plvs.util.jira;
 
 namespace Atlassian.plvs.ui.bamboo.treemodels {
-    public class FlatBuildTreeModel : ITreeModel {
+    public class FlatBuildTreeModel : AbstractBuildTreeModel {
 
         private readonly SortedDictionary<string, BuildNode> buildNodes = new SortedDictionary<string, BuildNode>();
 
-        public FlatBuildTreeModel(ICollection<BambooBuild> builds) {
-            updateBuilds(builds);
+        public FlatBuildTreeModel(BambooBuildListModel builds)
+            : base(builds) {
         }
 
-        public FlatBuildTreeModel() {
-            updateBuilds(null);
+        protected override void modelModelChanged(object sender, EventArgs e) {
+            fillModel(Model.Builds);
         }
 
-        public void updateBuilds(ICollection<BambooBuild> builds) {
+        protected override void fillModel(ICollection<BambooBuild> builds) {
             if (builds == null || builds.Count == 0) {
                 buildNodes.Clear();
                 if (StructureChanged != null) {
@@ -27,7 +28,7 @@ namespace Atlassian.plvs.ui.bamboo.treemodels {
                 }
                 return;
             }
-            foreach (BambooBuild build in builds) {
+            foreach (var build in builds) {
                 if (buildNodes.ContainsKey(getMapKeyFromBuild(build))) {
                     buildNodes[getMapKeyFromBuild(build)].Build = build;
                     if (NodesChanged != null) {
@@ -39,19 +40,13 @@ namespace Atlassian.plvs.ui.bamboo.treemodels {
                         NodesInserted(this, new TreeModelEventArgs(TreePath.Empty, new[] { getIndex(build) }, new[] { getNode(build) }));
                     }
                 }
-                List<string> toRemove = new List<string>();
-                foreach (string key in buildNodes.Keys) {
-                    bool found = false;
-                    foreach (BambooBuild b in builds) {
-                        if (!key.Equals(getMapKeyFromBuild(b))) continue;
-                        found = true;
-                        break;
-                    }
-                    if (found) continue;
-                    toRemove.Add(key);
-                }
-                foreach (string key in toRemove) {
-                    BuildNode n = buildNodes[key];
+                var toRemove = (from key in buildNodes.Keys 
+                                let found = builds.Any(b => key.Equals(getMapKeyFromBuild(b))) 
+                                where !found 
+                                select key).ToList();
+                
+                foreach (var key in toRemove) {
+                    var n = buildNodes[key];
                     buildNodes.Remove(key);
                     if (NodesRemoved != null) {
                         NodesRemoved(this, new TreeModelEventArgs(TreePath.Empty, new object[] {n}));
@@ -65,8 +60,8 @@ namespace Atlassian.plvs.ui.bamboo.treemodels {
         }
 
         private int getIndex(BambooBuild build) {
-            int i = 0;
-            foreach (string key in buildNodes.Keys) {
+            var i = 0;
+            foreach (var key in buildNodes.Keys) {
                 if (key.Equals(getMapKeyFromBuild(build))) {
                     return i;
                 }
@@ -79,17 +74,17 @@ namespace Atlassian.plvs.ui.bamboo.treemodels {
             return buildNodes[getMapKeyFromBuild(build)];
         }
 
-        public IEnumerable GetChildren(TreePath treePath) {
+        public override IEnumerable GetChildren(TreePath treePath) {
             return buildNodes.Values;
         }
 
-        public bool IsLeaf(TreePath treePath) {
+        public override bool IsLeaf(TreePath treePath) {
             return true;
         }
 
-        public event EventHandler<TreeModelEventArgs> NodesChanged;
-        public event EventHandler<TreeModelEventArgs> NodesInserted;
-        public event EventHandler<TreeModelEventArgs> NodesRemoved;
-        public event EventHandler<TreePathEventArgs> StructureChanged;
+        public override event EventHandler<TreeModelEventArgs> NodesChanged;
+        public override event EventHandler<TreeModelEventArgs> NodesInserted;
+        public override event EventHandler<TreeModelEventArgs> NodesRemoved;
+        public override event EventHandler<TreePathEventArgs> StructureChanged;
     }
 }

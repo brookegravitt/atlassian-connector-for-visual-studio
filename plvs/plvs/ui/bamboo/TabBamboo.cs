@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -11,6 +12,7 @@ using Atlassian.plvs.autoupdate;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.dialogs.bamboo;
 using Atlassian.plvs.models.bamboo;
+using Atlassian.plvs.store;
 using Atlassian.plvs.ui.bamboo.treemodels;
 using Atlassian.plvs.util;
 using Atlassian.plvs.util.bamboo;
@@ -46,10 +48,10 @@ namespace Atlassian.plvs.ui.bamboo {
             status = new StatusLabel(statusStrip, statusLabel);
 
             pollTimer = new Timer();
-            pollTimer.Elapsed += pollTimer_Elapsed;
+            pollTimer.Elapsed += pollTimerElapsed;
 
             infoTimer = new Timer();
-            infoTimer.Elapsed += infoTimer_Elapsed;
+            infoTimer.Elapsed += infoTimerElapsed;
 
             GlobalSettings.SettingsChanged += globalSettingsChanged;
 
@@ -57,6 +59,7 @@ namespace Atlassian.plvs.ui.bamboo {
             notifyBuildStatus.Visible = false;
             notifyBuildStatus.BalloonTipTitle = "Atlassian Bamboo Notification";
             notifyBuildStatus.Text = "No build information retrieved yet";
+            setupGroupByCombo();
         }
 
         public BambooServerFacade Facade { get { return BambooServerFacade.Instance; } }
@@ -82,6 +85,34 @@ namespace Atlassian.plvs.ui.bamboo {
             infoTimer.Start();
 
             this.safeInvoke(new MethodInvoker(initBuildTree));
+        }
+
+        private void setupGroupByCombo() {
+            foreach (BambooBuildGroupByComboItem.GroupBy groupBy in Enum.GetValues(typeof(BambooBuildGroupByComboItem.GroupBy))) {
+                comboGroupBy.Items.Add(new BambooBuildGroupByComboItem(groupBy, BambooBuildListModelImpl.Instance));
+            }
+            comboGroupBy.SelectedIndexChanged += comboGroupBySelectedIndexChanged;
+        }
+
+        private void comboGroupBySelectedIndexChanged(object sender, EventArgs e) {
+            updateBuildTreeModel();
+        }
+
+        private void updateBuildTreeModel() {
+            var item = comboGroupBy.SelectedItem as BambooBuildGroupByComboItem;
+            if (item == null) {
+                return;
+            }
+            
+            var oldModel = buildTree.Model as AbstractBuildTreeModel;
+            if (oldModel != null) {
+                oldModel.shutdown();
+            }
+
+            var buildTreeModel = item.TreeModel;
+
+            buildTree.Model = buildTreeModel;
+            buildTreeModel.init();
         }
 
         private void initBuildTree() {
@@ -118,8 +149,13 @@ namespace Atlassian.plvs.ui.bamboo {
 
                 splitter = new SplitContainer();
                 
-                buildTree = new BambooBuildTree(splitter) { Model = new FlatBuildTreeModel() };
-                buildTree.Model = new FlatBuildTreeModel();
+                buildTree = new BambooBuildTree(splitter) {
+                    CollapseExpandManager =
+                        new TreeNodeCollapseExpandStatusManager(
+                            ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS))
+                };
+
+                updateBuildTreeModel();
                 splitter.Panel1.Controls.Add(buildTree);
 
                 buildHistoryTable = new BambooBuildHistoryTable(status);
@@ -134,9 +170,9 @@ namespace Atlassian.plvs.ui.bamboo {
 
                 updateBuildListButtons();
 
-                buildTree.SelectionChanged += buildTree_SelectionChanged;
-                buildTree.MouseDoubleClick += buildTree_MouseDoubleClick;
-                buildTree.KeyPress += buildTree_KeyPress;
+                buildTree.SelectionChanged += buildTreeSelectionChanged;
+                buildTree.MouseDoubleClick += buildTreeMouseDoubleClick;
+                buildTree.KeyPress += buildTreeKeyPress;
 
                 int count = BambooServerModel.Instance.getAllEnabledServers().Count;
                 if (count == 0) {
@@ -144,16 +180,18 @@ namespace Atlassian.plvs.ui.bamboo {
                 } else {
                     showPollTimeInfo();
                 }
+
+                comboGroupBy.restoreSelectedIndex();
             }
         }
 
-        private void buildTree_KeyPress(object sender, KeyPressEventArgs e) {
+        private void buildTreeKeyPress(object sender, KeyPressEventArgs e) {
             if (e.KeyChar == (char) Keys.Enter) {
                 openSelectedBuild();
             }
         }
 
-        private void buildTree_MouseDoubleClick(object sender, MouseEventArgs e) {
+        private void buildTreeMouseDoubleClick(object sender, MouseEventArgs e) {
             openSelectedBuild();
         }
 
@@ -161,7 +199,7 @@ namespace Atlassian.plvs.ui.bamboo {
             runOnSelectedNode(build => BuildDetailsWindow.Instance.openBuild(build));
         }
 
-        private void buildTree_SelectionChanged(object sender, EventArgs e) {
+        private void buildTreeSelectionChanged(object sender, EventArgs e) {
             updateBuildListButtons();
             BuildNode bn = getSelectedBuildNode();
             buildHistoryTable.showHistoryForBuild(bn != null ? bn.Build : null);
@@ -190,14 +228,14 @@ namespace Atlassian.plvs.ui.bamboo {
             init();
         }
 
-        void pollTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
+        void pollTimerElapsed(object sender, System.Timers.ElapsedEventArgs e) {
             lastPollTime = null;
             nextPollTime = null;
             Thread t = PlvsUtils.createThread(() => pollRunner(true));
             t.Start();
         }
 
-        void infoTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
+        void infoTimerElapsed(object sender, System.Timers.ElapsedEventArgs e) {
             showPollTimeInfo();
         }
 
@@ -246,17 +284,21 @@ namespace Atlassian.plvs.ui.bamboo {
             if (buildTree == null) return;
 
             if (builds == null && exceptions == null) {
-                ((FlatBuildTreeModel) buildTree.Model).updateBuilds(null);
+                BambooBuildListModelImpl.Instance.clear(true);
                 buildHistoryTable.showHistoryForBuild(null);
                 status.setInfo("No builds to poll found");
                 return;
             }
-            ((FlatBuildTreeModel) buildTree.Model).updateBuilds(builds);
-            
-            BuildNode buildNode = getSelectedBuildNode();
+
+            BambooBuildListModelImpl.Instance.clear(false);
+            BambooBuildListModelImpl.Instance.addBuilds(builds);
+
+            buildTree.restoreExpandCollapseStates();
+
+            var buildNode = getSelectedBuildNode();
             buildHistoryTable.showHistoryForBuild(buildNode != null ? buildNode.Build : null );
 
-            bool haveExceptions = exceptions != null && exceptions.Count > 0;
+            var haveExceptions = exceptions != null && exceptions.Count > 0;
             if (haveExceptions) {
                 status.setError("Failed to poll some of the servers", exceptions);
             } else {
@@ -266,11 +308,9 @@ namespace Atlassian.plvs.ui.bamboo {
             bool? allpassing = null;
             if (builds != null) {
                 allpassing = true;
-                foreach (var b in builds) {
-                    if (allpassing.Value && b.Result != BambooBuild.BuildResult.SUCCESSFUL) {
-                        allpassing = false;
-                    }
-                } 
+                foreach (var b in builds.Where(b => allpassing.Value && b.Result != BambooBuild.BuildResult.SUCCESSFUL)) {
+                    allpassing = false;
+                }
             }
             bool allOk = allpassing != null && allpassing.Value;
             if (summaryStatusOk != null && summaryStatusOk == allOk) return;
@@ -296,13 +336,13 @@ namespace Atlassian.plvs.ui.bamboo {
             DateTime? next = nextPollTime;
 
             if (last != null && next != null) {
-                int minutes = DateTime.Now.Subtract(last.Value).Minutes;
+                var minutes = DateTime.Now.Subtract(last.Value).Minutes;
                 status.setInfo("Last poll finished at "
                                + last.Value.ToShortDateString() + " " + last.Value.ToLongTimeString()
                                + " (" + minutes + (minutes == 1 ? " minute" : " minutes") + " ago)" + getNextPollTimeInfo());
             } else if (next != null) {
-                ICollection<BambooServer> servers = BambooServerModel.Instance.getAllEnabledServers();
-                int count = servers != null ? servers.Count : 0;
+                var servers = BambooServerModel.Instance.getAllEnabledServers();
+                var count = servers != null ? servers.Count : 0;
                 if (count > 0) {
                     status.setInfo("" + count + " Bamboo " + (count == 1 ? "server" : "servers") + " enabled" + getNextPollTimeInfo());
                 } else {
@@ -335,16 +375,16 @@ namespace Atlassian.plvs.ui.bamboo {
             return ", next poll in " + sb;
         }
 
-        private void buttonPoll_Click(object sender, EventArgs e) {
-            Thread t = PlvsUtils.createThread(() => pollRunner(false));
+        private void buttonPollClick(object sender, EventArgs e) {
+            var t = PlvsUtils.createThread(() => pollRunner(false));
             t.Start();
         }
 
-        private void buttonOpen_Click(object sender, EventArgs e) {
+        private void buttonOpenClick(object sender, EventArgs e) {
             runOnSelectedNode(build => BuildDetailsWindow.Instance.openBuild(build));
         }
 
-        private void buttonViewInBrowser_Click(object sender, EventArgs e) {
+        private void buttonViewInBrowserClick(object sender, EventArgs e) {
             runOnSelectedNode(delegate(BambooBuild b) {
                                   try {
                                       PlvsUtils.runBrowser(b.Server.Url + "/browse/" + b.Key);
@@ -355,7 +395,7 @@ namespace Atlassian.plvs.ui.bamboo {
                               });
         }
 
-        private void buttonRunBuild_Click(object sender, EventArgs e) {
+        private void buttonRunBuildClick(object sender, EventArgs e) {
             runOnSelectedNode(delegate(BambooBuild b) {
                                   string key = BambooBuildUtils.getPlanKey(b);
                                   status.setInfo("Adding build " + key + " to the build queue...");

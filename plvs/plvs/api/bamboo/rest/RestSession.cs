@@ -533,6 +533,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
                     string masterKey = null;
                     int successfulTestCount = 0;
                     int failedTestCount = 0;
+                    string projectName = null;
                     string buildReason = null;
                     List<BambooBuild.RelatedIssue> relatedIssues = new List<BambooBuild.RelatedIssue>();
 
@@ -540,6 +541,9 @@ namespace Atlassian.plvs.api.bamboo.rest {
                         switch (it.Current.Name) {
                             case "master":
                                 masterKey = XPathUtils.getAttributeSafely(it.Current, "key", null);
+                                break;
+                            case "projectName":
+                                projectName = it.Current.Value;
                                 break;
                             case "buildRelativeTime":
                                 buildRelativeTime = it.Current.Value;
@@ -574,7 +578,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
 
                     var planState = getPlanState ? getPlanStateForBuild(key) : BambooBuild.PlanState.IDLE;
                     var build = new BambooBuild(server,
-                        key, masterKey, BambooBuild.stringToResult(state), number, buildRelativeTime,
+                        key, projectName, masterKey, BambooBuild.stringToResult(state), number, buildRelativeTime,
                         buildDurationDescription, successfulTestCount, failedTestCount, buildReason, planState, relatedIssues);
                     builds.Add(build);
                 }

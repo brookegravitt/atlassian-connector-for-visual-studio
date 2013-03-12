@@ -28,6 +28,8 @@
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.labelGroupBy = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.buttonPoll = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.buttonOpen = new System.Windows.Forms.ToolStripButton();
@@ -37,6 +39,7 @@
             this.buttonFindBuild = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.buttonHelp = new System.Windows.Forms.ToolStripButton();
+            this.comboGroupBy = new BambooBuildGroupByCombo(this.components);
             this.notifyBuildStatus = new System.Windows.Forms.NotifyIcon(this.components);
             this.toolStripContainer.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer.TopToolStripPanel.SuspendLayout();
@@ -87,6 +90,9 @@
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.labelGroupBy,
+            this.comboGroupBy,
+            this.toolStripSeparator4,
             this.buttonPoll,
             this.toolStripSeparator2,
             this.buttonOpen,
@@ -98,8 +104,19 @@
             this.buttonHelp});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(190, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(344, 25);
             this.toolStrip1.TabIndex = 0;
+            // 
+            // labelGroupBy
+            // 
+            this.labelGroupBy.Name = "labelGroupBy";
+            this.labelGroupBy.Size = new System.Drawing.Size(56, 22);
+            this.labelGroupBy.Text = "Group By";
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
             // 
             // buttonPoll
             // 
@@ -109,7 +126,7 @@
             this.buttonPoll.Name = "buttonPoll";
             this.buttonPoll.Size = new System.Drawing.Size(23, 22);
             this.buttonPoll.Text = "Poll Now";
-            this.buttonPoll.Click += new System.EventHandler(this.buttonPoll_Click);
+            this.buttonPoll.Click += new System.EventHandler(this.buttonPollClick);
             // 
             // toolStripSeparator2
             // 
@@ -124,7 +141,7 @@
             this.buttonOpen.Name = "buttonOpen";
             this.buttonOpen.Size = new System.Drawing.Size(23, 22);
             this.buttonOpen.Text = "Open Build";
-            this.buttonOpen.Click += new System.EventHandler(this.buttonOpen_Click);
+            this.buttonOpen.Click += new System.EventHandler(this.buttonOpenClick);
             // 
             // buttonViewInBrowser
             // 
@@ -134,7 +151,7 @@
             this.buttonViewInBrowser.Name = "buttonViewInBrowser";
             this.buttonViewInBrowser.Size = new System.Drawing.Size(23, 22);
             this.buttonViewInBrowser.Text = "View Build In Browser";
-            this.buttonViewInBrowser.Click += new System.EventHandler(this.buttonViewInBrowser_Click);
+            this.buttonViewInBrowser.Click += new System.EventHandler(this.buttonViewInBrowserClick);
             // 
             // buttonRunBuild
             // 
@@ -144,7 +161,7 @@
             this.buttonRunBuild.Name = "buttonRunBuild";
             this.buttonRunBuild.Size = new System.Drawing.Size(23, 22);
             this.buttonRunBuild.Text = "Run Build";
-            this.buttonRunBuild.Click += new System.EventHandler(this.buttonRunBuild_Click);
+            this.buttonRunBuild.Click += new System.EventHandler(this.buttonRunBuildClick);
             // 
             // toolStripSeparator1
             // 
@@ -175,6 +192,11 @@
             this.buttonHelp.Size = new System.Drawing.Size(23, 22);
             this.buttonHelp.Text = "Help";
             this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
+            // 
+            // comboGroupBy
+            // 
+            this.comboGroupBy.Name = "comboGroupBy";
+            this.comboGroupBy.Size = new System.Drawing.Size(121, 25);
             // 
             // notifyBuildStatus
             // 
@@ -218,5 +240,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripButton buttonOpen;
+        private System.Windows.Forms.ToolStripLabel labelGroupBy;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private BambooBuildGroupByCombo comboGroupBy;
     }
 }

@@ -43,11 +43,14 @@ namespace Atlassian.plvs.api.bamboo {
         }
 
         public BambooBuild(
-            BambooServer server, string key, string masterPlanKey, BuildResult result, int number, string relativeTime,
+            BambooServer server, string key, string projectName, string masterPlanKey, 
+            BuildResult result, int number, string relativeTime,
             string duration, int successfulTests, int failedTests, string reason, PlanState state,
             ICollection<RelatedIssue> relatedIssues) {
             
             MasterPlanKey = masterPlanKey;
+            ProjectKey = key.Split(new[] { '-' })[0];
+            ProjectName = projectName;
             Server = server;
             Key = key;
             Result = result;
@@ -63,6 +66,8 @@ namespace Atlassian.plvs.api.bamboo {
 
         public BambooServer Server { get; private set; }
         public string Key { get; private set; }
+        public string ProjectKey { get; private set; }
+        public string ProjectName { get; private set; }
         public string MasterPlanKey { get; private set; }
         public BuildResult Result { get; private set; }
         public int Number { get; private set; }
