@@ -279,6 +279,8 @@
     <Compile Include="explorer\treeNodes\ProjectNode.cs" />
     <Compile Include="models\AbstractServerModel.cs" />
     <Compile Include="api\bamboo\BambooServer.cs" />
+    <Compile Include="models\bamboo\BambooBuildListModel.cs" />
+    <Compile Include="models\bamboo\BambooBuildListModelImpl.cs" />
     <Compile Include="models\bamboo\BambooServerModel.cs" />
     <Compile Include="models\jira\fields\AffectsVersionsFiller.cs" />
     <Compile Include="models\jira\fields\AssigneeFiller.cs" />
@@ -317,6 +319,13 @@
     <Compile Include="ui\AutosizeListView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ui\bamboo\BambooBuildGroupByCombo.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ui\bamboo\BambooBuildGroupByCombo.Designer.cs">
+      <DependentUpon>BambooBuildGroupByCombo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ui\bamboo\BambooBuildGroupByComboItem.cs" />
     <Compile Include="ui\bamboo\BambooBuildHistoryTable.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -348,6 +357,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ui\bamboo\BuildNode.cs" />
+    <Compile Include="ui\bamboo\ProjectNode.cs" />
     <Compile Include="ui\bamboo\TabBamboo.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -356,7 +366,9 @@
     </Compile>
     <Compile Include="ui\bamboo\TestPackageOrClassNode.cs" />
     <Compile Include="ui\bamboo\TestMethodNode.cs" />
+    <Compile Include="ui\bamboo\treemodels\AbstractBuildTreeModel.cs" />
     <Compile Include="ui\bamboo\treemodels\FlatBuildTreeModel.cs" />
+    <Compile Include="ui\bamboo\treemodels\ProjectAndBranchesBuildTreeModel.cs" />
     <Compile Include="ui\bamboo\treemodels\TestResultTreeModel.cs" />
     <Compile Include="ui\ComboBoxWithImages.cs">
       <SubType>Component</SubType>
