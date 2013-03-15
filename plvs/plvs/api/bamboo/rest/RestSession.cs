@@ -243,12 +243,13 @@ namespace Atlassian.plvs.api.bamboo.rest {
         }
     
         private IEnumerable<string> getBranchKeys(string planKey) {
-            var endpoint = server.Url + string.Format(BRANCHES_ACTION, planKey);
+            var my = server.ShowMyBranchesOnly ? "&my" : "";
+            var endpoint = server.Url + string.Format(BRANCHES_ACTION + my, planKey);
             var result = new List<string>();
             using (var stream = getQueryResultStream(endpoint + getBasicAuthParameter(endpoint), true)) {
                 var xdoc = XDocument.Load(XmlReader.Create(stream));
                 foreach (var branch in xdoc.XPathSelectElements("/plan/branches/branch")) {
-                    if (server.ShowMyBranchesOnly) {
+                    if (server.UseFavourites) {
                         if (branch.Descendants("isFavourite").First().Value.Equals("false")) continue;
                     } 
                     var a = branch.Attribute("key");
