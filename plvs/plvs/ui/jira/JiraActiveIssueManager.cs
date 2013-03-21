@@ -304,11 +304,12 @@ namespace Atlassian.plvs.ui.jira {
         }
 
         private static void loadIssueAndRunAction(OnIssueLoaded loaded, ActiveIssue issue) {
-            JiraServer server = JiraServerModel.Instance.getServer(new Guid(issue.ServerGuid));
+            if (issue == null) return;
+            var server = JiraServerModel.Instance.getServer(new Guid(issue.ServerGuid));
             if (server == null) return;
 
             try {
-                JiraIssue jiraIssue = SmartJiraServerFacade.Instance.getIssue(server, issue.Key);
+                var jiraIssue = SmartJiraServerFacade.Instance.getIssue(server, issue.Key);
                 if (jiraIssue != null) {
                     loaded(server, jiraIssue);
                 }
