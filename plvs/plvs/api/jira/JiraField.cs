@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -48,19 +49,38 @@ namespace Atlassian.plvs.api.jira {
             
             var fieldType = FieldDefinition["schema"]["type"].Value<string>();
 
+            if ("array".Equals(fieldType)) {
+                if (Values.Count == 0) return new List<object>();
+
+                var stringItems = "string".Equals(FieldDefinition["schema"]["items"].Value<string>());
+                var res = Values.Select(value => stringItems ? value : getPair(SettablePropertyName, value)).ToList();
+                return filterEmptyStrings(res);
+            }
+
             var simple = !"user".Equals(fieldType) && !"timetracking".Equals(fieldType) && FieldDefinition["allowedValues"] == null;
             if (simple) {
                 return Values.Count == 0 ? null : Values[0];
             }
 
-            if ("array".Equals(fieldType)) {
-                if (Values.Count == 0) return new List<object>();
-
-                var stringItems = "string".Equals(FieldDefinition["schema"]["items"].Value<string>());
-                return Values.Select(value => stringItems ? value : getPair(SettablePropertyName, value)).ToList();
+            if (SettablePropertyName == null) {
+                return Values.Count == 0 ? null : Values[0];
             }
-
             return getPair(SettablePropertyName, Values[0]);
+        }
+
+        private static List<object> filterEmptyStrings(List<object> list) {
+            var result = new List<object>();
+            foreach (var item in list) {
+                if (!(item is string)) {
+                    result.Add(item);
+                } else {
+                    if (((string)item).Length == 0) {
+                        continue;
+                    }
+                    result.Add(item);
+                }
+            }
+            return result.Count > 0 ? result : null;
         }
 
         private static object getPair(string key, object val) {
