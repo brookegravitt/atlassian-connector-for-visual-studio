@@ -211,7 +211,10 @@ namespace Atlassian.plvs.api.jira {
         public void runIssueActionWithParams(JiraIssue issue, JiraNamedEntity action, ICollection<JiraField> fields, string comment) {
             object data;
             var fldsObj = new Dictionary<string, object>();
-            foreach (var field in fields) {
+            foreach (var field in from field in fields 
+                                  let ops = field.FieldDefinition["operations"] 
+                                  where ops != null && ops.Values().Any(op => "set".Equals(op.Value<string>())) 
+                                  select field) {
                 fldsObj[field.Id] = field.getJsonValue();
             }
             if (comment != null) {
