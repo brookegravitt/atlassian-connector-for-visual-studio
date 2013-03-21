@@ -1038,12 +1038,13 @@ namespace Atlassian.plvs.ui.jira {
             // hmm hmm, will these be typical files that are 
             // (1) openable by IE and 
             // (2) usually interesting for users to view?
-            return name.EndsWith(".jpg") 
-                || name.EndsWith(".png") 
-                || name.EndsWith(".gif") 
-                || name.EndsWith(".txt") 
-                || name.EndsWith(".xml")
-                || name.EndsWith(".log");
+            var lname = name.ToLower();
+            return lname.EndsWith(".jpg") 
+                || lname.EndsWith(".png") 
+                || lname.EndsWith(".gif") 
+                || lname.EndsWith(".txt") 
+                || lname.EndsWith(".xml")
+                || lname.EndsWith(".log");
         }
 
         private void listViewAttachments_SizeChanged(object sender, EventArgs e) {
