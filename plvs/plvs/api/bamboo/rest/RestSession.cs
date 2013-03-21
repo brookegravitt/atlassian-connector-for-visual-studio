@@ -729,6 +729,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
         private Stream getQueryResultStream(string endpoint, bool setBasicAuth) {
             var req = (HttpWebRequest)WebRequest.Create(endpoint);
             req.Proxy = server.NoProxy ? null : GlobalSettings.Proxy;
+            req.UserAgent = Constants.USER_AGENT;
             req.Timeout = GlobalSettings.NetworkTimeout * 1000;
             req.ReadWriteTimeout = GlobalSettings.NetworkTimeout * 2000;
             req.ContentType = "application/xml";
@@ -758,6 +759,7 @@ namespace Atlassian.plvs.api.bamboo.rest {
             // required for PLVS-83
             req.Accept = "application/xml";
             req.ContentLength = 0;
+            req.UserAgent = Constants.USER_AGENT;
 
             const string postData = "";
 

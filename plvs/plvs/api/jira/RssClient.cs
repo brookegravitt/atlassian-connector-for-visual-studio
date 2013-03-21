@@ -92,6 +92,7 @@ namespace Atlassian.plvs.api.jira {
             req.Credentials = CredentialUtils.getCredentialsForUserAndPassword(url.ToString(), UserName, Password);
             req.Timeout = GlobalSettings.NetworkTimeout * 1000;
             req.ReadWriteTimeout = GlobalSettings.NetworkTimeout * 2000;
+            req.UserAgent = Constants.USER_AGENT;
 
             if (!server.OldSkoolAuth) {
                 setSessionCookie(req);
