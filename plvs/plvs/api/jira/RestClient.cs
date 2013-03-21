@@ -42,6 +42,7 @@ namespace Atlassian.plvs.api.jira {
                 req.Timeout = GlobalSettings.NetworkTimeout * 1000;
                 req.ReadWriteTimeout = GlobalSettings.NetworkTimeout * 2000;
                 req.ContentType = "application/json";
+                req.UserAgent = Constants.USER_AGENT;
 
                 setSessionCookie(req);
 
@@ -394,6 +395,8 @@ namespace Atlassian.plvs.api.jira {
             req.Timeout = GlobalSettings.NetworkTimeout * 1000;
             req.ReadWriteTimeout = GlobalSettings.NetworkTimeout * 2000;
             req.ContentType = "application/json";
+            req.UserAgent = Constants.USER_AGENT;
+
             setBasicAuthHeader(req);
 
             string data = null;
@@ -460,6 +463,8 @@ namespace Atlassian.plvs.api.jira {
 
             request.Method = "POST";
             request.ContentType = "multipart/form-data; boundary=" + boundary;
+            request.UserAgent = Constants.USER_AGENT;
+
             prepareRequest(request);
 
             using (var formDataStream = request.GetRequestStream()) {
