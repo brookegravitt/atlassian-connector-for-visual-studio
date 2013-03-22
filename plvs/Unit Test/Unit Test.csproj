@@ -60,6 +60,7 @@
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
     <Compile Include="TestCreateIssueFromJson.cs" />
+    <Compile Include="TestParseIssuePlvs384.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resource.resx">
@@ -78,6 +79,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\plvs-374-bad-date.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\plvs-384-issue-json.txt.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

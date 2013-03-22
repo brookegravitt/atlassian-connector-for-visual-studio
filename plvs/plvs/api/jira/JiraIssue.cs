@@ -120,7 +120,8 @@ namespace Atlassian.plvs.api.jira {
                         Components.Add(v["name"].Value<string>());
                     }
                 }
-                Environment = fields["environment"].Value<string>();
+                var env = fields["environment"];
+                Environment = env != null ? env.Value<string>() : null;
                 getComments(fields["comment"], issue["renderedFields"]["comment"]);
                 getIssueLinks(fields["issuelinks"]);
             } catch (Exception e) {
