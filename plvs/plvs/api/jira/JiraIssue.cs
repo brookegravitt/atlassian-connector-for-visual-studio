@@ -424,7 +424,7 @@ namespace Atlassian.plvs.api.jira {
 
         public int IssueTypeId { get; set; }
 
-        public string ParentKey { get; private set; }
+        public string ParentKey { get; set; }
 
         public bool IsSubtask { get { return ParentKey != null; } }
 

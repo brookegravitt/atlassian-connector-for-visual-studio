@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Aga.Controls.Tree;
 using Atlassian.plvs.api.jira;
 using Atlassian.plvs.api.jira.facade;
+using Atlassian.plvs.dialogs.jira;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.util;
 using Atlassian.plvs.util.jira;
@@ -53,6 +54,17 @@ namespace Atlassian.plvs.ui.jira.issues.menus {
 
         private void addIssueActionItems(int generation) {
             List<JiraNamedEntity> actions = null;
+            if (!issue.IsSubtask && issue.Server.BuildNumber > 0) {
+                this.safeInvoke(new MethodInvoker(delegate {
+                    if (generation != menuOpenGeneration) return;
+                    Items.Add(new ToolStripSeparator());
+                    Items.Add(new ToolStripMenuItem("Add Subtask", Resources.add_jira, new EventHandler(
+                        delegate {
+                            CreateIssue.createDialogOrBringToFront(issue.Server, issue);
+                        }
+                    )));
+                }));
+            }
             try {
                 actions = SmartJiraServerFacade.Instance.getActionsForIssue(issue);
             } catch (Exception e) {
@@ -60,8 +72,7 @@ namespace Atlassian.plvs.ui.jira.issues.menus {
             }
             if (actions == null || actions.Count == 0) return;
 
-
-            Invoke(new MethodInvoker(delegate {
+            this.safeInvoke(new MethodInvoker(delegate {
                                          // PLVS-39 - only update current menu, skip results of previous getActionsForIssue()
                                          // in case the user quickly opens context menu more than once
                                          if (generation != menuOpenGeneration) return;

@@ -17,6 +17,8 @@ namespace Atlassian.plvs.dialogs.jira {
     public partial class CreateIssue : Form {
         private readonly JiraServer server;
 
+        private JiraIssue parent = null;
+
         private const string PROJECT = "createIssueDialog_selectedProject_";
         private const string ISSUE_TYPE = "createIssueDialog_selectedIssueType_";
         private const string PRIORITY = "createIssueDialog_selectedPriority_";
@@ -31,19 +33,26 @@ namespace Atlassian.plvs.dialogs.jira {
 
         private static CreateIssue instance;
 
-        public static void createDialogOrBringToFront(JiraServer server) {
-            if (instance == null) {
-                instance = new CreateIssue(server);
+        public static void createDialogOrBringToFront(JiraServer server, JiraIssue parent = null) {
+            if (instance == null || parent != instance.parent) {
+                if (instance != null) {
+                    instance.Close();
+                }
+                instance = new CreateIssue(server, parent);
                 instance.Show();
             } else {
                 instance.BringToFront();
             }
         }
 
-        private CreateIssue(JiraServer server) {
+        private CreateIssue(JiraServer server, JiraIssue parent = null) {
             this.server = server;
+            this.parent = parent;
             InitializeComponent();
 
+            if (parent == null) {
+                labelParentIssueKey.Visible = false;
+            }
             ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
 
             buttonCreate.Enabled = false;
@@ -54,6 +63,12 @@ namespace Atlassian.plvs.dialogs.jira {
                     comboProjects.Items.Add(project);
                 }
 
+                if (parent != null) {
+                    comboProjects.Visible = false;
+                    labelProject.Visible = false;
+                    labelParentIssueKey.Visible = true;
+                    labelParentIssueKey.Text = "Parent issue key: " + parent.Key;
+                }
                 List<JiraNamedEntity> priorities = JiraServerCache.Instance.getPriorities(server);
                 if (priorities != null) {
                     ImageList imageList = new ImageList();
@@ -111,8 +126,9 @@ namespace Atlassian.plvs.dialogs.jira {
         private void projectUpdateWorker(JiraProject project) {
             ParameterStore store = ParameterStoreManager.Instance.getStoreFor(ParameterStoreManager.StoreType.SETTINGS);
 
-            List<JiraNamedEntity> issueTypes =
-                SmartJiraServerFacade.Instance.getIssueTypes(server, project);
+            List<JiraNamedEntity> issueTypes = parent != null
+                ? SmartJiraServerFacade.Instance.getSubtaskIssueTypes(server, project)
+                : SmartJiraServerFacade.Instance.getIssueTypes(server, project);
             List<JiraNamedEntity> comps = SmartJiraServerFacade.Instance.getComponents(server, project);
             List<JiraNamedEntity> versions = SmartJiraServerFacade.Instance.getVersions(server, project);
             // newest versions first
@@ -320,6 +336,9 @@ namespace Atlassian.plvs.dialogs.jira {
                 issue.Assignee = assignee;
             }
 
+            if (parent != null) {
+                issue.ParentKey = parent.Key;
+            }
             return issue;
         }
 

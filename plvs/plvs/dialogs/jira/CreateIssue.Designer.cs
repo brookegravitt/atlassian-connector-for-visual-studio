@@ -1,4 +1,6 @@
-﻿namespace Atlassian.plvs.dialogs.jira {
+﻿using Atlassian.plvs.ui.jira;
+
+namespace Atlassian.plvs.dialogs.jira {
     partial class CreateIssue {
         /// <summary>
         /// Required designer variable.
@@ -27,13 +29,13 @@
             this.buttonCreate = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.comboProjects = new System.Windows.Forms.ComboBox();
-            this.comboTypes = new global::Atlassian.plvs.ui.jira.JiraNamedEntityComboBox();
+            this.comboTypes = new JiraNamedEntityComboBox();
             this.listComponents = new System.Windows.Forms.ListBox();
             this.listAffectsVersions = new System.Windows.Forms.ListBox();
             this.listFixVersions = new System.Windows.Forms.ListBox();
-            this.comboPriorities = new global::Atlassian.plvs.ui.jira.JiraNamedEntityComboBox();
+            this.comboPriorities = new JiraNamedEntityComboBox();
             this.textSummary = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.labelProject = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -42,10 +44,11 @@
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
-            this.jiraAssigneePicker = new global::Atlassian.plvs.ui.jira.JiraUserPicker();
-            this.textDescription = new global::Atlassian.plvs.ui.jira.JiraTextAreaWithWikiPreview();
+            this.jiraAssigneePicker = new JiraUserPicker();
+            this.textDescription = new JiraTextAreaWithWikiPreview();
             this.label1 = new System.Windows.Forms.Label();
             this.buttonCreateAndClose = new System.Windows.Forms.Button();
+            this.labelParentIssueKey = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // buttonCreate
@@ -140,15 +143,15 @@
             this.textSummary.TabIndex = 6;
             this.textSummary.TextChanged += new System.EventHandler(this.textSummary_TextChanged);
             // 
-            // label2
+            // labelProject
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(56, 15);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(44, 13);
-            this.label2.TabIndex = 12;
-            this.label2.Text = "Project*";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.labelProject.AutoSize = true;
+            this.labelProject.Location = new System.Drawing.Point(56, 15);
+            this.labelProject.Name = "labelProject";
+            this.labelProject.Size = new System.Drawing.Size(44, 13);
+            this.labelProject.TabIndex = 12;
+            this.labelProject.Text = "Project*";
+            this.labelProject.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // label3
             // 
@@ -269,11 +272,21 @@
             this.buttonCreateAndClose.UseVisualStyleBackColor = true;
             this.buttonCreateAndClose.Click += new System.EventHandler(this.buttonCreateAndClose_Click);
             // 
+            // labelParentIssueKey
+            // 
+            this.labelParentIssueKey.AutoSize = true;
+            this.labelParentIssueKey.Location = new System.Drawing.Point(102, 15);
+            this.labelParentIssueKey.Name = "labelParentIssueKey";
+            this.labelParentIssueKey.Size = new System.Drawing.Size(35, 13);
+            this.labelParentIssueKey.TabIndex = 25;
+            this.labelParentIssueKey.Text = "label2";
+            // 
             // CreateIssue
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(576, 667);
+            this.Controls.Add(this.labelParentIssueKey);
             this.Controls.Add(this.buttonCreateAndClose);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textDescription);
@@ -286,7 +299,7 @@
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.labelProject);
             this.Controls.Add(this.textSummary);
             this.Controls.Add(this.comboPriorities);
             this.Controls.Add(this.listFixVersions);
@@ -320,7 +333,7 @@
         private System.Windows.Forms.ListBox listFixVersions;
         private ui.jira.JiraNamedEntityComboBox comboPriorities;
         private System.Windows.Forms.TextBox textSummary;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label labelProject;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
@@ -333,5 +346,6 @@
         private global::Atlassian.plvs.ui.jira.JiraTextAreaWithWikiPreview textDescription;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button buttonCreateAndClose;
+        private System.Windows.Forms.Label labelParentIssueKey;
     }
 }
