@@ -51,10 +51,6 @@ namespace Atlassian.plvs.dialogs.bamboo {
 
                     getServerVersion();
 
-                    if (!server.UseFavourites) {
-                        getPlans();
-                    }
-
                     checkEnabled.Checked = server.Enabled;
                     checkShared.Checked = server.IsShared;
                     checkDontUseProxy.Checked = server.NoProxy;
@@ -83,6 +79,12 @@ namespace Atlassian.plvs.dialogs.bamboo {
         public override sealed string Text {
             get { return base.Text; }
             set { base.Text = value; }
+        }
+
+        protected override void OnLoad(EventArgs e) {
+            if (editing && server != null && !server.UseFavourites) {
+                getPlans();
+            }
         }
 
         private void buttonAddOrEditClick(object sender, EventArgs e) {
