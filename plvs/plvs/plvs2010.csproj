@@ -504,6 +504,7 @@
     <Compile Include="util\jira\IssueActionRunner.cs" />
     <Compile Include="util\PlvsLogger.cs" />
     <Compile Include="util\SolutionUtils.cs" />
+    <Compile Include="util\StreamWrapper.cs" />
     <Compile Include="util\XPathUtils.cs" />
     <Compile Include="ui\jira\TabJira.cs">
       <SubType>UserControl</SubType>
