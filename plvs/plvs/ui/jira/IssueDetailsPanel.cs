@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -60,6 +61,30 @@ namespace Atlassian.plvs.ui.jira {
         private WebBrowser issueDescription;
         private WebBrowserWithLabel webAttachmentView;
 
+        [ComImport]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [Guid("8895b1c6-b41f-4c1c-a562-0d564250836f")]
+        interface IPreviewHandler {
+            void SetWindow(IntPtr hwnd, ref Rectangle rect);
+            void SetRect(ref Rectangle rect);
+            void DoPreview();
+            void Unload();
+            void SetFocus();
+            void QueryFocus(out IntPtr phwnd);
+            [PreserveSig]
+            uint TranslateAccelerator(ref Message pmsg);
+        }
+
+        [ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid("b7d14566-0509-4cce-a71f-0a554233bd9b")]
+        internal interface IInitializeWithFile {
+            void Initialize([MarshalAs(UnmanagedType.LPWStr)] string pszFilePath, uint grfMode);
+        }
+
+        [ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid("b824b49d-22ac-4161-ac8a-9916e8fa3f7f")]
+        internal interface IInitializeWithStream {
+            void Initialize(IStream pstream, uint grfMode);
+        }
+
         [DllImport("User32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr SetClipboardViewer(IntPtr hWndNewViewer);
         
@@ -72,6 +97,8 @@ namespace Atlassian.plvs.ui.jira {
         [DllImport("shell32.dll", CharSet = CharSet.Auto)]
         static extern uint ExtractIconEx(string szFileName, int nIconIndex,
            IntPtr[] phiconLarge, IntPtr[] phiconSmall, uint nIcons);
+
+        private IPreviewHandler attachmentPreview;
 
         private IntPtr nextClipboardViewer;
 
@@ -124,6 +151,16 @@ namespace Atlassian.plvs.ui.jira {
             onClipboardChanged();
 
             issueComments.WebBrowserShortcutsEnabled = true;
+        }
+
+        protected override void Dispose(bool disposing) {
+            if (disposing && (components != null)) {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+            if (attachmentPreview != null) {
+                try { Marshal.FinalReleaseComObject(attachmentPreview); } catch {}
+            }
         }
 
         private void activeIssueManager_ActiveIssueChanged(object sender, EventArgs e) {
@@ -932,48 +969,119 @@ namespace Atlassian.plvs.ui.jira {
                     reinitializeAttachmentView(() => showUnableToViewAttachmentPage(""));
                 }
             } else {
-                try {
-                    showUnableToViewAttachmentPage("due to unsupported attachment type.<br>Double-click to it open using associated external program");
-                } catch (COMException ex) {
-                    Debug.WriteLine("IssueDetailsPanel.listViewAttachments_Click() - exception caught: " + ex.Message);
-                    reinitializeAttachmentView(() => showUnableToViewAttachmentPage(""));
+                var guid = getPreviewHandlerGuid(item.Attachment.Name);
+                if (Guid.Empty.Equals(guid)) {
+                    try {
+                        showUnableToViewAttachmentPage("due to unsupported attachment type.<br>Double-click to it open using associated external program");
+                    } catch (COMException ex) {
+                        Debug.WriteLine("IssueDetailsPanel.listViewAttachments_Click() - exception caught: " + ex.Message);
+                        reinitializeAttachmentView(() => showUnableToViewAttachmentPage(""));
+                    }
+                } else {
+                    showAttachmentPreviewHandler(item, guid);
                 }
             }
+        }
+
+        private void showAttachmentPreviewHandler(JiraAttachmentListViewItem item, Guid guid) {
+            var path = Path.GetTempPath() + item.Attachment.Name;
+            if (File.Exists(path)) {
+                File.Delete(path);
+            }
+            var stream = File.Create(path);
+            saveAttachmentToStream(item, stream, () => {
+                try {
+                    var handler = Activator.CreateInstance(Type.GetTypeFromCLSID(guid));
+                    if (handler is IInitializeWithFile) {
+                        ((IInitializeWithFile)handler).Initialize(path, 0);
+                        reinitializeAttachmentView(null, handler as IPreviewHandler);
+                    } else if (handler is IInitializeWithStream) {
+                        stream = File.Open(path, FileMode.Open);
+                        var wrapper = new StreamWrapper(stream);
+                        ((IInitializeWithStream)handler).Initialize(wrapper, 0);
+                        reinitializeAttachmentView(null, handler as IPreviewHandler);
+                    } else {
+                        this.safeInvoke(new MethodInvoker(() => showUnableToViewAttachmentPage("Unable to instantiate preview handler")));
+                    }
+                } catch (Exception e) {
+                    this.safeInvoke(new MethodInvoker(() => showUnableToViewAttachmentPage(e.Message)));
+                }
+            });
+        }
+
+        private static Guid getPreviewHandlerGuid(string filename) {
+            if (filename != null) {
+                var extension = Path.GetExtension(filename);
+                if (extension != null) {
+                    var ext = Registry.ClassesRoot.OpenSubKey(extension);
+                    if (ext != null) {
+                        var test = ext.OpenSubKey("shellex\\{8895b1c6-b41f-4c1c-a562-0d564250836f}");
+                        if (test != null) return new Guid(Convert.ToString(test.GetValue(null)));
+
+                        var className = Convert.ToString(ext.GetValue(null));
+                        test = Registry.ClassesRoot.OpenSubKey(className + "\\shellex\\{8895b1c6-b41f-4c1c-a562-0d564250836f}");
+                        if (test != null) return new Guid(Convert.ToString(test.GetValue(null)));
+                    }
+                }
+            }
+
+            return Guid.Empty;
         }
 
         private void showUnableToViewAttachmentPage(string cause) {
             webAttachmentView.Browser.DocumentText = string.Format(webAttachmentView.ErrorString, Font.FontFamily.Name, cause);
         }
 
-        private void reinitializeAttachmentView(Action onReinserted) {
+        private void reinitializeAttachmentView(Action onReinserted, IPreviewHandler previewHandler = null) {
             splitContainerAttachments.Panel2.SuspendLayout();
 
             if (webAttachmentView != null) {
                 splitContainerAttachments.Panel2.Controls.Remove(webAttachmentView);
+                webAttachmentView = null;
             }
+            if (attachmentPreview != null) {
+                splitContainerAttachments.Panel2.Controls.Clear();
+                try {
+                    Marshal.FinalReleaseComObject(attachmentPreview);
+                } catch (Exception) {}
+                attachmentPreview = previewHandler;
+            }
+            if (previewHandler != null) {
+                Panel p = new Panel {
+                    Dock = DockStyle.Fill
+                };
+                splitContainerAttachments.Panel2.Controls.Add(p);
+                Timer t = new Timer { Interval = 500 };
+                t.Tick += delegate {
+                              t.Stop();
+                              var r = p.ClientRectangle;
+                              previewHandler.SetWindow(p.Handle, ref r);
+                              previewHandler.DoPreview();
+                          };
+                t.Start();
+            } else {
+                webAttachmentView = new WebBrowserWithLabel {
+                    Dock = DockStyle.Fill,
+                    Location = new Point(0, 24),
+                    MinimumSize = new Size(20, 20),
+                    Name = "webAttachmentView",
+                    Size = new Size(433, 378),
+                    TabIndex = 0,
+                    Title = "Attachment Preview",
+                    ErrorString = Resources.attachment_download_html
+                };
 
-            webAttachmentView = new WebBrowserWithLabel
-                                {
-                                    Dock = DockStyle.Fill,
-                                    Location = new Point(0, 24),
-                                    MinimumSize = new Size(20, 20),
-                                    Name = "webAttachmentView",
-                                    Size = new Size(433, 378),
-                                    TabIndex = 0,
-                                    Title = "Attachment Preview",
-                                    ErrorString = Resources.attachment_download_html
-                                };
-            
-            splitContainerAttachments.Panel2.Controls.Add(webAttachmentView);
-            splitContainerAttachments.Panel2.ResumeLayout(true);
-            
-            if (onReinserted == null) return;
+                splitContainerAttachments.Panel2.Controls.Add(webAttachmentView);
+                splitContainerAttachments.Panel2.ResumeLayout(true);
 
-            // lame as hell. How can I tell when exactly it is kosher 
-            // to set WebBrowser control contents after adding it to parent?
-            Timer t = new Timer { Interval = 1000 };
-            t.Tick += delegate { t.Stop(); onReinserted(); };
-            t.Start();
+                if (onReinserted == null) return;
+
+                // lame as hell. How can I tell when exactly it is kosher 
+                // to set WebBrowser control contents after adding it to parent?
+                Timer t = new Timer { Interval = 1000 };
+                t.Tick += delegate { t.Stop(); onReinserted(); };
+                t.Start();
+            }
         }
 
         private const int WM_DRAWCLIPBOARD = 0x0308;
