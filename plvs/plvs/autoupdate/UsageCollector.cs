@@ -41,29 +41,29 @@ namespace Atlassian.plvs.autoupdate {
         public string getUsageReportingUrl(string url) {
             lock (this) {
                 if (!GlobalSettings.ReportUsage || instanceGuid.Equals(UNKNOWN)) return url;
-                StringBuilder sb = new StringBuilder(url);
+                var sb = new StringBuilder(url);
 
                 sb.Append("?uid=").Append(instanceGuid);
 
                 sb.Append("&version=").Append(PlvsVersionInfo.Version);
 
-                ICollection<JiraServer> jiras = JiraServerModel.Instance.getAllServers();
+                var jiras = JiraServerModel.Instance.getAllServers();
                 sb.Append("&jiraServers=").Append(jiras != null ? jiras.Count : 0);
 
-                ICollection<BambooServer> bamboos = BambooServerModel.Instance.getAllServers();
+                var bamboos = BambooServerModel.Instance.getAllServers();
                 sb.Append("&bambooServers=").Append(bamboos != null ? bamboos.Count : 0);
 
                 // todo - fix this when we handle crucible
                 sb.Append("&crucibleServers=0");
 
                 try {
-                    RegistryKey root = Registry.CurrentUser.CreateSubKey(Constants.PAZU_REG_KEY + "\\UsageStatistics");
+                    var root = Registry.CurrentUser.CreateSubKey(Constants.PAZU_REG_KEY + "\\UsageStatistics");
 
                     if (root != null) {
-                        int jirasOpen = (int)root.GetValue(JIRA_ISSUES_OPEN_KEY, 0);
+                        var jirasOpen = (int)root.GetValue(JIRA_ISSUES_OPEN_KEY, 0);
                         sb.Append("&i=").Append(jirasOpen);
                         root.SetValue(JIRA_ISSUES_OPEN_KEY, 0);
-                        int bamboosOpen = (int)root.GetValue(BAMBOO_BUILDS_OPEN_KEY, 0);
+                        var bamboosOpen = (int)root.GetValue(BAMBOO_BUILDS_OPEN_KEY, 0);
                         sb.Append("&b=").Append(bamboosOpen);
                         root.SetValue(BAMBOO_BUILDS_OPEN_KEY, 0);
                         root.Close();
@@ -85,9 +85,9 @@ namespace Atlassian.plvs.autoupdate {
         public void bumpJiraIssuesOpen() {
             lock(this) {
                 try {
-                    RegistryKey root = Registry.CurrentUser.CreateSubKey(Constants.PAZU_REG_KEY + "\\UsageStatistics");
+                    var root = Registry.CurrentUser.CreateSubKey(Constants.PAZU_REG_KEY + "\\UsageStatistics");
                     if (root != null) {
-                        int issues = (int) root.GetValue(JIRA_ISSUES_OPEN_KEY, 0);
+                        var issues = (int) root.GetValue(JIRA_ISSUES_OPEN_KEY, 0);
                         root.SetValue(JIRA_ISSUES_OPEN_KEY, ++issues);
                     }
                 }
@@ -100,9 +100,9 @@ namespace Atlassian.plvs.autoupdate {
         public void bumpBambooBuildsOpen() {
             lock(this) {
                 try {
-                    RegistryKey root = Registry.CurrentUser.CreateSubKey(Constants.PAZU_REG_KEY + "\\UsageStatistics");
+                    var root = Registry.CurrentUser.CreateSubKey(Constants.PAZU_REG_KEY + "\\UsageStatistics");
                     if (root != null) {
-                        int builds = (int)root.GetValue(BAMBOO_BUILDS_OPEN_KEY, 0);
+                        var builds = (int)root.GetValue(BAMBOO_BUILDS_OPEN_KEY, 0);
                         root.SetValue(BAMBOO_BUILDS_OPEN_KEY, ++builds);
                     }
                 } catch (Exception e) {
@@ -112,7 +112,7 @@ namespace Atlassian.plvs.autoupdate {
         }
 
         public void sendOptInOptOut(bool usage) {
-            Thread t = PlvsUtils.createThread(() => sendOptInOptOutWorker(usage));
+            var t = PlvsUtils.createThread(() => sendOptInOptOutWorker(usage));
             t.Start();
         }
 
@@ -122,13 +122,13 @@ namespace Atlassian.plvs.autoupdate {
                 return;
             }
 
-            string url = Autoupdate.STABLE_URL + "?uid=" + instanceGuid + "&userOptedIn=" + (usage ? "1" : "0");    
+            var url = Autoupdate.STABLE_URL + "?uid=" + instanceGuid + "&userOptedIn=" + (usage ? "1" : "0");    
             try {
-                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+                var req = (HttpWebRequest)WebRequest.Create(url);
 
                 req.Timeout = 5000;
                 req.ReadWriteTimeout = 20000;
-                HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+                var resp = (HttpWebResponse)req.GetResponse();
                 // ignore response
                 resp.GetResponseStream();
             } catch (Exception e) {
