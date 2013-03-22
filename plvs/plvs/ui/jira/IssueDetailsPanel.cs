@@ -873,7 +873,7 @@ namespace Atlassian.plvs.ui.jira {
             loaderThread.Start();
         }
 
-        private void dropDownIssueActions_MouseEnter(object sender, EventArgs e) {
+        private void dropDownIssueActionsMouseEnter(object sender, EventArgs e) {
             dropDownIssueActions.ToolTipText = "Issue Actions";
         }
 
@@ -914,11 +914,11 @@ namespace Atlassian.plvs.ui.jira {
                                      }));
         }
 
-        private void buttonLogWork_Click(object sender, EventArgs e) {
+        private void buttonLogWorkClick(object sender, EventArgs e) {
             new LogWork(this, model, facade, issue, status, activeIssueManager).ShowDialog();
         }
 
-        private void listViewAttachments_Click(object sender, EventArgs e) {
+        private void listViewAttachmentsClick(object sender, EventArgs e) {
             if (listViewAttachments.SelectedItems.Count == 0) return;
 
             JiraAttachmentListViewItem item = listViewAttachments.SelectedItems[0] as JiraAttachmentListViewItem;
@@ -933,7 +933,7 @@ namespace Atlassian.plvs.ui.jira {
                 }
             } else {
                 try {
-                    showUnableToViewAttachmentPage("due to unsupported attachment type");
+                    showUnableToViewAttachmentPage("due to unsupported attachment type.<br>Double-click to it open using associated external program");
                 } catch (COMException ex) {
                     Debug.WriteLine("IssueDetailsPanel.listViewAttachments_Click() - exception caught: " + ex.Message);
                     reinitializeAttachmentView(() => showUnableToViewAttachmentPage(""));
@@ -1015,10 +1015,15 @@ namespace Atlassian.plvs.ui.jira {
             saveAttachmentToStream(item, dlg.OpenFile());
         }
 
-        private void saveAttachmentToStream(JiraAttachmentListViewItem item, Stream stream) {
+        private void saveAttachmentToStream(JiraAttachmentListViewItem item, Stream stream, Action onComplete = null) {
             status.setInfo("Saving attachment \"" + item.Attachment.Name + "\"...");
-            WebClient client = new WebClient();
-            client.DownloadDataCompleted += ((sender, e) => downloadDataCompleted(item.Attachment.Name, e, stream));
+            var client = new WebClient();
+            client.DownloadDataCompleted += ((sender, e) => {
+                downloadDataCompleted(item.Attachment.Name, e, stream);
+                if (onComplete != null) {
+                    onComplete();
+                }
+            });
             client.DownloadDataAsync(new Uri(item.Url + "?" + CredentialUtils.getOsAuthString(issue.Server)));
         }
 
@@ -1047,14 +1052,14 @@ namespace Atlassian.plvs.ui.jira {
                 || lname.EndsWith(".log");
         }
 
-        private void listViewAttachments_SizeChanged(object sender, EventArgs e) {
+        private void listViewAttachmentsSizeChanged(object sender, EventArgs e) {
             columnName.Width = listViewAttachments.Width / 2;
             columnAuthor.Width = listViewAttachments.Width / 6;
             columnSize.Width = listViewAttachments.Width / 6;
             columnDate.Width = -2;
         }
 
-        private void listViewAttachments_SelectedIndexChanged(object sender, EventArgs e) {
+        private void listViewAttachmentsSelectedIndexChanged(object sender, EventArgs e) {
             buttonSaveAttachmentAs.Enabled = listViewAttachments.SelectedItems.Count > 0;
         }
 
@@ -1154,7 +1159,7 @@ namespace Atlassian.plvs.ui.jira {
             editor.ShowDialog();
         }
 
-        private void buttonStartStopProgress_Click(object sender, EventArgs e) {
+        private void buttonStartStopProgressClick(object sender, EventArgs e) {
             activeIssueManager.toggleActiveState(issue);
         }
 
@@ -1162,7 +1167,7 @@ namespace Atlassian.plvs.ui.jira {
             buttonPaste.Enabled = Clipboard.ContainsImage();
         }
 
-        private void buttonPaste_Click(object sender, EventArgs e) {
+        private void buttonPasteClick(object sender, EventArgs e) {
             if (Clipboard.ContainsImage()) {
                 Image image = Clipboard.GetImage();
                 if (image == null) return;
@@ -1183,6 +1188,35 @@ namespace Atlassian.plvs.ui.jira {
                 FileStream stream = new FileStream(tempFileName, FileMode.Open);
                 readFileFromStreamAndUpload(stream, "from-clipboard-" + DateTime.Now.ToString("yyyyMMdd-HHmm") + ext);
             }
+        }
+
+        private void listViewAttachmentsMouseDoubleClick(object sender, MouseEventArgs e) {
+            openAttachmentFromTemp();
+        }
+
+        private void listViewAttachmentsKeyPress(object sender, KeyPressEventArgs e) {
+            if (e.KeyChar == (char) Keys.Enter) {
+                openAttachmentFromTemp();
+            }
+        }
+
+        private void openAttachmentFromTemp() {
+            if (listViewAttachments.SelectedItems.Count == 0) return;
+
+            var item = listViewAttachments.SelectedItems[0] as JiraAttachmentListViewItem;
+            if (item == null) return;
+            var path = Path.GetTempPath() + item.Attachment.Name;
+            if (File.Exists(path)) {
+                File.Delete(path);
+            }
+            var stream = File.Create(path);
+            saveAttachmentToStream(item, stream, () => {
+                try {
+                    Process.Start(path);
+                } catch(Exception e) {
+                    PlvsUtils.showError("Unable to open attachment", e);
+                }
+            });
         }
     }
 }
