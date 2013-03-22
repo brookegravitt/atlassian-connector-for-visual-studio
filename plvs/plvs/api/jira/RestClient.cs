@@ -320,6 +320,9 @@ namespace Atlassian.plvs.api.jira {
 
             var fields = new Dictionary<string, object>();
             fields["issuetype"] = new {id = issue.IssueTypeId.ToString()};
+            if (issue.IsSubtask) {
+                fields["parent"] = new {key = issue.ParentKey};
+            }
             maybeSetField(fieldsMeta, fields, "project", new { key = issue.ProjectKey });
             maybeSetField(fieldsMeta, fields, "summary", issue.Summary);
             maybeSetField(fieldsMeta, fields, "description", issue.Description);

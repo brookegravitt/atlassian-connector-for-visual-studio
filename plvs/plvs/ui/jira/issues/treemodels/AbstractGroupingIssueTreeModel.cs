@@ -113,7 +113,7 @@ namespace Atlassian.plvs.ui.jira.issues.treemodels {
                 if (GroupSubtasksUnderParent && e.Issue.IsSubtask) {
                     foreach (var issueNode in groupNode.IssueNodes) {
                         if (!issueNode.Issue.Key.Equals(e.Issue.ParentKey)) continue;
-
+                        if (issueNode.SubtaskNodes == null) continue;
                         foreach (IssueNode subNode in issueNode.SubtaskNodes) {
                             if (subNode.Issue.Id != e.Issue.Id) continue;
 
