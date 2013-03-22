@@ -466,14 +466,19 @@ namespace Atlassian.plvs.api.jira.soap {
         }
 
         private static JiraNamedEntity createNamedEntity(object o) {
-            int id = int.Parse((string)o.GetType().GetProperty("id").GetValue(o, null));
-            string name = (string)o.GetType().GetProperty("name").GetValue(o, null);
-            PropertyInfo propertyInfo = o.GetType().GetProperty("icon");
-            string icon = null;
-            if (propertyInfo != null) {
-                icon = (string)propertyInfo.GetValue(o, null);
+            var idVal = (string)o.GetType().GetProperty("id").GetValue(o, null);
+            try {
+                var id = int.Parse(idVal);
+                var name = (string)o.GetType().GetProperty("name").GetValue(o, null);
+                var propertyInfo = o.GetType().GetProperty("icon");
+                string icon = null;
+                if (propertyInfo != null) {
+                    icon = (string)propertyInfo.GetValue(o, null);
+                }
+                return new JiraNamedEntity(id, name, icon);
+            } catch(Exception) {
+                return null;
             }
-            return new JiraNamedEntity(id, name, icon);
         }
     }
 }
