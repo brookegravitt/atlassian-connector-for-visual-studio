@@ -99,16 +99,20 @@ namespace Atlassian.plvs.util {
             if (allProjectItems.Count == 0) {
                 Debug.WriteLine("************ SolutionUtils.matchProjectItems() - empty project item list, have you forgotten to call refillAllSolutionProjectItems()?");
             }
-            foreach (ProjectItem item in allProjectItems) {
-                if (file.Contains("\\")) {
-                    if (file.EndsWith("\\" + item.Name)) {
-                        files.Add(item);
-                    }
-                } else {
-                    if (file.Equals(item.Name)) {
-                        files.Add(item);
+            try {
+                foreach (var item in allProjectItems) {
+                    if (file.Contains("\\")) {
+                        if (file.EndsWith("\\" + item.Name)) {
+                            files.Add(item);
+                        }
+                    } else {
+                        if (file.Equals(item.Name)) {
+                            files.Add(item);
+                        }
                     }
                 }
+            } catch(Exception e) {
+                Debug.WriteLine(e.Message);
             }
         }
     }
