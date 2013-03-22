@@ -302,8 +302,11 @@ namespace Atlassian.plvs.api.jira {
         }
 
         public string createIssue(JiraIssue issue) {
-//            JContainer meta = getJson(BaseUrl + REST + "issue/createmeta?projectKeys=" + issue.ProjectKey + "&issuetypeIds=" + issue.IssueTypeId + "&expand=projects.issuetypes.fields");
-//            var fields = meta["projects"]["issuetypes"]["fields"];
+            var meta = getJson(BaseUrl + REST + "issue/createmeta?projectKeys=" + issue.ProjectKey + "&issuetypeIds=" + issue.IssueTypeId + "&expand=projects.issuetypes.fields");
+            var projects = meta["projects"];
+            var types = projects.Children()["issuetypes"];
+            var fieldsMeta = types.Children()["fields"];
+
             var assignee = issue.Assignee != null ? new {name = issue.Assignee} : null;
             var fixVersions = issue.FixVersions != null 
                 ? (object) issue.FixVersions.Select(fv => new { name = fv }).ToList()
@@ -314,21 +317,39 @@ namespace Atlassian.plvs.api.jira {
             var components = issue.Components != null
                 ? (object) issue.Components.Select(c => new { name = c }).ToList()
                 : new List<object>();
-            var data = new {
-                fields = new {
-                    project = new { key = issue.ProjectKey },
-                    summary = issue.Summary,
-                    description = issue.Description,
-                    issuetype = new { id = issue.IssueTypeId.ToString() },
-                    priority = new { id = issue.PriorityId.ToString() },
-                    assignee = assignee,
-                    fixVersions = fixVersions,
-                    versions = versions,
-                    components = components
-                }
-            };
+
+            var fields = new Dictionary<string, object>();
+            fields["issuetype"] = new {id = issue.IssueTypeId.ToString()};
+            maybeSetField(fieldsMeta, fields, "project", new { key = issue.ProjectKey });
+            maybeSetField(fieldsMeta, fields, "summary", issue.Summary);
+            maybeSetField(fieldsMeta, fields, "description", issue.Description);
+            maybeSetField(fieldsMeta, fields, "priority", new { id = issue.PriorityId.ToString() });
+            maybeSetField(fieldsMeta, fields, "assignee", assignee);
+            maybeSetField(fieldsMeta, fields, "fixVersions", fixVersions);
+            maybeSetField(fieldsMeta, fields, "versions", versions);
+            maybeSetField(fieldsMeta, fields, "components", components);
+            var data = new { fields = fields };
+//                new {
+//                    project = new { key = issue.ProjectKey },
+//                    summary = issue.Summary,
+//                    description = issue.Description,
+//                    issuetype = new { id = issue.IssueTypeId.ToString() },
+//                    priority = new { id = issue.PriorityId.ToString() },
+//                    assignee = assignee,
+//                    fixVersions = fixVersions,
+//                    versions = versions,
+//                    components = components
+//        }
+//        };
+
             var result = postJson(BaseUrl + REST + "issue", data, HttpStatusCode.Created);
             return result["key"].Value<string>();
+        }
+
+        private static void maybeSetField(IJEnumerable<JToken> fieldsMeta, Dictionary<string, object> fields, string fieldName, object value) {
+            if (fieldsMeta[fieldName]["operations"].Values().Any(o => "set".Equals(o.Value<string>()))) {
+                fields[fieldName] = value;
+            }
         }
 
         private void logWorkAtUrl(string url, string timeSpent, DateTime startDate, string comment) {
