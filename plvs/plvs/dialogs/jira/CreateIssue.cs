@@ -312,7 +312,7 @@ namespace Atlassian.plvs.dialogs.jira {
                               {
                                   Summary = textSummary.Text,
                                   Description = textDescription.Text,
-                                  ProjectKey = ((JiraProject) comboProjects.SelectedItem).Key,
+                                  ProjectKey = parent != null ? parent.ProjectKey : ((JiraProject) comboProjects.SelectedItem).Key,
                                   IssueTypeId =
                                       ((ComboBoxWithImagesItem<JiraNamedEntity>) comboTypes.SelectedItem).Value.Id,
                                   PriorityId =
