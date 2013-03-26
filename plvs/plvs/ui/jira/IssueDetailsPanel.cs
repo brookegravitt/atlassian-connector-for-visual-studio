@@ -1015,7 +1015,11 @@ namespace Atlassian.plvs.ui.jira {
             saveAttachmentToStream(item, dlg.OpenFile());
         }
 
-        private void saveAttachmentToStream(JiraAttachmentListViewItem item, Stream stream, Action onComplete = null) {
+        private void saveAttachmentToStream(JiraAttachmentListViewItem item, Stream stream) {
+            saveAttachmentToStream(item, stream, null);
+        }
+
+        private void saveAttachmentToStream(JiraAttachmentListViewItem item, Stream stream, Action onComplete) {
             status.setInfo("Saving attachment \"" + item.Attachment.Name + "\"...");
             var client = new WebClient();
             client.DownloadDataCompleted += ((sender, e) => {
