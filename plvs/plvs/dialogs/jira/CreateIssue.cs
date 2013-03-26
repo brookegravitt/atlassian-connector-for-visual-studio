@@ -33,7 +33,11 @@ namespace Atlassian.plvs.dialogs.jira {
 
         private static CreateIssue instance;
 
-        public static void createDialogOrBringToFront(JiraServer server, JiraIssue parent = null) {
+        public static void createDialogOrBringToFront(JiraServer server) {
+            createDialogOrBringToFront(server, null);
+        }
+
+        public static void createDialogOrBringToFront(JiraServer server, JiraIssue parent) {
             if (instance == null || parent != instance.parent) {
                 if (instance != null) {
                     instance.Close();
