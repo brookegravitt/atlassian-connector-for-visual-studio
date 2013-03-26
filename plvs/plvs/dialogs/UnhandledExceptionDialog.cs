@@ -22,7 +22,7 @@ namespace Atlassian.plvs.dialogs {
 
         private void buttonReportBug_Click(object sender, EventArgs e) {
             try {
-                StringBuilder url = new StringBuilder("https://studio.atlassian.com/secure/CreateIssueDetails!init.jspa?pid=10500&issuetype=1");
+                StringBuilder url = new StringBuilder("https://ecosystem.atlassian.net/secure/CreateIssueDetails!init.jspa?pid=13773&issuetype=1");
                 url.Append("&environment=");
                 StringBuilder env = new StringBuilder();
                 env.Append("connector version: ").Append(PlvsVersionInfo.VersionAndStamp);
