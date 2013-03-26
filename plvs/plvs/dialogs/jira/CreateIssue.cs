@@ -49,7 +49,7 @@ namespace Atlassian.plvs.dialogs.jira {
             }
         }
 
-        private CreateIssue(JiraServer server, JiraIssue parent = null) {
+        private CreateIssue(JiraServer server, JiraIssue parent) {
             this.server = server;
             this.parent = parent;
             InitializeComponent();
