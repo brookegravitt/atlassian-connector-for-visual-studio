@@ -67,12 +67,6 @@ namespace Atlassian.plvs.dialogs.jira {
                     comboProjects.Items.Add(project);
                 }
 
-                if (parent != null) {
-                    comboProjects.Visible = false;
-                    labelProject.Visible = false;
-                    labelParentIssueKey.Visible = true;
-                    labelParentIssueKey.Text = "Parent issue key: " + parent.Key;
-                }
                 List<JiraNamedEntity> priorities = JiraServerCache.Instance.getPriorities(server);
                 if (priorities != null) {
                     ImageList imageList = new ImageList();
@@ -101,6 +95,19 @@ namespace Atlassian.plvs.dialogs.jira {
                         }
                     }
                 }
+
+                if (parent != null) {
+                    comboProjects.Visible = false;
+                    labelProject.Visible = false;
+                    labelParentIssueKey.Visible = true;
+                    labelParentIssueKey.Text = "Parent issue key: " + parent.Key;
+                    foreach (var item in comboProjects.Items.Cast<object>()
+                        .Where(item => ((JiraProject) item).Key.Equals(parent.ProjectKey))) {
+                        comboProjects.SelectedItem = item;
+                        break;
+                    }
+                }
+
             }
 
             StartPosition = FormStartPosition.CenterParent;
