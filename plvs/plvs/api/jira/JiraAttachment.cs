@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Newtonsoft.Json.Linq;
 
 namespace Atlassian.plvs.api.jira {
@@ -15,7 +16,7 @@ namespace Atlassian.plvs.api.jira {
         public JiraAttachment(JToken att) {
             Id = att["id"].Value<int>();
             Name = att["filename"].Value<string>();
-            Created = DateTime.Parse(att["created"].Value<string>());
+            Created = DateTime.Parse(att["created"].Value<string>(), CultureInfo.InvariantCulture);
             Author = att["author"]["name"].Value<string>();
             Size = att["size"].Value<int>();
         }
