@@ -96,11 +96,35 @@ namespace Unit_Test {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to {
+        ///  &quot;expand&quot;: &quot;editmeta,renderedFields,transitions,changelog,operations&quot;,
+        ///  &quot;id&quot;: &quot;62949&quot;,
+        ///  &quot;self&quot;: &quot;https://www.FOOBAR.de/jira/rest/api/2/issue/62949&quot;,
+        ///  &quot;key&quot;: &quot;FOOPROJECTI-691&quot;,
+        ///  &quot;fields&quot;: {
+        ///    &quot;summary&quot;: &quot;OBUFSCATED OBFUSCATEDOBUFSCATED OBFUSCATEDOBUFSCATED OBFUSCATEDOBUFSCATED OBFUSCATED&quot;,
+        ///    &quot;customfield_11067&quot;: null,
+        ///    &quot;progress&quot;: {
+        ///      &quot;progress&quot;: 0,
+        ///      &quot;total&quot;: 0
+        ///    },
+        ///    &quot;customfield_10561&quot;: null,
+        ///    &quot;customfield_11066&quot;: null,
+        ///    &quot;customfield_11065&quot;: null,
+        ///    &quot;custom [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string plvs_384_issue_json_txt {
             get {
                 return ResourceManager.GetString("plvs-384-issue-json.txt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string plvs_389 {
+            get {
+                return ResourceManager.GetString("plvs-389", resourceCulture);
             }
         }
     }

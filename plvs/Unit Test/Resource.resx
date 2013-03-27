@@ -124,6 +124,9 @@
   <data name="plvs-384-issue-json.txt" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\plvs-384-issue-json.txt.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;windows-1250</value>
   </data>
+  <data name="plvs-389" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\plvs-389.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;windows-1250</value>
+  </data>
   <data name="plvs_374_no_priority" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\plvs-374-no-priority.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;windows-1250</value>
   </data>

@@ -59,8 +59,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
-    <Compile Include="TestCreateIssueFromJson.cs" />
-    <Compile Include="TestParseIssuePlvs384.cs" />
+    <Compile Include="TestIssueJsonParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resource.resx">
@@ -82,6 +81,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\plvs-384-issue-json.txt.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\plvs-389.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

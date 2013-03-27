@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
+using System.Text;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Atlassian.plvs.api.jira;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -8,8 +12,21 @@ using Newtonsoft.Json.Linq;
 
 namespace Unit_Test {
     [TestClass]
-    public class TestCreateIssueFromJson {
+    public class TestIssueJsonParser {
         private JiraServer server = new JiraServer(Guid.NewGuid(), "test", "http://localhost", "test", "test", false, false, true);
+
+        [TestMethod]
+        public void TestParseJsonPlvs384() {
+            try {
+                var json = Resource.plvs_384_issue_json_txt;
+                var issue = JsonConvert.DeserializeObject(json);
+                var t = issue as JToken;
+                var s = new JiraServer("a", "http:/a", "a", "a", true, false);
+                var issueObject = new JiraIssue(s, t);
+            } catch (Exception e) {
+                Assert.Fail(e.Message);
+            }
+        }
 
         [TestMethod]
         public void TestPlvs374() {
@@ -19,7 +36,7 @@ namespace Unit_Test {
                 var t = issue as JToken;
                 new JiraIssue(server, t);
             } catch (Exception e) {
-                Assert.Fail(e.Message);   
+                Assert.Fail(e.Message);
             }
         }
 
@@ -30,6 +47,21 @@ namespace Unit_Test {
                 Thread.CurrentThread.CurrentCulture = info;
                 Thread.CurrentThread.CurrentUICulture = info;
                 var json = Resource.plvs_374_bad_date;
+                var issue = JsonConvert.DeserializeObject(json);
+                var t = issue as JToken;
+                new JiraIssue(server, t);
+            } catch (Exception e) {
+                Assert.Fail(e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void TestPlvs389() {
+            try {
+                var info = new CultureInfo("de-DE");
+                Thread.CurrentThread.CurrentCulture = info;
+                Thread.CurrentThread.CurrentUICulture = info;
+                var json = Resource.plvs_389;
                 var issue = JsonConvert.DeserializeObject(json);
                 var t = issue as JToken;
                 new JiraIssue(server, t);

@@ -369,7 +369,7 @@ namespace Atlassian.plvs.api.jira {
             var list = rendered != null ? rendered["comments"] : cmts["comments"];
             var cmtTimes = new Dictionary<int, DateTime>();
             foreach (var cmt in cmts["comments"]) {
-                cmtTimes[cmt["id"].Value<int>()] = DateTime.Parse(cmt["created"].Value<string>());
+                cmtTimes[cmt["id"].Value<int>()] = DateTime.Parse(cmt["created"].Value<string>(), CultureInfo.InvariantCulture);
             }
             foreach (var comment in list) {
                 var id = comment["id"].Value<int>();
