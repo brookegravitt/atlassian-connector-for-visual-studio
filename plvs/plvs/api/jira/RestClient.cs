@@ -29,7 +29,7 @@ namespace Atlassian.plvs.api.jira {
             var url = new StringBuilder(BaseUrl + "/rest/api/1.0/render");
 
             if (server.OldSkoolAuth) {
-                url.Append(appendAuthentication(true));
+                url.Append(appendAuthentication(url.ToString()));
             }
 
             try {
@@ -263,7 +263,7 @@ namespace Atlassian.plvs.api.jira {
             try {
                 var url = BaseUrl + REST + "issue/" + issue.Key + "/attachments";
                 if (server.OldSkoolAuth) {
-                    url = url + appendAuthentication(true);
+                    url = url + appendAuthentication(url);
                 }
 
                 using (var response = FormUpload.multipartFormDataPost(url,
@@ -412,7 +412,7 @@ namespace Atlassian.plvs.api.jira {
             var url = new StringBuilder(tgtUrl);
 
             if (server.OldSkoolAuth) {
-                url.Append(appendAuthentication(true));
+                url.Append(appendAuthentication(url.ToString()));
             }
 
             var req = (HttpWebRequest)WebRequest.Create(url.ToString());

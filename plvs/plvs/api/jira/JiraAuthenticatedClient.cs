@@ -81,9 +81,9 @@ namespace Atlassian.plvs.api.jira {
             return idxEnd == -1 ? null : cookies.Substring(idxStart + tokenName.Length, idxEnd - idxStart - tokenName.Length);
         }
 
-        protected string appendAuthentication(bool first) {
+        protected string appendAuthentication(string url) {
             if (UserName != null) {
-                return (first ? "?" : "&") + CredentialUtils.getOsAuthString(UserName, Password);
+                return (url.Contains("?") ? "&" : "?") + CredentialUtils.getOsAuthString(UserName, Password);
             }
             return "";
         }
