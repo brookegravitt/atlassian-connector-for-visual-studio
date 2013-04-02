@@ -26,7 +26,7 @@ namespace Atlassian.plvs.api.jira {
             url.Append("&tempMax=" + max);
 
             if (server.OldSkoolAuth) {
-                url.Append(appendAuthentication(false));
+                url.Append(appendAuthentication(url.ToString()));
             }
 
             try {
@@ -50,7 +50,7 @@ namespace Atlassian.plvs.api.jira {
             url.Append("&tempMax=" + max);
 
             if (server.OldSkoolAuth) {
-                url.Append(appendAuthentication(false));
+                url.Append(appendAuthentication(url.ToString()));
             }
 
             try {
@@ -68,7 +68,7 @@ namespace Atlassian.plvs.api.jira {
             url.Append(key).Append("/").Append(key).Append(".xml");
 
             if (server.OldSkoolAuth) {
-                url.Append(appendAuthentication(true));
+                url.Append(appendAuthentication(url.ToString()));
             }
 
             try {
