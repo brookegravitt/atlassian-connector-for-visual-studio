@@ -5,6 +5,14 @@ namespace Atlassian.plvs.api.jira.facade {
     public class RestJiraServerFacade : AbstractJiraServerFacade {
         public override void login(JiraServer server) {
             restSupported(server);
+            using (var rest = new RestClient(server)) {
+                rest.restLogin();
+            }
+        }
+
+        public override void dropAllSessions() {
+            RestClient.clearSessions();
+            base.dropAllSessions();
         }
 
         public override string getSoapToken(JiraServer server) {
@@ -31,13 +39,15 @@ namespace Atlassian.plvs.api.jira.facade {
 
         public override string getRenderedContent(JiraIssue issue, string markup) {
             using (var rest = new RestClient(issue.Server)) {
-                return setSessionCookieAndWrapExceptions(issue.Server, rest, () => rest.getRenderedContent(issue.Key, -1, -1, markup));
+                return rest.getRenderedContent(issue.Key, -1, -1, markup);
+//                return setSessionCookieAndWrapExceptions(issue.Server, rest, () => rest.getRenderedContent(issue.Key, -1, -1, markup));
             }
         }
 
         public override string getRenderedContent(JiraServer server, int issueTypeId, JiraProject project, string markup) {
             using (var rest = new RestClient(server)) {
-                return setSessionCookieAndWrapExceptions(server, rest, () => rest.getRenderedContent(null, issueTypeId, project.Id, markup));
+                return rest.getRenderedContent(null, issueTypeId, project.Id, markup);
+//                return setSessionCookieAndWrapExceptions(server, rest, () => rest.getRenderedContent(null, issueTypeId, project.Id, markup));
             }
         }
 

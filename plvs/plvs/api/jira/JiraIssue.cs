@@ -52,6 +52,8 @@ namespace Atlassian.plvs.api.jira {
 
         private readonly List<IssueLinkType> issueLinks = new List<IssueLinkType>();
 
+//        public JToken RestIssue { get; private set; }
+
         public JiraIssue() {
             ServerLanguage = null;
         }
@@ -124,6 +126,8 @@ namespace Atlassian.plvs.api.jira {
                 Environment = env != null ? env.Value<string>() : null;
                 getComments(fields["comment"], issue["renderedFields"]["comment"]);
                 getIssueLinks(fields["issuelinks"]);
+
+//                RestIssue = issue;
             } catch (Exception e) {
                 throw new InvalidOperationException("Unable to parse issue JSON object: " + issue, e);
             }
