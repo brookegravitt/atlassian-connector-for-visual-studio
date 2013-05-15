@@ -457,9 +457,14 @@ namespace Atlassian.plvs.ui.jira {
                     JiraIssue issue = SmartJiraServerFacade.Instance.getIssue(server, CurrentActiveIssue.Key);
                     if (issue != null) {
                         string me = CredentialUtils.getUserNameWithoutDomain(server.UserName);
-                        if (issue.Assignee == null || !issue.Assignee.Equals(me)) {
+                        if (issue.Assignee == null || issue.Assignee.Equals("Unknown") || !issue.Assignee.Equals(me)) {
                             jiraStatus.setInfo("Assigning issue to me...");
-                            JiraField assignee = new JiraField("assignee", null) { Values = new List<string> { me } };
+                            JiraField assignee = new JiraField("assignee", null) {
+                                Values = new List<string> { me },
+                                SettablePropertyName = "name"
+                            };
+                            var rawIssueObject = SmartJiraServerFacade.Instance.getRawIssueObject(issue);
+                            assignee.setRawIssueObject(rawIssueObject);
                             SmartJiraServerFacade.Instance.updateIssue(issue, new List<JiraField> { assignee });
                             ++mods;
                         }
