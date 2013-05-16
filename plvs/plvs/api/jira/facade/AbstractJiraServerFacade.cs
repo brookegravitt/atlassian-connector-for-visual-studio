@@ -91,17 +91,13 @@ namespace Atlassian.plvs.api.jira.facade {
             }
         }
 
-        protected static string getSessionOrTokenKey(JiraServer server) {
-            return server.Url + "_" + server.UserName + "_" + server.Password;
-        }
-
         private void setSessionCookie(JiraServer server, JiraAuthenticatedClient client) {
             if (server.OldSkoolAuth) {
                 return;
             }
 
             lock (rssSessionCookieMap) {
-                var key = getSessionOrTokenKey(server);
+                var key = CredentialUtils.getSessionOrTokenKey(server);
                 if (rssSessionCookieMap.ContainsKey(key)) {
                     client.SessionTokens = rssSessionCookieMap[key];
                 } else {
@@ -116,7 +112,7 @@ namespace Atlassian.plvs.api.jira.facade {
             }
 
             lock (rssSessionCookieMap) {
-                rssSessionCookieMap.Remove(getSessionOrTokenKey(server));
+                rssSessionCookieMap.Remove(CredentialUtils.getSessionOrTokenKey(server));
             }
         }
     }

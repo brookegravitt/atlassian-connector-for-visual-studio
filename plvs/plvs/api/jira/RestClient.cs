@@ -15,29 +15,23 @@ using Newtonsoft.Json.Linq;
 
 namespace Atlassian.plvs.api.jira {
     internal class RestClient : JiraAuthenticatedClient {
-        private static readonly Dictionary<string, string> sessionMap = new Dictionary<string, string>();
+        private static readonly Dictionary<string, CookieContainer> sessionMap = new Dictionary<string, CookieContainer>();
 
         private readonly JiraServer server;
 
         private const string REST = "/rest/api/2/";
         private const string UNEXPECTED = "Unexpected response code: ";
 
-        private string sessionCookie;
-
         public RestClient(JiraServer server)
             : base(server.Url, server.UserName, server.Password, server.NoProxy) {
             this.server = server;
-            this.sessionCookie = lockedGet(getSessionKey(server));
         }
 
-        public string restLogin() {
-            lockedPut(getSessionKey(server), null);
-            var auth = jsonOp("POST", BaseUrl + "/rest/auth/1/session", new {username = server.UserName, password = server.Password}, HttpStatusCode.OK);
-            sessionCookie = auth["session"]["value"].Value<string>();
-            if (sessionCookie != null) {
-                lockedPut(getSessionKey(server), sessionCookie);
+        public void restLogin() {
+            lock (sessionMap) {
+                sessionMap.Remove(CredentialUtils.getSessionOrTokenKey(server));
             }
-            return sessionCookie;
+            var auth = jsonOp("POST", BaseUrl + "/rest/auth/1/session", new {username = server.UserName, password = server.Password}, HttpStatusCode.OK);
         }
 
         public static void clearSessions() {
@@ -65,7 +59,8 @@ namespace Atlassian.plvs.api.jira {
                 req.ContentType = "application/json";
                 req.UserAgent = Constants.USER_AGENT;
 
-                setSessionCookie(req);
+                loadLoginSessionCookies(req);
+//                setSessionCookie(req);
 
                 var requestStream = req.GetRequestStream();
                 var encoding = new ASCIIEncoding();
@@ -86,6 +81,9 @@ namespace Atlassian.plvs.api.jira {
                 requestStream.Close();
 
                 var resp = (HttpWebResponse)req.GetResponse();
+
+                storeLoginSessionCookies(req);
+
                 var stream = resp.GetResponseStream();
                 var text = PlvsUtils.getTextDocument(stream);
                 if (stream != null) stream.Close();
@@ -287,15 +285,17 @@ namespace Atlassian.plvs.api.jira {
                     url = url + appendAuthentication(url);
                 }
 
+                HttpWebRequest request = null;
                 using (var response = FormUpload.multipartFormDataPost(url,
                     req => {
 //                        setBasicAuthHeader(req);
-                        setLoginSessionCookie(req);
+                        request = req;
+                        loadLoginSessionCookies(req);
                         req.Headers["X-Atlassian-Token"] = "nocheck";
                     },
                     new Dictionary<string, string> { { "file", "file://" + file } })) {
 
-                    getLoginSessionCookie(response);
+                    storeLoginSessionCookies(request);
 
                     if (response.StatusCode != HttpStatusCode.OK) {
                         throw new WebException("Failed to upload attachment, error code: " + response.StatusCode);
@@ -432,22 +432,16 @@ namespace Atlassian.plvs.api.jira {
             req.Headers["Authorization"] = "Basic " + authInfo;
         }
 
-        private void setLoginSessionCookie(HttpWebRequest req) {
-            if (sessionCookie == null) {
-                return;
+        private void loadLoginSessionCookies(HttpWebRequest req) {
+            lock(sessionMap) {
+                var key = CredentialUtils.getSessionOrTokenKey(server);
+                req.CookieContainer = sessionMap.ContainsKey(key) ? sessionMap[key] : new CookieContainer();
             }
-            req.CookieContainer = new CookieContainer();
-            var cookie = new Cookie("JSESSIONID", sessionCookie) {
-                Domain = server.Url.Substring(server.Url.IndexOf("//") + 2)
-            };
-            req.CookieContainer.Add(cookie);
-
-//            req.Headers["Cookie"] = sessionCookie;
         }
 
-        private void getLoginSessionCookie(HttpWebResponse response) {
-            foreach (var cooky in response.Cookies.Cast<Cookie>().Where(cooky => cooky.Name.ToLower().Equals("jsessionid"))) {
-                sessionCookie = cooky.Value;
+        private void storeLoginSessionCookies(HttpWebRequest request) {
+            lock(sessionMap) {
+                sessionMap[CredentialUtils.getSessionOrTokenKey(server)] = request.CookieContainer;
             }
         }
 
@@ -468,7 +462,7 @@ namespace Atlassian.plvs.api.jira {
             req.UserAgent = Constants.USER_AGENT;
 
 //            setBasicAuthHeader(req);
-            setLoginSessionCookie(req);
+            loadLoginSessionCookies(req);
 
             string data = null;
 
@@ -484,7 +478,7 @@ namespace Atlassian.plvs.api.jira {
             HttpWebResponse response;
             try {
                 response = (HttpWebResponse)req.GetResponse();
-                getLoginSessionCookie(response);
+                storeLoginSessionCookies(req);
 
                 if (response.StatusCode == expectedCode) {
                     using (var stream = response.GetResponseStream()) {
@@ -513,22 +507,6 @@ namespace Atlassian.plvs.api.jira {
             }
 
             throw new WebException(UNEXPECTED + response.StatusCode);
-        }
-
-        private static string getSessionKey(Server server) {
-            return server.Url + "_" + server.UserName + "_" + server.Password;
-        }
-
-        private static string lockedGet(string key) {
-            lock (sessionMap) {
-                return sessionMap.ContainsKey(key) ? sessionMap[key] : null;
-            }
-        }
-
-        private static void lockedPut(string key, string val) {
-            lock (sessionMap) {
-                sessionMap[key] = val;
-            }
         }
     }
 

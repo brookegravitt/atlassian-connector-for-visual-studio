@@ -3,6 +3,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Net;
 using System.Web;
+using Atlassian.plvs.api.jira;
 
 namespace Atlassian.plvs.api {
     public static class CredentialUtils {
@@ -69,6 +70,10 @@ namespace Atlassian.plvs.api {
             return 
                 "os_username=" + HttpUtility.UrlEncode(getUserNameWithoutDomain(userName)) 
                 + "&os_password=" + HttpUtility.UrlEncode(password);
+        }
+
+        public static string getSessionOrTokenKey(Server server) {
+            return server.Url + "_" + server.UserName + "_" + server.Password;
         }
     }
 }
