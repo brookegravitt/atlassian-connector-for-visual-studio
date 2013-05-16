@@ -270,7 +270,7 @@ namespace Atlassian.plvs.api.jira.facade {
 
         private void setSoapSessionToken(JiraServer server, SoapSession session) {
             lock (soapTokenMap) {
-                var key = getSessionOrTokenKey(server);
+                var key = CredentialUtils.getSessionOrTokenKey(server);
                 if (soapTokenMap.ContainsKey(key)) {
                     session.Token = soapTokenMap[key];
                 } else {
@@ -281,7 +281,7 @@ namespace Atlassian.plvs.api.jira.facade {
 
         private void removeSoapSessionToken(JiraServer server) {
             lock (soapTokenMap) {
-                soapTokenMap.Remove(getSessionOrTokenKey(server));
+                soapTokenMap.Remove(CredentialUtils.getSessionOrTokenKey(server));
             }
         }
     }

@@ -72,7 +72,7 @@ namespace Atlassian.plvs.api.jira {
             }
         }
 
-        private static string getSessionToken(string cookies, string tokenName) {
+        protected static string getSessionToken(string cookies, string tokenName) {
             int idxStart = cookies.LastIndexOf(tokenName);
             if (idxStart == -1) {
                 return null;
