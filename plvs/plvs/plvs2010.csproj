@@ -98,7 +98,9 @@
     <Compile Include="api\jira\facade\AbstractJiraServerFacade.cs" />
     <Compile Include="api\jira\facade\SmartJiraServerFacade.cs" />
     <Compile Include="api\jira\FiveOhThreeJiraException.cs" />
+    <Compile Include="api\jira\gh\Sprint.cs" />
     <Compile Include="api\jira\JiraAuthenticatedClient.cs" />
+    <Compile Include="api\jira\gh\RapidBoard.cs" />
     <Compile Include="api\jira\RestClient.cs" />
     <Compile Include="api\jira\IssueLinkType.cs" />
     <Compile Include="api\jira\JiraAttachment.cs" />
@@ -445,6 +447,9 @@
     <Compile Include="ui\jira\fields\TimeTrackingEditorProvider.cs" />
     <Compile Include="ui\jira\fields\UserFieldEditorProvider.cs" />
     <Compile Include="ui\jira\fields\NamedEntityListFieldEditorProvider.cs" />
+    <Compile Include="ui\jira\issuefilternodes\GhSprintNode.cs" />
+    <Compile Include="ui\jira\issuefilternodes\GhBoardTreeNode.cs" />
+    <Compile Include="ui\jira\issuefilternodes\GhGroupTreeNode.cs" />
     <Compile Include="ui\jira\issues\menus\SavedFilterContextMenu.cs">
       <SubType>Component</SubType>
     </Compile>
