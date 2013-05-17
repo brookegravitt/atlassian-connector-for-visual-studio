@@ -42,6 +42,7 @@ namespace Atlassian.plvs.ui.jira {
         public bool FilterOrRecentlyViewedSelected {
             get { return SelectedNode != null 
                          && (SelectedNode is JiraSavedFilterTreeNode
+                             || SelectedNode is GhSprintTreeNode
                              || SelectedNode is RecentlyOpenIssuesTreeNode
                              || SelectedNode is JiraCustomFilterTreeNode
                              || SelectedNode is JiraPresetFilterTreeNode);
@@ -93,12 +94,14 @@ namespace Atlassian.plvs.ui.jira {
 
         public void getAndCastSelectedNode(
             out JiraSavedFilterTreeNode saved, out RecentlyOpenIssuesTreeNode recent, 
-            out JiraCustomFilterTreeNode custom, out JiraPresetFilterTreeNode preset) {
+            out JiraCustomFilterTreeNode custom, out JiraPresetFilterTreeNode preset, 
+            out GhSprintTreeNode sprint) {
 
             saved = SelectedNode as JiraSavedFilterTreeNode;
             recent = SelectedNode as RecentlyOpenIssuesTreeNode;
             custom = SelectedNode as JiraCustomFilterTreeNode;
             preset = SelectedNode as JiraPresetFilterTreeNode;
+            sprint = SelectedNode as GhSprintTreeNode;
         }
 
         public TreeNodeWithJiraServer findGroupNode(JiraServer server, Type type) {
@@ -115,6 +118,21 @@ namespace Atlassian.plvs.ui.jira {
         public JiraServer CurrentlySelectedServer { get {
                 TreeNodeWithJiraServer node = SelectedNode as TreeNodeWithJiraServer;
                 return node == null ? null : node.Server;
+            }
+        }
+
+        public void addGhNodes(JiraServer server) {
+            var node = findServerNode(server);
+            if (node == null) return;
+
+            var groupTreeNode = new GhGroupTreeNode(server, 2);
+            node.Nodes.Add(groupTreeNode);
+            foreach (var rapidBoard in JiraServerCache.Instance.getGhBoards(server).Values) {
+                var boardTreeNode = new GhBoardTreeNode(server, rapidBoard, 2);
+                groupTreeNode.Nodes.Add(boardTreeNode);
+                foreach (var sprint in rapidBoard.Sprints) {
+                    boardTreeNode.Nodes.Add(new GhSprintTreeNode(server, sprint, 2));
+                }
             }
         }
 

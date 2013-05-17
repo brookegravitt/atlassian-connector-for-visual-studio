@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Atlassian.plvs.api.jira.gh;
 
 namespace Atlassian.plvs.api.jira.facade {
     public class RestJiraServerFacade : AbstractJiraServerFacade {
@@ -17,6 +18,30 @@ namespace Atlassian.plvs.api.jira.facade {
 
         public override string getSoapToken(JiraServer server) {
             throw new NotImplementedException();
+        }
+
+        public override bool supportsGh(JiraServer server) {
+            using (var rest = new RestClient(server)) {
+                return rest.supportsGh();
+            }
+        }
+
+        public override List<RapidBoard> getGhBoards(JiraServer server) {
+            using (var rest = new RestClient(server)) {
+                return rest.getGhBoards();
+            }
+        }
+
+        public override List<Sprint> getGhSprints(JiraServer server, int boardId) {
+            using (var rest = new RestClient(server)) {
+                return rest.getGhSprints(boardId);
+            }
+        }
+
+        public override List<string> getIssueKeysForSprint(JiraServer server, Sprint sprint) {
+            using (var rest = new RestClient(server)) {
+                return rest.getIssueKeysForSprint(sprint.BoardId, sprint.Id);
+            }
         }
 
         public override List<JiraIssue> getSavedFilterIssues(JiraServer server, JiraSavedFilter filter, int start, int count) {

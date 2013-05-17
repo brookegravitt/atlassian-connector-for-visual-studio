@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Atlassian.plvs.api.jira.gh;
 
 namespace Atlassian.plvs.api.jira.facade {
     public class SmartJiraServerFacade : AbstractJiraServerFacade {
@@ -25,6 +26,30 @@ namespace Atlassian.plvs.api.jira.facade {
 
         public override string getSoapToken(JiraServer server) {
             return delegated(server, delegate { return restFacade.getSoapToken(server); }, delegate { return classicFacade.getSoapToken(server); });
+        }
+
+        public override bool supportsGh(JiraServer server) {
+            return delegated(server,
+                             delegate { return restFacade.supportsGh(server); },
+                             delegate { return classicFacade.supportsGh(server); });
+        }
+
+        public override List<RapidBoard> getGhBoards(JiraServer server) {
+            return delegated(server,
+                             delegate { return restFacade.getGhBoards(server); },
+                             delegate { return classicFacade.getGhBoards(server); });
+        }
+
+        public override List<string> getIssueKeysForSprint(JiraServer server, Sprint sprint) {
+            return delegated(server,
+                             delegate { return restFacade.getIssueKeysForSprint(server, sprint); },
+                             delegate { return classicFacade.getIssueKeysForSprint(server, sprint); });
+        }
+
+        public override List<Sprint> getGhSprints(JiraServer server, int boardId) {
+            return delegated(server,
+                             delegate { return restFacade.getGhSprints(server, boardId); },
+                             delegate { return classicFacade.getGhSprints(server, boardId); });
         }
 
         public override List<JiraIssue> getSavedFilterIssues(JiraServer server, JiraSavedFilter filter, int start, int count) {

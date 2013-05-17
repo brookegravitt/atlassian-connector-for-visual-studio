@@ -551,6 +551,7 @@ namespace Atlassian.plvs.ui.jira {
 
             try {
 
+                JiraServerCache.Instance.clearGhBoards();
                 JiraServerCache.Instance.clearProjects();
                 JiraServerCache.Instance.clearIssueTypes();
                 JiraServerCache.Instance.clearStatuses();
@@ -562,8 +563,23 @@ namespace Atlassian.plvs.ui.jira {
                     status.setInfo("[" + server.Name + "] Authenticating...");
                     Facade.login(server);
 
+                    status.setInfo("[" + server.Name + "] Loading GreenHopper boards");
+                    bool supportsGh = Facade.supportsGh(server);
+                    if (supportsGh) {
+                        var rapidBoards = Facade.getGhBoards(server);
+                        if (rapidBoards != null) {
+                            foreach (var rapidBoard in rapidBoards) {
+                                JiraServerCache.Instance.addRapidBoard(server, rapidBoard);
+                                var ghSprints = Facade.getGhSprints(server, rapidBoard.Id);
+                                if (ghSprints != null) {
+                                    rapidBoard.Sprints.AddRange(ghSprints);
+                                }
+                            }
+                        }
+                    }
+
                     status.setInfo("[" + server.Name + "] Loading project definitions...");
-                    List<JiraProject> projects = Facade.getProjects(server);
+                    var projects = Facade.getProjects(server);
                     foreach (JiraProject proj in projects) {
                         JiraServerCache.Instance.addProject(server, proj);
                     }
@@ -613,6 +629,9 @@ namespace Atlassian.plvs.ui.jira {
                                                          return;
                                                      }
                                                      PlvsLogger.log("reloadKnownServersWorker() - populating filter nodes");
+                                                     if (supportsGh) {
+                                                         filtersTree.addGhNodes(jiraServer);
+                                                     }
                                                      filtersTree.addFilterGroupNodes(jiraServer);
                                                      filtersTree.addPresetFilterNodes(jiraServer);
                                                      filtersTree.addSavedFilterNodes(jiraServer, filters);
@@ -723,8 +742,9 @@ namespace Atlassian.plvs.ui.jira {
             RecentlyOpenIssuesTreeNode recentIssuesNode;
             JiraCustomFilterTreeNode customFilterNode;
             JiraPresetFilterTreeNode presetFilterNode;
+            GhSprintTreeNode sprintFilterNode;
 
-            filtersTree.getAndCastSelectedNode(out savedFilterNode, out recentIssuesNode, out customFilterNode, out presetFilterNode);
+            filtersTree.getAndCastSelectedNode(out savedFilterNode, out recentIssuesNode, out customFilterNode, out presetFilterNode, out sprintFilterNode);
 
             Thread issueLoadThread = null;
 
@@ -738,6 +758,8 @@ namespace Atlassian.plvs.ui.jira {
                 issueLoadThread = reloadIssuesWithPresetFilter(presetFilterNode, () => restoreExpandStatesAndSelectedIssue(selectedIssue));
             } else if (recentIssuesNode != null) {
                 issueLoadThread = reloadIssuesWithRecentlyViewedIssues(() => restoreExpandStatesAndSelectedIssue(selectedIssue));
+            } else if (sprintFilterNode != null) {
+                issueLoadThread = reloadIssuesWithSprint(sprintFilterNode, () => restoreExpandStatesAndSelectedIssue(selectedIssue));
             }
 
             loadIssuesInThread(issueLoadThread);
@@ -788,6 +810,30 @@ namespace Atlassian.plvs.ui.jira {
                                                   reloadCompleted();
                                               }
                                           });
+        }
+
+        private Thread reloadIssuesWithSprint(GhSprintTreeNode node, Action reloadCompleted) {
+            return PlvsUtils.createThread(delegate {
+                try {
+                    builder.rebuildModelWithSprint(MODEL, node.Server, node.Sprint);
+                } catch (Exception ex) {
+                    status.setError(RETRIEVING_ISSUES_FAILED, ex);
+                } finally {
+                    reloadCompleted();
+                }
+            });
+        }
+
+        private Thread updateIssuesWithSprint(GhSprintTreeNode node, Action reloadCompleted) {
+            return PlvsUtils.createThread(delegate {
+                try {
+                    builder.updateModelWithSprint(MODEL, node.Server, node.Sprint);
+                } catch (Exception ex) {
+                    status.setError(RETRIEVING_ISSUES_FAILED, ex);
+                } finally {
+                    reloadCompleted();
+                }
+            });
         }
 
         private Thread reloadIssuesWithPresetFilter(JiraPresetFilterTreeNode node, Action reloadCompleted) {
@@ -843,8 +889,9 @@ namespace Atlassian.plvs.ui.jira {
             RecentlyOpenIssuesTreeNode recentIssuesNode;
             JiraCustomFilterTreeNode customFilterNode;
             JiraPresetFilterTreeNode presetFilterNode;
+            GhSprintTreeNode sprintTreeNode;
 
-            filtersTree.getAndCastSelectedNode(out savedFilterNode, out recentIssuesNode, out customFilterNode, out presetFilterNode);
+            filtersTree.getAndCastSelectedNode(out savedFilterNode, out recentIssuesNode, out customFilterNode, out presetFilterNode, out sprintTreeNode);
 
             Thread issueLoadThread = null;
 
@@ -856,6 +903,8 @@ namespace Atlassian.plvs.ui.jira {
                 issueLoadThread = updateIssuesWithCustomFilter(customFilterNode, () => restoreExpandStatesAndSelectedIssue(selectedIssue));
             } else if (presetFilterNode != null) {
                 issueLoadThread = updateIssuesWithPresetFilter(presetFilterNode, () => restoreExpandStatesAndSelectedIssue(selectedIssue));
+            } else if (sprintTreeNode != null) {
+                issueLoadThread = updateIssuesWithSprint(sprintTreeNode, () => restoreExpandStatesAndSelectedIssue(selectedIssue));
             }
 
             loadIssuesInThread(issueLoadThread);

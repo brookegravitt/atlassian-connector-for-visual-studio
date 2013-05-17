@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Atlassian.plvs.api.jira.gh;
 using Atlassian.plvs.util;
 
 namespace Atlassian.plvs.api.jira.facade {
@@ -18,6 +19,14 @@ namespace Atlassian.plvs.api.jira.facade {
                 rssSessionCookieMap.Clear();
             }
         }
+
+        public abstract bool supportsGh(JiraServer server);
+
+        public abstract List<RapidBoard> getGhBoards(JiraServer server);
+
+        public abstract List<Sprint> getGhSprints(JiraServer server, int boardId);
+
+        public abstract List<string> getIssueKeysForSprint(JiraServer server, Sprint sprint);
 
         public abstract string getSoapToken(JiraServer server);
 
