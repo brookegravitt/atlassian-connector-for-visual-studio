@@ -59,11 +59,11 @@ namespace Atlassian.plvs.api.jira {
 
             var simple = !"user".Equals(fieldType) && !"timetracking".Equals(fieldType) && FieldDefinition["allowedValues"] == null;
             if (simple) {
-                return Values.Count == 0 ? null : Values[0];
+                return Values == null || Values.Count == 0 ? null : Values[0];
             }
 
             if (SettablePropertyName == null) {
-                return Values.Count == 0 ? null : Values[0];
+                return Values == null || Values.Count == 0 ? null : Values[0];
             }
             return getPair(SettablePropertyName, Values[0]);
         }

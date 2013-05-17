@@ -7,6 +7,7 @@ using System.Text;
 using System.Net;
 using System.Diagnostics;
 using System.Web;
+using Atlassian.plvs.api.jira.gh;
 using Atlassian.plvs.dialogs;
 using Atlassian.plvs.models.jira.fields;
 using Atlassian.plvs.util;
@@ -38,6 +39,37 @@ namespace Atlassian.plvs.api.jira {
             lock (sessionMap) {
                 sessionMap.Clear();
             }
+        }
+
+        public bool supportsGh() {
+            try {
+                getJson(BaseUrl + "/rest/greenhopper/1.0/rapidview");
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+
+        public List<RapidBoard> getGhBoards() {
+            var boards = getJson(BaseUrl + "/rest/greenhopper/1.0/rapidview");
+            return boards["views"].Select(item => new RapidBoard(item)).ToList();
+        }
+
+        public List<Sprint> getGhSprints(int boardId) {
+            var sprints = getJson(BaseUrl + "/rest/greenhopper/1.0/sprints/" + boardId);
+            return sprints["sprints"].Select(item => new Sprint(boardId, item)).ToList();
+        }
+
+        public List<string> getIssueKeysForSprint(int boardId, int sprintId) {
+            var resp = getJson(BaseUrl + "/rest/greenhopper/1.0/rapid/charts/sprintreport?rapidViewId=" + boardId + "&sprintId=" + sprintId);
+            var completedIssues = resp["contents"]["completedIssues"];
+            var incompletedIssues = resp["contents"]["incompletedIssues"];
+            var puntedIssues = resp["contents"]["puntedIssues"];
+            var keys = new List<string>();
+            keys.AddRange(keysFrom(completedIssues));
+            keys.AddRange(keysFrom(incompletedIssues));
+            keys.AddRange(keysFrom(puntedIssues));
+            return keys;
         }
 
         public string getRenderedContent(string issueKey, int issueType, int projectId, string markup) {
@@ -181,7 +213,7 @@ namespace Atlassian.plvs.api.jira {
 
         public List<JiraIssue> getCustomFilterIssues(JiraFilter filter, string sortOrder, int start, int count) {
             var rawJql = filter.getJql();
-            var order = rawJql.ToLower().Contains("order by") ? "" : " order by " + filter.getSortBy() + " " + sortOrder;
+            var order = rawJql.ToLower().Contains("order by") || filter.getSortBy() == null ? "" : " order by " + filter.getSortBy() + " " + sortOrder;
             var jql = HttpUtility.UrlEncode(rawJql + order);
             var url = BaseUrl + REST + "search?jql=" + jql + "&startAt=" + start + "&maxResults=" + count + "&expand=renderedFields";
             var res = getJson(url);
@@ -443,6 +475,11 @@ namespace Atlassian.plvs.api.jira {
             lock(sessionMap) {
                 sessionMap[CredentialUtils.getSessionOrTokenKey(server)] = request.CookieContainer;
             }
+        }
+
+        private static IEnumerable<string> keysFrom(JToken issues) {
+            if (issues == null) return new List<string>();
+            return issues.Children().Select(issue => issue["key"].Value<string>());
         }
 
         private JContainer jsonOp(string method, string tgtUrl, object json, HttpStatusCode expectedCode) {

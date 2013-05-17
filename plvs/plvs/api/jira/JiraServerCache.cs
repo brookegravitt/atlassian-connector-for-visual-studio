@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Atlassian.plvs.api.jira.gh;
 
 namespace Atlassian.plvs.api.jira {
     internal class JiraServerCache {
@@ -24,6 +25,9 @@ namespace Atlassian.plvs.api.jira {
         private readonly SortedDictionary<Guid, SortedDictionary<int, JiraNamedEntity>> resolutionCache =
             new SortedDictionary<Guid, SortedDictionary<int, JiraNamedEntity>>();
 
+        private readonly SortedDictionary<Guid, SortedDictionary<int, RapidBoard>> ghBoardsCache = 
+            new SortedDictionary<Guid, SortedDictionary<int, RapidBoard>>();
+
         private readonly Dictionary<Guid, JiraUserCache> userCaches = new Dictionary<Guid, JiraUserCache>();
 
         public SortedDictionary<string, JiraProject> getProjects(JiraServer server) {
@@ -35,6 +39,30 @@ namespace Atlassian.plvs.api.jira {
             return new SortedDictionary<string, JiraProject>();
         }
 
+        public void addRapidBoard(JiraServer server, RapidBoard rapidBoard) {
+            lock (ghBoardsCache) {
+                if (!ghBoardsCache.ContainsKey(server.GUID)) {
+                    ghBoardsCache[server.GUID] = new SortedDictionary<int, RapidBoard>();
+                }
+                ghBoardsCache[server.GUID][rapidBoard.Id] = rapidBoard;
+            }
+        }
+
+        public void clearGhBoards() {
+            lock (ghBoardsCache) {
+                ghBoardsCache.Clear();
+            }
+        }
+
+        public SortedDictionary<int, RapidBoard> getGhBoards(JiraServer server) {
+            lock (ghBoardsCache) {
+                if (ghBoardsCache.ContainsKey(server.GUID)) {
+                    return ghBoardsCache[server.GUID];
+                }
+            }
+            return new SortedDictionary<int, RapidBoard>();
+        }
+
         public void addProject(JiraServer server, JiraProject project) {
             lock (projectCache) {
                 if (!projectCache.ContainsKey(server.GUID)) {
@@ -43,7 +71,7 @@ namespace Atlassian.plvs.api.jira {
                 projectCache[server.GUID][project.Key] = project;
             }
         }
-
+        
         public void clearProjects() {
             lock (projectCache) {
                 projectCache.Clear();

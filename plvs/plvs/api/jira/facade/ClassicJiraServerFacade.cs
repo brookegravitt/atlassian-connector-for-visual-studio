@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Atlassian.plvs.api.jira.gh;
 using Atlassian.plvs.api.jira.soap;
 
 namespace Atlassian.plvs.api.jira.facade {
@@ -22,6 +23,22 @@ namespace Atlassian.plvs.api.jira.facade {
                 soapTokenMap.Clear();
             }
             base.dropAllSessions();
+        }
+
+        public override bool supportsGh(JiraServer server) {
+            return false;
+        }
+
+        public override List<RapidBoard> getGhBoards(JiraServer server) {
+            throw new NotImplementedException();
+        }
+
+        public override List<Sprint> getGhSprints(JiraServer server, int boardId) {
+            throw new NotImplementedException();
+        }
+
+        public override List<string> getIssueKeysForSprint(JiraServer server, Sprint sprint) {
+            throw new NotImplementedException();
         }
 
         public override string getRenderedContent(JiraIssue issue, string markup) {
