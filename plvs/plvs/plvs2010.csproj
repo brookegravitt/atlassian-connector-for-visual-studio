@@ -980,6 +980,7 @@
     <Content Include="Resources\icons\jira-blue-16-with-padding.png" />
     <Content Include="Resources\icons\jira-blue-16.ico" />
     <Content Include="Resources\icons\jira-blue-16.png" />
+    <Content Include="Resources\icons\kanban16.png" />
     <Content Include="Resources\icons\minus.png" />
     <Content Include="Resources\icons\new_comment.png" />
     <Content Include="Resources\icons\nothing.png" />
@@ -993,6 +994,7 @@
     <Content Include="Resources\icons\projectsettings.png" />
     <Content Include="Resources\icons\refresh.png" />
     <Content Include="Resources\icons\run-build.png" />
+    <Content Include="Resources\icons\scrum16.png" />
     <Content Include="Resources\icons\search-jira.png" />
     <Content Include="Resources\icons\status_plugin.gif" />
     <Content Include="Resources\icons\status_plugin.ico" />
