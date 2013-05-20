@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using Atlassian.plvs.api.jira;
+using Atlassian.plvs.api.jira.gh;
 using Atlassian.plvs.dialogs.jira;
 using Atlassian.plvs.models.jira;
 using Atlassian.plvs.models.jira.presetFilters;
@@ -21,6 +23,7 @@ namespace Atlassian.plvs.ui.jira {
         private const string PRESET_FILTER_GROUP_NAME = "PRESETS";
         private const string CUSTOM_FILTER_GROUP_NAME = "CUSTOM";
         private const string SAVED_FILTER_GROUP_NAME = "SAVED";
+        private const string GH_SPRINT_GROUP_NAME = "GH";
 
         private readonly ImageList filterTreeImages = new ImageList();
         private ToolTip filtersTreeToolTip;
@@ -62,6 +65,9 @@ namespace Atlassian.plvs.ui.jira {
             filterTreeImages.Images.Add(Resources.ico_jira_custom_filter);
             filterTreeImages.Images.Add(Resources.ico_jira_preset_filter);
             filterTreeImages.Images.Add(Resources.ico_jira_recent_issues);
+            filterTreeImages.Images.Add(Resources.ico_jira_filter);
+            filterTreeImages.Images.Add(Resources.kanban16);
+            filterTreeImages.Images.Add(Resources.scrum16);
 
             ImageList = filterTreeImages;
         }
@@ -125,13 +131,14 @@ namespace Atlassian.plvs.ui.jira {
             var node = findServerNode(server);
             if (node == null) return;
 
-            var groupTreeNode = new GhGroupTreeNode(server, 2);
+            var groupTreeNode = new GhGroupTreeNode(server, 6);
             node.Nodes.Add(groupTreeNode);
             foreach (var rapidBoard in JiraServerCache.Instance.getGhBoards(server).Values) {
-                var boardTreeNode = new GhBoardTreeNode(server, rapidBoard, 2);
+                if (rapidBoard.Sprints == null || rapidBoard.Sprints.Count == 0) continue;
+                var boardTreeNode = new GhBoardTreeNode(server, rapidBoard, 7);
                 groupTreeNode.Nodes.Add(boardTreeNode);
                 foreach (var sprint in rapidBoard.Sprints) {
-                    boardTreeNode.Nodes.Add(new GhSprintTreeNode(server, sprint, 2));
+                    boardTreeNode.Nodes.Add(new GhSprintTreeNode(server, sprint, 8));
                 }
             }
         }
@@ -339,7 +346,12 @@ namespace Atlassian.plvs.ui.jira {
             JiraPresetFiltersGroupTreeNode pgtn = SelectedNode as JiraPresetFiltersGroupTreeNode;
             JiraCustomFiltersGroupTreeNode cgtn = SelectedNode as JiraCustomFiltersGroupTreeNode;
             JiraSavedFiltersGroupTreeNode sgtn = SelectedNode as JiraSavedFiltersGroupTreeNode;
-            if (pgtn != null) {
+            GhSprintTreeNode ghtn = SelectedNode as GhSprintTreeNode;
+
+            if (ghtn != null) {
+                store.storeParameter(FILTERS_TREE_FILTER_GROUP_PARAM, GH_SPRINT_GROUP_NAME);
+                store.storeParameter(FILTERS_TREE_FILTER_PARAM, ghtn.Sprint.BoardId + "/" + ghtn.Sprint.Id);
+            } else if (pgtn != null) {
                 store.storeParameter(FILTERS_TREE_FILTER_GROUP_PARAM, PRESET_FILTER_GROUP_NAME);
                 store.storeParameter(FILTERS_TREE_FILTER_PARAM, null);
             } else {
@@ -394,6 +406,12 @@ namespace Atlassian.plvs.ui.jira {
                         string filter = store.loadParameter(FILTERS_TREE_FILTER_PARAM, null);
                         TreeNodeWithJiraServer groupNode;
                         switch (group) {
+                            case GH_SPRINT_GROUP_NAME:
+                                groupNode = findGroupNode(tnws.Server, typeof (GhGroupTreeNode));
+                                if (selectFilterNode(filter, findGhBoardGroupNode(groupNode as GhGroupTreeNode, filter), compareGhSprint)) {
+                                    return;
+                                }
+                                break;
                             case PRESET_FILTER_GROUP_NAME:
                                 groupNode = findGroupNode(tnws.Server, typeof(JiraPresetFiltersGroupTreeNode));
                                 if (selectFilterNode(filter, groupNode, comparePresetFilterNodeToString)) {
@@ -418,13 +436,20 @@ namespace Atlassian.plvs.ui.jira {
             }
         }
 
+        private static TreeNode findGhBoardGroupNode(GhGroupTreeNode group, string filter) {
+            var strings = filter.Split('/');
+            return group.Nodes.OfType<GhBoardTreeNode>().FirstOrDefault(b => ("" + b.Board.Id).Equals(strings[0]));
+        }
+
         private bool selectFilterNode(string filter, TreeNode groupNode, CompareFilterNodeToString compare) {
             if (filter == null) {
                 SelectedNode = groupNode;
                 return true;
             }
-            foreach (TreeNode fn in groupNode.Nodes) {
-                if (!compare(fn, filter)) continue;
+            if (groupNode == null) {
+                return false;
+            }
+            foreach (TreeNode fn in groupNode.Nodes.Cast<TreeNode>().Where(fn => compare(fn, filter))) {
                 SelectedNode = fn;
                 return true;
             }
@@ -437,6 +462,11 @@ namespace Atlassian.plvs.ui.jira {
 
         private static bool compareSavedFilterNodeToString(TreeNode node, string filter) {
             return filter.Equals((((JiraSavedFilterTreeNode)node).Filter.Id).ToString());
+        }
+
+        private static bool compareGhSprint(TreeNode node, string filter) {
+            var sprint = ((GhSprintTreeNode)node).Sprint;
+            return filter.Equals(sprint.BoardId + "/" + sprint.Id);
         }
 
         private static bool comparePresetFilterNodeToString(TreeNode node, string filter) {

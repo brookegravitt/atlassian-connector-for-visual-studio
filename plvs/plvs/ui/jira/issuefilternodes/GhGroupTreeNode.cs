@@ -4,7 +4,7 @@ using Atlassian.plvs.api.jira;
 namespace Atlassian.plvs.ui.jira.issuefilternodes {
     public class GhGroupTreeNode : JiraFilterGroupTreeNode {
         public GhGroupTreeNode(JiraServer server, int imageIdx)
-            : base(server, "GreenHopper", imageIdx) {
+            : base(server, "Agile", imageIdx) {
         }
 
         public override string NodeKey {
