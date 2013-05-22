@@ -50,6 +50,7 @@ namespace Atlassian.plvs.api.jira {
             var fieldType = FieldDefinition["schema"]["type"].Value<string>();
 
             if ("array".Equals(fieldType)) {
+                if (Values == null) return null;
                 if (Values.Count == 0) return new List<object>();
 
                 var stringItems = "string".Equals(FieldDefinition["schema"]["items"].Value<string>());
