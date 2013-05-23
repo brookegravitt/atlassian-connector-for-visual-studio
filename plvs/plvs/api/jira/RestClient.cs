@@ -61,7 +61,11 @@ namespace Atlassian.plvs.api.jira {
 
         public List<Sprint> getGhSprints(int boardId) {
             var sprints = getJson(BaseUrl + "/rest/greenhopper/1.0/sprints/" + boardId);
-            return sprints["sprints"].Select(item => new Sprint(boardId, item)).ToList();
+            if (sprints == null) return new List<Sprint>();
+            var sps = sprints["sprints"];
+            return sps == null 
+                ? new List<Sprint>() 
+                : sps.Select(item => new Sprint(boardId, item)).ToList();
         }
 
         public List<string> getIssueKeysForSprint(int boardId, int sprintId) {
