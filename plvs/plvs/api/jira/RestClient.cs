@@ -52,9 +52,11 @@ namespace Atlassian.plvs.api.jira {
 
         public List<RapidBoard> getGhBoards() {
             var boards = getJson(BaseUrl + "/rest/greenhopper/1.0/rapidview");
-            return boards == null 
+            if (boards == null) return new List<RapidBoard>();
+            var views = boards["views"];
+            return views == null 
                 ? new List<RapidBoard>() 
-                : boards["views"].Select(item => new RapidBoard(item)).ToList();
+                : views.Select(item => new RapidBoard(item)).ToList();
         }
 
         public List<Sprint> getGhSprints(int boardId) {
