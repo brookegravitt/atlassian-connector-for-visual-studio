@@ -1,0 +1,8 @@
+_ReSharper.*
+obj
+bin
+TestResults
+gadget/packages
+.suo
+.csproj.user
+.ReSharper.user

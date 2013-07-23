@@ -7,14 +7,16 @@
   <property name="version" value="0.0.0" overwrite="false" readonly="false" />
   <property name="build.type" value="SNAPSHOT" overwrite="false" readonly="false" />
   <property name="build.stamp" value="00000000-0000" overwrite="false" readonly="false" />
-  <property name="upload.host" value="update.atlassian.com" overwrite="false" />
+  <!--<property name="upload.host" value="update.atlassian.com" overwrite="false" />-->
+  <property name="upload.host" value="update-fe.internal.atlassian.com" overwrite="false" />
   <property name="upload.dir" value="/var/www/domains/atlassian.com/update/htdocs/atlassian-vs-plugin" overwrite="false" />
   <property name="download.url" value="http://update.atlassian.com/atlassian-vs-plugin/Downloads" overwrite="false" />
+  
   <property name="snapshot.xml.file" value="latestPossibleVersion.xml" overwrite="false" />
   <property name="scp.exe" value="c:/progra~1/putty/pscp.exe" overwrite="false" />
-  <property name="scp.key" value="c:/Users/kalamon/putty.keys/dac.new.bamboo.priv.ppk" overwrite="false" />
+  <property name="scp.key" value="bogus" overwrite="false" />
   <property name="scp.opts" value="-i ${scp.key} -noagent -v -batch" overwrite="false" />
-  <property name="scp.login" value="jgorycki" overwrite="false" />
+  <property name="scp.login" value="bogus" overwrite="false" />
   <property name="nsis" value="c:/progra~1/nsis/makensis.exe" overwrite="false" />
   <property name="msbuild35" value="C:/Windows/Microsoft.NET/Framework/v3.5/MSBuild.exe" overwrite="false" />
   <property name="msbuild40" value="C:/Windows/Microsoft.NET/Framework/v4.0.30319/MSBuild.exe" overwrite="false" />
