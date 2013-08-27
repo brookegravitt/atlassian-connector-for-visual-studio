@@ -563,7 +563,7 @@ namespace Atlassian.plvs.ui.jira {
                     status.setInfo("[" + server.Name + "] Authenticating...");
                     Facade.login(server);
 
-                    status.setInfo("[" + server.Name + "] Loading GreenHopper boards");
+                    status.setInfo("[" + server.Name + "] Loading Agile boards...");
                     bool supportsGh = Facade.supportsGh(server);
                     if (supportsGh) {
                         var rapidBoards = Facade.getGhBoards(server);
