@@ -114,29 +114,6 @@ Function AbortOnNoVS
 	Abort
 FunctionEnd
 
-Function un.RemoveVs2011Files
-
-	ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\11.0" "InstallDir"
- 
-	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\plvs2010.dll"
-	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\Ankh.ExtensionPoints.dll"
-	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\Aga.Controls.dll"
-	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\edit.png"
-	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\ajax-loader.gif"
-	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\nothing.png"
-	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\plvs2010.pkgdef"
-	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\extension.vsixmanifest"
-	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\ide_plugin_32.png"
-	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\LICENSE"
-
-	RMDir "$0\Extensions\Atlassian\Atlassian Connector"
- 
-	DeleteRegKey HKLM "Software\Microsoft\VisualStudio\11.0\InstalledProducts\PlvsPackage"
-
-	;; still required for AnkhSVN integration?
-	DeleteRegKey HKLM "Software\Microsoft\VisualStudio\11.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}"
-FunctionEnd
-
 Function un.RemoveVs2010Files
 
 	ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\10.0" "InstallDir"
@@ -172,6 +149,38 @@ Function un.Unregister2008
 	DeleteRegKey HKLM "Software\Microsoft\VisualStudio\9.0\Text Editor\External Markers\{658DDF58-FC14-4db9-8110-B52A6845B6CF}"
 	DeleteRegKey HKLM "Software\Microsoft\VisualStudio\9.0\Text Editor\External Markers\{D7F03136-206D-4674-ADC7-DA0E9EE38869}"
 	DeleteRegKey HKLM "Software\Microsoft\VisualStudio\9.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}"
+FunctionEnd
+
+Function un.Unregister2011
+
+	ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\11.0" "InstallDir"
+ 
+	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\plvs2010.dll"
+	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\Ankh.ExtensionPoints.dll"
+	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\Aga.Controls.dll"
+	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\edit.png"
+	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\ajax-loader.gif"
+	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\nothing.png"
+	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\plvs2010.pkgdef"
+	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\extension.vsixmanifest"
+	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\ide_plugin_32.png"
+	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\LICENSE"
+
+	RMDir "$0\Extensions\Atlassian\Atlassian Connector"
+ 
+	DeleteRegKey HKLM "Software\Microsoft\VisualStudio\11.0\InstalledProducts\PlvsPackage"
+
+	;; still required for AnkhSVN integration?
+	DeleteRegKey HKLM "Software\Microsoft\VisualStudio\11.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}"
+	
+	DeleteRegKey HKCU "Software\Microsoft\VisualStudio\9.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
+	DeleteRegKey HKCU "Software\Microsoft\VisualStudio\11.0_Config\InstalledProducts\PlvsPackage"
+	DeleteRegKey HKCU "Software\Microsoft\VisualStudio\11.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}"
+	DeleteRegValue HKCU "Software\Microsoft\VisualStudio\9.0\Menus" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
+	DeleteRegKey HKCU "Software\Microsoft\VisualStudio\9.0\ToolWindows\{06c81945-10ef-4d72-8daf-32d29f7e9573}"
+	DeleteRegKey HKCU "Software\Microsoft\VisualStudio\9.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}"
+	DeleteRegKey HKCU "Software\Microsoft\VisualStudio\9.0\ToolWindows\{F9624C15-E757-4582-BF55-F2DB8146681C}"
+
 FunctionEnd
 
 Function LaunchVS
@@ -593,8 +602,10 @@ Section "Uninstall"
 	RMDir "$INSTDIR"
 
 	ClearErrors
+	
 	ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\9.0" "InstallDir"
 	${IfNot} ${Errors}
+		; MessageBox MB_ICONSTOP|MB_OK "found VS 2008" /SD IDOK
 		Call un.Unregister2008
 		ExecWait '"$0\devenv.exe" /setup'
 	${EndIf}
@@ -603,13 +614,17 @@ Section "Uninstall"
 
 	ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\10.0" "InstallDir"
 	${IfNot} ${Errors}
+		; MessageBox MB_ICONSTOP|MB_OK "found VS 2010" /SD IDOK
 		Call un.RemoveVs2010Files
 		ExecWait '"$0\devenv.exe" /setup'
 	${EndIf}	
-
+	
+	ClearErrors
+	
 	ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\11.0" "InstallDir"
 	${IfNot} ${Errors}
-		Call un.RemoveVs2011Files
+		; MessageBox MB_ICONSTOP|MB_OK "found VS 2012" /SD IDOK
+		Call un.Unregister2011
 		ExecWait '"$0\devenv.exe" /setup'
 	${EndIf}	
 	
