@@ -32,7 +32,7 @@ namespace Atlassian.plvs.api.jira {
             lock (sessionMap) {
                 sessionMap.Remove(CredentialUtils.getSessionOrTokenKey(server));
             }
-            var auth = jsonOp("POST", BaseUrl + "/rest/auth/1/session", new {username = server.UserName, password = server.Password}, HttpStatusCode.OK);
+            var auth = jsonOpNoRetry("POST", BaseUrl + "/rest/auth/1/session", new {username = server.UserName, password = server.Password}, HttpStatusCode.OK);
         }
 
         public static void clearSessions() {
@@ -498,6 +498,18 @@ namespace Atlassian.plvs.api.jira {
         }
 
         private JContainer jsonOp(string method, string tgtUrl, object json, HttpStatusCode expectedCode) {
+            try {
+                return jsonOpNoRetry(method, tgtUrl, json, expectedCode);
+            } catch (WebException e) {
+                if (((HttpWebResponse) e.Response).StatusCode == HttpStatusCode.Unauthorized) {
+                    restLogin();
+                    return jsonOpNoRetry(method, tgtUrl, json, expectedCode);
+                }
+                throw;
+            }
+        }
+
+        private JContainer jsonOpNoRetry(string method, string tgtUrl, object json, HttpStatusCode expectedCode) {
             var url = new StringBuilder(tgtUrl);
 
             if (server.OldSkoolAuth) {
