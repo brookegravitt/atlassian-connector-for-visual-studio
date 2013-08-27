@@ -60,12 +60,19 @@ namespace Atlassian.plvs.api.jira {
         }
 
         public List<Sprint> getGhSprints(int boardId) {
-            var sprints = getJson(BaseUrl + "/rest/greenhopper/1.0/sprints/" + boardId);
+            JContainer sprints;
+            var newerThan6301 = false;
+            try {
+                sprints = getJson(BaseUrl + "/rest/greenhopper/1.0/sprints/" + boardId);
+            } catch (WebException e) {
+                sprints = getJson(BaseUrl + "/rest/greenhopper/1.0/sprintquery/" + boardId);
+                newerThan6301 = true;
+            }
             if (sprints == null) return new List<Sprint>();
             var sps = sprints["sprints"];
             return sps == null 
                 ? new List<Sprint>() 
-                : sps.Select(item => new Sprint(boardId, item)).ToList();
+                : sps.Select(item => new Sprint(boardId, item, newerThan6301)).ToList();
         }
 
         public List<string> getIssueKeysForSprint(int boardId, int sprintId) {

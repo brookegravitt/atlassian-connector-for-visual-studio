@@ -7,11 +7,13 @@ namespace Atlassian.plvs.api.jira.gh {
         public bool Closed { get; private set; }
         public int BoardId { get; private set; }
         
-        public Sprint(int boardId, JToken sprint) {
+        public Sprint(int boardId, JToken sprint, bool newerThan6301) {
             BoardId = boardId;
             Id = sprint["id"].Value<int>();
             Name = sprint["name"].Value<string>();
-            Closed = sprint["closed"].Value<bool>();
+            Closed = newerThan6301 
+                ? sprint["state"].Value<string>().Equals("CLOSED")
+                : sprint["closed"].Value<bool>();
         }
     }
 }
