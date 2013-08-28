@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Aga.Controls.Tree;
 using Atlassian.plvs.api.bamboo;
 using Atlassian.plvs.models.bamboo;
@@ -59,7 +60,7 @@ namespace Atlassian.plvs.ui.bamboo.treemodels {
             foreach (var build in builds) {
                 var proj = getMapProjectKeyFromBuild(build);
                 if (!projectNodes.ContainsKey(proj)) {
-                    projectNodes[proj] = new ProjectNode(build.Server.GUID.ToString(), build.ProjectName + " (" + build.ProjectKey + ")");
+                    projectNodes[proj] = new ProjectNode(build.Server.GUID.ToString(), build.ProjectName + " (" + build.ProjectKey + ")", build.ProjectKey);
                 }
             }
         }
@@ -77,7 +78,12 @@ namespace Atlassian.plvs.ui.bamboo.treemodels {
                 return projectNodes.Values;
             }
             if (treePath.LastNode is ProjectNode) {
-                return masterNodes.Values;
+                var pn = treePath.LastNode as ProjectNode;
+                var res = new SortedDictionary<string, BuildNode>();
+                foreach (var m in masterNodes.Values.Where(m => m.NodeKey.StartsWith(pn.NodeKey))) {
+                    res[m.Key] = m;
+                }
+                return res.Values;
             }
             var n = treePath.LastNode as BuildNode;
             return n != null ? n.BranchNodes : null;
