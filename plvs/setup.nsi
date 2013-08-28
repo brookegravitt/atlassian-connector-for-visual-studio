@@ -41,17 +41,14 @@ Var CheckboxVS2010
 Var CheckboxVS2010_State
 Var CheckboxVS2011
 Var CheckboxVS2011_State
-Var Image2008
-Var Image2008Handle
-Var Image2010
-Var Image2010Handle
-Var Image2011
-Var Image2011Handle
+Var CheckboxVS2013
+Var CheckboxVS2013_State
 
 Var FoundVS2008
 Var FoundVS2010
 Var FoundVS2011
-; == 3 if we have all versions
+Var FoundVS2013
+; == 4 if we have all versions
 Var FoundAll
 
 Function .onInit
@@ -63,9 +60,6 @@ Function .onInit
 	${EndIf}	
 
 	InitPluginsDir
-	File /oname=$PLUGINSDIR\vs2008.bmp "plvs\Resources\icons\vs2008.bmp"
-	File /oname=$PLUGINSDIR\vs2010.bmp "plvs\Resources\icons\vs2010.bmp"
-	File /oname=$PLUGINSDIR\vs2011.bmp "plvs\Resources\icons\vs2012.bmp"
 	
 FunctionEnd
 
@@ -98,19 +92,28 @@ Function CheckVS
 	${IfNot} ${Errors}
 		IntOp $FoundVS2011 0 + 1
 	${EndIf}	
+
+    ClearErrors
 	
-	IntOp $FoundAll $FoundVS2011 + $FoundVS2010
+	ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\12.0" "InstallDir"
+	${IfNot} ${Errors}
+		IntOp $FoundVS2013 0 + 1
+	${EndIf}	
+	
+	IntOp $FoundAll $FoundVS2013 + $FoundVS2011
+	IntOp $FoundAll $FoundAll + $FoundVS2010
 	IntOp $FoundAll $FoundAll + $FoundVS2008
 
 	${If} $FoundVS2008 <> 1
 		${AndIf} $FoundVS2010 <> 1
 			${AndIf} $FoundVS2011 <> 1
-				Call AbortOnNoVS
+				${AndIf} $FoundVS2013 <> 1
+					Call AbortOnNoVS
 	${EndIf}		
 FunctionEnd
 
 Function AbortOnNoVS
-	MessageBox MB_ICONSTOP|MB_OK "Neither Visual Studio 2008 nor Visual Studio 2010 is installed. Setup will now close." /SD IDOK
+	MessageBox MB_ICONSTOP|MB_OK "Visual Studio installation is not found. Setup will now close." /SD IDOK
 	Abort
 FunctionEnd
 
@@ -133,7 +136,6 @@ Function un.RemoveVs2010Files
  
 	DeleteRegKey HKLM "Software\Microsoft\VisualStudio\10.0\InstalledProducts\PlvsPackage"
 
-	;; still required for AnkhSVN integration?
 	DeleteRegKey HKLM "Software\Microsoft\VisualStudio\10.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}"
 FunctionEnd
 
@@ -170,24 +172,57 @@ Function un.Unregister2011
  
 	DeleteRegKey HKLM "Software\Microsoft\VisualStudio\11.0\InstalledProducts\PlvsPackage"
 
-	;; still required for AnkhSVN integration?
 	DeleteRegKey HKLM "Software\Microsoft\VisualStudio\11.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}"
 	
-	DeleteRegKey HKCU "Software\Microsoft\VisualStudio\9.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
+	DeleteRegKey HKCU "Software\Microsoft\VisualStudio\11.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
 	DeleteRegKey HKCU "Software\Microsoft\VisualStudio\11.0_Config\InstalledProducts\PlvsPackage"
 	DeleteRegKey HKCU "Software\Microsoft\VisualStudio\11.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}"
-	DeleteRegValue HKCU "Software\Microsoft\VisualStudio\9.0\Menus" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
-	DeleteRegKey HKCU "Software\Microsoft\VisualStudio\9.0\ToolWindows\{06c81945-10ef-4d72-8daf-32d29f7e9573}"
-	DeleteRegKey HKCU "Software\Microsoft\VisualStudio\9.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}"
-	DeleteRegKey HKCU "Software\Microsoft\VisualStudio\9.0\ToolWindows\{F9624C15-E757-4582-BF55-F2DB8146681C}"
+	DeleteRegValue HKCU "Software\Microsoft\VisualStudio\11.0\Menus" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
+	DeleteRegKey HKCU "Software\Microsoft\VisualStudio\11.0\ToolWindows\{06c81945-10ef-4d72-8daf-32d29f7e9573}"
+	DeleteRegKey HKCU "Software\Microsoft\VisualStudio\11.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}"
+	DeleteRegKey HKCU "Software\Microsoft\VisualStudio\11.0\ToolWindows\{F9624C15-E757-4582-BF55-F2DB8146681C}"
+
+FunctionEnd
+
+Function un.Unregister2013
+
+	ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\12.0" "InstallDir"
+ 
+	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\plvs2010.dll"
+	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\Ankh.ExtensionPoints.dll"
+	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\Aga.Controls.dll"
+	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\edit.png"
+	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\ajax-loader.gif"
+	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\nothing.png"
+	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\plvs2010.pkgdef"
+	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\extension.vsixmanifest"
+	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\ide_plugin_32.png"
+	Delete "$0\Extensions\Atlassian\Atlassian Connector\1.0\LICENSE"
+
+	RMDir "$0\Extensions\Atlassian\Atlassian Connector"
+ 
+	DeleteRegKey HKLM "Software\Microsoft\VisualStudio\12.0\InstalledProducts\PlvsPackage"
+
+	DeleteRegKey HKLM "Software\Microsoft\VisualStudio\12.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}"
+	
+	DeleteRegKey HKCU "Software\Microsoft\VisualStudio\12.0\Packages\{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
+	DeleteRegKey HKCU "Software\Microsoft\VisualStudio\12.0_Config\InstalledProducts\PlvsPackage"
+	DeleteRegKey HKCU "Software\Microsoft\VisualStudio\12.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}"
+	DeleteRegValue HKCU "Software\Microsoft\VisualStudio\12.0\Menus" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
+	DeleteRegKey HKCU "Software\Microsoft\VisualStudio\12.0\ToolWindows\{06c81945-10ef-4d72-8daf-32d29f7e9573}"
+	DeleteRegKey HKCU "Software\Microsoft\VisualStudio\12.0\ToolWindows\{34218db5-88b7-4773-b356-c07e94987cd2}"
+	DeleteRegKey HKCU "Software\Microsoft\VisualStudio\12.0\ToolWindows\{F9624C15-E757-4582-BF55-F2DB8146681C}"
 
 FunctionEnd
 
 Function LaunchVS
 	IfSilent noLaunchVs
 
-	${If} $FoundAll = 3
-		${If} $CheckboxVS2011_State == ${BST_CHECKED} 
+	${If} $FoundAll = 4
+		${If} $CheckboxVS2013_State == ${BST_CHECKED} 
+			ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\12.0" "InstallDir"
+			Exec "$0\devenv.exe"
+		${ElseIf} $CheckboxVS2011_State == ${BST_CHECKED} 
 			ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\11.0" "InstallDir"
 			Exec "$0\devenv.exe"
 		${ElseIf} $CheckboxVS2010_State == ${BST_CHECKED} 
@@ -198,7 +233,10 @@ Function LaunchVS
 			Exec "$0\devenv.exe"
 		${EndIf}
 	${Else}
-		${If} $FoundVS2011 = 1
+		${If} $FoundVS2013 = 1
+			ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\12.0" "InstallDir"
+			Exec "$0\devenv.exe"
+		${ElseIf} $FoundVS2011 = 1
 			ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\11.0" "InstallDir"
 			Exec "$0\devenv.exe"
 		${ElseIf} $FoundVS2010 = 1
@@ -258,56 +296,42 @@ Function nsComponentsPage
 			${If} $CheckboxVS2008_State == ${BST_UNCHECKED}
 				${NSD_Uncheck} $CheckboxVS2008
 			${EndIf}
-			
-			${NSD_CreateBitmap} 0 20u 100% 100% ""
-			Pop $Image2008
-			${NSD_SetImage} $Image2008 $PLUGINSDIR\vs2008.bmp $Image2008Handle
 		${EndIf}
 	
 		${If} $FoundVS2010 = 1
-			${NSD_CreateCheckbox} 35u 60u 100% 10u "Visual Studio 201&0"
+			${NSD_CreateCheckbox} 35u 42u 100% 10u "Visual Studio 201&0"
 			Pop $CheckboxVS2010
 			${NSD_Check} $CheckboxVS2010
 			${If} $CheckboxVS2010_State == ${BST_UNCHECKED}
 				${NSD_Uncheck} $CheckboxVS2010
 			${EndIf}
-
-			${NSD_CreateBitmap} 0 49u 100% 100% ""
-			Pop $Image2010
-			${NSD_SetImage} $Image2010 $PLUGINSDIR\vs2010.bmp $Image2010Handle
 		${EndIf}
 
 		${If} $FoundVS2011 = 1
-			${NSD_CreateCheckbox} 35u 88u 100% 10u "Visual Studio 201&2"
+			${NSD_CreateCheckbox} 35u 52u 100% 10u "Visual Studio 201&2"
 			Pop $CheckboxVS2011
 			${NSD_Check} $CheckboxVS2011
 			${If} $CheckboxVS2011_State == ${BST_UNCHECKED}
 				${NSD_Uncheck} $CheckboxVS2011
 			${EndIf}
+		${EndIf}
 
-			${NSD_CreateBitmap} 0 79u 100% 100% ""
-			Pop $Image2011
-			${NSD_SetImage} $Image2011 $PLUGINSDIR\vs2011.bmp $Image2011Handle
+		${If} $FoundVS2013 = 1
+			${NSD_CreateCheckbox} 35u 62u 100% 10u "Visual Studio 201&3"
+			Pop $CheckboxVS2013
+			${NSD_Check} $CheckboxVS2013
+			${If} $CheckboxVS2013_State == ${BST_UNCHECKED}
+				${NSD_Uncheck} $CheckboxVS2013
+			${EndIf}
 		${EndIf}
 
 		nsDialogs::Show
 		
-		${If} $FoundVS2008 = 1
-			${NSD_FreeImage} $Image2008Handle
-		${EndIf}
-		${If} $FoundVS2010 = 1
-			${NSD_FreeImage} $Image2010Handle
-		${EndIf}
-		${If} $FoundVS2011 = 1
-			${NSD_FreeImage} $Image2011Handle
-		${EndIf}
-
 	${Else}
 
 		Abort
 		
 	${EndIf}	
-
 
 FunctionEnd
 
@@ -316,12 +340,14 @@ Function nsComponentsPageLeave
 	${NSD_GetState} $CheckboxVS2008 $CheckboxVS2008_State
 	${NSD_GetState} $CheckboxVS2010 $CheckboxVS2010_State
 	${NSD_GetState} $CheckboxVS2011 $CheckboxVS2011_State
+	${NSD_GetState} $CheckboxVS2013 $CheckboxVS2013_State
 
-	${If} $CheckboxVS2011_State == ${BST_UNCHECKED}
-		${AndIf} $CheckboxVS2010_State == ${BST_UNCHECKED}
-			${AndIf} $CheckboxVS2008_State == ${BST_UNCHECKED}
-				MessageBox MB_OK|MB_ICONSTOP "At least one version of Visual Studio has to be selected" /SD IDOK
-				Abort
+	${If} $CheckboxVS2013_State == ${BST_UNCHECKED}
+		${AndIf} $CheckboxVS2011_State == ${BST_UNCHECKED}
+			${AndIf} $CheckboxVS2010_State == ${BST_UNCHECKED}
+				${AndIf} $CheckboxVS2008_State == ${BST_UNCHECKED}
+					MessageBox MB_OK|MB_ICONSTOP "At least one version of Visual Studio has to be selected" /SD IDOK
+					Abort
 	${EndIf}		
 
 FunctionEnd
@@ -383,6 +409,14 @@ Section "Connector Files"
 		${OrIf} $FoundAll = 1
 			Call Integrate2011
 		${EndIf}
+	${EndIf}
+	
+	${If} $FoundVS2013 = 1
+		${If} $FoundAll > 1
+		${AndIf} $CheckboxVS2013_State == ${BST_CHECKED} 
+		${OrIf} $FoundAll = 1
+			Call Integrate2013
+		${EndIf}
 	${EndIf}	
 	
 	Goto endFiles
@@ -398,6 +432,10 @@ Section "Connector Files"
 
 		${If} $FoundVS2011 = 1
 			Call Integrate2011
+		${EndIf}	
+		
+		${If} $FoundVS2013 = 1
+			Call Integrate2013
 		${EndIf}	
 		
 	endFiles:
@@ -567,10 +605,51 @@ Function Integrate2011
 
 FunctionEnd
 
+Function Integrate2013
+
+	${If} $FoundVS2013 = 1
+		ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\12.0" "InstallDir"
+  
+		SetOutPath "$0\Extensions\Atlassian\Atlassian Connector\1.0"
+ 
+		File "plvs\bin\Release\plvs2010.dll"
+		File "plvs\bin\Release\Ankh.ExtensionPoints.dll"
+		File "plvs\bin\Release\Aga.Controls.dll"
+		File "plvs\third party\newtonsoft\Newtonsoft.Json.dll"
+		File "plvs\bin\Release\edit.png"
+		File "plvs\bin\Release\ajax-loader.gif"
+		File "plvs\bin\Release\nothing.png"
+		File "plvs\bin\Release\plvs2010.pkgdef"
+		File "plvs\bin\Release\extension.vsixmanifest"
+		File "plvs\Resources\icons\ide_plugin_32.png"
+		File "plvs\LICENSE"
+
+		SetOutPath $INSTDIR  
+  
+		;; seems to be needed regardless of the vsixmanifest. Without this, logo does not show up in the VS About box
+		WriteRegStr HKLM "Software\Microsoft\VisualStudio\12.0\InstalledProducts\PlvsPackage" "" "#110"
+		WriteRegStr HKLM "Software\Microsoft\VisualStudio\12.0\InstalledProducts\PlvsPackage" "Package" "{36fa5f7f-2b5d-4cec-8c06-10c483683a16}"
+		WriteRegStr HKLM "Software\Microsoft\VisualStudio\12.0\InstalledProducts\PlvsPackage" "ProductDetails" "#112"
+		WriteRegStr HKLM "Software\Microsoft\VisualStudio\12.0\InstalledProducts\PlvsPackage" "PID" "1.0"
+		WriteRegStr HKLM "Software\Microsoft\VisualStudio\12.0\InstalledProducts\PlvsPackage" "LogoID" "#600"
+		WriteRegDWORD HKLM "Software\Microsoft\VisualStudio\12.0\InstalledProducts\PlvsPackage" "UseInterface" 1
+
+		;; still required for AnkhSVN integration?
+		WriteRegStr HKLM "Software\Microsoft\VisualStudio\12.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}" "" "Atlassian JIRA Connector"
+		WriteRegStr HKLM "Software\Microsoft\VisualStudio\12.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}" "Service" "{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}"
+
+		WriteRegStr HKLM "Software\Microsoft\VisualStudio\12.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}\Name" "" "#113"
+		WriteRegStr HKLM "Software\Microsoft\VisualStudio\12.0\IssueRepositoryConnectors\{F6D2F9E0-0B03-42F2-A4BF-A3E4E0019685}\Name" "Package" "{36FA5F7F-2B5D-4CEC-8C06-10C483683A16}"
+	
+		ExecWait '"$0\devenv.exe" /setup'
+	${EndIf}
+
+FunctionEnd
+
 ; Uninstaller
 ;
 ; FIXME: 
-; right now the uninstaller blindly tries to uninstall VS2008, VS2010 and VS2011 integrations,
+; right now the uninstaller blindly tries to uninstall VS2008, VS2010, VS2012 and VS2013 integrations,
 ; regardless of what integration options were selected during the installation
 ;
 Section "Uninstall"
@@ -605,7 +684,6 @@ Section "Uninstall"
 	
 	ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\9.0" "InstallDir"
 	${IfNot} ${Errors}
-		; MessageBox MB_ICONSTOP|MB_OK "found VS 2008" /SD IDOK
 		Call un.Unregister2008
 		ExecWait '"$0\devenv.exe" /setup'
 	${EndIf}
@@ -614,7 +692,6 @@ Section "Uninstall"
 
 	ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\10.0" "InstallDir"
 	${IfNot} ${Errors}
-		; MessageBox MB_ICONSTOP|MB_OK "found VS 2010" /SD IDOK
 		Call un.RemoveVs2010Files
 		ExecWait '"$0\devenv.exe" /setup'
 	${EndIf}	
@@ -623,8 +700,15 @@ Section "Uninstall"
 	
 	ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\11.0" "InstallDir"
 	${IfNot} ${Errors}
-		; MessageBox MB_ICONSTOP|MB_OK "found VS 2012" /SD IDOK
 		Call un.Unregister2011
+		ExecWait '"$0\devenv.exe" /setup'
+	${EndIf}	
+	
+	ClearErrors
+	
+	ReadRegStr $0 HKLM "SOFTWARE\Microsoft\VisualStudio\12.0" "InstallDir"
+	${IfNot} ${Errors}
+		Call un.Unregister2013
 		ExecWait '"$0\devenv.exe" /setup'
 	${EndIf}	
 	
