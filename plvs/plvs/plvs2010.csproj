@@ -1012,9 +1012,6 @@
     <None Include="Resources\texts\summary_and_description_css.txt" />
     <None Include="Resources\texts\toggler_javascript.txt" />
     <None Include="third party\ankh\LICENSE.rtf" />
-    <Content Include="Resources\icons\vs2008.bmp" />
-    <Content Include="Resources\icons\vs2010.bmp" />
-    <Content Include="Resources\icons\vs2012.bmp" />
     <Content Include="Resources\icons\VSObject_Class.png" />
     <Content Include="Resources\icons\VSObject_Namespace.png" />
     <Content Include="Resources\texts\attachment_download_html.txt" />
