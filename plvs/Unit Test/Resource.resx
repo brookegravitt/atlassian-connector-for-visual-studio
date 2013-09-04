@@ -130,4 +130,7 @@
   <data name="plvs_374_no_priority" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\plvs-374-no-priority.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;windows-1250</value>
   </data>
+  <data name="plvs_413" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\plvs-413.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>

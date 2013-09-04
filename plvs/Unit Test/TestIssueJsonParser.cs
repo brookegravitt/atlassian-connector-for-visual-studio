@@ -69,5 +69,21 @@ namespace Unit_Test {
                 Assert.Fail(e.Message);
             }
         }
+
+        [TestMethod]
+        public void TestPlvs313() {
+            JToken current = null;
+            try {
+                var json = Resource.plvs_413;
+                var issues = JsonConvert.DeserializeObject(json) as JToken;
+                foreach (var issue in issues["issues"]) {
+                    current = issue;
+                    new JiraIssue(server, current);
+                }
+            } catch (Exception e) {
+                Assert.Fail(current["key"].Value<string>() + ": " + e.Message);
+            }
+        }
+
     }
 }
