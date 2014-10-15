@@ -501,7 +501,8 @@ namespace Atlassian.plvs.api.jira {
             try {
                 return jsonOpNoRetry(method, tgtUrl, json, expectedCode);
             } catch (WebException e) {
-                if (((HttpWebResponse) e.Response).StatusCode == HttpStatusCode.Unauthorized) {
+                var response = ((HttpWebResponse)e.Response);
+                if (response != null && response.StatusCode == HttpStatusCode.Unauthorized) {
                     restLogin();
                     return jsonOpNoRetry(method, tgtUrl, json, expectedCode);
                 }
