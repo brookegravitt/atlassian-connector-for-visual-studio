@@ -18,6 +18,7 @@ namespace Atlassian.plvs.api.jira {
 
         private const string JSESSIONID = "JSESSIONID=";
         private const string STUDIO_CROWD_TOKEN = "studio.crowd.tokenkey=";
+        private const string REQUEST_SOURCE = "vs-ide-connector";
 
         public IDictionary<string, string> SessionTokens { get; set; }
 
@@ -86,6 +87,11 @@ namespace Atlassian.plvs.api.jira {
                 return (url.Contains("?") ? "&" : "?") + CredentialUtils.getOsAuthString(UserName, Password);
             }
             return "";
+        }
+
+        protected string appendRequestSource(string url)
+        {
+            return (url.ToString().Contains("?") ? "&" : "?") + "requestSource=" + REQUEST_SOURCE;
         }
 
         protected void setSessionCookie(HttpWebRequest req) {

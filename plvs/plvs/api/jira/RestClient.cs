@@ -517,6 +517,8 @@ namespace Atlassian.plvs.api.jira {
                 url.Append(appendAuthentication(url.ToString()));
             }
 
+            url.Append(appendRequestSource(url.ToString()));
+
             var req = (HttpWebRequest)WebRequest.Create(url.ToString());
             req.Proxy = server.NoProxy ? null : GlobalSettings.Proxy;
 
@@ -525,6 +527,7 @@ namespace Atlassian.plvs.api.jira {
             req.ReadWriteTimeout = GlobalSettings.NetworkTimeout * 2000;
             req.ContentType = "application/json";
             req.UserAgent = Constants.USER_AGENT;
+
 
 //            setBasicAuthHeader(req);
             loadLoginSessionCookies(req);
